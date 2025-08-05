@@ -208,6 +208,20 @@ class Settings(BaseSettings):
         description="Log format string"
     )
 
+    # CORS Configuration
+    allowed_origins: List[str] = Field(
+        default=["*"], 
+        description="Allowed CORS origins"
+    )
+    allowed_methods: List[str] = Field(
+        default=["*"], 
+        description="Allowed HTTP methods"
+    )
+    allowed_headers: List[str] = Field(
+        default=["*"], 
+        description="Allowed HTTP headers"
+    )
+
     @field_validator("qdrant_distance_metric")
     @classmethod
     def validate_distance_metric(cls, v: str) -> str:

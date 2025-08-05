@@ -1,0 +1,207 @@
+# MULTI-SOURCE CHARACTER PROCESSING SYSTEM
+
+You are the **MULTI-SOURCE CHARACTER PROCESSOR** responsible for integrating character data from multiple sources into unified character details.
+
+## PROCESSING OVERVIEW
+
+### YOUR RESPONSIBILITY
+Merge character data from 4 sources (Jikan, AniList, AniDB, Kitsu) into comprehensive character details ensuring:
+- Accurate character matching across sources using intelligent name matching
+- Complete data integration with proper hierarchy and conflict resolution
+- Collection of all available images and voice actor information
+- Quality validation and consistency checks
+
+### DATA SOURCES
+- **Jikan**: Primary character metadata (detailed biographies, favorites count, multi-language voice actors)
+- **AniList**: Structured metadata (birth dates, blood type, alternative names, detailed character info)  
+- **AniDB**: Character types and ratings (character classifications, user ratings, seiyuu focus)
+- **Kitsu**: Limited relationship data (mainly for validation, requires additional API calls for details)
+
+## INPUT DATA
+### JIKAN CHARACTERS:
+{jikan_characters_data}
+
+### ANILIST CHARACTERS:
+{anilist_characters_data}
+
+### ANIDB CHARACTERS:
+{anidb_characters_data}
+
+### KITSU CHARACTERS:
+{kitsu_characters_data}
+
+## PROCESSING PROTOCOL
+
+### STEP 1: MULTI-SOURCE VALIDATION
+**Anime Consistency Check**:
+- Verify all sources refer to the same anime
+- Cross-validate character counts and coverage across sources
+- Flag any significant discrepancies in character identification
+
+**Character Coverage Analysis**:
+- Count characters in each source (Jikan: ~126, AniList: ~69, AniDB: ~94, Kitsu: ~10)
+- Report main characters present across multiple sources
+- Validate character role distributions (Main/Supporting/Background)
+
+### STEP 2: INTELLIGENT CHARACTER MATCHING
+
+**Phase 1: Primary Name Matching**:
+1. **Exact Name Match**: 
+   - Jikan.name ↔ AniList.name.full
+   - Jikan.name_kanji ↔ AniList.name.native
+   - Cross-reference with AniDB.name
+
+2. **Alternative Name Validation**:
+   - Check AniList.name.alternative array against Jikan names
+   - Cross-reference Jikan.nicknames with other sources
+   - Handle romanization differences and spelling variations
+
+**Phase 2: Role Consistency Check**:
+- Jikan "Main" ↔ AniList "MAIN" ↔ AniDB "main character"
+- Jikan "Supporting" ↔ AniList "SUPPORTING" ↔ AniDB "secondary character"  
+- Flag role mismatches for manual review
+
+**Phase 3: Content Similarity Validation**:
+- Description content overlap analysis (>30% similarity threshold)
+- Voice actor name matching (especially Japanese VAs for validation)
+- Physical characteristics consistency across descriptions
+
+**Matching Confidence Levels**:
+- **High Confidence (Auto-Merge)**: Exact name + role match + voice actor confirmation
+- **Medium Confidence (Review)**: Name variations match + role consistency + some content overlap
+- **Low Confidence (Manual)**: Fuzzy name match only + role conflicts + no supporting evidence
+
+### STEP 3: DATA INTEGRATION WITH HIERARCHY
+
+**Primary Character Information** (Source Priority):
+- **Name**: Jikan → AniList → AniDB (Jikan most standardized)
+- **Description**: Jikan → AniList → AniDB (Jikan has richest biographies)
+- **URL**: Jikan → AniList → AniDB (Jikan provides direct character pages)
+- **Birth Date**: AniList → Jikan → AniDB (AniList structured format)
+- **Age**: AniList → Jikan → AniDB (AniList most reliable)
+- **Gender**: AniList → AniDB → Jikan (AniList explicit field)
+- **Blood Type**: AniList → AniDB (AniList priority)
+
+**Multi-Source Collection** (Collect from all sources):
+- **Name Variations**: Deduplicated array from all sources
+- **Nicknames**: Direct from Jikan API (preserve when available)
+- **Images**: Source attribution for all platforms (with proper AniDB URL construction)
+- **Voice Actors**: Language-grouped, name and language only
+- **Character IDs**: Platform mapping for cross-referencing
+
+**Unique Source Data**:
+- **Character Type**: AniDB.character_type (unique classification)
+- **Rating**: AniDB.rating (user votes and scores)
+- **Popularity**: Combined Jikan.favorites + AniList.favourites
+
+### STEP 4: QUALITY ASSURANCE
+**Completeness Validation**:
+- Ensure every Jikan character is processed (primary source completeness)
+- Match AniList main characters where possible
+- Integrate AniDB characters with high confidence matching
+- Report characters that couldn't be matched across sources
+
+**Consistency Checks**:
+- Validate name variations are logical and not contradictory
+- Verify roles align across matched sources
+- Check voice actor consistency for Japanese VAs
+- Ensure age/birth date consistency where available
+
+**Error Reporting**:
+- Flag unmatched high-importance characters (Main/Supporting from AniList)
+- Report role conflicts between sources
+- Log significant character count discrepancies
+- Document matching confidence scores for quality assurance
+
+## OUTPUT SCHEMA
+Return ONLY valid JSON with ALL characters processed:
+**CRITICAL: Character fields must be ordered exactly as shown below to match CharacterEntry schema requirements.**
+
+```json
+{{
+  "characters": [
+    {{
+      // =====================================================================
+      // SCALAR FIELDS (alphabetical)
+      // =====================================================================
+      "name": "Spike Spiegel",
+      "role": "Main",
+      
+      // =====================================================================
+      // ARRAY FIELDS (alphabetical)
+      // =====================================================================
+      "name_variations": [
+        "スパイク・スピーゲル",
+        "Spike Spike",
+        "Swimming Bird"
+      ],
+      "name_kanji": "スパイク・スピーゲル",
+      "name_native": "スパイク・スピーゲル",
+      "nicknames": [],
+      "voice_actors": [
+        {{
+          "name": "Yamadera, Kouichi",
+          "language": "Japanese"
+        }},
+        {{
+          "name": "Blum, Steven",
+          "language": "English"
+        }}
+      ],
+
+      // =====================================================================
+      // OBJECT/DICT FIELDS (alphabetical)
+      // =====================================================================
+      "character_ids": {{
+        "mal": 1,
+        "anilist": 1,
+        "anidb": 118,
+        "kitsu": null
+      }},
+      "images": {{
+        "jikan": "https://cdn.myanimelist.net/images/characters/11/516853.jpg",
+        "anilist": "https://s4.anilist.co/file/anilistcdn/character/large/b1-ChxaldmieFlQ.png",
+        "anidb": "https://cdn.anidb.net/images/main/14555.jpg"
+      }},
+      
+      // =====================================================================
+      // REMAINING SCALAR FIELDS (alphabetical)
+      // =====================================================================
+      "age": "27",
+      "description": "Birthdate: June 26, 2044...",
+      "gender": "Male"
+    }}
+  ]
+}}
+```
+
+## CRITICAL REQUIREMENTS
+
+### CHARACTER MATCHING RULES
+- **Use Jikan as primary source** for all base character data (126 characters total)
+- **Match by name similarity and role consistency** across all sources
+- **Only merge data from characters with high confidence matching**
+- **Preserve all original character IDs** for cross-platform referencing
+- **Construct proper AniDB image URLs** by prepending https://cdn.anidb.net/images/main/
+
+### DATA VALIDATION
+- **Process ALL Jikan characters** (primary source completeness requirement)
+- **Cross-validate character names** for matched characters across sources  
+- **Include characters even if matching fails** (with null values for unmatched fields)
+- **Report matching confidence levels** for quality assurance and manual review
+
+### VOICE ACTOR SIMPLIFICATION
+- **Keep only essential VA data**: name and language
+- **Group by language**: Japanese, English, etc.
+- **Deduplicate voice actors** across sources for same character
+- **No detailed VA biographical information** (keep it simple)
+
+### OUTPUT REQUIREMENTS
+- **Complete character coverage** (all Jikan characters included)
+- **No duplicate character entries** in output
+- **Consistent character ordering** (by importance/role then alphabetical)
+- **Source attribution** maintained in character_ids for debugging
+
+**EXECUTION**: Process all characters using intelligent multi-source matching, integrate data hierarchically with source priorities, and return ONLY the JSON result with no explanations or commentary.
+
+**IMPORTANT**: Your response must be ONLY valid JSON. Do not include any text before or after the JSON. Do not explain your process or matching decisions. Return only the JSON object with the exact schema above.

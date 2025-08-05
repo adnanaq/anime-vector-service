@@ -26,6 +26,13 @@ class SimilarityResponse(BaseModel):
     total_found: int = Field(..., description="Total number of similar anime found")
 
 
+class BatchSimilarityRequest(BaseModel):
+    """Request model for batch similarity search."""
+    anime_ids: List[str] = Field(..., description="List of anime IDs to find similarities for")
+    limit: int = Field(default=5, ge=1, le=20, description="Maximum similar anime per reference")
+    similarity_type: str = Field(default="semantic", description="Type of similarity: semantic, visual, or vector")
+
+
 @router.get("/similarity/anime/{anime_id}", response_model=SimilarityResponse)
 async def get_similar_anime(
     anime_id: str,
@@ -164,11 +171,7 @@ async def get_vector_similar_anime(
 
 
 @router.post("/similarity/batch")
-async def get_batch_similarity(
-    anime_ids: List[str] = Field(..., description="List of anime IDs to find similarities for"),
-    limit: int = Query(default=5, ge=1, le=20, description="Maximum similar anime per reference"),
-    similarity_type: str = Query(default="semantic", description="Type of similarity: semantic, visual, or vector")
-):
+async def get_batch_similarity(request: BatchSimilarityRequest):
     """
     Find similar anime for multiple reference anime in batch.
     
@@ -180,24 +183,24 @@ async def get_batch_similarity(
         if not qdrant_client:
             raise HTTPException(status_code=503, detail="Vector database not available")
         
-        if len(anime_ids) > 10:
+        if len(request.anime_ids) > 10:
             raise HTTPException(status_code=400, detail="Maximum 10 anime IDs allowed in batch request")
         
         batch_results = {}
         
-        for anime_id in anime_ids:
+        for anime_id in request.anime_ids:
             try:
-                if similarity_type == "visual":
-                    results = await qdrant_client.find_visually_similar_anime(anime_id, limit)
-                elif similarity_type == "vector":
-                    results = await qdrant_client.get_similar_anime(anime_id, limit)
+                if request.similarity_type == "visual":
+                    results = await qdrant_client.find_visually_similar_anime(anime_id, request.limit)
+                elif request.similarity_type == "vector":
+                    results = await qdrant_client.get_similar_anime(anime_id, request.limit)
                 else:  # semantic (default)
-                    results = await qdrant_client.find_similar(anime_id, limit)
+                    results = await qdrant_client.find_similar(anime_id, request.limit)
                 
                 batch_results[anime_id] = {
                     "similar_anime": results,
                     "total_found": len(results),
-                    "similarity_type": similarity_type
+                    "similarity_type": request.similarity_type
                 }
                 
             except Exception as e:
