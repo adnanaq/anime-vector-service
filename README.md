@@ -1,66 +1,67 @@
 # Anime Vector Service
 
-A microservice for handling vector database operations, extracted from the main Anime MCP Server for better scalability and maintainability.
+A microservice for semantic search over anime content using vector embeddings and Qdrant database.
 
-## Overview
+## Features
 
-This service provides:
-- Semantic search capabilities using Qdrant vector database
-- Multi-modal search (text + image) with CLIP embeddings
-- FastEmbed text embeddings (BGE, Sentence Transformers)
-- Batch vector operations for efficient data processing
-- RESTful API for easy integration
+- **Semantic Search**: Text-based search using BGE-M3 embeddings
+- **Visual Search**: Image-to-image similarity with JinaCLIP v2
+- **Multimodal Search**: Combined text and image queries
+- **Similarity Analysis**: Find visually or contextually similar anime
+- **Batch Operations**: Efficient bulk vector processing
+- **Production Ready**: Health checks, monitoring, CORS support
 
-## Architecture
+## Quick Start
 
-```
-anime-vector-service/
-├── src/
-│   ├── api/           # REST API endpoints
-│   ├── vector/        # Vector processing logic (moved from main repo)
-│   ├── models/        # Pydantic data models
-│   ├── config/        # Configuration management
-│   └── main.py        # FastAPI application entry point
-├── docker/
-│   ├── Dockerfile
-│   └── docker-compose.yml
-└── requirements.txt
+### Using Docker (Recommended)
+
+```bash
+# Start services
+docker compose up -d
+
+# Service available at http://localhost:8002
+curl http://localhost:8002/health
 ```
 
-## Key Features
+### Local Development
 
-- **Multi-Vector Support**: Text, picture, and thumbnail embeddings in single collection
-- **Advanced Search**: Semantic, similarity, image-based, and multimodal search
-- **Performance Optimized**: Quantization, HNSW indexing, batch processing
-- **Production Ready**: Health checks, statistics, error handling
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Start Qdrant database
+docker compose up -d qdrant
+
+# Run service
+python -m src.main
+```
 
 ## API Endpoints
 
-### Core Vector Operations
-- `POST /api/v1/vectors/search` - Semantic text search
-- `POST /api/v1/vectors/similar` - Find similar anime by ID
-- `POST /api/v1/vectors/image-search` - Image-based visual search
-- `POST /api/v1/vectors/multimodal` - Combined text+image search
+### Search Operations
+- `POST /api/v1/search` - Semantic text search
+- `POST /api/v1/search/image` - Image-based search
+- `POST /api/v1/search/multimodal` - Combined text+image search
 
-### Data Management
-- `POST /api/v1/vectors/upsert` - Add/update vectors
-- `POST /api/v1/vectors/batch-upsert` - Batch operations
-- `DELETE /api/v1/vectors/{id}` - Remove vectors
+### Similarity Operations  
+- `POST /api/v1/similarity/anime/{anime_id}` - Find similar anime
+- `POST /api/v1/similarity/visual/{anime_id}` - Find visually similar anime
 
 ### Administration
-- `GET /api/v1/health` - Service health check
-- `GET /api/v1/stats` - Database statistics
-- `POST /api/v1/admin/reindex` - Rebuild vector index
+- `GET /health` - Service health status
+- `GET /api/v1/admin/stats` - Database statistics
+- `POST /api/v1/admin/reindex` - Rebuild search index
 
 ## Configuration
 
-Key environment variables:
+Environment variables:
+
 ```env
-# Vector Service
+# Service
 VECTOR_SERVICE_HOST=0.0.0.0
 VECTOR_SERVICE_PORT=8002
 
-# Qdrant Configuration
+# Database
 QDRANT_URL=http://localhost:6333
 QDRANT_COLLECTION_NAME=anime_database
 
@@ -69,40 +70,10 @@ TEXT_EMBEDDING_MODEL=BAAI/bge-m3
 IMAGE_EMBEDDING_MODEL=jinaai/jina-clip-v2
 ```
 
-## Development
+## Technology Stack
 
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Start Qdrant
-docker compose up -d qdrant
-
-# Run service
-python -m src.main
-```
-
-## Migration Status
-
-This service was extracted from the main anime-mcp-server repository to improve:
-- **Scalability**: Independent scaling of vector operations
-- **Maintainability**: Clear separation of concerns
-- **Performance**: Dedicated resources for embedding computations
-- **Reusability**: Multiple services can share the same vector backend
-
-## Data Migration
-
-When moving to production:
-1. Export vectors from main service
-2. Import to this service's Qdrant instance
-3. Update main service to use vector service API
-4. Validate search functionality
-
-## Dependencies
-
-- FastAPI: REST API framework
-- Qdrant: Vector database
-- FastEmbed: Text embeddings
-- CLIP/JinaCLIP: Image embeddings
-- Sentence Transformers: Alternative text embeddings
-- PyTorch: Deep learning framework
+- **FastAPI**: REST API framework
+- **Qdrant**: Vector database with HNSW indexing
+- **BGE-M3**: Multi-lingual text embeddings
+- **JinaCLIP v2**: Vision-language model for images
+- **Docker**: Containerized deployment
