@@ -149,6 +149,28 @@ Create additional files or folders as Memory files in [docs](/docs/) or [tasks](
 - Possible Extensions
 - Deployment procedures
 
+## Session Memory System
+
+### 8. [WORKING_LOG/](/WORKING_LOG/) - Session-Based Memory
+**Development session tracking for persistent context**
+
+- Daily development logs with structured templates
+- Session-specific decisions, patterns, and insights
+- Cross-session learning and context preservation
+- Links current work to historical patterns
+
+### Memory Persistence Protocol
+- **Living Memory**: Context persists across development sessions
+- **Learning Compounds**: Patterns and insights accumulate over time
+- **Session Continuity**: Each session builds on previous knowledge
+- **Structured Knowledge**: Information categorized for easy retrieval
+
+### Integration with Core Memory
+- WORKING_LOG/ feeds insights into lessons-learned.md
+- Session contexts update active_context.md
+- Historical decisions inform architecture.md updates
+- Error resolutions enhance error-documentation.md
+
 # Core Workflows
 
 Now we define the procedural workflows to read/write to these memeory files.

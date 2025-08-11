@@ -2,30 +2,148 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Rules System - Compressed Protocols (ALWAYS Follow)
+## MANDATORY PROTOCOL ENFORCEMENT (ZERO TOLERANCE FOR VIOLATIONS)
 
-### Mode Tokens
-- `@PLAN_MODE` → Load: docs/{architecture,product_requirement_docs,technical}.md + tasks/{active_context,tasks_plan}.md → Clarify → Strategy → Validate → Document
-- `@CODE_MODE` → Load: core files + src/ context → Analyze deps → Plan changes → Simulate → Test → Document
+### **🛑 RULE VIOLATION = IMMEDIATE STOP + RULE CITATION**
+
+### **VIOLATION PHRASE DETECTION (AUTO-STOP)**
+**IF USER SAYS**: "skip the questions", "don't ask questions", "just implement", "no questions"
+**MANDATORY RESPONSE**: 
+```
+🛑 RULE VIOLATION DETECTED: BP-3 prohibits skipping clarification questions.
+CLAUDE.md Rule BP-3 states: "NEVER start research or implementation without clarification"
+I cannot proceed without clarification questions. This is non-negotiable.
+```
+
+### BP-1 (MUST): Mode Detection and Protocol Activation  
+**BEFORE ANYTHING ELSE** - Detect mode and state protocol:
+- Any broad optimization/improvement request = **@PLAN_MODE** (NOT @CODE_MODE)
+- Specific implementation task = **@CODE_MODE**
+- **ALWAYS** state: "Activating [X] protocol per CLAUDE.md rules"
+
+### BP-2 (MUST): Context Loading Before Any Action
+**IMMEDIATELY** after protocol activation, load context:
+```
+Loading required context per BP-2:
+✓ docs/architecture.md
+✓ docs/product_requirement_docs.md  
+✓ docs/technical.md
+✓ tasks/active_context.md
+✓ tasks/tasks_plan.md
+```
+
+### BP-3 (MUST): Clarification Questions - ZERO EXCEPTIONS
+**SEQUENCE IS NON-NEGOTIABLE**: Context → Questions → Wait for Answers → Then Proceed
+
+**MANDATORY QUESTIONS** (cannot be skipped even if user requests):
+1. **Specific Scope**: What exactly needs to be done?
+2. **Priority/Urgency**: What's most critical?
+3. **Constraints**: Timeline, resources, limitations?
+4. **Success Criteria**: How do we measure success?
+5. **Integration**: How should this fit with existing systems?
+
+**ENFORCEMENT**: If user tries to skip questions, cite BP-3 and refuse to proceed
+
+### BP-4 (MUST): Architecture Validation
+**FOR ANY SYSTEM CHANGES** - validate against docs/architecture.md:
+- Parse mermaid diagrams
+- Check component boundaries
+- **STOP** if violations detected
+
+## Rules System - Compressed Protocols
+
+### Mode Tokens (with mandatory validation)
+- `@PLAN_MODE` → **MUST** Load docs/ + tasks/ → **MUST** Ask Clarification Questions → Research → Strategy → Validate → Document
+- `@CODE_MODE` → **MUST** Load context + src/ → **MUST** Analyze deps → Plan → Simulate → Test → Document
 
 ### Protocol Tokens  
-- `@PRE_IMPL` → Read docs/ + tasks/ + get src/ context + dependency analysis + flow analysis
-- `@ARCH_VALID` → Parse mermaid from docs/architecture.md → validate boundaries/flow/interfaces → STOP if missing/fail
-- `@SIM_TEST` → Dry run changes → validate no breakage → generate feedback → fix before implement
-- `@MEM_UPDATE` → Review 7 core files → update active_context.md + tasks_plan.md → lessons-learned.md + error-documentation.md
+- `@PRE_IMPL` → **MUST** Read docs/ + tasks/ + src/ context + dependency analysis + flow analysis
+- `@ARCH_VALID` → **MUST** Parse mermaid from docs/architecture.md → validate → **STOP** if violations
+- `@SIM_TEST` → **MUST** Dry run changes → validate no breakage → fix before implement
+- `@MEM_UPDATE` → **MUST** Review memory files → update context → document patterns
 
-### Intelligence Tokens
-- `@LESSONS` → Apply patterns from rules/lessons-learned.md (async-first, config-driven, multi-vector, graceful degradation)
-- `@ERRORS` → Check rules/error-documentation.md for similar issues → apply known resolutions
-- `@ANTI_PATTERNS` → Avoid: premature optimization, config sprawl, monolithic loading, feature creep
+### Intelligence Tokens (AUTOMATICALLY ENFORCED)
 
-### Execution Pattern
+### **🔍 ANTI-PATTERN AUTO-DETECTION (IMMEDIATE STOP)**
+**Trigger Phrases** → **MANDATORY STOP RESPONSE**:
 ```
-User Request → Mode Detection → Load @[MODE]_MODE → Apply @PRE_IMPL → @ARCH_VALID → 
-Execute with @LESSONS + @ERRORS → @SIM_TEST → Implement → @MEM_UPDATE
+"optimize everything" → 🛑 ANTI-PATTERN: Premature optimization detected per CLAUDE.md
+"make it faster" → 🛑 ANTI-PATTERN: Need specific bottlenecks and baselines first
+"improve performance" → 🛑 ANTI-PATTERN: Must identify specific performance issues
+"fix all issues" → 🛑 ANTI-PATTERN: Need issue prioritization and scope
 ```
 
-**Usage**: Reference tokens (e.g., `@PLAN_MODE`, `@PRE_IMPL`) trigger full protocol expansion from rules/ files.
+### **⚠️ ERROR CONTEXT MANDATORY CHECK**
+**ANY mention of**: "error", "failure", "broken", "not working", "failing"
+**REQUIRED FIRST ACTION**: 
+```
+Checking @ERRORS per CLAUDE.md rules...
+From rules/error-documentation.md: [list relevant known issues]
+Applying known solutions before new investigation...
+```
+
+### **📚 LESSONS AUTO-APPLICATION**
+**MUST apply patterns** from rules/lessons-learned.md for:
+- Performance requests → async-first, config-driven patterns
+- Architecture changes → graceful degradation principles  
+- Implementation → multi-vector design philosophy
+- Error handling → context-rich error messages
+
+### **🔄 SELF-UPDATE TRIGGERS**
+- Pattern violations detected → Update rules
+- New successful patterns → Document in lessons-learned
+- Error resolutions → Update error-documentation
+
+### Execution Pattern (WITH VALIDATION GATES)
+```
+User Request → Mode Detection (STATE EXPLICITLY) → 
+Load @[MODE]_MODE → VALIDATE Context Loaded → 
+Apply @PRE_IMPL → VALIDATE @ARCH_VALID → 
+Execute with @LESSONS + @ERRORS → @SIM_TEST → 
+Implement → @MEM_UPDATE
+```
+
+### 🔒 MANDATORY VALIDATION GATES (CANNOT BE BYPASSED)
+
+**GATE 1: RULE VIOLATION DETECTION**
+- [ ] ✋ Check for "skip questions" phrases → STOP if detected
+- [ ] ✋ Check for anti-pattern triggers → STOP if detected  
+- [ ] ✋ Check for error mentions → Check @ERRORS first
+
+**GATE 2: PROTOCOL COMPLIANCE**
+- [ ] 📋 Protocol explicitly stated with CLAUDE.md reference
+- [ ] 📋 Context files loaded with checkmark confirmation
+- [ ] 📋 Clarification questions asked (MANDATORY - no exceptions)
+- [ ] 📋 User responses received before proceeding
+
+**GATE 3: ARCHITECTURE VALIDATION** 
+- [ ] 🏗️ Architecture constraints checked against docs/architecture.md
+- [ ] 🏗️ Component boundaries validated
+- [ ] 🏗️ Interface contracts verified
+
+### **🚨 VIOLATION RESPONSE TEMPLATES**
+
+**For "skip questions" violations:**
+```
+🛑 RULE VIOLATION: BP-3 Clarification Questions cannot be skipped
+CLAUDE.md states: "NEVER start implementation without clarification"
+This is non-negotiable. I need answers to proceed safely.
+```
+
+**For anti-pattern violations:**
+```
+🛑 ANTI-PATTERN DETECTED: [specific pattern]
+Per CLAUDE.md rules, I must clarify requirements first.
+[Specific questions for this anti-pattern]
+```
+
+**For missing context:**
+```
+🛑 PROTOCOL VIOLATION: Context loading required per BP-2
+Loading context files now...
+```
+
+**Usage**: Reference tokens trigger full protocol expansion. **IMPORTANT**: Rules are recursive - they apply at every step.
 
 ## Repository Overview
 

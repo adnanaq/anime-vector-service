@@ -10,11 +10,33 @@ description: Include these rules while IMPLEMENTATION/Coding.
 
 ---
 
-## Pre-Implementation Checklist
+## Pre-Implementation Checklist (@PRE_IMPL Protocol)
 
-Before every code implementation/change ALWAYS do **2 things**:
-a. **Read and understand** the documentation in [docs](/docs/) and [tasks](/tasks/)
-a. **Get required code context** from [src](/src/) and other codes locations
+Before every code implementation/change ALWAYS do **5 things**:
+
+### Context Acquisition
+1. **Read and understand** the documentation in [docs](/docs/) and [tasks](/tasks/)
+2. **Get required code context** from [src](/src/) and other codes locations
+
+### Clarification Questions
+3. **Ask Context-Setting Questions**:
+   - What is the specific goal for this implementation?
+   - What architectural constraints should I be aware of?
+   - What recent changes might impact this work?
+   - What specific patterns should I follow/avoid from [rules/lessons-learned.md](/rules/lessons-learned.md)?
+   - What testing/validation requirements exist?
+
+### Session Context Assessment  
+4. **Assess Current State**:
+   - Check [WORKING_LOG/](/WORKING_LOG/) for recent session insights
+   - Review [tasks/active_context.md](/tasks/active_context.md) for current priorities
+   - Identify potential conflicts with ongoing work
+
+### Memory Integration
+5. **Check Historical Context**:
+   - Review [rules/error-documentation.md](/rules/error-documentation.md) for similar issues
+   - Apply patterns from [rules/lessons-learned.md](/rules/lessons-learned.md)
+   - Note any architectural decisions from recent [WORKING_LOG/](/WORKING_LOG/) entries
 
 ---
 
