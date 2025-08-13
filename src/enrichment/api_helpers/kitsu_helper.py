@@ -53,13 +53,49 @@ class KitsuEnrichmentHelper:
             return None
     
     async def get_anime_episodes(self, anime_id: int) -> List[Dict[str, Any]]:
-        """Get anime episodes by Kitsu ID."""
+        """Get ALL anime episodes by Kitsu ID with pagination."""
+        all_episodes = []
+        page = 0
+        page_size = 20  # Kitsu default page size
+        
         try:
-            response = await self._make_request(f"/anime/{anime_id}/episodes")
-            return response.get("data", []) if response else []
+            while True:
+                params = {
+                    "page[limit]": page_size,
+                    "page[offset]": page * page_size
+                }
+                
+                response = await self._make_request(f"/anime/{anime_id}/episodes", params)
+                
+                if not response or "data" not in response:
+                    break
+                
+                episodes = response["data"]
+                if not episodes:  # No more episodes
+                    break
+                
+                all_episodes.extend(episodes)
+                logger.info(f"Fetched page {page + 1}: {len(episodes)} episodes (total: {len(all_episodes)})")
+                
+                # Check if there are more pages
+                meta = response.get("meta", {})
+                count = meta.get("count", 0)
+                
+                if len(all_episodes) >= count or len(episodes) < page_size:
+                    # We have all episodes or got less than page size (last page)
+                    break
+                
+                page += 1
+                
+                # Add small delay to respect rate limits
+                await asyncio.sleep(0.1)
+            
+            logger.info(f"Total episodes fetched for anime {anime_id}: {len(all_episodes)}")
+            return all_episodes
+            
         except Exception as e:
             logger.error(f"Kitsu get_anime_episodes failed for ID {anime_id}: {e}")
-            return []
+            return all_episodes  # Return what we got so far
     
     async def get_anime_categories(self, anime_id: int) -> List[Dict[str, Any]]:
         """Get anime categories by Kitsu ID."""

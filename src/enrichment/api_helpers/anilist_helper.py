@@ -34,7 +34,8 @@ class AniListEnrichmentHelper:
         payload = {"query": query, "variables": variables or {}}
 
         if not self.session:
-            self.session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=30))
+            # No timeout - we want ALL data, even if it takes minutes
+            self.session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=None))
 
         try:
             if self.rate_limit_remaining < 5:

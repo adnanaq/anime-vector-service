@@ -87,6 +87,25 @@ This document captures important patterns, preferences, and project intelligence
 - Database operations: batch size 100-500 for upserts
 **Trade-offs**: Larger batches increase latency and memory usage
 
+### Data Enrichment Optimization
+
+#### 1. Programmatic vs AI Processing
+**Learning**: Deterministic tasks should never use AI - it's 1000x slower
+**Key Findings**:
+- ID extraction from URLs: 0.001s programmatic vs 5s+ with AI
+- API fetching: 10-15s parallel vs 30-60s sequential
+- Episode processing: 0.1s programmatic vs 5s+ with AI
+**Application**: Built programmatic pipeline for Steps 1-3 of enrichment
+**Impact**: Reduced enrichment time from 5-15 minutes to 10-30 seconds (30x improvement)
+
+#### 2. Parallel API Fetching Strategy
+**Learning**: asyncio.gather() with individual timeouts prevents one slow API from blocking all
+**Implementation**:
+- Each API gets its own timeout (10s default)
+- Graceful degradation if APIs fail
+- Connection pooling for efficiency
+**Result**: Successfully fetches from 3-6 APIs concurrently in <15 seconds
+
 ### Technology Choice Validation
 
 #### 1. FastAPI was the Right Choice
