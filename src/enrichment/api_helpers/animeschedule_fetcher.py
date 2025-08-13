@@ -10,7 +10,7 @@ import requests
 import sys
 import os
 
-def fetch_animeschedule_data(search_term):
+def fetch_animeschedule_data(search_term, save_file=False):
     """Fetch AnimSchedule data for an anime"""
     
     print(f"🔄 Fetching AnimSchedule data for: {search_term}")
@@ -31,9 +31,10 @@ def fetch_animeschedule_data(search_term):
         # Take the first result (most relevant)
         anime_data = search_results['anime'][0]
         
-        # Save to temp file
-        with open('temp/as.json', 'w', encoding='utf-8') as f:
-            json.dump(anime_data, f, ensure_ascii=False, indent=2)
+        # Save to temp file only if requested (for standalone usage)
+        if save_file:
+            with open('temp/as.json', 'w', encoding='utf-8') as f:
+                json.dump(anime_data, f, ensure_ascii=False, indent=2)
         
         print("✅ AnimSchedule data fetched successfully")
         return anime_data
@@ -51,4 +52,4 @@ if __name__ == "__main__":
         sys.exit(1)
     
     search_term = sys.argv[1]
-    fetch_animeschedule_data(search_term)
+    fetch_animeschedule_data(search_term, save_file=True)
