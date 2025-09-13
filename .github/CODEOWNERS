@@ -1,0 +1,8 @@
+# Global code ownership
+* @adnanaq
+
+# Critical files require additional review
+/src/config/ @adnanaq
+/docker/ @adnanaq
+/.github/ @adnanaq
+/requirements.txt @adnanaq

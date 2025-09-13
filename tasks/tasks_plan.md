@@ -73,6 +73,10 @@
   - [ ] Performance alerting rules
 
 - [ ] **Security Implementation**
+  - [x] GitHub Rulesets branch protection (main branch secured)
+  - [x] CODEOWNERS file for required code review
+  - [ ] Enhanced GitHub Rulesets for file security controls
+  - [ ] CI/CD status checks integration with GitHub protection
   - [ ] JWT-based API authentication
   - [ ] Rate limiting per client/endpoint
   - [ ] RBAC for admin endpoints
@@ -256,17 +260,29 @@
    - Performance optimization best practices
 
 ### Short-term (Next Sprint - Phase 3)
-1. **Production Monitoring**
+1. **Enhanced Repository Security** (Priority: High)
+   - [ ] **GitHub Security Rulesets Enhancement**
+     - [ ] File path restrictions (block .env, secrets, config files)
+     - [ ] File size limits (prevent large model uploads to git)
+     - [ ] File extension restrictions (block executables, binaries)
+     - [ ] Content scanning for secrets and credentials
+   - [ ] **CI/CD Status Checks Integration**
+     - [ ] Add pytest test requirements to main branch protection
+     - [ ] Code formatting checks (black, isort, autoflake)
+     - [ ] Security scanning integration (bandit, safety)
+     - [ ] Documentation coverage requirements
+
+2. **Production Monitoring**
    - Prometheus metrics collection
    - Grafana visualization dashboards
    - Alerting rules and thresholds
 
-2. **Security Framework**
+3. **Security Framework**
    - Authentication system implementation
    - Rate limiting and request throttling
    - Admin endpoint access control
 
-3. **Deployment Infrastructure**
+4. **Deployment Infrastructure**
    - Kubernetes deployment manifests
    - Production-ready Docker configuration
    - Load balancing and auto-scaling
