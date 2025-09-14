@@ -53,8 +53,39 @@ class Settings(BaseSettings):
 
     # Multi-Vector Configuration
     image_vector_size: int = Field(
-        default=512, 
+        default=512,
         description="Image embedding dimensions (CLIP)"
+    )
+
+    # 14-Vector Semantic Architecture Configuration
+    vector_names: dict = Field(
+        default={
+            "title_vector": 384,
+            "character_vector": 384,
+            "genre_vector": 384,
+            "technical_vector": 384,
+            "staff_vector": 384,
+            "review_vector": 384,
+            "temporal_vector": 384,
+            "streaming_vector": 384,
+            "related_vector": 384,
+            "franchise_vector": 384,
+            "episode_vector": 384,
+            "sources_vector": 384,
+            "identifiers_vector": 384,
+            "image_vector": 512
+        },
+        description="14-vector semantic architecture with named vectors and dimensions"
+    )
+
+    # Vector Priority Classification for Optimization
+    vector_priorities: dict = Field(
+        default={
+            "high": ["title_vector", "character_vector", "genre_vector", "review_vector", "image_vector"],
+            "medium": ["technical_vector", "staff_vector", "temporal_vector", "streaming_vector"],
+            "low": ["related_vector", "franchise_vector", "episode_vector", "sources_vector", "identifiers_vector"]
+        },
+        description="Vector priority classification for performance optimization"
     )
 
     # Modern Embedding Configuration
@@ -110,36 +141,85 @@ class Settings(BaseSettings):
 
     # Qdrant Performance Optimization
     qdrant_enable_quantization: bool = Field(
-        default=False, 
+        default=False,
         description="Enable quantization for performance"
     )
     qdrant_quantization_type: str = Field(
-        default="scalar", 
+        default="scalar",
         description="Quantization type: binary, scalar, product"
     )
     qdrant_quantization_always_ram: Optional[bool] = Field(
-        default=None, 
+        default=None,
         description="Keep quantized vectors in RAM"
+    )
+
+    # Advanced Quantization Configuration per Vector Priority
+    quantization_config: dict = Field(
+        default={
+            "high": {
+                "type": "scalar",
+                "scalar_type": "int8",
+                "always_ram": True
+            },
+            "medium": {
+                "type": "scalar",
+                "scalar_type": "int8",
+                "always_ram": False
+            },
+            "low": {
+                "type": "binary",
+                "always_ram": False
+            }
+        },
+        description="Quantization configuration per vector priority for memory optimization"
     )
     
     # HNSW Configuration
     qdrant_hnsw_ef_construct: Optional[int] = Field(
-        default=None, 
+        default=None,
         description="HNSW ef_construct parameter"
     )
     qdrant_hnsw_m: Optional[int] = Field(
-        default=None, 
+        default=None,
         description="HNSW M parameter"
     )
     qdrant_hnsw_max_indexing_threads: Optional[int] = Field(
-        default=None, 
+        default=None,
         description="Maximum indexing threads"
+    )
+
+    # Anime-Optimized HNSW Parameters per Vector Priority
+    hnsw_config: dict = Field(
+        default={
+            "high": {
+                "ef_construct": 256,
+                "m": 64,
+                "ef": 128
+            },
+            "medium": {
+                "ef_construct": 200,
+                "m": 48,
+                "ef": 64
+            },
+            "low": {
+                "ef_construct": 128,
+                "m": 32,
+                "ef": 32
+            }
+        },
+        description="Anime-optimized HNSW parameters per vector priority for similarity matching"
     )
     
     # Memory and Storage Configuration
     qdrant_memory_mapping_threshold: Optional[int] = Field(
-        default=None, 
+        default=None,
         description="Memory mapping threshold in KB"
+    )
+
+    # Advanced Memory Management for Million-Query Optimization
+    memory_mapping_threshold_mb: int = Field(
+        default=50,
+        description="Memory mapping threshold in MB for large collection optimization"
     )
     qdrant_enable_wal: Optional[bool] = Field(
         default=None, 
