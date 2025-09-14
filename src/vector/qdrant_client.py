@@ -23,7 +23,9 @@ from qdrant_client.models import (
     VectorParams,
     # Qdrant optimization models
     BinaryQuantization,
+    BinaryQuantizationConfig,
     ScalarQuantization,
+    ScalarQuantizationConfig,
     ProductQuantization,
     QuantizationConfig,
     HnswConfig,
@@ -79,7 +81,7 @@ class QdrantClient:
         self._init_processors()
 
         # Create collection if it doesn't exist
-        self._ensure_collection_exists()
+        self._initialize_collection()
 
     def _init_processors(self):
         """Initialize embedding processors."""
@@ -111,49 +113,101 @@ class QdrantClient:
             raise
     
 
-    def _ensure_collection_exists(self):
-        """Create anime collection with optimization features if it doesn't exist."""
+    def _initialize_collection(self):
+        """Initialize and validate anime collection with 14-vector architecture and performance optimization."""
         try:
-            # Check if collection exists
+            # Check if collection exists and validate its configuration
             collections = self.client.get_collections().collections
             collection_exists = any(
                 col.name == self.collection_name for col in collections
             )
 
             if not collection_exists:
-                # Create optimized multi-vector collection
-                logger.info(f"Creating optimized multi-vector collection: {self.collection_name}")
+                # Create collection with current vector architecture
+                logger.info(f"Creating optimized collection: {self.collection_name}")
                 vectors_config = self._create_multi_vector_config()
 
-                # Task #116: Add quantization configuration
+                # Validate vector configuration before creation
+                self._validate_vector_config(vectors_config)
+
+                # Add performance optimization configurations
                 quantization_config = self._create_quantization_config()
-                
-                # Task #116: Add optimizers configuration (use optimized version)
                 optimizers_config = self._create_optimized_optimizers_config() or self._create_optimizers_config()
-                
-                # Task #116: Add WAL configuration
                 wal_config = self._create_wal_config()
 
-                # Create collection with full optimization
+                # Create collection with optimization
                 self.client.create_collection(
-                    collection_name=self.collection_name, 
+                    collection_name=self.collection_name,
                     vectors_config=vectors_config,
                     quantization_config=quantization_config,
                     optimizers_config=optimizers_config,
                     wal_config=wal_config
                 )
-                
+
                 # Configure payload indexing for faster filtering
                 if getattr(self.settings, "qdrant_enable_payload_indexing", True):
                     self._setup_payload_indexing()
-                
-                logger.info(f"Created optimized collection: {self.collection_name}")
+
+                logger.info(f"Successfully created collection with {len(vectors_config)} vectors")
             else:
-                logger.info(f"Collection {self.collection_name} already exists")
+                # Validate existing collection compatibility
+                if not self._validate_collection_compatibility():
+                    logger.warning(f"Collection {self.collection_name} exists but may have compatibility issues")
+                    logger.info("Continuing with existing collection configuration for backward compatibility")
+                else:
+                    logger.info(f"Collection {self.collection_name} validated successfully")
 
         except Exception as e:
             logger.error(f"Failed to ensure collection exists: {e}")
             raise
+
+    def _validate_collection_compatibility(self) -> bool:
+        """Validate existing collection compatibility with current vector architecture."""
+        try:
+            collection_info = self.client.get_collection(self.collection_name)
+            existing_vectors = collection_info.config.params.vectors
+
+            # Check if collection has expected vector configurations
+            expected_vectors = set(self.settings.vector_names.keys())
+
+            if isinstance(existing_vectors, dict):
+                existing_vector_names = set(existing_vectors.keys())
+
+                # Check if we have the current semantic vectors
+                has_current_vectors = expected_vectors.issubset(existing_vector_names)
+
+                if has_current_vectors:
+                    logger.info("Collection has complete vector configuration")
+                    return True
+                else:
+                    logger.warning(f"Collection missing expected vectors. Expected: {expected_vectors}, Found: {existing_vector_names}")
+                    return False
+            else:
+                logger.warning("Collection uses single vector configuration, not compatible with multi-vector architecture")
+                return False
+
+        except Exception as e:
+            logger.error(f"Failed to validate collection compatibility: {e}")
+            return False
+
+    def _validate_vector_config(self, vectors_config: Dict[str, VectorParams]):
+        """Validate vector configuration before collection creation."""
+        if not vectors_config:
+            raise ValueError("Vector configuration is empty")
+
+        expected_count = len(self.settings.vector_names)
+        actual_count = len(vectors_config)
+
+        if actual_count != expected_count:
+            raise ValueError(f"Vector count mismatch: expected {expected_count}, got {actual_count}")
+
+        # Validate vector dimensions
+        for vector_name, vector_params in vectors_config.items():
+            expected_dim = self.settings.vector_names.get(vector_name)
+            if expected_dim and vector_params.size != expected_dim:
+                raise ValueError(f"Vector {vector_name} dimension mismatch: expected {expected_dim}, got {vector_params.size}")
+
+        logger.info(f"Vector configuration validated: {actual_count} vectors with correct dimensions")
 
     # Distance mapping constant
     _DISTANCE_MAPPING = {
@@ -186,12 +240,16 @@ class QdrantClient:
         """Get quantization config based on vector priority."""
         config = self.settings.quantization_config.get(priority, {})
         if config.get("type") == "scalar":
-            return ScalarQuantization(
+            scalar_config = ScalarQuantizationConfig(
                 type=ScalarType.INT8,
                 always_ram=config.get("always_ram", False)
             )
+            return ScalarQuantization(scalar=scalar_config)
         elif config.get("type") == "binary":
-            return BinaryQuantization(always_ram=config.get("always_ram", False))
+            binary_config = BinaryQuantizationConfig(
+                always_ram=config.get("always_ram", False)
+            )
+            return BinaryQuantization(binary=binary_config)
         return None
 
     def _get_hnsw_config(self, priority: str) -> HnswConfigDiff:
@@ -199,8 +257,7 @@ class QdrantClient:
         config = self.settings.hnsw_config.get(priority, {})
         return HnswConfigDiff(
             ef_construct=config.get("ef_construct", 200),
-            m=config.get("m", 48),
-            ef=config.get("ef", 64)
+            m=config.get("m", 48)
         )
 
     def _get_vector_priority(self, vector_name: str) -> str:
@@ -846,7 +903,7 @@ class QdrantClient:
     async def create_collection(self) -> bool:
         """Create the anime collection."""
         try:
-            self._ensure_collection_exists()
+            self._initialize_collection()
             return True
         except Exception as e:
             logger.error(f"Failed to create collection: {e}")
