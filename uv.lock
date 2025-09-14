@@ -138,6 +138,13 @@ dev = [
     { name = "pytest-mock" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "autoflake" },
+    { name = "black" },
+    { name = "isort" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "accelerate", specifier = "==1.8.1" },
@@ -172,6 +179,13 @@ requires-dist = [
     { name = "uvicorn", specifier = "==0.34.3" },
 ]
 provides-extras = ["dev"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "autoflake", specifier = ">=2.3.1" },
+    { name = "black", specifier = ">=25.1.0" },
+    { name = "isort", specifier = ">=6.0.1" },
+]
 
 [[package]]
 name = "annotated-types"
