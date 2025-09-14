@@ -27,10 +27,13 @@ from qdrant_client.models import (
     ProductQuantization,
     QuantizationConfig,
     HnswConfig,
+    HnswConfigDiff,
     OptimizersConfig,
+    OptimizersConfigDiff,
     WalConfig,
     CollectionParams,
     PayloadSchemaType,
+    ScalarType,
 )
 
 from ..config import Settings
@@ -125,8 +128,8 @@ class QdrantClient:
                 # Task #116: Add quantization configuration
                 quantization_config = self._create_quantization_config()
                 
-                # Task #116: Add optimizers configuration
-                optimizers_config = self._create_optimizers_config()
+                # Task #116: Add optimizers configuration (use optimized version)
+                optimizers_config = self._create_optimized_optimizers_config() or self._create_optimizers_config()
                 
                 # Task #116: Add WAL configuration
                 wal_config = self._create_wal_config()
@@ -160,48 +163,65 @@ class QdrantClient:
     }
 
     def _create_multi_vector_config(self) -> Dict[str, VectorParams]:
-        """Create multi-vector configuration for text + picture + thumbnail vectors with optimization."""
+        """Create 14-vector configuration with priority-based optimization."""
         distance = self._DISTANCE_MAPPING.get(self._distance_metric, Distance.COSINE)
-        
-        # Add HNSW optimization configuration
-        hnsw_config = None
-        if (hasattr(self.settings, "qdrant_hnsw_ef_construct") and self.settings.qdrant_hnsw_ef_construct) or \
-           (hasattr(self.settings, "qdrant_hnsw_m") and self.settings.qdrant_hnsw_m) or \
-           (hasattr(self.settings, "qdrant_hnsw_max_indexing_threads") and self.settings.qdrant_hnsw_max_indexing_threads):
-            
-            hnsw_params = {}
-            if hasattr(self.settings, "qdrant_hnsw_ef_construct") and self.settings.qdrant_hnsw_ef_construct:
-                hnsw_params["ef_construct"] = self.settings.qdrant_hnsw_ef_construct
-            if hasattr(self.settings, "qdrant_hnsw_m") and self.settings.qdrant_hnsw_m:
-                hnsw_params["m"] = self.settings.qdrant_hnsw_m
-            if hasattr(self.settings, "qdrant_hnsw_max_indexing_threads") and self.settings.qdrant_hnsw_max_indexing_threads:
-                hnsw_params["max_indexing_threads"] = self.settings.qdrant_hnsw_max_indexing_threads
-            
-            if hnsw_params:
-                hnsw_config = HnswConfig(**hnsw_params)
-                logger.info(f"Applying HNSW optimization: {hnsw_params}")
 
-        # Create vector parameters with optional HNSW optimization
-        vector_params = {
-            "text": VectorParams(
-                size=self._vector_size, 
+        # Use new 14-vector architecture from settings
+        vector_params = {}
+        for vector_name, dimension in self.settings.vector_names.items():
+            priority = self._get_vector_priority(vector_name)
+            vector_params[vector_name] = VectorParams(
+                size=dimension,
                 distance=distance,
-                hnsw_config=hnsw_config
-            ),
-            "picture": VectorParams(
-                size=self._image_vector_size, 
-                distance=distance,
-                hnsw_config=hnsw_config
-            ),
-            "thumbnail": VectorParams(
-                size=self._image_vector_size, 
-                distance=distance,
-                hnsw_config=hnsw_config
-            ),
-        }
-        
+                hnsw_config=self._get_hnsw_config(priority),
+                quantization_config=self._get_quantization_config(priority)
+            )
+
+        logger.info(f"Created 14-vector configuration with {len(vector_params)} vectors")
         return vector_params
-    
+
+    # NEW: Priority-Based Configuration Methods for Million-Query Optimization
+
+    def _get_quantization_config(self, priority: str) -> Optional[QuantizationConfig]:
+        """Get quantization config based on vector priority."""
+        config = self.settings.quantization_config.get(priority, {})
+        if config.get("type") == "scalar":
+            return ScalarQuantization(
+                type=ScalarType.INT8,
+                always_ram=config.get("always_ram", False)
+            )
+        elif config.get("type") == "binary":
+            return BinaryQuantization(always_ram=config.get("always_ram", False))
+        return None
+
+    def _get_hnsw_config(self, priority: str) -> HnswConfigDiff:
+        """Get HNSW config based on vector priority."""
+        config = self.settings.hnsw_config.get(priority, {})
+        return HnswConfigDiff(
+            ef_construct=config.get("ef_construct", 200),
+            m=config.get("m", 48),
+            ef=config.get("ef", 64)
+        )
+
+    def _get_vector_priority(self, vector_name: str) -> str:
+        """Determine priority level for vector."""
+        for priority, vectors in self.settings.vector_priorities.items():
+            if vector_name in vectors:
+                return priority
+        return "medium"  # default
+
+    def _create_optimized_optimizers_config(self) -> Optional[OptimizersConfigDiff]:
+        """Create optimized optimizers configuration for million-query scale."""
+        try:
+            return OptimizersConfigDiff(
+                default_segment_number=4,
+                indexing_threshold=20000,
+                memmap_threshold_kb=self.settings.memory_mapping_threshold_mb * 1024
+            )
+        except Exception as e:
+            logger.error(f"Failed to create optimized optimizers config: {e}")
+            return None
+
     def _create_quantization_config(self) -> Optional[QuantizationConfig]:
         """Create quantization configuration for performance optimization."""
         if not getattr(self.settings, "qdrant_enable_quantization", False):
