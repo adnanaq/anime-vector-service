@@ -26,8 +26,21 @@ curl http://localhost:8002/health
 ### Local Development
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+# Install dependencies using UV (recommended)
+uv sync --dev
+
+# Start Qdrant database
+docker compose up -d qdrant
+
+# Run service
+uv run python -m src.main
+```
+
+#### Alternative: Using pip
+
+```bash
+# Install dependencies with pip
+pip install -e .
 
 # Start Qdrant database
 docker compose up -d qdrant
@@ -70,6 +83,33 @@ TEXT_EMBEDDING_MODEL=BAAI/bge-m3
 IMAGE_EMBEDDING_MODEL=jinaai/jina-clip-v2
 ```
 
+## Dependency Management
+
+This project uses **UV** for fast and reliable dependency management:
+
+- `pyproject.toml`: Project configuration and dependencies
+- `uv.lock`: Lock file with exact dependency versions
+- `.venv/`: Virtual environment managed by UV
+
+### Key Commands
+
+```bash
+# Install dependencies
+uv sync --dev
+
+# Add a new dependency
+uv add package-name
+
+# Add a development dependency
+uv add --dev package-name
+
+# Run scripts
+uv run python script.py
+
+# Update dependencies
+uv lock --upgrade
+```
+
 ## Technology Stack
 
 - **FastAPI**: REST API framework
@@ -77,3 +117,4 @@ IMAGE_EMBEDDING_MODEL=jinaai/jina-clip-v2
 - **BGE-M3**: Multi-lingual text embeddings
 - **JinaCLIP v2**: Vision-language model for images
 - **Docker**: Containerized deployment
+- **UV**: Fast Python package manager
