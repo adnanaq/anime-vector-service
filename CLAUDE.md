@@ -109,31 +109,6 @@ Role selection must be documented in project memory files:
 **Role-Specific Goals**: [What this session aims to accomplish from this role's perspective]
 ```
 
-**WORKING_LOG/ Session Entry:**
-
-```markdown
-# Session Log: [Role] Focus
-
-**Date**: [Date]
-**Role**: [Selected Role]  
-**Session Goals**: [Role-specific objectives]
-
-## Role-Specific Decisions Made
-
-- [Decision 1 with role-specific reasoning]
-- [Decision 2 with role-specific reasoning]
-
-## [Role] Patterns Applied
-
-- [Pattern 1 from lessons-learned.md]
-- [Pattern 2 from lessons-learned.md]
-
-## Knowledge Areas Utilized
-
-- [Specific expertise applied]
-- [Tools and technologies used]
-```
-
 ## MANDATORY PROTOCOL ENFORCEMENT (ZERO TOLERANCE FOR VIOLATIONS)
 
 ### **🛑 RULE VIOLATION = IMMEDIATE STOP + RULE CITATION**

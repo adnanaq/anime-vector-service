@@ -9,24 +9,24 @@ The Memory Files consists of required core files and optional context files. Fil
 
 ```mermaid
 flowchart TD
-    PB[ [product_requirement_docs.md](docs/product_requirement_docs.md) ] --> PC[ [technical.md](docs/technical.md) ]
-    PB --> SP[ [architecture.md](docs/architecture.md) ]
+    PB["[product_requirement_docs.md](docs/product_requirement_docs.md)"] --> PC["[technical.md](docs/technical.md)"]
+    PB --> SP["[architecture.md](docs/architecture.md)"]
 
-    SP --> TC[ [tasks_plan.md](tasks/tasks_plan.md) ]
+    SP --> TC["[tasks_plan.md](tasks/tasks_plan.md)"]
     PC --> TC
     PB --> TC
 
-    TC --> AC[ [active_context.md](tasks/active_context.md) ]
+    TC --> AC["[active_context.md](tasks/active_context.md)"]
 
-    AC --> ER[ [error-documentation.mdc](rules/error-documentation.md)]
-    AC --> LL[ [lessons-learned.md](rules/lessons-learned.md) ]
+    AC --> ER["[error-documentation.md](rules/error-documentation.md)"]
+    AC --> LL["[lessons-learned.md](rules/lessons-learned.md)"]
 
-    subgraph LIT[ docs/literature ]
+    subgraph LIT[docs/literature]
         L1[...]
         L2[...]
     end
 
-    subgraph RFC[ tasks/rfc/ ]
+    subgraph RFC[tasks/rfc/]
         R1[...]
         R2[...]
     end
@@ -152,6 +152,7 @@ Create additional files or folders as Memory files in [docs](/docs/) or [tasks](
 ## Session Memory System
 
 ### 8. [WORKING_LOG/](/WORKING_LOG/) - Session-Based Memory
+
 **Development session tracking for persistent context**
 
 - Daily development logs with structured templates
@@ -160,12 +161,14 @@ Create additional files or folders as Memory files in [docs](/docs/) or [tasks](
 - Links current work to historical patterns
 
 ### Memory Persistence Protocol
+
 - **Living Memory**: Context persists across development sessions
 - **Learning Compounds**: Patterns and insights accumulate over time
 - **Session Continuity**: Each session builds on previous knowledge
 - **Structured Knowledge**: Information categorized for easy retrieval
 
 ### Integration with Core Memory
+
 - WORKING_LOG/ feeds insights into lessons-learned.md
 - Session contexts update active_context.md
 - Historical decisions inform architecture.md updates
@@ -190,7 +193,16 @@ If you are not 100% confident, **ask the user** to confirm.
 
 ```mermaid
 flowchart TD
-    Start[Start] --> ReadFiles[Read Memory Files ("docs/": (a)"docs/architecture.md" (b)"docs/product_requirement_docs.md" (c)"docs/technical.md". "tasks/" : (a)"tasks/active_context.md" (b)"tasks/tasks_plan.md". if needed further: "docs/literature" and "tasks/rfc") ]
+    Start[Start] --> ReadFiles["Read Memory Files
+    (docs/:
+      (a) docs/architecture.md
+      (b) docs/product_requirement_docs.md
+      (c) docs/technical.md
+    tasks/:
+      (a) tasks/active_context.md
+      (b) tasks/tasks_plan.md
+    if needed further: docs/literature and tasks/rfc)"]
+
     ReadFiles --> CheckFiles{Files Complete?}
 
     CheckFiles -->|No| Plan[Create Plan]
@@ -203,20 +215,53 @@ flowchart TD
     Present --> Verification{Approach Verified?}
 
     Verification -->|No| Clarify[Seek Clarification]
-    Clarify --> Strategy[Develop Strategy]
+    Clarify --> Strategy
 
-    Verification -->|Yes| DocumentMemory[Document in Memory Files ("docs/": (a)"docs/architecture.md" (b)"docs/product_requirement_docs.md" (c)"docs/technical.md". "tasks/" : (a)"tasks/active_context.md" (b)"tasks/tasks_plan.md" if needed further: "docs/literature" and "tasks/rfc")]
+    Verification -->|Yes| DocumentMemory["Document in Memory Files
+    (docs/:
+      (a) docs/architecture.md
+      (b) docs/product_requirement_docs.md
+      (c) docs/technical.md
+    tasks/:
+      (a) tasks/active_context.md
+      (b) tasks/tasks_plan.md
+    if needed further: docs/literature and tasks/rfc)"]
 ```
 
 ## ACT or Code MODE
 
 ```mermaid
 flowchart TD
-    Start[Start] --> Context[Check Memory Files (Core Files always ("docs/": (a)"docs/architecture.md" (b)"docs/product_requirement_docs.md" (c)"docs/technical.md". "tasks/" : (a)"tasks/active_context.md" (b)"tasks/tasks_plan.md"), rest based on context (if needed further: "docs/literature" and "tasks/rfc")) ]
-    Context --> Update[Update Documentation]
-    Update --> Rules[Update [lessons-learned.md](mdc:rules/lessons-learned.md), [error-documentation.md](mdc:rules/error-documentation.md) if needed]
-    Rules --> Execute[Execute Task]
-    Execute --> Document[Document Changes in Memory Files ("docs/": (a)"docs/architecture.md" (b)"docs/product_requirement_docs.md" (c)"docs/technical.md". "tasks/" : (a)"tasks/active_context.md" (b)"tasks/tasks_plan.md" if needed further: "docs/literature" and "tasks/rfc") ]
+    Start[Start] --> Context["Check Memory Files
+    Core Files always:
+      docs/
+        (a) architecture.md
+        (b) product_requirement_docs.md
+        (c) technical.md
+      tasks/
+        (a) active_context.md
+        (b) tasks_plan.md
+    Rest based on context:
+      (if needed further: docs/literature and tasks/rfc)"]
+
+    Context --> Update["Update Documentation"]
+
+    Update --> Rules["Update
+      [lessons-learned.md](mdc:rules/lessons-learned.md),
+      [error-documentation.md](mdc:rules/error-documentation.md)
+      if needed"]
+
+    Rules --> Execute["Execute Task"]
+
+    Execute --> Document["Document Changes in Memory Files
+    docs/:
+      (a) architecture.md
+      (b) product_requirement_docs.md
+      (c) technical.md
+    tasks/:
+      (a) active_context.md
+      (b) tasks_plan.md
+    if needed further: docs/literature and tasks/rfc)"]
 ```
 
 # Documentation Updates
@@ -235,12 +280,12 @@ flowchart TD
 
     subgraph Process
         P1[Review Core Files]
-        P2[Document Current State in [active_context.md](mdc:tasks/active_context.md) and [tasks_plan.md](mdc:tasks/tasks_plan.md) ]
-        P3[Clarify Next Steps and document in [tasks_plan.md](mdc:tasks/tasks_plan.md) ]
-        P4[Update [lessons-learned.md](mdc:rules/lessons-learned.md), [error-documentation.md](mdc:rules/error-documentation.md)]
-        P5 Update [ [architecture.md](mdc:docs/architecture.md) ]
+        P2["Document Current State in [active_context.md](mdc:tasks/active_context.md) and [tasks_plan.md](mdc:tasks/tasks_plan.md)"]
+        P3["Clarify Next Steps and document in [tasks_plan.md](mdc:tasks/tasks_plan.md)"]
+        P4["Update [lessons-learned.md](mdc:rules/lessons-learned.md), [error-documentation.md](mdc:rules/error-documentation.md)"]
+        P5["Update [architecture.md](mdc:docs/architecture.md)"]
 
-        P1 --> P2 --> P3 --> P4
+        P1 --> P2 --> P3 --> P4 --> P5
     end
 
     Start --> Process
@@ -261,11 +306,11 @@ flowchart TD
     subgraph Learn [Learning Process]
         D1[Identify Pattern]
         D2[Validate with User]
-        D3[Document in [lessons-learned.md](mdc:rules/lessons-learned.md) ]
+        D3["Document in [lessons-learned.md](mdc:rules/lessons-learned.md)"]
     end
 
     subgraph Apply [Usage]
-        A1[Read [lessons-learned.md](mdc:rules/lessons-learned.md) ]
+        A1["Read [lessons-learned.md](mdc:rules/lessons-learned.md)"]
         A2[Apply Learned Patterns]
         A3[Improve Future Work]
     end
