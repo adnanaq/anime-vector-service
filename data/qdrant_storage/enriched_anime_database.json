@@ -290,24 +290,12 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/47450/poster_image/d45dad4606a54f054e89f48137caf179.png",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/47450/poster_image/d45dad4606a54f054e89f48137caf179.png"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1615/149911l.jpg",
-            "source": "jikan"
-          },
-          {
-            "url": "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/nvade-show-04ec867666.jpg",
-            "source": "animeschedule"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/raise-a-suilen-nvade-show-1.webp?t=1670863100",
-            "source": "animeplanet"
-          }
+          "https://cdn.myanimelist.net/images/anime/1615/149911l.jpg",
+          "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/nvade-show-04ec867666.jpg",
+          "https://cdn.anime-planet.com/anime/primary/raise-a-suilen-nvade-show-1.webp?t=1670863100"
         ],
         "banners": []
       },
@@ -660,24 +648,12 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/poster_images/8925/original.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/poster_images/8925/original.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1812/149912l.jpg",
-            "source": "jikan"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/chiaki-kuriyama-0-1.jpg?t=1625777343",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://cdn.anidb.net/images/main/143437.jpg",
-            "source": "anidb"
-          }
+          "https://cdn.myanimelist.net/images/anime/1812/149912l.jpg",
+          "https://cdn.anime-planet.com/anime/primary/chiaki-kuriyama-0-1.jpg?t=1625777343",
+          "https://cdn.anidb.net/images/main/143437.jpg"
         ],
         "banners": []
       },
@@ -1006,10 +982,7 @@
       "images": {
         "posters": [],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1602/147203l.jpg",
-            "source": "jikan"
-          }
+          "https://cdn.myanimelist.net/images/anime/1602/147203l.jpg"
         ],
         "banners": []
       },
@@ -1142,28 +1115,13 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/poster_images/9179/original.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/poster_images/9179/original.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/3/65151l.jpg",
-            "source": "jikan"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/aesop-no-ohanashi-yori-ushi-to-kaeru-yokubatta-inu-1-268x376.webp?t=1670093916",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b185879-cZ5NuWJ2qXiI.jpg",
-            "source": "anilist"
-          },
-          {
-            "url": "https://cdn.anidb.net/images/main/5423.jpg",
-            "source": "anidb"
-          }
+          "https://cdn.myanimelist.net/images/anime/3/65151l.jpg",
+          "https://cdn.anime-planet.com/anime/primary/aesop-no-ohanashi-yori-ushi-to-kaeru-yokubatta-inu-1-268x376.webp?t=1670093916",
+          "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b185879-cZ5NuWJ2qXiI.jpg",
+          "https://cdn.anidb.net/images/main/5423.jpg"
         ],
         "banners": []
       },
@@ -1303,20 +1261,11 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/47627/poster_image/6079f4c437002c380ab738dd551af26c.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/47627/poster_image/6079f4c437002c380ab738dd551af26c.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1948/136272l.jpg",
-            "source": "jikan"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/ai-wo-taberu-1.webp?t=1744323856",
-            "source": "animeplanet"
-          }
+          "https://cdn.myanimelist.net/images/anime/1948/136272l.jpg",
+          "https://cdn.anime-planet.com/anime/primary/ai-wo-taberu-1.webp?t=1744323856"
         ],
         "banners": []
       },
@@ -1591,36 +1540,15 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/45982/poster_image/fdc84e14082db38df9cab0fd33cc2dab.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/45982/poster_image/fdc84e14082db38df9cab0fd33cc2dab.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1336/120560l.jpg",
-            "source": "jikan"
-          },
-          {
-            "url": "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/anata-wo-hitokoto-de-arawashite-kudasai-no-shitsumon-ga-nigate-da-c2a2f3820a.jpg",
-            "source": "animeschedule"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/anata-wo-hitokoto-de-arawashite-kudasai-no-shitsumon-ga-nigate-da-1-285x399.webp?t=1641927580",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://www.anime-planet.com/images/anime/screenshots/anata-wo-hitokoto-de-arawashite-kudasai-no-shitsumon-ga-nigate-da-19036-1.jpg",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx143612-TbcchzTXhYwD.png",
-            "source": "anilist"
-          },
-          {
-            "url": "https://cdn.anidb.net/images/main/268744.jpg",
-            "source": "anidb"
-          }
+          "https://cdn.myanimelist.net/images/anime/1336/120560l.jpg",
+          "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/anata-wo-hitokoto-de-arawashite-kudasai-no-shitsumon-ga-nigate-da-c2a2f3820a.jpg",
+          "https://cdn.anime-planet.com/anime/primary/anata-wo-hitokoto-de-arawashite-kudasai-no-shitsumon-ga-nigate-da-1-285x399.webp?t=1641927580",
+          "https://www.anime-planet.com/images/anime/screenshots/anata-wo-hitokoto-de-arawashite-kudasai-no-shitsumon-ga-nigate-da-19036-1.jpg",
+          "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx143612-TbcchzTXhYwD.png",
+          "https://cdn.anidb.net/images/main/268744.jpg"
         ],
         "banners": []
       },
@@ -2120,20 +2048,11 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/47667/poster_image/6f837b37e3bdd2e753375afe6586b230.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/47667/poster_image/6f837b37e3bdd2e753375afe6586b230.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1580/136658l.jpg",
-            "source": "jikan"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/ayakai-shima-e-youkoso-mitaman-no-ayakashima-kankou-annai-1.webp?t=1748837151",
-            "source": "animeplanet"
-          }
+          "https://cdn.myanimelist.net/images/anime/1580/136658l.jpg",
+          "https://cdn.anime-planet.com/anime/primary/ayakai-shima-e-youkoso-mitaman-no-ayakashima-kankou-annai-1.webp?t=1748837151"
         ],
         "banners": []
       },
@@ -2599,26 +2518,11 @@
       "images": {
         "posters": [],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1671/127574l.jpg",
-            "source": "jikan"
-          },
-          {
-            "url": "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/bungaku-shoujo-kyou-no-oyatsu-hatsukoi-a68ff18909.jpg",
-            "source": "animeschedule"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/bungaku-shoujo-kyou-no-oyatsu-hatsukoi-1-190x267.jpg?t=1625886563",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/bungaku-shoujo-kyou-no-oyatsu-hatsukoi-1.jpg?t=1625772826",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://cdn.anidb.net/images/main/288282.jpg",
-            "source": "anidb"
-          }
+          "https://cdn.myanimelist.net/images/anime/1671/127574l.jpg",
+          "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/bungaku-shoujo-kyou-no-oyatsu-hatsukoi-a68ff18909.jpg",
+          "https://cdn.anime-planet.com/anime/primary/bungaku-shoujo-kyou-no-oyatsu-hatsukoi-1-190x267.jpg?t=1625886563",
+          "https://cdn.anime-planet.com/anime/primary/bungaku-shoujo-kyou-no-oyatsu-hatsukoi-1.jpg?t=1625772826",
+          "https://cdn.anidb.net/images/main/288282.jpg"
         ],
         "banners": []
       },
@@ -4979,24 +4883,12 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/poster_images/5352/original.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/poster_images/5352/original.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/6/26770l.jpg",
-            "source": "jikan"
-          },
-          {
-            "url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/8481.jpg",
-            "source": "anilist"
-          },
-          {
-            "url": "https://cdn.anidb.net/images/main/288281.jpg",
-            "source": "anidb"
-          }
+          "https://cdn.myanimelist.net/images/anime/6/26770l.jpg",
+          "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/8481.jpg",
+          "https://cdn.anidb.net/images/main/288281.jpg"
         ],
         "banners": []
       },
@@ -5835,40 +5727,16 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/poster_images/4550/original.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/poster_images/4550/original.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/8/81162l.jpg",
-            "source": "jikan"
-          },
-          {
-            "url": "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/bungaku-shoujo-bab9b005de.jpg",
-            "source": "animeschedule"
-          },
-          {
-            "url": "https://media.kitsu.app/anime/cover_images/4550/original.jpg",
-            "source": "kitsu"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/bungaku-shoujo-movie-1-190x271.jpg?t=1625886661",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://www.anime-planet.com/images/anime/screenshots/bungaku-shoujo-movie-3206-1.jpg",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx6408-UsXM2RcYTCZd.jpg",
-            "source": "anilist"
-          },
-          {
-            "url": "https://cdn.anidb.net/images/main/33980.jpg",
-            "source": "anidb"
-          }
+          "https://cdn.myanimelist.net/images/anime/8/81162l.jpg",
+          "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/bungaku-shoujo-bab9b005de.jpg",
+          "https://media.kitsu.app/anime/cover_images/4550/original.jpg",
+          "https://cdn.anime-planet.com/anime/primary/bungaku-shoujo-movie-1-190x271.jpg?t=1625886661",
+          "https://www.anime-planet.com/images/anime/screenshots/bungaku-shoujo-movie-3206-1.jpg",
+          "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx6408-UsXM2RcYTCZd.jpg",
+          "https://cdn.anidb.net/images/main/33980.jpg"
         ],
         "banners": []
       },
@@ -6243,28 +6111,13 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/poster_images/41893/original.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/poster_images/41893/original.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1168/93236l.jpg",
-            "source": "jikan"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/calpis-hakkou-monogatari-1-190x266.jpg?t=1625908198",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://www.anime-planet.com/images/anime/screenshots/calpis-hakkou-monogatari-14682-1.jpg",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b138257-Fmpt13iBDfo8.png",
-            "source": "anilist"
-          }
+          "https://cdn.myanimelist.net/images/anime/1168/93236l.jpg",
+          "https://cdn.anime-planet.com/anime/primary/calpis-hakkou-monogatari-1-190x266.jpg?t=1625908198",
+          "https://www.anime-planet.com/images/anime/screenshots/calpis-hakkou-monogatari-14682-1.jpg",
+          "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b138257-Fmpt13iBDfo8.png"
         ],
         "banners": []
       },
@@ -6591,40 +6444,16 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/poster_images/4416/original.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/poster_images/4416/original.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/7/38319l.jpg",
-            "source": "jikan"
-          },
-          {
-            "url": "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/eiji-cf0cd8b8d4.jpg",
-            "source": "animeschedule"
-          },
-          {
-            "url": "https://media.kitsu.app/anime/cover_images/4416/original.jpg",
-            "source": "kitsu"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/eiji-1-190x266.jpg?t=1625896212",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://www.anime-planet.com/images/anime/screenshots/eiji-4485-1.jpg",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx6076-Ze36WqQQa82X.png",
-            "source": "anilist"
-          },
-          {
-            "url": "https://cdn.anidb.net/images/main/239576.jpg",
-            "source": "anidb"
-          }
+          "https://cdn.myanimelist.net/images/anime/7/38319l.jpg",
+          "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/eiji-cf0cd8b8d4.jpg",
+          "https://media.kitsu.app/anime/cover_images/4416/original.jpg",
+          "https://cdn.anime-planet.com/anime/primary/eiji-1-190x266.jpg?t=1625896212",
+          "https://www.anime-planet.com/images/anime/screenshots/eiji-4485-1.jpg",
+          "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx6076-Ze36WqQQa82X.png",
+          "https://cdn.anidb.net/images/main/239576.jpg"
         ],
         "banners": []
       },
@@ -6865,10 +6694,7 @@
       "images": {
         "posters": [],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/4/84552l.jpg",
-            "source": "jikan"
-          }
+          "https://cdn.myanimelist.net/images/anime/4/84552l.jpg"
         ],
         "banners": []
       },
@@ -7357,28 +7183,13 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/poster_images/12654/original.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/poster_images/12654/original.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1192/112238l.jpg",
-            "source": "jikan"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/eiyuu-kaitai-1.jpg?t=1625780008",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/21829-8iXZsPRh9bZ3.jpg",
-            "source": "anilist"
-          },
-          {
-            "url": "https://cdn.anidb.net/images/main/221947.jpg",
-            "source": "anidb"
-          }
+          "https://cdn.myanimelist.net/images/anime/1192/112238l.jpg",
+          "https://cdn.anime-planet.com/anime/primary/eiyuu-kaitai-1.jpg?t=1625780008",
+          "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/21829-8iXZsPRh9bZ3.jpg",
+          "https://cdn.anidb.net/images/main/221947.jpg"
         ],
         "banners": []
       },
@@ -7694,32 +7505,14 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/45470/poster_image/799ebbb960faef68e5d263fc96f22491.png",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/45470/poster_image/799ebbb960faef68e5d263fc96f22491.png"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1390/136923l.jpg",
-            "source": "mal"
-          },
-          {
-            "url": "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/hataraku-no-100-nenshi-b2128b6e40.jpg",
-            "source": "animeschedule"
-          },
-          {
-            "url": "https://media.kitsu.app/anime/45470/cover_image/b91afe8ade83f620c1eceef3fb541cf3.png",
-            "source": "kitsu"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/hataraku-no-100-nenshi-1.webp?t=1654277046",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b140882-PGlyYvG4bNco.png",
-            "source": "anilist"
-          }
+          "https://cdn.myanimelist.net/images/anime/1390/136923l.jpg",
+          "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/hataraku-no-100-nenshi-b2128b6e40.jpg",
+          "https://media.kitsu.app/anime/45470/cover_image/b91afe8ade83f620c1eceef3fb541cf3.png",
+          "https://cdn.anime-planet.com/anime/primary/hataraku-no-100-nenshi-1.webp?t=1654277046",
+          "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b140882-PGlyYvG4bNco.png"
         ],
         "banners": []
       },
@@ -7879,16 +7672,10 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/45635/poster_image/c50fb8dc787c4309328a7c5cb6dd70b0.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/45635/poster_image/c50fb8dc787c4309328a7c5cb6dd70b0.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/hitman-bang-i-equals-fantasy-1.jpg?t=1625789879",
-            "source": "animeplanet"
-          }
+          "https://cdn.anime-planet.com/anime/primary/hitman-bang-i-equals-fantasy-1.jpg?t=1625789879"
         ],
         "banners": []
       },
@@ -7995,14 +7782,8 @@
       "images": {
         "posters": [],
         "covers": [
-          {
-            "url": "https://cdn.anisearch.com/images/anime/cover/18/18676_600_300.webp",
-            "source": "offline"
-          },
-          {
-            "url": "https://cdn.anisearch.com/images/anime/cover/18/18676_600.webp",
-            "source": "offline"
-          }
+          "https://cdn.anisearch.com/images/anime/cover/18/18676_600_300.webp",
+          "https://cdn.anisearch.com/images/anime/cover/18/18676_600.webp"
         ],
         "banners": []
       },
@@ -8113,20 +7894,11 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/47870/poster_image/c83f60d65f8cd72e9a8d5cfcdca73693.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/47870/poster_image/c83f60d65f8cd72e9a8d5cfcdca73693.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1033/105399l.jpg",
-            "source": "mal"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/inochi-sketch-x-mameshiba-1.webp?t=1640913409",
-            "source": "animeplanet"
-          }
+          "https://cdn.myanimelist.net/images/anime/1033/105399l.jpg",
+          "https://cdn.anime-planet.com/anime/primary/inochi-sketch-x-mameshiba-1.webp?t=1640913409"
         ],
         "banners": []
       },
@@ -8232,20 +8004,11 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/poster_images/41577/original.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/poster_images/41577/original.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/6/85893l.jpg",
-            "source": "mal"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/kinako-movie-x-mameshiba-1.jpg?t=1625789402",
-            "source": "animeplanet"
-          }
+          "https://cdn.myanimelist.net/images/anime/6/85893l.jpg",
+          "https://cdn.anime-planet.com/anime/primary/kinako-movie-x-mameshiba-1.jpg?t=1625789402"
         ],
         "banners": []
       },
@@ -8369,20 +8132,11 @@
       "enhanced_metadata": {},
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/poster_images/41274/large.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/poster_images/41274/large.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1168/92670l.jpg",
-            "source": "mal"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/kiss-dekiru-gyoza-x-mameshiba-movie-1-190x266.jpg?t=1625898882",
-            "source": "animeplanet"
-          }
+          "https://cdn.myanimelist.net/images/anime/1168/92670l.jpg",
+          "https://cdn.anime-planet.com/anime/primary/kiss-dekiru-gyoza-x-mameshiba-movie-1-190x266.jpg?t=1625898882"
         ],
         "banners": []
       },
@@ -8491,16 +8245,10 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/49471/poster_image/large-0cbbf582aa8c46ff9e3660a46d50dbde.jpeg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/49471/poster_image/large-0cbbf582aa8c46ff9e3660a46d50dbde.jpeg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1553/147281l.jpg",
-            "source": "mal"
-          }
+          "https://cdn.myanimelist.net/images/anime/1553/147281l.jpg"
         ],
         "banners": []
       },
@@ -8577,10 +8325,7 @@
       "images": {
         "posters": [],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/img/sp/icon/apple-touch-icon-256.png",
-            "source": "mal"
-          }
+          "https://cdn.myanimelist.net/img/sp/icon/apple-touch-icon-256.png"
         ],
         "banners": []
       },
@@ -8878,22 +8623,10 @@
       "images": {
         "posters": [],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1248/150792l.jpg",
-            "source": "mal"
-          },
-          {
-            "url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx191718-CxERuSkmrKYc.png",
-            "source": "anilist"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/roll-over-and-die-i-will-fight-for-an-ordinary-life-with-my-love-and-cursed-sword-1.webp?t=1751300024",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://cdn.anidb.net/images/main/317821.jpg",
-            "source": "anidb"
-          }
+          "https://cdn.myanimelist.net/images/anime/1248/150792l.jpg",
+          "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx191718-CxERuSkmrKYc.png",
+          "https://cdn.anime-planet.com/anime/primary/roll-over-and-die-i-will-fight-for-an-ordinary-life-with-my-love-and-cursed-sword-1.webp?t=1751300024",
+          "https://cdn.anidb.net/images/main/317821.jpg"
         ],
         "banners": []
       },
@@ -9085,32 +8818,14 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/poster_images/12943/original.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/poster_images/12943/original.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1714/102585l.jpg",
-            "source": "mal"
-          },
-          {
-            "url": "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/parade-de-satie-0adff95730.jpg",
-            "source": "animeschedule"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/parade-de-satie-1.jpg?t=1625783287",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/101905-j7UJdMHBWtkN.jpg",
-            "source": "anilist"
-          },
-          {
-            "url": "https://cdn.anidb.net/images/main/228791.jpg",
-            "source": "anidb"
-          }
+          "https://cdn.myanimelist.net/images/anime/1714/102585l.jpg",
+          "https://img.animeschedule.net/production/assets/public/img/anime/jpg/default/parade-de-satie-0adff95730.jpg",
+          "https://cdn.anime-planet.com/anime/primary/parade-de-satie-1.jpg?t=1625783287",
+          "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/101905-j7UJdMHBWtkN.jpg",
+          "https://cdn.anidb.net/images/main/228791.jpg"
         ],
         "banners": []
       },
@@ -9348,24 +9063,12 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/48739/poster_image/cdc106cd80f74fc2d8bb2123b370c24a.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/48739/poster_image/cdc106cd80f74fc2d8bb2123b370c24a.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1206/141774l.jpg",
-            "source": "jikan"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/pokemon-shirt-sizing-concept-movie-1-285x399.webp?t=1743888098",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/pokemon-shirt-sizing-concept-movie-1.webp?t=1743888097",
-            "source": "animeplanet"
-          }
+          "https://cdn.myanimelist.net/images/anime/1206/141774l.jpg",
+          "https://cdn.anime-planet.com/anime/primary/pokemon-shirt-sizing-concept-movie-1-285x399.webp?t=1743888098",
+          "https://cdn.anime-planet.com/anime/primary/pokemon-shirt-sizing-concept-movie-1.webp?t=1743888097"
         ],
         "banners": []
       },
@@ -9529,24 +9232,12 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/poster_images/41829/original.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/poster_images/41829/original.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1135/92193l.jpg",
-            "source": "mal"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/r100-x-mameshiba-original-manners-1.jpg?t=1625789403",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://cdn.anisearch.com/images/anime/cover/19/19915_600.webp",
-            "source": "anisearch"
-          }
+          "https://cdn.myanimelist.net/images/anime/1135/92193l.jpg",
+          "https://cdn.anime-planet.com/anime/primary/r100-x-mameshiba-original-manners-1.jpg?t=1625789403",
+          "https://cdn.anisearch.com/images/anime/cover/19/19915_600.webp"
         ],
         "banners": []
       },
@@ -9886,24 +9577,12 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/poster_images/44893/large.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/poster_images/44893/large.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1108/105484l.jpg",
-            "source": "mal"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/irodorimidori-star-t-1.jpg?t=1625789223",
-            "source": "animeplanet"
-          },
-          {
-            "url": "https://cdn.anisearch.com/images/anime/cover/18/18459_600.webp",
-            "source": "anisearch"
-          }
+          "https://cdn.myanimelist.net/images/anime/1108/105484l.jpg",
+          "https://cdn.anime-planet.com/anime/primary/irodorimidori-star-t-1.jpg?t=1625789223",
+          "https://cdn.anisearch.com/images/anime/cover/18/18459_600.webp"
         ],
         "banners": []
       },
@@ -10002,30 +9681,15 @@
       },
       "images": {
         "posters": [
-          {
-            "url": "https://media.kitsu.app/anime/poster_images/43145/original.jpg",
-            "source": "kitsu"
-          }
+          "https://media.kitsu.app/anime/poster_images/43145/original.jpg"
         ],
         "covers": [
-          {
-            "url": "https://cdn.myanimelist.net/images/anime/1109/96789l.jpg",
-            "source": "jikan"
-          },
-          {
-            "url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b113199-OMQfdojQs71k.jpg",
-            "source": "anilist"
-          },
-          {
-            "url": "https://cdn.anime-planet.com/anime/primary/tokyo-1-190x266.jpg?t=1625898989",
-            "source": "animeplanet"
-          }
+          "https://cdn.myanimelist.net/images/anime/1109/96789l.jpg",
+          "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/b113199-OMQfdojQs71k.jpg",
+          "https://cdn.anime-planet.com/anime/primary/tokyo-1-190x266.jpg?t=1625898989"
         ],
         "banners": [
-          {
-            "url": "https://s4.anilist.co/file/anilistcdn/media/anime/banner/113199-PCDcpY5xAgNI.jpg",
-            "source": "anilist"
-          }
+          "https://s4.anilist.co/file/anilistcdn/media/anime/banner/113199-PCDcpY5xAgNI.jpg"
         ]
       },
       "premiere_dates": {

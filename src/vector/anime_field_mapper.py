@@ -17,11 +17,11 @@ logger = logging.getLogger(__name__)
 
 class AnimeFieldMapper:
     """
-    Maps anime data fields to 14-vector semantic architecture.
+    Maps anime data fields to 13-vector semantic architecture.
 
     Extracts and processes anime data for embedding into:
-    - 13 text vectors (BGE-M3, 384-dim each) for semantic search
-    - 1 visual vector (JinaCLIP v2, 512-dim) for image search
+    - 12 text vectors (BGE-M3, 1024-dim each) for semantic search
+    - 1 visual vector (JinaCLIP v2, 768-dim) for image search
     """
 
     def __init__(self) -> None:
@@ -30,7 +30,7 @@ class AnimeFieldMapper:
 
     def map_anime_to_vectors(self, anime: AnimeEntry) -> Dict[str, Any]:
         """
-        Map complete anime entry to all 14 vectors.
+        Map complete anime entry to all 13 vectors.
 
         Args:
             anime: AnimeEntry model with comprehensive anime data
@@ -40,7 +40,7 @@ class AnimeFieldMapper:
         """
         vector_data = {}
 
-        # Text vectors (13)
+        # Text vectors (12)
         vector_data["title_vector"] = self._extract_title_content(anime)
         vector_data["character_vector"] = self._extract_character_content(anime)
         vector_data["genre_vector"] = self._extract_genre_content(anime)
@@ -52,7 +52,6 @@ class AnimeFieldMapper:
         vector_data["related_vector"] = self._extract_related_content(anime)
         vector_data["franchise_vector"] = self._extract_franchise_content(anime)
         vector_data["episode_vector"] = self._extract_episode_content(anime)
-        vector_data["sources_vector"] = self._extract_sources_content(anime)
         vector_data["identifiers_vector"] = self._extract_identifiers_content(anime)
 
         # Visual vector (1)
@@ -61,7 +60,7 @@ class AnimeFieldMapper:
         return vector_data
 
     # ============================================================================
-    # TEXT VECTOR EXTRACTORS (BGE-M3, 384-dim)
+    # TEXT VECTOR EXTRACTORS (BGE-M3, 1024-dim)
     # ============================================================================
 
     def _extract_title_content(self, anime: AnimeEntry) -> str:
@@ -150,20 +149,18 @@ class AnimeFieldMapper:
         return " | ".join(content_parts)
 
     def _extract_technical_content(self, anime: AnimeEntry) -> str:
-        """Extract technical details like episodes, rating, status, type."""
+        """Extract technical details like rating, status, type, source material."""
         content_parts = []
 
         # Basic technical info
         content_parts.append(f"Type: {anime.type}")
         content_parts.append(f"Status: {anime.status}")
-        content_parts.append(f"Episodes: {anime.episodes}")
 
         if anime.rating:
             content_parts.append(f"Rating: {anime.rating}")
         if anime.source_material:
             content_parts.append(f"Source: {anime.source_material}")
-        if anime.nsfw is not None:
-            content_parts.append(f"NSFW: {anime.nsfw}")
+        # NSFW removed - now in payload indexing for filtering
 
         # Licensing information
         if anime.licensors:
@@ -197,17 +194,10 @@ class AnimeFieldMapper:
         return " | ".join(content_parts)
 
     def _extract_review_content(self, anime: AnimeEntry) -> str:
-        """Extract statistics, scores, popularity trends, and awards."""
+        """Extract awards, achievements, and recognition for semantic context."""
         content_parts = []
 
-        # Statistics information
-        if hasattr(anime, "statistics") and anime.statistics:
-            if hasattr(anime.statistics, "score") and anime.statistics.score:
-                content_parts.append(f"Score: {anime.statistics.score}")
-            if hasattr(anime.statistics, "popularity") and anime.statistics.popularity:
-                content_parts.append(f"Popularity: {anime.statistics.popularity}")
-            if hasattr(anime.statistics, "members") and anime.statistics.members:
-                content_parts.append(f"Members: {anime.statistics.members}")
+        # Statistics removed - now in payload indexing for precise filtering
 
         # Awards
         award_info = []
@@ -235,13 +225,6 @@ class AnimeFieldMapper:
             if hasattr(anime.aired_dates, "to_date") and anime.aired_dates.to_date:
                 content_parts.append(f"Aired To: {anime.aired_dates.to_date}")
 
-        # Season information
-        if hasattr(anime, "anime_season") and anime.anime_season:
-            if hasattr(anime.anime_season, "season") and anime.anime_season.season:
-                season_info = f"Season: {anime.anime_season.season}"
-                if hasattr(anime.anime_season, "year") and anime.anime_season.year:
-                    season_info += f" {anime.anime_season.year}"
-                content_parts.append(season_info)
 
         # Broadcast information
         if hasattr(anime, "broadcast") and anime.broadcast:
@@ -365,48 +348,6 @@ class AnimeFieldMapper:
 
         return " | ".join(content_parts)
 
-    def _extract_sources_content(self, anime: AnimeEntry) -> str:
-        """Extract semantic source context from sources and external_links."""
-        content_parts = []
-
-        # Process source URLs for semantic meaning
-        if anime.sources:
-            source_contexts = []
-            for source_url in anime.sources:
-                # Extract platform names and context from URLs
-                if "myanimelist.net" in source_url:
-                    source_contexts.append(
-                        "Source: MyAnimeList (MAL) - comprehensive anime database"
-                    )
-                elif "anilist.co" in source_url:
-                    source_contexts.append(
-                        "Source: AniList - modern anime tracking platform"
-                    )
-                elif "kitsu.io" in source_url:
-                    source_contexts.append("Source: Kitsu - anime discovery platform")
-                elif "anidb.net" in source_url:
-                    source_contexts.append("Source: AniDB - detailed anime database")
-                elif "anime-planet.com" in source_url:
-                    source_contexts.append(
-                        "Source: Anime-Planet - anime recommendations"
-                    )
-                else:
-                    # Generic source context
-                    source_contexts.append(f"Source: {source_url}")
-            content_parts.extend(source_contexts)
-
-        # External links processing
-        if hasattr(anime, "external_links") and anime.external_links:
-            link_contexts = []
-            for link in anime.external_links:
-                if hasattr(link, "site") and link.site:
-                    link_part = f"External: {link.site}"
-                    if hasattr(link, "type") and link.type:
-                        link_part += f" ({link.type})"
-                    link_contexts.append(link_part)
-            content_parts.extend(link_contexts)
-
-        return " | ".join(content_parts)
 
     def _extract_identifiers_content(self, anime: AnimeEntry) -> str:
         """Extract IDs as semantic relationships from List and Dict objects."""
@@ -434,35 +375,51 @@ class AnimeFieldMapper:
         return " | ".join(content_parts)
 
     # ============================================================================
-    # VISUAL VECTOR EXTRACTOR (JinaCLIP v2, 512-dim)
+    # VISUAL VECTOR EXTRACTOR (JinaCLIP v2, 768-dim)
     # ============================================================================
 
     def _extract_image_content(self, anime: AnimeEntry) -> List[str]:
-        """Extract image URLs for visual embedding."""
+        """Extract all image URLs for comprehensive visual embedding."""
         image_urls = []
 
-        # Primary images
-        if anime.picture:
-            image_urls.append(anime.picture)
-        if anime.thumbnail:
-            image_urls.append(anime.thumbnail)
-
-        # Additional images from various sources
+        # Process all images from unified images field (now simple URL strings)
         if hasattr(anime, "images") and anime.images:
-            if isinstance(anime.images, dict):
-                image_urls.extend(anime.images.values())
-            elif isinstance(anime.images, list):
-                image_urls.extend(anime.images)
+            # Process covers (highest priority)
+            if "covers" in anime.images and anime.images["covers"]:
+                for cover_url in anime.images["covers"]:
+                    if cover_url:  # Simple URL string
+                        image_urls.append(cover_url)
 
-        # Character images
+            # Process posters (high quality promotional images)
+            if "posters" in anime.images and anime.images["posters"]:
+                for poster_url in anime.images["posters"]:
+                    if poster_url:  # Simple URL string
+                        image_urls.append(poster_url)
+
+            # Process banners (additional visual content)
+            if "banners" in anime.images and anime.images["banners"]:
+                for banner_url in anime.images["banners"]:
+                    if banner_url:  # Simple URL string
+                        image_urls.append(banner_url)
+
+            # Process any other image types in the images field
+            for image_type, image_list in anime.images.items():
+                if image_type not in ["covers", "posters", "banners"] and image_list:
+                    for image_url in image_list:
+                        if image_url:  # Simple URL string
+                            image_urls.append(image_url)
+
+        # Character images (rich character visual data)
         for character in anime.characters:
             if character.images:
-                image_urls.extend(character.images.values())
+                for platform, image_url in character.images.items():
+                    if image_url:
+                        image_urls.append(image_url)
 
-        # Trailer thumbnails
+        # Trailer thumbnails (promotional visual content)
         for trailer in anime.trailers:
-            if hasattr(trailer, "thumbnail") and trailer.thumbnail:
-                image_urls.append(trailer.thumbnail)
+            if hasattr(trailer, "thumbnail_url") and trailer.thumbnail_url:
+                image_urls.append(trailer.thumbnail_url)
             if hasattr(trailer, "image_url") and trailer.image_url:
                 image_urls.append(trailer.image_url)
 
@@ -477,7 +434,7 @@ class AnimeFieldMapper:
     def get_vector_types(self) -> Dict[str, str]:
         """Get mapping of vector names to their types (text/visual)."""
         return {
-            # Text vectors (BGE-M3, 384-dim)
+            # Text vectors (BGE-M3, 1024-dim)
             "title_vector": "text",
             "character_vector": "text",
             "genre_vector": "text",
@@ -489,9 +446,8 @@ class AnimeFieldMapper:
             "related_vector": "text",
             "franchise_vector": "text",
             "episode_vector": "text",
-            "sources_vector": "text",
             "identifiers_vector": "text",
-            # Visual vector (JinaCLIP v2, 512-dim)
+            # Visual vector (JinaCLIP v2, 768-dim)
             "image_vector": "visual",
         }
 
@@ -506,3 +462,34 @@ class AnimeFieldMapper:
             return False
 
         return True
+
+    def _extract_image_url(self, anime: AnimeEntry) -> str:
+        """Extract the primary image URL for visual embedding using unified images field.
+
+        Args:
+            anime: AnimeEntry instance
+
+        Returns:
+            Primary image URL or empty string if not available
+        """
+        # Use unified images field with priority: covers -> posters -> banners
+        if hasattr(anime, "images") and anime.images:
+            # Priority 1: covers (best quality cover images)
+            if "covers" in anime.images and anime.images["covers"]:
+                for cover_url in anime.images["covers"]:
+                    if cover_url:  # Simple URL string check
+                        return cover_url
+
+            # Priority 2: posters (good quality poster images)
+            if "posters" in anime.images and anime.images["posters"]:
+                for poster_url in anime.images["posters"]:
+                    if poster_url:  # Simple URL string check
+                        return poster_url
+
+            # Priority 3: banners (fallback option)
+            if "banners" in anime.images and anime.images["banners"]:
+                for banner_url in anime.images["banners"]:
+                    if banner_url:  # Simple URL string check
+                        return banner_url
+
+        return ""

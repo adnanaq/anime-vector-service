@@ -348,12 +348,31 @@ class QdrantClient:
         return None
 
     def _setup_payload_indexing(self):
-        """Setup payload field indexing for faster filtering."""
+        """Setup payload field indexing for faster filtering.
+
+        Creates indexes only for searchable metadata fields while keeping
+        operational data (like enrichment_metadata) non-indexed for storage efficiency.
+
+        Indexed fields include:
+        - Core searchable fields: id, title, type, status, episodes, rating, nsfw
+        - Categorical fields: genres, tags, demographics, content_warnings
+        - Temporal fields: anime_season, duration
+        - Platform fields: sources
+        - Statistics for numerical filtering: statistics, score
+
+        Non-indexed operational data:
+        - enrichment_metadata: Development/debugging data not needed for search
+        """
         indexed_fields = getattr(self.settings, "qdrant_indexed_payload_fields", [])
         if not indexed_fields:
+            logger.info("No payload indexing configured")
             return
-            
+
         try:
+            logger.info(f"Setting up payload indexing for {len(indexed_fields)} searchable fields")
+            logger.info("Indexed fields enable fast filtering on: core metadata, genres, temporal data, platform stats")
+            logger.info("Non-indexed fields (enrichment_metadata) stored for debugging but don't impact search performance")
+
             for field in indexed_fields:
                 # Create index for each field to optimize filtering
                 self.client.create_payload_index(
@@ -361,7 +380,11 @@ class QdrantClient:
                     field_name=field,
                     field_schema=PayloadSchemaType.KEYWORD  # Most anime fields are keywords/strings
                 )
-                logger.info(f"Created payload index for field: {field}")
+                logger.debug(f"✓ Created payload index for searchable field: {field}")
+
+            logger.info(f"Successfully indexed {len(indexed_fields)} searchable payload fields")
+            logger.info("Payload optimization complete: fast filtering enabled, operational metadata preserved")
+
         except Exception as e:
             logger.warning(f"Failed to setup payload indexing: {e}")
             # Don't fail collection creation if indexing fails

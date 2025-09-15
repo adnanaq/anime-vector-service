@@ -71,7 +71,7 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
     - bannerImage → add to banners array
   - AniDB: Extract from picture field (prepend "https://cdn.anidb.net/images/main/") → add to covers array
   - Ensure no duplication of URLs within each image type array
-  - Add source attribution ("jikan", "animeschedule", "kitsu", "animeplanet", "anilist", "anidb") to each image
+  - Store URLs as simple strings (no source attribution objects needed)
 - **source_material**: Extract from Jikan source field, use AniList source as fallback if Jikan is null/missing
 - **type**: Cross-validate with offline database type (use offline DB if consistent, otherwise hierarchy: Offline DB → Jikan → AniList → Kitsu)
 - **rating**: Extract from Jikan rating field
@@ -145,8 +145,8 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
 - **dates**: Cross-validate json_ld.startDate/endDate with existing aired dates
 - **studios**: Cross-validate studios array with existing studio data
 - **images**: Extract Anime-Planet images and add to covers array:
-  - json_ld.image → add to covers array with source "animeplanet"
-  - opengraph.image → add to covers array with source "animeplanet" (if different URL)
+  - json_ld.image → add to covers array
+  - opengraph.image → add to covers array (if different URL)
 
 ### ANILIST ENHANCEMENTS:
 - **source_material**: Use as fallback if Jikan source field is null/missing (Light Novel, Manga, etc.)
@@ -196,8 +196,8 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
      - Jikan, AnimSchedule, and Anime-Planet images → covers array
    - AnimSchedule: prepend "https://img.animeschedule.net/production/assets/public/img/" to imageVersionRoute
    - Ensure no duplication of URLs within each image type array
-   - Add source attribution to each image object
-   - Do not include type field in image objects (type is implied by array organization)
+   - Store URLs as simple strings in arrays (no objects or source attribution needed)
+   - Do not include type field since type is implied by array organization
 
 4. **EXTERNAL LINK DEDUPLICATION**:
    - Extract external links from all available sources (Jikan, AnimSchedule, Anime-Planet, AniList)
@@ -298,24 +298,16 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
   }, // EXAMPLE - Extract actual external links with AniList normalized keys
   "images": {
     "posters": [
-      {
-        "url": "https://media.kitsu.app/anime/poster_images/100/original.jpg",
-        "source": "kitsu"
-      }
+      "https://media.kitsu.app/anime/poster_images/100/original.jpg"
     ],
     "covers": [
-      {
-        "url": "https://media.kitsu.app/anime/cover_images/100/original.jpg",
-        "source": "kitsu"
-      }
+      "https://media.kitsu.app/anime/cover_images/100/original.jpg",
+      "https://cdn.myanimelist.net/images/anime/1515/149911.jpg"
     ],
     "banners": [
-      {
-        "url": "https://s4.anilist.co/file/anilistcdn/media/anime/banner/1-T3PJUjFJyRwg.jpg",
-        "source": "anilist"
-      }
+      "https://s4.anilist.co/file/anilistcdn/media/anime/banner/1-T3PJUjFJyRwg.jpg"
     ]
-  }, // EXAMPLE - Organize by image type: "posters", "covers", "banners", etc. Multiple sources can contribute to each type
+  }, // EXAMPLE - Organize by image type with simple URL strings: "posters", "covers", "banners", etc.
   "premiere_dates": {
     "original": "2024-01-01",
     "sub": "2024-01-01",

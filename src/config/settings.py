@@ -43,8 +43,8 @@ class Settings(BaseSettings):
         description="Qdrant collection name"
     )
     qdrant_vector_size: int = Field(
-        default=384, 
-        description="Vector embedding dimensions"
+        default=1024,
+        description="Vector embedding dimensions for text vectors (BGE-M3)"
     )
     qdrant_distance_metric: str = Field(
         default="cosine", 
@@ -53,29 +53,28 @@ class Settings(BaseSettings):
 
     # Multi-Vector Configuration
     image_vector_size: int = Field(
-        default=512,
-        description="Image embedding dimensions (CLIP)"
+        default=1024,
+        description="Image embedding dimensions (JinaCLIP v2: 1024, CLIP: 512)"
     )
 
-    # 14-Vector Semantic Architecture Configuration
+    # 13-Vector Semantic Architecture Configuration
     vector_names: dict = Field(
         default={
-            "title_vector": 384,
-            "character_vector": 384,
-            "genre_vector": 384,
-            "technical_vector": 384,
-            "staff_vector": 384,
-            "review_vector": 384,
-            "temporal_vector": 384,
-            "streaming_vector": 384,
-            "related_vector": 384,
-            "franchise_vector": 384,
-            "episode_vector": 384,
-            "sources_vector": 384,
-            "identifiers_vector": 384,
-            "image_vector": 512
+            "title_vector": 1024,
+            "character_vector": 1024,
+            "genre_vector": 1024,
+            "technical_vector": 1024,
+            "staff_vector": 1024,
+            "review_vector": 1024,
+            "temporal_vector": 1024,
+            "streaming_vector": 1024,
+            "related_vector": 1024,
+            "franchise_vector": 1024,
+            "episode_vector": 1024,
+            "identifiers_vector": 1024,
+            "image_vector": 1024
         },
-        description="14-vector semantic architecture with named vectors and dimensions"
+        description="13-vector semantic architecture with named vectors and dimensions (BGE-M3: 1024-dim, JinaCLIP v2: 1024-dim)"
     )
 
     # Vector Priority Classification for Optimization
@@ -83,7 +82,7 @@ class Settings(BaseSettings):
         default={
             "high": ["title_vector", "character_vector", "genre_vector", "review_vector", "image_vector"],
             "medium": ["technical_vector", "staff_vector", "temporal_vector", "streaming_vector"],
-            "low": ["related_vector", "franchise_vector", "episode_vector", "sources_vector", "identifiers_vector"]
+            "low": ["related_vector", "franchise_vector", "episode_vector", "identifiers_vector"]
         },
         description="Vector priority classification for performance optimization"
     )
@@ -232,8 +231,20 @@ class Settings(BaseSettings):
         description="Enable payload field indexing"
     )
     qdrant_indexed_payload_fields: List[str] = Field(
-        default=["type", "status", "year", "source", "tags"], 
-        description="Payload fields to index for faster filtering"
+        default=[
+            # Core searchable fields
+            "id", "title", "type", "status", "episodes", "rating", "nsfw",
+            # Categorical fields
+            "genres", "tags", "demographics", "content_warnings",
+            # Temporal fields
+            "anime_season", "duration",
+            # Platform fields
+            "sources",
+            # Statistics for numerical filtering
+            "statistics", "score"
+            # Note: enrichment_metadata intentionally excluded (non-indexed operational data)
+        ],
+        description="Payload fields to index for search filtering (excludes operational metadata)"
     )
 
     # API Configuration

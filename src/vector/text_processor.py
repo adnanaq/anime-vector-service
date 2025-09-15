@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 
 from ..config import Settings
+from ..models.anime import AnimeEntry
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +42,9 @@ class TextProcessor:
         
         # Initialize models
         self._init_models()
+
+        # Initialize field mapper for multi-vector processing
+        self._field_mapper = None
     
     def _init_models(self):
         """Initialize text embedding model."""
@@ -540,3 +544,124 @@ class TextProcessor:
             
         except Exception:
             return False
+
+    # ============================================================================
+    # MULTI-VECTOR PROCESSING METHODS
+    # ============================================================================
+
+    def _get_field_mapper(self):
+        """Lazy initialization of field mapper."""
+        if self._field_mapper is None:
+            from .anime_field_mapper import AnimeFieldMapper
+            self._field_mapper = AnimeFieldMapper()
+        return self._field_mapper
+
+    def process_anime_vectors(self, anime: AnimeEntry) -> Dict[str, List[float]]:
+        """
+        Process anime data into multiple semantic text embeddings.
+
+        Args:
+            anime: AnimeEntry with comprehensive anime data
+
+        Returns:
+            Dict mapping vector names to their embeddings
+        """
+        try:
+            field_mapper = self._get_field_mapper()
+
+            # Extract field content for all vectors
+            vector_data = field_mapper.map_anime_to_vectors(anime)
+
+            # Generate embeddings for text vectors only
+            text_embeddings = {}
+            text_vectors = [
+                name for name, vec_type in field_mapper.get_vector_types().items()
+                if vec_type == "text"
+            ]
+
+            for vector_name in text_vectors:
+                if vector_name in vector_data:
+                    text_content = vector_data[vector_name]
+
+                    # Apply field-specific preprocessing
+                    processed_text = self._preprocess_field_content(
+                        text_content, vector_name
+                    )
+
+                    # Generate embedding
+                    if processed_text.strip():
+                        embedding = self.encode_text(processed_text)
+                        if embedding:
+                            text_embeddings[vector_name] = embedding
+                        else:
+                            # Use zero vector for failed embedding
+                            text_embeddings[vector_name] = self._get_zero_embedding()
+                    else:
+                        # Use zero vector for empty content
+                        text_embeddings[vector_name] = self._get_zero_embedding()
+
+            logger.debug(f"Generated embeddings for {len(text_embeddings)} text vectors")
+            return text_embeddings
+
+        except Exception as e:
+            logger.error(f"Failed to process anime vectors: {e}")
+            raise
+
+    def _preprocess_field_content(self, content: str, vector_name: str) -> str:
+        """
+        Apply field-specific preprocessing to improve embedding quality.
+
+        Args:
+            content: Raw text content from field mapper
+            vector_name: Name of the vector being processed
+
+        Returns:
+            Preprocessed text optimized for embedding
+        """
+        if not content:
+            return ""
+
+        # Apply general preprocessing
+        processed = content.strip()
+
+        # Field-specific preprocessing rules
+        if vector_name == "title_vector":
+            processed = processed.replace("Synopsis:", "Story:")
+            processed = processed.replace("Background:", "Production:")
+
+        elif vector_name == "character_vector":
+            processed = processed.replace("Role:", "Character Role:")
+            processed = processed.replace("Description:", "Background:")
+
+        elif vector_name == "genre_vector":
+            processed = processed.replace("Shounen", "Shonen (young male)")
+            processed = processed.replace("Shoujo", "Shojo (young female)")
+            processed = processed.replace("Seinen", "Seinen (adult male)")
+            processed = processed.replace("Josei", "Josei (adult female)")
+
+        elif vector_name == "technical_vector":
+            processed = processed.replace("Type:", "Anime Type:")
+            processed = processed.replace("Status:", "Airing Status:")
+            processed = processed.replace("Episodes:", "Episode Count:")
+
+        elif vector_name == "sources_vector":
+            processed = processed.replace("Source:", "Platform:")
+            processed = processed.replace("External:", "External Platform:")
+
+        return processed
+
+    def _get_zero_embedding(self) -> List[float]:
+        """Get zero embedding vector for empty/failed content."""
+        if self.model:
+            embedding_size = self.model["embedding_size"]
+            return [0.0] * embedding_size
+        else:
+            return [0.0] * 384  # Default size
+
+    def get_text_vector_names(self) -> List[str]:
+        """Get list of text vector names supported by this processor."""
+        field_mapper = self._get_field_mapper()
+        return [
+            name for name, vec_type in field_mapper.get_vector_types().items()
+            if vec_type == "text"
+        ]
