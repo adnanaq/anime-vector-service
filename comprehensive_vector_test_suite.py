@@ -77,6 +77,14 @@ class ComprehensiveVectorTester:
         self.text_processor = TextProcessor(settings)
         self.vision_processor = VisionProcessor(settings)
 
+        # Initialize QdrantClient for multi-vector operations
+        from src.vector.qdrant_client import QdrantClient
+        qdrant_settings = get_settings()
+        qdrant_settings.qdrant_url = qdrant_url
+        qdrant_settings.qdrant_api_key = api_key
+        qdrant_settings.qdrant_collection_name = collection_name
+        self.qdrant_client = QdrantClient(settings=qdrant_settings)
+
         # Test suites
         self.test_suites = []
         self._sample_images = {}  # Cache for sample images from collection
@@ -95,6 +103,7 @@ class ComprehensiveVectorTester:
             self._create_semantic_complexity_tests(),
             self._create_image_vector_tests(),
             self._create_payload_filter_tests(),
+            self._create_comprehensive_search_tests(),
             self._create_multi_vector_tests(),
             self._create_edge_case_tests(),
             self._create_performance_tests(),
@@ -398,6 +407,55 @@ class ComprehensiveVectorTester:
                         "key": "score.arithmeticMean",
                         "range": {"gte": 7.0}
                     }
+                }
+            ]
+        )
+
+    def _create_comprehensive_search_tests(self) -> TestSuite:
+        """Create tests for high-level comprehensive search methods."""
+        return TestSuite(
+            name="Comprehensive Search Tests",
+            description="Test high-level search methods that combine multiple vectors",
+            tests=[
+                {
+                    "name": "Text Comprehensive Search",
+                    "test_type": "search_text_comprehensive",
+                    "query": "magical girl transformation anime with friendship themes",
+                    "limit": 5,
+                    "fusion_method": "rrf",
+                    "description": "Test search across all 12 text vectors using RRF fusion"
+                },
+                {
+                    "name": "Text Comprehensive with DBSF",
+                    "test_type": "search_text_comprehensive",
+                    "query": "dark psychological thriller with complex characters",
+                    "limit": 5,
+                    "fusion_method": "dbsf",
+                    "description": "Test search across all 12 text vectors using DBSF fusion"
+                },
+                {
+                    "name": "Character-Focused Search",
+                    "test_type": "search_characters",
+                    "query": "strong female protagonist with magical abilities",
+                    "limit": 5,
+                    "fusion_method": "rrf",
+                    "description": "Test character-focused search using character-related vectors"
+                },
+                {
+                    "name": "Complete Search All Vectors",
+                    "test_type": "search_complete",
+                    "query": "high school romance comedy with beautiful animation",
+                    "limit": 5,
+                    "fusion_method": "rrf",
+                    "description": "Test search across all 14 vectors (12 text + 2 image)"
+                },
+                {
+                    "name": "Visual Comprehensive Search",
+                    "test_type": "search_visual_comprehensive",
+                    "image_data": "placeholder_base64_image_data",
+                    "limit": 5,
+                    "fusion_method": "rrf",
+                    "description": "Test search across both image vectors (will be skipped if no image data)"
                 }
             ]
         )
@@ -829,41 +887,41 @@ class ComprehensiveVectorTester:
 
     async def execute_multi_vector_query(self, query_configs: List[Dict],
                                         limit: int = 5) -> Tuple[Dict, float]:
-        """Execute multi-vector weighted search."""
+        """Execute multi-vector search using Qdrant's native multi-vector API."""
         start_time = time.time()
 
-        # This is a simplified approach - we'll search each vector and combine results
-        # In a real implementation, you might want to use Qdrant's native multi-vector search
+        try:
+            # Prepare vector queries for the new multi-vector API
+            vector_queries = []
+            for config in query_configs:
+                query_text = config["query"]
+                vector_name = config["vector"]
 
-        all_results = {}
-        total_weight = sum(config.get("weight", 1.0) for config in query_configs)
+                # Generate vector using text processor (all multi-vector tests use text queries)
+                vector_data = self.text_processor.encode_text(query_text)
+                if vector_data is None:
+                    vector_data = [0.1] * 1024  # 1024-dim placeholder
 
-        for config in query_configs:
-            query = config["query"]
-            vector_name = config["vector"]
-            weight = config.get("weight", 1.0) / total_weight
+                vector_queries.append({
+                    "vector_name": vector_name,
+                    "vector_data": vector_data
+                })
 
-            result, _ = await self.execute_search_query(query, vector_name, limit=limit)
+            # Use the new native multi-vector search
+            results = await self.qdrant_client.search_multi_vector(
+                vector_queries=vector_queries,
+                limit=limit,
+                fusion_method="rrf"  # Use Reciprocal Rank Fusion
+            )
 
-            # Weight and combine results (simplified scoring)
-            for item in result.get("result", []):
-                point_id = item["id"]
-                score = item["score"] * weight
+            execution_time = time.time() - start_time
+            return {"result": results}, execution_time
 
-                if point_id in all_results:
-                    all_results[point_id]["score"] += score
-                else:
-                    all_results[point_id] = {
-                        "id": point_id,
-                        "score": score,
-                        "payload": item["payload"]
-                    }
+        except Exception as e:
+            # No fallback - multi-vector API must work
+            print(f"❌ Multi-vector API failed: {e}")
+            raise
 
-        # Sort by combined score
-        sorted_results = sorted(all_results.values(), key=lambda x: x["score"], reverse=True)[:limit]
-
-        execution_time = time.time() - start_time
-        return {"result": sorted_results}, execution_time
 
     async def run_test_suite(self, suite: TestSuite) -> TestSuite:
         """Execute all tests in a test suite."""
@@ -988,6 +1046,70 @@ class ComprehensiveVectorTester:
                         result, exec_time = cross_results[first_vector]
                     else:
                         result, exec_time = {"result": []}, 0.0
+
+                elif test_config.get("test_type") == "search_text_comprehensive":
+                    # Text comprehensive search test
+                    query = test_config["query"]
+                    limit = test_config.get("limit", 5)
+                    fusion_method = test_config.get("fusion_method", "rrf")
+
+                    start_time = time.time()
+                    search_results = await self.qdrant_client.search_text_comprehensive(
+                        query=query,
+                        limit=limit,
+                        fusion_method=fusion_method
+                    )
+                    exec_time = time.time() - start_time
+                    result = {"result": search_results}
+
+                elif test_config.get("test_type") == "search_characters":
+                    # Character-focused search test
+                    query = test_config["query"]
+                    limit = test_config.get("limit", 5)
+                    fusion_method = test_config.get("fusion_method", "rrf")
+
+                    start_time = time.time()
+                    search_results = await self.qdrant_client.search_characters(
+                        query=query,
+                        limit=limit,
+                        fusion_method=fusion_method
+                    )
+                    exec_time = time.time() - start_time
+                    result = {"result": search_results}
+
+                elif test_config.get("test_type") == "search_complete":
+                    # Complete search across all 14 vectors
+                    query = test_config["query"]
+                    limit = test_config.get("limit", 5)
+                    fusion_method = test_config.get("fusion_method", "rrf")
+
+                    start_time = time.time()
+                    search_results = await self.qdrant_client.search_complete(
+                        query=query,
+                        limit=limit,
+                        fusion_method=fusion_method
+                    )
+                    exec_time = time.time() - start_time
+                    result = {"result": search_results}
+
+                elif test_config.get("test_type") == "search_visual_comprehensive":
+                    # Visual comprehensive search test
+                    image_data = test_config.get("image_data")
+                    if not image_data or image_data == "placeholder_base64_image_data":
+                        print(f"   ⚠️  No image data provided, skipping visual comprehensive test")
+                        continue
+
+                    limit = test_config.get("limit", 5)
+                    fusion_method = test_config.get("fusion_method", "rrf")
+
+                    start_time = time.time()
+                    search_results = await self.qdrant_client.search_visual_comprehensive(
+                        image_data=image_data,
+                        limit=limit,
+                        fusion_method=fusion_method
+                    )
+                    exec_time = time.time() - start_time
+                    result = {"result": search_results}
 
                 else:  # Single vector test
                     query = test_config["query"]

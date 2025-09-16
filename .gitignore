@@ -212,3 +212,4 @@ data/current_anime*.json
 
 # AI processing temporary files
 stage*_*.json
+__pycache__/

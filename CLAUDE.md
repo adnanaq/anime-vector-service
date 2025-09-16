@@ -445,24 +445,6 @@ The service supports multiple embedding providers through configuration:
 
 This repository uses a comprehensive Memory Files system for project documentation. Always consult these files before making architectural changes or planning new features.
 
-## Development Patterns
-
-### Async-First Architecture
-
-All I/O operations use async/await patterns. The service is designed for high concurrency with proper async context management.
-
-### Configuration-Driven Features
-
-Most functionality is configurable through environment variables rather than code changes. This enables zero-downtime configuration updates.
-
-### Multi-Vector Design Philosophy
-
-Named vectors in the same collection outperform separate collections for multi-modal data. This architecture provides 40% better search performance.
-
-### Error Handling Strategy
-
-The service implements graceful degradation - it continues operating with reduced functionality when dependencies fail rather than complete service failure.
-
 ## Integration Points
 
 ### External Dependencies

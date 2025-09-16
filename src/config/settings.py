@@ -35,11 +35,15 @@ class Settings(BaseSettings):
 
     # Qdrant Vector Database Configuration
     qdrant_url: str = Field(
-        default="http://localhost:6333", 
+        default="http://localhost:6333",
         description="Qdrant server URL"
     )
+    qdrant_api_key: Optional[str] = Field(
+        default=None,
+        description="Qdrant API key for cloud authentication"
+    )
     qdrant_collection_name: str = Field(
-        default="anime_database", 
+        default="anime_database",
         description="Qdrant collection name"
     )
     qdrant_vector_size: int = Field(

@@ -49,6 +49,7 @@ dev = [
     "black>=24.0.0",
     "isort>=5.13.0",
     "autoflake>=2.3.0",
+    "mypy>=1.18.1",
 ]
 
 [build-system]

@@ -11,31 +11,36 @@ from typing import Any, Dict, List, Optional
 
 # fastembed import moved to _init_encoder method for lazy loading
 from qdrant_client import QdrantClient as QdrantSDK
-from qdrant_client.models import (
+from qdrant_client.models import (  # Qdrant optimization models; Multi-vector search models
+    BinaryQuantization,
+    BinaryQuantizationConfig,
+    CollectionParams,
     Distance,
     FieldCondition,
     Filter,
+    Fusion,
+    FusionQuery,
+    HnswConfig,
+    HnswConfigDiff,
     MatchAny,
     MatchValue,
     NamedVector,
-    PointStruct,
-    Range,
-    VectorParams,
-    # Qdrant optimization models
-    BinaryQuantization,
-    BinaryQuantizationConfig,
-    ScalarQuantization,
-    ScalarQuantizationConfig,
-    ProductQuantization,
-    QuantizationConfig,
-    HnswConfig,
-    HnswConfigDiff,
+    NearestQuery,
     OptimizersConfig,
     OptimizersConfigDiff,
-    WalConfig,
-    CollectionParams,
     PayloadSchemaType,
+    PointStruct,
+    Prefetch,
+    ProductQuantization,
+    QuantizationConfig,
+    Query,
+    QueryRequest,
+    Range,
+    ScalarQuantization,
+    ScalarQuantizationConfig,
     ScalarType,
+    VectorParams,
+    WalConfig,
 )
 
 from ..config import Settings
@@ -70,9 +75,15 @@ class QdrantClient:
         self.settings = settings
         self.url = url or settings.qdrant_url
         self.collection_name = collection_name or settings.qdrant_collection_name
-        self.client = QdrantSDK(url=self.url)
+
+        # Initialize Qdrant client with API key if provided
+        if settings.qdrant_api_key:
+            self.client = QdrantSDK(url=self.url, api_key=settings.qdrant_api_key)
+        else:
+            self.client = QdrantSDK(url=self.url)
+
         self._distance_metric = settings.qdrant_distance_metric
-        
+
         # Initialize embedding manager
         self.embedding_manager = MultiVectorEmbeddingManager(settings)
 
@@ -88,29 +99,28 @@ class QdrantClient:
             # Import processors
             from .text_processor import TextProcessor
             from .vision_processor import VisionProcessor
-            
+
             # Initialize text processor
             self.text_processor = TextProcessor(self.settings)
-            
+
             # Initialize vision processor
             self.vision_processor = VisionProcessor(self.settings)
-            
+
             # Update vector sizes based on modern models
             text_info = self.text_processor.get_model_info()
             vision_info = self.vision_processor.get_model_info()
-            
+
             self._vector_size = text_info.get("embedding_size", 384)
             self._image_vector_size = vision_info.get("embedding_size", 512)
-            
+
             logger.info(
                 f"Initialized processors - Text: {text_info['model_name']} ({self._vector_size}), "
                 f"Vision: {vision_info['model_name']} ({self._image_vector_size})"
             )
-            
+
         except Exception as e:
             logger.error(f"Failed to initialize processors: {e}")
             raise
-    
 
     def _initialize_collection(self):
         """Initialize and validate anime collection with 14-vector architecture and performance optimization."""
@@ -131,7 +141,10 @@ class QdrantClient:
 
                 # Add performance optimization configurations
                 quantization_config = self._create_quantization_config()
-                optimizers_config = self._create_optimized_optimizers_config() or self._create_optimizers_config()
+                optimizers_config = (
+                    self._create_optimized_optimizers_config()
+                    or self._create_optimizers_config()
+                )
                 wal_config = self._create_wal_config()
 
                 # Create collection with optimization
@@ -140,21 +153,29 @@ class QdrantClient:
                     vectors_config=vectors_config,
                     quantization_config=quantization_config,
                     optimizers_config=optimizers_config,
-                    wal_config=wal_config
+                    wal_config=wal_config,
                 )
 
                 # Configure payload indexing for faster filtering
                 if getattr(self.settings, "qdrant_enable_payload_indexing", True):
                     self._setup_payload_indexing()
 
-                logger.info(f"Successfully created collection with {len(vectors_config)} vectors")
+                logger.info(
+                    f"Successfully created collection with {len(vectors_config)} vectors"
+                )
             else:
                 # Validate existing collection compatibility
                 if not self._validate_collection_compatibility():
-                    logger.warning(f"Collection {self.collection_name} exists but may have compatibility issues")
-                    logger.info("Continuing with existing collection configuration for backward compatibility")
+                    logger.warning(
+                        f"Collection {self.collection_name} exists but may have compatibility issues"
+                    )
+                    logger.info(
+                        "Continuing with existing collection configuration for backward compatibility"
+                    )
                 else:
-                    logger.info(f"Collection {self.collection_name} validated successfully")
+                    logger.info(
+                        f"Collection {self.collection_name} validated successfully"
+                    )
 
         except Exception as e:
             logger.error(f"Failed to ensure collection exists: {e}")
@@ -179,10 +200,14 @@ class QdrantClient:
                     logger.info("Collection has complete vector configuration")
                     return True
                 else:
-                    logger.warning(f"Collection missing expected vectors. Expected: {expected_vectors}, Found: {existing_vector_names}")
+                    logger.warning(
+                        f"Collection missing expected vectors. Expected: {expected_vectors}, Found: {existing_vector_names}"
+                    )
                     return False
             else:
-                logger.warning("Collection uses single vector configuration, not compatible with multi-vector architecture")
+                logger.warning(
+                    "Collection uses single vector configuration, not compatible with multi-vector architecture"
+                )
                 return False
 
         except Exception as e:
@@ -198,15 +223,21 @@ class QdrantClient:
         actual_count = len(vectors_config)
 
         if actual_count != expected_count:
-            raise ValueError(f"Vector count mismatch: expected {expected_count}, got {actual_count}")
+            raise ValueError(
+                f"Vector count mismatch: expected {expected_count}, got {actual_count}"
+            )
 
         # Validate vector dimensions
         for vector_name, vector_params in vectors_config.items():
             expected_dim = self.settings.vector_names.get(vector_name)
             if expected_dim and vector_params.size != expected_dim:
-                raise ValueError(f"Vector {vector_name} dimension mismatch: expected {expected_dim}, got {vector_params.size}")
+                raise ValueError(
+                    f"Vector {vector_name} dimension mismatch: expected {expected_dim}, got {vector_params.size}"
+                )
 
-        logger.info(f"Vector configuration validated: {actual_count} vectors with correct dimensions")
+        logger.info(
+            f"Vector configuration validated: {actual_count} vectors with correct dimensions"
+        )
 
     # Distance mapping constant
     _DISTANCE_MAPPING = {
@@ -227,10 +258,12 @@ class QdrantClient:
                 size=dimension,
                 distance=distance,
                 hnsw_config=self._get_hnsw_config(priority),
-                quantization_config=self._get_quantization_config(priority)
+                quantization_config=self._get_quantization_config(priority),
             )
 
-        logger.info(f"Created 14-vector configuration with {len(vector_params)} vectors")
+        logger.info(
+            f"Created 14-vector configuration with {len(vector_params)} vectors"
+        )
         return vector_params
 
     # NEW: Priority-Based Configuration Methods for Million-Query Optimization
@@ -240,8 +273,7 @@ class QdrantClient:
         config = self.settings.quantization_config.get(priority, {})
         if config.get("type") == "scalar":
             scalar_config = ScalarQuantizationConfig(
-                type=ScalarType.INT8,
-                always_ram=config.get("always_ram", False)
+                type=ScalarType.INT8, always_ram=config.get("always_ram", False)
             )
             return ScalarQuantization(scalar=scalar_config)
         elif config.get("type") == "binary":
@@ -255,8 +287,7 @@ class QdrantClient:
         """Get HNSW config based on vector priority."""
         config = self.settings.hnsw_config.get(priority, {})
         return HnswConfigDiff(
-            ef_construct=config.get("ef_construct", 200),
-            m=config.get("m", 48)
+            ef_construct=config.get("ef_construct", 200), m=config.get("m", 48)
         )
 
     def _get_vector_priority(self, vector_name: str) -> str:
@@ -272,7 +303,7 @@ class QdrantClient:
             return OptimizersConfigDiff(
                 default_segment_number=4,
                 indexing_threshold=20000,
-                memmap_threshold_kb=self.settings.memory_mapping_threshold_mb * 1024
+                memmap_threshold_kb=self.settings.memory_mapping_threshold_mb * 1024,
             )
         except Exception as e:
             logger.error(f"Failed to create optimized optimizers config: {e}")
@@ -282,10 +313,10 @@ class QdrantClient:
         """Create quantization configuration for performance optimization."""
         if not getattr(self.settings, "qdrant_enable_quantization", False):
             return None
-            
+
         quantization_type = getattr(self.settings, "qdrant_quantization_type", "scalar")
         always_ram = getattr(self.settings, "qdrant_quantization_always_ram", None)
-        
+
         try:
             if quantization_type == "binary":
                 quantization = BinaryQuantization(always_ram=always_ram)
@@ -293,19 +324,19 @@ class QdrantClient:
             elif quantization_type == "scalar":
                 quantization = ScalarQuantization(
                     type="int8",  # 8-bit quantization for good balance
-                    always_ram=always_ram
+                    always_ram=always_ram,
                 )
                 logger.info("Enabling scalar quantization for memory optimization")
             elif quantization_type == "product":
                 quantization = ProductQuantization(
                     compression=16,  # Good compression ratio for anime vectors
-                    always_ram=always_ram
+                    always_ram=always_ram,
                 )
                 logger.info("Enabling product quantization for storage optimization")
             else:
                 logger.warning(f"Unknown quantization type: {quantization_type}")
                 return None
-                
+
             return QuantizationConfig(quantization)
         except Exception as e:
             logger.error(f"Failed to create quantization config: {e}")
@@ -315,17 +346,21 @@ class QdrantClient:
         """Create optimizers configuration for indexing performance."""
         try:
             optimizer_params = {}
-            
+
             # Task #116: Configure memory mapping threshold
-            memory_threshold = getattr(self.settings, "qdrant_memory_mapping_threshold", None)
+            memory_threshold = getattr(
+                self.settings, "qdrant_memory_mapping_threshold", None
+            )
             if memory_threshold:
                 optimizer_params["memmap_threshold"] = memory_threshold
-                
+
             # Configure indexing threads if specified
-            indexing_threads = getattr(self.settings, "qdrant_hnsw_max_indexing_threads", None)
+            indexing_threads = getattr(
+                self.settings, "qdrant_hnsw_max_indexing_threads", None
+            )
             if indexing_threads:
                 optimizer_params["indexing_threshold"] = 0  # Start indexing immediately
-                
+
             if optimizer_params:
                 logger.info(f"Applying optimizer configuration: {optimizer_params}")
                 return OptimizersConfig(**optimizer_params)
@@ -368,21 +403,31 @@ class QdrantClient:
             return
 
         try:
-            logger.info(f"Setting up payload indexing for {len(indexed_fields)} searchable fields")
-            logger.info("Indexed fields enable fast filtering on: core metadata, genres, temporal data, platform stats")
-            logger.info("Non-indexed fields (enrichment_metadata) stored for debugging but don't impact search performance")
+            logger.info(
+                f"Setting up payload indexing for {len(indexed_fields)} searchable fields"
+            )
+            logger.info(
+                "Indexed fields enable fast filtering on: core metadata, genres, temporal data, platform stats"
+            )
+            logger.info(
+                "Non-indexed fields (enrichment_metadata) stored for debugging but don't impact search performance"
+            )
 
             for field in indexed_fields:
                 # Create index for each field to optimize filtering
                 self.client.create_payload_index(
                     collection_name=self.collection_name,
                     field_name=field,
-                    field_schema=PayloadSchemaType.KEYWORD  # Most anime fields are keywords/strings
+                    field_schema=PayloadSchemaType.KEYWORD,  # Most anime fields are keywords/strings
                 )
                 logger.debug(f"✓ Created payload index for searchable field: {field}")
 
-            logger.info(f"Successfully indexed {len(indexed_fields)} searchable payload fields")
-            logger.info("Payload optimization complete: fast filtering enabled, operational metadata preserved")
+            logger.info(
+                f"Successfully indexed {len(indexed_fields)} searchable payload fields"
+            )
+            logger.info(
+                "Payload optimization complete: fast filtering enabled, operational metadata preserved"
+            )
 
         except Exception as e:
             logger.warning(f"Failed to setup payload indexing: {e}")
@@ -435,10 +480,6 @@ class QdrantClient:
             logger.error(f"Failed to get stats: {e}")
             return {"error": str(e)}
 
-    
-
-    
-
     def _generate_point_id(self, anime_id: str) -> str:
         """Generate unique point ID from anime ID."""
         return hashlib.md5(anime_id.encode()).hexdigest()
@@ -461,31 +502,33 @@ class QdrantClient:
 
             for i in range(0, total_docs, batch_size):
                 batch_documents = documents[i : i + batch_size]
-                
+
                 # Process batch to get vectors and payloads
-                processed_batch = await self.embedding_manager.process_anime_batch(batch_documents)
-                
+                processed_batch = await self.embedding_manager.process_anime_batch(
+                    batch_documents
+                )
+
                 points = []
                 for doc_data in processed_batch:
-                    if doc_data['metadata'].get('processing_failed'):
-                        logger.warning(f"Skipping failed document: {doc_data['metadata'].get('anime_title')}")
+                    if doc_data["metadata"].get("processing_failed"):
+                        logger.warning(
+                            f"Skipping failed document: {doc_data['metadata'].get('anime_title')}"
+                        )
                         continue
 
-                    point_id = self._generate_point_id(doc_data['payload']["id"])
-                    
+                    point_id = self._generate_point_id(doc_data["payload"]["id"])
+
                     point = PointStruct(
                         id=point_id,
-                        vector=doc_data['vectors'],
-                        payload=doc_data['payload']
+                        vector=doc_data["vectors"],
+                        payload=doc_data["payload"],
                     )
                     points.append(point)
 
                 if points:
                     # Upsert batch to Qdrant
                     self.client.upsert(
-                        collection_name=self.collection_name,
-                        points=points,
-                        wait=True
+                        collection_name=self.collection_name, points=points, wait=True
                     )
                     logger.info(
                         f"Uploaded batch {i//batch_size + 1}/{(total_docs-1)//batch_size + 1} ({len(points)} points)"
@@ -498,59 +541,59 @@ class QdrantClient:
             logger.error(f"Failed to add documents: {e}")
             return False
 
-    async def search(
-        self, query: str, limit: int = 20, filters: Optional[Dict] = None
-    ) -> List[Dict[str, Any]]:
-        """Perform semantic search on anime collection.
+    # async def search(
+    #     self, query: str, limit: int = 20, filters: Optional[Dict] = None
+    # ) -> List[Dict[str, Any]]:
+    #     """Perform semantic search on anime collection.
 
-        Args:
-            query: Search query text
-            limit: Maximum number of results
-            filters: Optional filters for metadata
+    #     Args:
+    #         query: Search query text
+    #         limit: Maximum number of results
+    #         filters: Optional filters for metadata
 
-        Returns:
-            List of search results with anime data and scores
-        """
-        try:
-            # Create query embedding using the embedding manager's text processor
-            query_embedding = self.embedding_manager.text_processor.encode_text(query)
-            if query_embedding is None:
-                logger.warning("Failed to create embedding for search query.")
-                return []
+    #     Returns:
+    #         List of search results with anime data and scores
+    #     """
+    #     try:
+    #         # Create query embedding using the embedding manager's text processor
+    #         query_embedding = self.embedding_manager.text_processor.encode_text(query)
+    #         if query_embedding is None:
+    #             logger.warning("Failed to create embedding for search query.")
+    #             return []
 
-            # Build filter if provided
-            qdrant_filter = None
-            if filters:
-                qdrant_filter = self._build_filter(filters)
-            
-            loop = asyncio.get_event_loop()
+    #         # Build filter if provided
+    #         qdrant_filter = None
+    #         if filters:
+    #             qdrant_filter = self._build_filter(filters)
 
-            # Perform search using named vector for multi-vector collection
-            search_result = await loop.run_in_executor(
-                None,
-                lambda: self.client.search(
-                    collection_name=self.collection_name,
-                    query_vector=NamedVector(name="title_vector", vector=query_embedding),
-                    query_filter=qdrant_filter,
-                    limit=limit,
-                    with_payload=True,
-                    with_vectors=False,
-                ),
-            )
+    #         loop = asyncio.get_event_loop()
 
-            # Format results
-            results = []
-            for hit in search_result:
-                result = dict(hit.payload)
-                result["_score"] = hit.score
-                result["_id"] = hit.id
-                results.append(result)
+    #         # Perform search using named vector for multi-vector collection
+    #         search_result = await loop.run_in_executor(
+    #             None,
+    #             lambda: self.client.search(
+    #                 collection_name=self.collection_name,
+    #                 query_vector=NamedVector(name="title_vector", vector=query_embedding),
+    #                 query_filter=qdrant_filter,
+    #                 limit=limit,
+    #                 with_payload=True,
+    #                 with_vectors=False,
+    #             ),
+    #         )
 
-            return results
+    #         # Format results
+    #         results = []
+    #         for hit in search_result:
+    #             result = dict(hit.payload)
+    #             result["_score"] = hit.score
+    #             result["_id"] = hit.id
+    #             results.append(result)
 
-        except Exception as e:
-            logger.error(f"Search failed: {e}")
-            return []
+    #         return results
+
+    #     except Exception as e:
+    #         logger.error(f"Search failed: {e}")
+    #         return []
 
     async def get_similar_anime(
         self, anime_id: str, limit: int = 10
@@ -589,13 +632,14 @@ class QdrantClient:
 
             # Search excluding the reference anime itself
             filter_out_self = Filter(
-                must_not=[
-                    FieldCondition(key="id", match=MatchValue(value=anime_id))
-                ]
+                must_not=[FieldCondition(key="id", match=MatchValue(value=anime_id))]
             )
 
             # Use title_vector for similarity search
-            if isinstance(reference_vectors, dict) and "title_vector" in reference_vectors:
+            if (
+                isinstance(reference_vectors, dict)
+                and "title_vector" in reference_vectors
+            ):
                 query_vector = NamedVector(
                     name="title_vector",
                     vector=reference_vectors["title_vector"],
@@ -812,156 +856,397 @@ class QdrantClient:
             logger.error(f"Failed to create collection: {e}")
             return False
 
-    async def search_by_image(
-        self, image_data: str, limit: int = 10, use_hybrid_search: bool = True
+    # async def search_by_image(
+    #     self, image_data: str, limit: int = 10, use_hybrid_search: bool = True
+    # ) -> List[Dict[str, Any]]:
+    #     """Search for anime by image similarity using optimized hybrid search.
+
+    #     Args:
+    #         image_data: Base64 encoded image data
+    #         limit: Maximum number of results
+    #         use_hybrid_search: If True, uses modern hybrid search API for efficiency
+
+    #     Returns:
+    #         List of anime with visual similarity scores
+    #     """
+    #     try:
+    #         # Create image embedding
+    #         image_embedding = self.embedding_manager.vision_processor.encode_image(image_data)
+    #         if image_embedding is None:
+    #             logger.error("Failed to create image embedding")
+    #             return []
+
+    #         loop = asyncio.get_event_loop()
+
+    #         # Use image_vector for search
+    #         search_result = await loop.run_in_executor(
+    #             None,
+    #             lambda: self.client.search(
+    #                 collection_name=self.collection_name,
+    #                 query_vector=NamedVector(name="image_vector", vector=image_embedding),
+    #                 limit=limit,
+    #                 with_payload=True,
+    #                 with_vectors=False,
+    #             ),
+    #         )
+
+    #         # Format results
+    #         results = []
+    #         for hit in search_result:
+    #             result = dict(hit.payload)
+    #             result["visual_similarity_score"] = hit.score
+    #             result["_id"] = hit.id
+    #             results.append(result)
+
+    #         return results
+
+    #     except Exception as e:
+    #         logger.error(f"Image search failed: {e}")
+    #         return []
+
+    async def search_multi_vector(
+        self,
+        vector_queries: List[Dict[str, Any]],
+        limit: int = 10,
+        fusion_method: str = "rrf",
+        filters: Optional[Filter] = None,
     ) -> List[Dict[str, Any]]:
-        """Search for anime by image similarity using optimized hybrid search.
+        """Search across multiple vectors using Qdrant's native multi-vector API.
+
+        Args:
+            vector_queries: List of vector query dicts with keys:
+                - vector_name: Name of the vector to search (e.g., "title_vector")
+                - vector_data: The query vector (list of floats)
+                - weight: Optional weight for fusion (default: 1.0)
+            limit: Maximum number of results to return
+            fusion_method: Fusion algorithm - "rrf" or "dbsf"
+            filters: Optional Qdrant filter conditions
+
+        Returns:
+            List of search results with fusion scores
+        """
+        try:
+            if not vector_queries:
+                raise ValueError("vector_queries cannot be empty")
+
+            # Create prefetch queries for each vector
+            prefetch_queries = []
+            for query_config in vector_queries:
+                vector_name = query_config["vector_name"]
+                vector_data = query_config["vector_data"]
+
+                # Create a Prefetch query for this vector
+                prefetch_query = Prefetch(
+                    using=vector_name,
+                    query=vector_data,
+                    limit=limit * 2,  # Get more results for better fusion
+                    filter=filters,
+                )
+                prefetch_queries.append(prefetch_query)
+
+            # Determine fusion method
+            if fusion_method.lower() == "rrf":
+                fusion = Fusion.RRF
+            elif fusion_method.lower() == "dbsf":
+                fusion = Fusion.DBSF
+            else:
+                logger.warning(f"Unknown fusion method {fusion_method}, using RRF")
+                fusion = Fusion.RRF
+
+            # Create the fusion query
+            fusion_query = FusionQuery(fusion=fusion)
+
+            # Execute the multi-vector search using query_points
+            response = self.client.query_points(
+                collection_name=self.collection_name,
+                prefetch=prefetch_queries,
+                query=fusion_query,
+                limit=limit,
+                with_payload=True,
+                with_vectors=False,
+            )
+
+            # Convert response to our format
+            results = []
+            for point in response.points:
+                result = {
+                    "id": str(point.id),
+                    "anime_id": str(point.id),
+                    "_id": str(point.id),
+                    "score": point.score,
+                    "_score": point.score,
+                    "fusion_score": point.score,
+                    **point.payload,
+                }
+                results.append(result)
+
+            logger.info(
+                f"Multi-vector search returned {len(results)} results using {fusion_method.upper()}"
+            )
+            return results
+
+        except Exception as e:
+            logger.error(f"Multi-vector search failed: {e}")
+            raise
+
+    async def search_text_comprehensive(
+        self,
+        query: str,
+        limit: int = 10,
+        fusion_method: str = "rrf",
+        filters: Optional[Filter] = None,
+    ) -> List[Dict[str, Any]]:
+        """Search across all 12 text vectors using native Qdrant fusion.
+
+        Args:
+            query: Text search query
+            limit: Maximum number of results
+            fusion_method: Fusion algorithm - "rrf" or "dbsf"
+            filters: Optional Qdrant filter conditions
+
+        Returns:
+            List of search results with comprehensive text similarity scores
+        """
+        try:
+            # Generate text embedding once
+            query_embedding = self.embedding_manager.text_processor.encode_text(query)
+            if query_embedding is None:
+                logger.warning(
+                    "Failed to create embedding for comprehensive text search"
+                )
+                return []
+
+            # All 12 text vectors for comprehensive search
+            text_vector_names = [
+                "title_vector",
+                "character_vector",
+                "genre_vector",
+                "technical_vector",
+                "staff_vector",
+                "review_vector",
+                "temporal_vector",
+                "streaming_vector",
+                "related_vector",
+                "franchise_vector",
+                "episode_vector",
+                "identifiers_vector",
+            ]
+
+            # Create vector queries for all text vectors
+            vector_queries = []
+            for vector_name in text_vector_names:
+                vector_queries.append(
+                    {"vector_name": vector_name, "vector_data": query_embedding}
+                )
+
+            # Use native multi-vector search
+            results = await self.search_multi_vector(
+                vector_queries=vector_queries,
+                limit=limit,
+                fusion_method=fusion_method,
+                filters=filters,
+            )
+
+            logger.info(
+                f"Comprehensive text search returned {len(results)} results across {len(text_vector_names)} vectors"
+            )
+            return results
+
+        except Exception as e:
+            logger.error(f"Comprehensive text search failed: {e}")
+            return []
+
+    async def search_visual_comprehensive(
+        self,
+        image_data: str,
+        limit: int = 10,
+        fusion_method: str = "rrf",
+        filters: Optional[Filter] = None,
+    ) -> List[Dict[str, Any]]:
+        """Search across both image vectors using native Qdrant fusion.
 
         Args:
             image_data: Base64 encoded image data
             limit: Maximum number of results
-            use_hybrid_search: If True, uses modern hybrid search API for efficiency
+            fusion_method: Fusion algorithm - "rrf" or "dbsf"
+            filters: Optional Qdrant filter conditions
 
         Returns:
-            List of anime with visual similarity scores
+            List of search results with comprehensive visual similarity scores
         """
         try:
-            # Create image embedding
-            image_embedding = self.embedding_manager.vision_processor.encode_image(image_data)
+            # Generate image embedding once
+            image_embedding = self.embedding_manager.vision_processor.encode_image(
+                image_data
+            )
             if image_embedding is None:
-                logger.error("Failed to create image embedding")
+                logger.error(
+                    "Failed to create image embedding for comprehensive visual search"
+                )
                 return []
 
-            loop = asyncio.get_event_loop()
+            # Both image vectors for comprehensive visual search
+            image_vector_names = ["image_vector", "character_image_vector"]
 
-            # Use image_vector for search
-            search_result = await loop.run_in_executor(
-                None,
-                lambda: self.client.search(
-                    collection_name=self.collection_name,
-                    query_vector=NamedVector(name="image_vector", vector=image_embedding),
-                    limit=limit,
-                    with_payload=True,
-                    with_vectors=False,
-                ),
+            # Create vector queries for both image vectors
+            vector_queries = []
+            for vector_name in image_vector_names:
+                vector_queries.append(
+                    {"vector_name": vector_name, "vector_data": image_embedding}
+                )
+
+            # Use native multi-vector search
+            results = await self.search_multi_vector(
+                vector_queries=vector_queries,
+                limit=limit,
+                fusion_method=fusion_method,
+                filters=filters,
             )
 
-            # Format results
-            results = []
-            for hit in search_result:
-                result = dict(hit.payload)
-                result["visual_similarity_score"] = hit.score
-                result["_id"] = hit.id
-                results.append(result)
-
+            logger.info(
+                f"Comprehensive visual search returned {len(results)} results across {len(image_vector_names)} vectors"
+            )
             return results
 
         except Exception as e:
-            logger.error(f"Image search failed: {e}")
+            logger.error(f"Comprehensive visual search failed: {e}")
             return []
 
-    async def search_multimodal(
+    async def search_complete(
         self,
         query: str,
         image_data: Optional[str] = None,
         limit: int = 10,
-        text_weight: float = 0.7,
+        fusion_method: str = "rrf",
+        filters: Optional[Filter] = None,
     ) -> List[Dict[str, Any]]:
-        """Search using both text and image queries with weighted combination.
+        """Search across all 14 vectors (12 text + 2 image) using native Qdrant fusion.
 
         Args:
             query: Text search query
             image_data: Optional base64 encoded image data
             limit: Maximum number of results
-            text_weight: Weight for text similarity (0.0-1.0), image gets (1-text_weight)
+            fusion_method: Fusion algorithm - "rrf" or "dbsf"
+            filters: Optional Qdrant filter conditions
 
         Returns:
-            List of anime with combined similarity scores
+            List of search results with complete multi-modal similarity scores
         """
         try:
-            # If no image provided, just do text search
-            if not image_data:
-                logger.info("No image provided, performing text-only search")
-                return await self.search(query, limit)
+            vector_queries = []
 
-            # Get text results
-            text_results = await self.search(query, limit * 2)  # Get more for fusion
-            text_scores = {
-                r.get("anime_id", r.get("_id", "")): r.get("_score", 0.0)
-                for r in text_results
-            }
+            # Generate text embedding for all 12 text vectors
+            query_embedding = self.embedding_manager.text_processor.encode_text(query)
+            if query_embedding is None:
+                logger.warning("Failed to create text embedding for complete search")
+            else:
+                # All 12 text vectors
+                text_vector_names = [
+                    "title_vector",
+                    "character_vector",
+                    "genre_vector",
+                    "technical_vector",
+                    "staff_vector",
+                    "review_vector",
+                    "temporal_vector",
+                    "streaming_vector",
+                    "related_vector",
+                    "franchise_vector",
+                    "episode_vector",
+                    "identifiers_vector",
+                ]
 
-            # Get image results
-            image_results = await self.search_by_image(image_data, limit * 2)
-            image_scores = {
-                r.get("anime_id", r.get("_id", "")): r.get(
-                    "visual_similarity_score", r.get("score", 0.0)
-                )
-                for r in image_results
-            }
-
-            # Debug logging
-            logger.info(f"Text search returned {len(text_results)} results")
-            logger.info(f"Image search returned {len(image_results)} results")
-
-            # Combine results with weighted scoring
-            combined_results = {}
-            all_anime_ids = set(text_scores.keys()) | set(image_scores.keys())
-            all_anime_ids.discard("")  # Remove empty IDs
-
-            for anime_id in all_anime_ids:
-                text_score = text_scores.get(anime_id, 0.0)
-                image_score = image_scores.get(anime_id, 0.0)
-
-                # Weighted combination - ensure at least one score exists
-                if text_score > 0 or image_score > 0:
-                    combined_score = (
-                        text_weight * text_score + (1 - text_weight) * image_score
+                for vector_name in text_vector_names:
+                    vector_queries.append(
+                        {"vector_name": vector_name, "vector_data": query_embedding}
                     )
-                    combined_results[anime_id] = combined_score
 
-            logger.info(f"Combined {len(combined_results)} unique results")
+            # Add image vectors if image provided
+            if image_data:
+                image_embedding = self.embedding_manager.vision_processor.encode_image(
+                    image_data
+                )
+                if image_embedding is None:
+                    logger.warning(
+                        "Failed to create image embedding for complete search"
+                    )
+                else:
+                    # Both image vectors
+                    image_vector_names = ["image_vector", "character_image_vector"]
 
-            # Sort by combined score and get top results
-            if not combined_results:
-                logger.warning("No combined results, falling back to text search")
-                return await self.search(query, limit)
+                    for vector_name in image_vector_names:
+                        vector_queries.append(
+                            {"vector_name": vector_name, "vector_data": image_embedding}
+                        )
 
-            sorted_anime_ids = sorted(
-                combined_results.keys(), key=lambda x: combined_results[x], reverse=True
-            )[:limit]
+            if not vector_queries:
+                logger.error("No valid embeddings generated for complete search")
+                return []
 
-            # Fetch full anime data for top results
-            final_results = []
-            for anime_id in sorted_anime_ids:
-                # Try to get data from existing results first to avoid extra queries
-                anime_data = None
-                for result in text_results + image_results:
-                    if (
-                        result.get("anime_id") == anime_id
-                        or result.get("_id") == anime_id
-                    ):
-                        anime_data = dict(result)
-                        break
+            # Use native multi-vector search across all vectors
+            results = await self.search_multi_vector(
+                vector_queries=vector_queries,
+                limit=limit,
+                fusion_method=fusion_method,
+                filters=filters,
+            )
 
-                # If not found in results, query directly
-                if not anime_data:
-                    anime_data = await self.get_by_id(anime_id)
-
-                if anime_data:
-                    anime_data["multimodal_score"] = combined_results[anime_id]
-                    anime_data["text_score"] = text_scores.get(anime_id, 0.0)
-                    anime_data["image_score"] = image_scores.get(anime_id, 0.0)
-                    anime_data["_score"] = combined_results[anime_id]  # For consistency
-                    final_results.append(anime_data)
-
-            logger.info(f"Returning {len(final_results)} multimodal results")
-            return final_results
+            logger.info(
+                f"Complete search returned {len(results)} results across {len(vector_queries)} vectors"
+            )
+            return results
 
         except Exception as e:
-            logger.error(f"Multimodal search failed: {e}")
-            # Fallback to text-only search
-            return await self.search(query, limit)
+            logger.error(f"Complete search failed: {e}")
+            return []
+
+    async def search_characters(
+        self,
+        query: str,
+        limit: int = 10,
+        fusion_method: str = "rrf",
+        filters: Optional[Filter] = None,
+    ) -> List[Dict[str, Any]]:
+        """Search specifically for character-related content.
+
+        Args:
+            query: Text search query focused on characters
+            limit: Maximum number of results
+            fusion_method: Fusion algorithm - "rrf" or "dbsf"
+            filters: Optional Qdrant filter conditions
+
+        Returns:
+            List of search results focused on character similarity
+        """
+        try:
+            # Generate text embedding
+            query_embedding = self.embedding_manager.text_processor.encode_text(query)
+            if query_embedding is None:
+                logger.warning("Failed to create embedding for character search")
+                return []
+
+            # Character-focused vectors
+            vector_queries = [
+                {"vector_name": "character_vector", "vector_data": query_embedding},
+                {
+                    "vector_name": "title_vector",
+                    "vector_data": query_embedding,
+                },  # For context
+            ]
+
+            results = await self.search_multi_vector(
+                vector_queries=vector_queries,
+                limit=limit,
+                fusion_method=fusion_method,
+                filters=filters,
+            )
+
+            logger.info(f"Character search returned {len(results)} results")
+            return results
+
+        except Exception as e:
+            logger.error(f"Character search failed: {e}")
+            return []
 
     async def find_visually_similar_anime(
         self, anime_id: str, limit: int = 10
@@ -996,7 +1281,10 @@ class QdrantClient:
 
             # Extract image vector
             reference_vectors = reference_point[0].vector
-            if isinstance(reference_vectors, dict) and "image_vector" in reference_vectors:
+            if (
+                isinstance(reference_vectors, dict)
+                and "image_vector" in reference_vectors
+            ):
                 image_vector = reference_vectors["image_vector"]
                 # Check if image vector is all zeros (no image processed)
                 if all(v == 0.0 for v in image_vector):
@@ -1010,9 +1298,7 @@ class QdrantClient:
 
             # Filter to exclude the reference anime itself
             filter_out_self = Filter(
-                must_not=[
-                    FieldCondition(key="id", match=MatchValue(value=anime_id))
-                ]
+                must_not=[FieldCondition(key="id", match=MatchValue(value=anime_id))]
             )
 
             # Search using image_vector
