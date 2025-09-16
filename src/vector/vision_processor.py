@@ -590,13 +590,13 @@ class VisionProcessor:
         return self._field_mapper
 
     async def process_anime_image_vector(self, anime) -> Optional[List[float]]:
-        """Process ALL images from anime data and combine into unified vector with duplicate detection.
+        """Process general anime images (covers, posters, banners, trailers) excluding character images.
 
         Args:
             anime: AnimeEntry instance with image data
 
         Returns:
-            Combined image embedding vector or None if processing fails
+            Combined general image embedding vector or None if processing fails
         """
         try:
             field_mapper = self._get_field_mapper()
@@ -608,7 +608,7 @@ class VisionProcessor:
                 logger.warning("No image URLs found for anime")
                 return None
 
-            logger.debug(f"Processing ALL {len(image_urls)} images for anime")
+            logger.debug(f"Processing {len(image_urls)} general images for anime (excluding character images)")
 
             # Process all images with duplicate vector detection
             successful_embeddings = []
@@ -645,11 +645,74 @@ class VisionProcessor:
                     return combined_embedding
 
             # Fallback: return None to store URLs in payload instead
-            logger.info("All image processing failed, URLs will be stored in payload")
+            logger.info("All general image processing failed, URLs will be stored in payload")
             return None
 
         except Exception as e:
-            logger.error(f"Image vector processing failed: {e}")
+            logger.error(f"General image vector processing failed: {e}")
+            return None
+
+    async def process_anime_character_image_vector(self, anime) -> Optional[List[float]]:
+        """Process character images from anime data for character identification and recommendations.
+
+        Args:
+            anime: AnimeEntry instance with character image data
+
+        Returns:
+            Combined character image embedding vector or None if processing fails
+        """
+        try:
+            field_mapper = self._get_field_mapper()
+
+            # Extract character image URLs from anime data (separate from general images)
+            character_image_urls = field_mapper._extract_character_image_content(anime)
+
+            if not character_image_urls:
+                logger.debug("No character image URLs found for anime")
+                return None
+
+            logger.debug(f"Processing {len(character_image_urls)} character images for anime")
+
+            # Process character images with duplicate vector detection
+            successful_embeddings = []
+            processed_vectors = set()  # Store vector hashes to detect duplicates
+
+            for i, image_url in enumerate(character_image_urls):
+                try:
+                    image_data = await self._download_and_cache_image(image_url)
+                    if image_data:
+                        embedding = self.encode_image(image_data)
+                        if embedding:
+                            # Create hash of embedding to check for duplicates
+                            embedding_hash = self._hash_embedding(embedding)
+
+                            if embedding_hash not in processed_vectors:
+                                successful_embeddings.append(embedding)
+                                processed_vectors.add(embedding_hash)
+                                logger.debug(f"Successfully encoded unique character image {i+1}/{len(character_image_urls)}")
+                            else:
+                                logger.debug(f"Skipped duplicate character image {i+1}/{len(character_image_urls)}")
+                except Exception as e:
+                    logger.warning(f"Failed to process character image {i+1}: {e}")
+                    continue
+
+            if successful_embeddings:
+                # Combine multiple embeddings by averaging (preserves character identification features)
+                if len(successful_embeddings) == 1:
+                    logger.debug("Single unique character image processed")
+                    return successful_embeddings[0]
+                else:
+                    # Average multiple embeddings for comprehensive character visual representation
+                    combined_embedding = np.mean(successful_embeddings, axis=0).tolist()
+                    logger.debug(f"Combined {len(successful_embeddings)} unique character image embeddings from {len(character_image_urls)} total character images")
+                    return combined_embedding
+
+            # Fallback: return None to store character image URLs in payload instead
+            logger.debug("All character image processing failed, URLs will be stored in payload")
+            return None
+
+        except Exception as e:
+            logger.error(f"Character image vector processing failed: {e}")
             return None
 
     def _hash_embedding(self, embedding: List[float], precision: int = 4) -> str:

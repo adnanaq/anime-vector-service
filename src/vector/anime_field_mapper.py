@@ -4,7 +4,7 @@ AnimeFieldMapper - Extract and map anime data fields to 14-vector semantic archi
 
 Maps anime data from AnimeEntry models to appropriate text/visual embeddings
 for each vector type. Implements the comprehensive field mapping strategy
-defined in Phase 2.5 architecture.
+defined in Phase 2.5 architecture with character image semantic separation.
 """
 
 import logging
@@ -17,11 +17,13 @@ logger = logging.getLogger(__name__)
 
 class AnimeFieldMapper:
     """
-    Maps anime data fields to 13-vector semantic architecture.
+    Maps anime data fields to 14-vector semantic architecture.
 
     Extracts and processes anime data for embedding into:
     - 12 text vectors (BGE-M3, 1024-dim each) for semantic search
-    - 1 visual vector (JinaCLIP v2, 768-dim) for image search
+    - 2 visual vectors (JinaCLIP v2, 1024-dim each) for image search
+      * image_vector: covers, posters, banners, trailer thumbnails
+      * character_image_vector: character images for character identification
     """
 
     def __init__(self) -> None:
@@ -30,7 +32,7 @@ class AnimeFieldMapper:
 
     def map_anime_to_vectors(self, anime: AnimeEntry) -> Dict[str, Any]:
         """
-        Map complete anime entry to all 13 vectors.
+        Map complete anime entry to all 14 vectors.
 
         Args:
             anime: AnimeEntry model with comprehensive anime data
@@ -54,8 +56,9 @@ class AnimeFieldMapper:
         vector_data["episode_vector"] = self._extract_episode_content(anime)
         vector_data["identifiers_vector"] = self._extract_identifiers_content(anime)
 
-        # Visual vector (1)
+        # Visual vectors (2)
         vector_data["image_vector"] = self._extract_image_content(anime)
+        vector_data["character_image_vector"] = self._extract_character_image_content(anime)
 
         return vector_data
 
@@ -375,11 +378,11 @@ class AnimeFieldMapper:
         return " | ".join(content_parts)
 
     # ============================================================================
-    # VISUAL VECTOR EXTRACTOR (JinaCLIP v2, 768-dim)
+    # VISUAL VECTOR EXTRACTORS (JinaCLIP v2, 1024-dim)
     # ============================================================================
 
     def _extract_image_content(self, anime: AnimeEntry) -> List[str]:
-        """Extract all image URLs for comprehensive visual embedding."""
+        """Extract general anime image URLs (covers, posters, banners, trailers) excluding character images."""
         image_urls = []
 
         # Process all images from unified images field (now simple URL strings)
@@ -409,13 +412,6 @@ class AnimeFieldMapper:
                         if image_url:  # Simple URL string
                             image_urls.append(image_url)
 
-        # Character images (rich character visual data)
-        for character in anime.characters:
-            if character.images:
-                for platform, image_url in character.images.items():
-                    if image_url:
-                        image_urls.append(image_url)
-
         # Trailer thumbnails (promotional visual content)
         for trailer in anime.trailers:
             if hasattr(trailer, "thumbnail_url") and trailer.thumbnail_url:
@@ -425,6 +421,22 @@ class AnimeFieldMapper:
 
         # Remove duplicates while preserving order
         unique_urls = list(dict.fromkeys(image_urls))
+        return unique_urls
+
+    def _extract_character_image_content(self, anime: AnimeEntry) -> List[str]:
+        """Extract character image URLs for character-specific visual embedding."""
+        character_image_urls = []
+
+        # Extract character images separately for character identification and recommendations
+        for character in anime.characters:
+            if character.images:
+                # character.images is Dict[str, str] with platform keys mapping to URLs
+                for platform, image_url in character.images.items():
+                    if image_url:
+                        character_image_urls.append(image_url)
+
+        # Remove duplicates while preserving order
+        unique_urls = list(dict.fromkeys(character_image_urls))
         return unique_urls
 
     # ============================================================================
@@ -447,8 +459,9 @@ class AnimeFieldMapper:
             "franchise_vector": "text",
             "episode_vector": "text",
             "identifiers_vector": "text",
-            # Visual vector (JinaCLIP v2, 768-dim)
+            # Visual vectors (JinaCLIP v2, 1024-dim)
             "image_vector": "visual",
+            "character_image_vector": "visual",
         }
 
     def validate_mapping(self, vector_data: Dict[str, Any]) -> bool:

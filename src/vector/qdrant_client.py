@@ -39,6 +39,8 @@ from qdrant_client.models import (
 )
 
 from ..config import Settings
+from ..models.anime import AnimeEntry
+from .embedding_manager import MultiVectorEmbeddingManager
 
 logger = logging.getLogger(__name__)
 
@@ -69,13 +71,10 @@ class QdrantClient:
         self.url = url or settings.qdrant_url
         self.collection_name = collection_name or settings.qdrant_collection_name
         self.client = QdrantSDK(url=self.url)
-        self._vector_size = settings.qdrant_vector_size
         self._distance_metric = settings.qdrant_distance_metric
-        self._image_vector_size = getattr(settings, "image_vector_size", 512)
         
-        # Embedding processors
-        self.text_processor = None
-        self.vision_processor = None
+        # Initialize embedding manager
+        self.embedding_manager = MultiVectorEmbeddingManager(settings)
 
         # Initialize processors
         self._init_processors()
@@ -436,177 +435,58 @@ class QdrantClient:
             logger.error(f"Failed to get stats: {e}")
             return {"error": str(e)}
 
-    def _create_image_embedding(self, image_data: str) -> Optional[List[float]]:
-        """Create image embedding vector using modern vision processor.
+    
 
-        Args:
-            image_data: Base64 encoded image data
-
-        Returns:
-            Image embedding vector or None if processing fails
-        """
-        try:
-            if not image_data or not image_data.strip():
-                logger.warning("Empty image data provided for embedding")
-                return [0.0] * self._image_vector_size
-
-            # Use modern vision processor
-            embedding = self.vision_processor.encode_image(image_data)
-
-            if embedding is None:
-                logger.warning("No embedding generated for image")
-                return [0.0] * self._image_vector_size
-
-            # Ensure correct dimensions
-            if len(embedding) != self._image_vector_size:
-                logger.warning(
-                    f"Image embedding size mismatch: got {len(embedding)}, expected {self._image_vector_size}"
-                )
-                # Pad or truncate to match expected size
-                if len(embedding) < self._image_vector_size:
-                    embedding.extend([0.0] * (self._image_vector_size - len(embedding)))
-                else:
-                    embedding = embedding[: self._image_vector_size]
-
-            return embedding
-
-        except Exception as e:
-            logger.error(f"Failed to create image embedding: {e}")
-            # Return zero vector on error to prevent pipeline failure
-            return [0.0] * self._image_vector_size
-
-    def _create_embedding(self, text: str) -> List[float]:
-        """Create semantic embedding vector from text using modern text processor."""
-        try:
-            if not text or not text.strip():
-                logger.warning("Empty text provided for embedding")
-                # Return zero vector for empty text
-                return [0.0] * self._vector_size
-
-            # Use modern text processor
-            embedding = self.text_processor.encode_text(text.strip())
-            
-            if embedding is None:
-                logger.warning(f"No embedding generated for text: {text[:100]}...")
-                return [0.0] * self._vector_size
-
-            # Ensure correct dimensions
-            if len(embedding) != self._vector_size:
-                logger.warning(
-                    f"Embedding size mismatch: got {len(embedding)}, expected {self._vector_size}"
-                )
-                # Pad or truncate to match expected size
-                if len(embedding) < self._vector_size:
-                    embedding.extend([0.0] * (self._vector_size - len(embedding)))
-                else:
-                    embedding = embedding[: self._vector_size]
-
-            return embedding
-
-        except Exception as e:
-            logger.error(f"Failed to create embedding for text '{text[:100]}...': {e}")
-            # Return zero vector on error to prevent pipeline failure
-            return [0.0] * self._vector_size
+    
 
     def _generate_point_id(self, anime_id: str) -> str:
         """Generate unique point ID from anime ID."""
         return hashlib.md5(anime_id.encode()).hexdigest()
 
     async def add_documents(
-        self, documents: List[Dict[str, Any]], batch_size: int = 100
+        self, documents: List[AnimeEntry], batch_size: int = 100
     ) -> bool:
-        """Add anime documents to the collection.
+        """Add anime documents to the collection using the 13-vector architecture.
 
         Args:
-            documents: List of anime documents
+            documents: List of AnimeEntry objects
             batch_size: Number of documents to process per batch
 
         Returns:
             True if successful, False otherwise
         """
         try:
-            loop = asyncio.get_event_loop()
             total_docs = len(documents)
-
             logger.info(f"Adding {total_docs} documents in batches of {batch_size}")
 
             for i in range(0, total_docs, batch_size):
-                batch = documents[i : i + batch_size]
+                batch_documents = documents[i : i + batch_size]
+                
+                # Process batch to get vectors and payloads
+                processed_batch = await self.embedding_manager.process_anime_batch(batch_documents)
+                
                 points = []
-
-                for doc in batch:
-                    try:
-                        # Create text embedding from embedding_text
-                        embedding_text = doc.get("embedding_text", "")
-                        if not embedding_text:
-                            logger.warning(
-                                f"Empty embedding_text for anime_id: {doc.get('anime_id')}"
-                            )
-                            continue
-
-                        text_embedding = self._create_embedding(embedding_text)
-                        point_id = self._generate_point_id(doc["anime_id"])
-
-                        # Prepare payload (exclude processed fields)
-                        payload = {
-                            k: v
-                            for k, v in doc.items()
-                            if k
-                            not in ("embedding_text", "picture_data", "thumbnail_data")
-                        }
-
-                        # Create multi-vector point with text + picture + thumbnail vectors
-                        vectors = {"text": text_embedding}
-
-                        # Add picture vector if picture data available
-                        picture_data = doc.get("picture_data")
-                        if picture_data:
-                            picture_embedding = self._create_image_embedding(
-                                picture_data
-                            )
-                            if picture_embedding:
-                                vectors["picture"] = picture_embedding
-                            else:
-                                vectors["picture"] = [0.0] * self._image_vector_size
-                        else:
-                            # Use zero vector for missing picture
-                            vectors["picture"] = [0.0] * self._image_vector_size
-
-                        # Add thumbnail vector if thumbnail data available
-                        thumbnail_data = doc.get("thumbnail_data")
-                        if thumbnail_data:
-                            thumbnail_embedding = self._create_image_embedding(
-                                thumbnail_data
-                            )
-                            if thumbnail_embedding:
-                                vectors["thumbnail"] = thumbnail_embedding
-                            else:
-                                vectors["thumbnail"] = [0.0] * self._image_vector_size
-                        else:
-                            # Use zero vector for missing thumbnail
-                            vectors["thumbnail"] = [0.0] * self._image_vector_size
-
-                        point = PointStruct(
-                            id=point_id, vector=vectors, payload=payload
-                        )
-
-                        points.append(point)
-
-                    except Exception as e:
-                        logger.error(
-                            f"Failed to process document {doc.get('anime_id')}: {e}"
-                        )
+                for doc_data in processed_batch:
+                    if doc_data['metadata'].get('processing_failed'):
+                        logger.warning(f"Skipping failed document: {doc_data['metadata'].get('anime_title')}")
                         continue
 
-                if points:
-                    # Upload batch
-                    await loop.run_in_executor(
-                        None,
-                        lambda: self.client.upsert(
-                            collection_name=self.collection_name, points=points
-                        ),
+                    point_id = self._generate_point_id(doc_data['payload']["id"])
+                    
+                    point = PointStruct(
+                        id=point_id,
+                        vector=doc_data['vectors'],
+                        payload=doc_data['payload']
                     )
+                    points.append(point)
 
+                if points:
+                    # Upsert batch to Qdrant
+                    self.client.upsert(
+                        collection_name=self.collection_name,
+                        points=points,
+                        wait=True
+                    )
                     logger.info(
                         f"Uploaded batch {i//batch_size + 1}/{(total_docs-1)//batch_size + 1} ({len(points)} points)"
                     )
@@ -632,14 +512,17 @@ class QdrantClient:
             List of search results with anime data and scores
         """
         try:
-            # Create query embedding
-            query_embedding = self._create_embedding(query)
+            # Create query embedding using the embedding manager's text processor
+            query_embedding = self.embedding_manager.text_processor.encode_text(query)
+            if query_embedding is None:
+                logger.warning("Failed to create embedding for search query.")
+                return []
 
             # Build filter if provided
             qdrant_filter = None
             if filters:
                 qdrant_filter = self._build_filter(filters)
-            print(f"Qdrant filter: {qdrant_filter}")
+            
             loop = asyncio.get_event_loop()
 
             # Perform search using named vector for multi-vector collection
@@ -647,7 +530,7 @@ class QdrantClient:
                 None,
                 lambda: self.client.search(
                     collection_name=self.collection_name,
-                    query_vector=NamedVector(name="text", vector=query_embedding),
+                    query_vector=NamedVector(name="title_vector", vector=query_embedding),
                     query_filter=qdrant_filter,
                     limit=limit,
                     with_payload=True,
@@ -702,27 +585,24 @@ class QdrantClient:
                 return []
 
             # Use the reference vector to find similar anime
-            reference_vector = reference_point[0].vector
+            reference_vectors = reference_point[0].vector
 
             # Search excluding the reference anime itself
             filter_out_self = Filter(
                 must_not=[
-                    FieldCondition(key="anime_id", match=MatchValue(value=anime_id))
+                    FieldCondition(key="id", match=MatchValue(value=anime_id))
                 ]
             )
 
-            # Use text vector for similarity search (multi-vector collection)
-            if isinstance(reference_vector, dict):
+            # Use title_vector for similarity search
+            if isinstance(reference_vectors, dict) and "title_vector" in reference_vectors:
                 query_vector = NamedVector(
-                    name="text",
-                    vector=reference_vector.get(
-                        "text", reference_vector.get("picture", [])
-                    ),
+                    name="title_vector",
+                    vector=reference_vectors["title_vector"],
                 )
             else:
-                # Legacy case - shouldn't happen with multi-vector
-                logger.warning("Found non-dict vector in multi-vector collection")
-                query_vector = reference_vector
+                logger.warning(f"No 'title_vector' found for anime: {anime_id}")
+                return []
 
             search_result = await loop.run_in_executor(
                 None,
@@ -947,107 +827,19 @@ class QdrantClient:
         """
         try:
             # Create image embedding
-            image_embedding = self._create_image_embedding(image_data)
-            if not image_embedding:
+            image_embedding = self.embedding_manager.vision_processor.encode_image(image_data)
+            if image_embedding is None:
                 logger.error("Failed to create image embedding")
                 return []
 
             loop = asyncio.get_event_loop()
 
-            if use_hybrid_search:
-                # Task #116: Use modern hybrid search API (single request vs multiple)
-                try:
-                    # Use batch search for multiple vectors in single request
-                    search_requests = [
-                        {
-                            "vector": NamedVector(name="picture", vector=image_embedding),
-                            "limit": limit,
-                            "with_payload": True,
-                            "with_vectors": False,
-                        },
-                        {
-                            "vector": NamedVector(name="thumbnail", vector=image_embedding),
-                            "limit": limit,
-                            "with_payload": True,
-                            "with_vectors": False,
-                        }
-                    ]
-                    
-                    # Execute hybrid search
-                    hybrid_results = await loop.run_in_executor(
-                        None,
-                        lambda: self.client.search_batch(
-                            collection_name=self.collection_name,
-                            requests=search_requests
-                        ),
-                    )
-
-                    # Process hybrid results
-                    picture_results = hybrid_results[0] if len(hybrid_results) > 0 else []
-                    thumbnail_results = hybrid_results[1] if len(hybrid_results) > 1 else []
-
-                    # Combine results with weighted scoring (favor picture over thumbnail)
-                    picture_scores = {
-                        hit.payload.get("anime_id", hit.id): hit.score
-                        for hit in picture_results
-                    }
-                    thumbnail_scores = {
-                        hit.payload.get("anime_id", hit.id): hit.score
-                        for hit in thumbnail_results
-                    }
-
-                    # Weighted combination: 70% picture, 30% thumbnail
-                    combined_results = {}
-                    all_anime_ids = set(picture_scores.keys()) | set(thumbnail_scores.keys())
-
-                    for anime_id in all_anime_ids:
-                        picture_score = picture_scores.get(anime_id, 0.0)
-                        thumbnail_score = thumbnail_scores.get(anime_id, 0.0)
-
-                        # Combined score with higher weight on picture
-                        if picture_score > 0 or thumbnail_score > 0:
-                            combined_score = 0.7 * picture_score + 0.3 * thumbnail_score
-                            combined_results[anime_id] = combined_score
-
-                    # Sort by combined score and get top results
-                    sorted_anime_ids = sorted(
-                        combined_results.keys(),
-                        key=lambda x: combined_results[x],
-                        reverse=True,
-                    )[:limit]
-
-                    # Get full anime data for results
-                    results = []
-                    for anime_id in sorted_anime_ids:
-                        # Find the anime data from either result set
-                        anime_data = None
-                        for hit in picture_results + thumbnail_results:
-                            if hit.payload.get("anime_id", hit.id) == anime_id:
-                                anime_data = dict(hit.payload)
-                                break
-
-                        if anime_data:
-                            anime_data["visual_similarity_score"] = combined_results[anime_id]
-                            anime_data["picture_score"] = picture_scores.get(anime_id, 0.0)
-                            anime_data["thumbnail_score"] = thumbnail_scores.get(anime_id, 0.0)
-                            anime_data["_id"] = anime_id
-                            results.append(anime_data)
-
-                    logger.info(
-                        f"Hybrid image search: {len(picture_results)} picture + {len(thumbnail_results)} thumbnail = {len(results)} final results"
-                    )
-                    return results
-
-                except Exception as hybrid_error:
-                    logger.warning(f"Hybrid search failed, falling back to individual searches: {hybrid_error}")
-                    # Fall back to individual searches if hybrid search not available
-
-            # Fallback: Individual searches (legacy mode or hybrid search unavailable)
-            picture_results = await loop.run_in_executor(
+            # Use image_vector for search
+            search_result = await loop.run_in_executor(
                 None,
                 lambda: self.client.search(
                     collection_name=self.collection_name,
-                    query_vector=NamedVector(name="picture", vector=image_embedding),
+                    query_vector=NamedVector(name="image_vector", vector=image_embedding),
                     limit=limit,
                     with_payload=True,
                     with_vectors=False,
@@ -1056,7 +848,7 @@ class QdrantClient:
 
             # Format results
             results = []
-            for hit in picture_results:
+            for hit in search_result:
                 result = dict(hit.payload)
                 result["visual_similarity_score"] = hit.score
                 result["_id"] = hit.id
@@ -1204,8 +996,8 @@ class QdrantClient:
 
             # Extract image vector
             reference_vectors = reference_point[0].vector
-            if isinstance(reference_vectors, dict) and "picture" in reference_vectors:
-                image_vector = reference_vectors["picture"]
+            if isinstance(reference_vectors, dict) and "image_vector" in reference_vectors:
+                image_vector = reference_vectors["image_vector"]
                 # Check if image vector is all zeros (no image processed)
                 if all(v == 0.0 for v in image_vector):
                     logger.warning(
@@ -1213,22 +1005,22 @@ class QdrantClient:
                     )
                     return []
             else:
-                logger.warning(f"No picture vector found for anime: {anime_id}")
+                logger.warning(f"No image_vector found for anime: {anime_id}")
                 return []
 
             # Filter to exclude the reference anime itself
             filter_out_self = Filter(
                 must_not=[
-                    FieldCondition(key="anime_id", match=MatchValue(value=anime_id))
+                    FieldCondition(key="id", match=MatchValue(value=anime_id))
                 ]
             )
 
-            # Search using picture vector
+            # Search using image_vector
             search_result = await loop.run_in_executor(
                 None,
                 lambda: self.client.search(
                     collection_name=self.collection_name,
-                    query_vector=NamedVector(name="picture", vector=image_vector),
+                    query_vector=NamedVector(name="image_vector", vector=image_vector),
                     query_filter=filter_out_self,
                     limit=limit,
                     with_payload=True,

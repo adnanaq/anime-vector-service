@@ -57,7 +57,7 @@ class Settings(BaseSettings):
         description="Image embedding dimensions (JinaCLIP v2: 1024, CLIP: 512)"
     )
 
-    # 13-Vector Semantic Architecture Configuration
+    # 14-Vector Semantic Architecture Configuration
     vector_names: dict = Field(
         default={
             "title_vector": 1024,
@@ -72,15 +72,16 @@ class Settings(BaseSettings):
             "franchise_vector": 1024,
             "episode_vector": 1024,
             "identifiers_vector": 1024,
-            "image_vector": 1024
+            "image_vector": 1024,
+            "character_image_vector": 1024
         },
-        description="13-vector semantic architecture with named vectors and dimensions (BGE-M3: 1024-dim, JinaCLIP v2: 1024-dim)"
+        description="14-vector semantic architecture with named vectors and dimensions (BGE-M3: 1024-dim, JinaCLIP v2: 1024-dim)"
     )
 
     # Vector Priority Classification for Optimization
     vector_priorities: dict = Field(
         default={
-            "high": ["title_vector", "character_vector", "genre_vector", "review_vector", "image_vector"],
+            "high": ["title_vector", "character_vector", "genre_vector", "review_vector", "image_vector", "character_image_vector"],
             "medium": ["technical_vector", "staff_vector", "temporal_vector", "streaming_vector"],
             "low": ["related_vector", "franchise_vector", "episode_vector", "identifiers_vector"]
         },
