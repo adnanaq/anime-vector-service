@@ -133,7 +133,6 @@ dmypy.json
 
 # Model cache directories
 cache/
-models/
 .cache/
 *.model
 *.bin
