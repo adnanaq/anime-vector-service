@@ -1,7 +1,7 @@
 """Vector Service Configuration Settings."""
 
 from functools import lru_cache
-from typing import List, Optional
+from typing import List, Optional, Literal
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -141,6 +141,46 @@ class Settings(BaseSettings):
     model_warm_up: bool = Field(
         default=False,
         description="Pre-load and warm up models during initialization"
+    )
+
+    # LoRA Fine-tuning Configuration
+    lora_enabled: bool = Field(
+        default=False,
+        description="Enable LoRA (Low-Rank Adaptation) fine-tuning"
+    )
+    lora_rank: int = Field(
+        default=16,
+        ge=1,
+        le=256,
+        description="LoRA rank (r) parameter - higher values = more parameters"
+    )
+    lora_alpha: int = Field(
+        default=32,
+        ge=1,
+        le=512,
+        description="LoRA alpha parameter - scaling factor (typically 2*rank)"
+    )
+    lora_dropout: float = Field(
+        default=0.1,
+        ge=0.0,
+        le=0.5,
+        description="LoRA dropout probability for regularization"
+    )
+    lora_target_modules: List[str] = Field(
+        default=[
+            "q_proj", "k_proj", "v_proj", "out_proj",  # Attention layers
+            "fc1", "fc2",  # MLP layers
+            "to_q", "to_k", "to_v", "to_out"  # Alternative naming
+        ],
+        description="Target modules for LoRA adaptation in vision transformers"
+    )
+    lora_bias: Literal["none", "all", "lora_only"] = Field(
+        default="none",
+        description="LoRA bias handling: none, all, lora_only"
+    )
+    lora_task_type: str = Field(
+        default="FEATURE_EXTRACTION",
+        description="LoRA task type for vision models"
     )
 
     # Image Processing Configuration

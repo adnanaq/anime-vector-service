@@ -5,20 +5,236 @@ vision models for anime art style recognition tasks.
 """
 
 import logging
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Dict, List, Optional, Tuple, Any, Union, Literal
 from pathlib import Path
 
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
+from torch.optim import AdamW
 import torch.nn.functional as F
-from transformers import AutoModel, AutoTokenizer
-from peft import LoraConfig, get_peft_model, TaskType
+from transformers import AutoModel, AutoTokenizer, PreTrainedModel
+from peft import LoraConfig, get_peft_model, TaskType, PeftModel
 import numpy as np
+try:
+    import open_clip
+except ImportError:
+    open_clip = None
 
 from ..config import Settings
 
 logger = logging.getLogger(__name__)
+
+
+class LoRAEnhancedVisionModel(nn.Module):
+    """LoRA-enhanced vision model for anime-specific fine-tuning."""
+
+    def __init__(
+        self,
+        base_vision_model: nn.Module,
+        lora_config: LoraConfig,
+        freeze_base: bool = True
+    ):
+        """Initialize LoRA-enhanced vision model.
+
+        Args:
+            base_vision_model: Base vision model (e.g., OpenCLIP)
+            lora_config: LoRA configuration for fine-tuning
+            freeze_base: Whether to freeze base model parameters
+        """
+        super().__init__()
+
+        self.base_model = base_vision_model
+        self.lora_config = lora_config
+
+        # Freeze base model parameters if specified
+        if freeze_base:
+            for param in self.base_model.parameters():
+                param.requires_grad = False
+
+        # Apply LoRA to the vision model
+        self.lora_model = self._apply_lora_to_vision_model()
+
+        logger.info(f"LoRA-enhanced vision model initialized with r={lora_config.r}")
+
+    def _apply_lora_to_vision_model(self) -> Union[nn.Module, PeftModel, Any]:
+        """Apply LoRA to vision transformer layers.
+
+        Returns:
+            LoRA-enhanced model or base model if LoRA fails
+        """
+        try:
+            # For OpenCLIP models, we need to handle the visual component
+            if hasattr(self.base_model, 'visual'):
+                # OpenCLIP visual encoder
+                visual_model = self.base_model.visual
+
+                # Ensure we have a proper Module, not Tensor
+                if not isinstance(visual_model, nn.Module):
+                    logger.error(f"Visual model is not a proper Module: {type(visual_model)}")
+                    return self.base_model
+
+                # Apply LoRA to the visual transformer
+                if hasattr(visual_model, 'transformer'):
+                    # Create a wrapper model for PEFT compatibility
+                    vision_wrapper = VisionTransformerWrapper(visual_model)
+                    lora_model = get_peft_model(vision_wrapper, self.lora_config)
+                    logger.info("Applied LoRA to vision transformer layers")
+                    return lora_model
+                else:
+                    logger.warning("Vision model doesn't have transformer layers, applying LoRA to entire visual component")
+                    # Fallback: apply to entire visual model
+                    fallback_wrapper = VisionModelWrapper(visual_model)
+                    lora_model = get_peft_model(fallback_wrapper, self.lora_config)
+                    logger.info("Applied LoRA to entire visual model")
+                    return lora_model
+            else:
+                # Direct model (e.g., standalone ViT)
+                if isinstance(self.base_model, nn.Module):
+                    model_wrapper = VisionModelWrapper(self.base_model)
+                    lora_model = get_peft_model(model_wrapper, self.lora_config)
+                    logger.info("Applied LoRA to standalone vision model")
+                    return lora_model
+                else:
+                    logger.error(f"Base model is not a proper Module: {type(self.base_model)}")
+                    return self.base_model
+
+        except Exception as e:
+            logger.error(f"Failed to apply LoRA to vision model: {e}")
+            # Fallback: return base model without LoRA
+            return self.base_model
+
+    def encode_image(self, image_tensor: torch.Tensor) -> torch.Tensor:
+        """Encode image using LoRA-enhanced model.
+
+        Args:
+            image_tensor: Input image tensor
+
+        Returns:
+            Enhanced image embeddings
+        """
+        try:
+            # Check if we have a PeftModel (LoRA-enhanced)
+            if isinstance(self.lora_model, PeftModel):
+                # Use the LoRA-enhanced model
+                return self.lora_model(image_tensor)
+            elif hasattr(self.lora_model, 'base_model') and hasattr(self.lora_model.base_model, 'visual_model'):
+                # Wrapper-based LoRA model
+                visual_model = self.lora_model.base_model.visual_model
+                if callable(visual_model):
+                    return visual_model(image_tensor)
+                else:
+                    raise RuntimeError("Visual model is not callable")
+            else:
+                # Fallback to base model
+                if hasattr(self.base_model, 'encode_image') and callable(self.base_model.encode_image):
+                    return self.base_model.encode_image(image_tensor)
+                elif hasattr(self.base_model, 'visual') and callable(self.base_model.visual):
+                    return self.base_model.visual(image_tensor)
+                elif callable(self.base_model):
+                    return self.base_model(image_tensor)
+                else:
+                    raise RuntimeError("Base model is not callable")
+        except Exception as e:
+            logger.error(f"Error in LoRA vision encoding: {e}")
+            # Final fallback to base model
+            if hasattr(self.base_model, 'encode_image') and callable(self.base_model.encode_image):
+                return self.base_model.encode_image(image_tensor)
+            elif hasattr(self.base_model, 'visual') and callable(self.base_model.visual):
+                return self.base_model.visual(image_tensor)
+            elif callable(self.base_model):
+                return self.base_model(image_tensor)
+            else:
+                raise RuntimeError("Base model is not callable")
+
+    def forward(self, image_tensor: torch.Tensor) -> torch.Tensor:
+        """Forward pass through LoRA-enhanced vision model."""
+        return self.encode_image(image_tensor)
+
+
+class VisionTransformerWrapper(PreTrainedModel):
+    """Wrapper for vision transformer to make it compatible with PEFT."""
+
+    def __init__(self, visual_model: nn.Module, config=None):
+        # Create a minimal config if none provided
+        if config is None:
+            from transformers import PretrainedConfig
+            config = PretrainedConfig()
+
+        super().__init__(config)
+        self.visual_model = visual_model
+
+        # Identify and store transformer layers for LoRA targeting
+        self.transformer_layers: List[nn.Module] = []
+        if hasattr(visual_model, 'transformer'):
+            transformer = visual_model.transformer
+
+            # Handle OpenCLIP-style resblocks (ModuleList)
+            if hasattr(transformer, 'resblocks'):
+                resblocks = transformer.resblocks
+                if isinstance(resblocks, (nn.ModuleList, nn.Sequential)):
+                    self.transformer_layers = list(resblocks)
+                else:
+                    # Handle unknown iterable types (cast to Any to bypass mypy)
+                    try:
+                        # Test if it's iterable
+                        iterator = iter(resblocks)  # type: ignore[arg-type]
+                        self.transformer_layers = [block for block in resblocks if isinstance(block, nn.Module)]  # type: ignore[union-attr]
+                    except (TypeError, AttributeError):
+                        logger.warning("Could not iterate over transformer resblocks")
+                        self.transformer_layers = []
+
+            # Handle other transformer implementations with 'layers'
+            elif hasattr(transformer, 'layers'):
+                layers = transformer.layers
+                if isinstance(layers, (nn.ModuleList, nn.Sequential)):
+                    self.transformer_layers = list(layers)
+                else:
+                    # Handle unknown iterable types (cast to Any to bypass mypy)
+                    try:
+                        # Test if it's iterable
+                        iterator = iter(layers)  # type: ignore[arg-type]
+                        self.transformer_layers = [layer for layer in layers if isinstance(layer, nn.Module)]  # type: ignore[union-attr]
+                    except (TypeError, AttributeError):
+                        logger.warning("Could not iterate over transformer layers")
+                        self.transformer_layers = []
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward pass through wrapped vision model."""
+        return self.visual_model(x)
+
+    def get_input_embeddings(self):
+        """Required method for PreTrainedModel."""
+        return None
+
+    def set_input_embeddings(self, value):
+        """Required method for PreTrainedModel."""
+        pass
+
+
+class VisionModelWrapper(PreTrainedModel):
+    """Generic wrapper for vision models to make them compatible with PEFT."""
+
+    def __init__(self, vision_model: nn.Module, config=None):
+        # Create a minimal config if none provided
+        if config is None:
+            from transformers import PretrainedConfig
+            config = PretrainedConfig()
+
+        super().__init__(config)
+        self.vision_model = vision_model
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward pass through wrapped vision model."""
+        return self.vision_model(x)
+
+    def get_input_embeddings(self):
+        """Required method for PreTrainedModel."""
+        return None
+
+    def set_input_embeddings(self, value):
+        """Required method for PreTrainedModel."""
+        pass
 
 
 class ArtStyleClassificationHead(nn.Module):
@@ -197,63 +413,122 @@ class ArtStyleClassifier:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
         # Model components
-        self.classifier_model = None
-        self.optimizer = None
-        self.loss_fn = None
+        self.classifier_model: Optional[ArtStyleClassifierModel] = None
+        self.lora_vision_model: Optional[LoRAEnhancedVisionModel] = None
+        self.optimizer: Optional[AdamW] = None
+        self.loss_fn: Optional[Dict[str, nn.CrossEntropyLoss]] = None
         
         # Training state
         self.num_styles = 0
-        self.style_vocab = {}
-        self.studio_vocab = {}
-        self.era_vocab = {}
+        self.style_vocab: Dict[str, int] = {}
+        self.studio_vocab: Dict[str, int] = {}
+        self.era_vocab: Dict[str, int] = {}
         self.is_trained = False
         
         logger.info(f"Art style classifier initialized on {self.device}")
     
     def setup_lora_model(self, lora_config: LoraConfig, fine_tuning_config: Any):
-        """Setup LoRA model for parameter-efficient fine-tuning.
-        
+        """Setup LoRA model for parameter-efficient fine-tuning on vision backbone.
+
         Args:
-            lora_config: LoRA configuration
+            lora_config: LoRA configuration for vision model
             fine_tuning_config: Fine-tuning configuration
         """
         self.fine_tuning_config = fine_tuning_config
-        
+
         try:
             # Get vision model info
             vision_info = self.vision_processor.get_model_info()
             input_dim = vision_info.get('embedding_size', 512)
-            
-            # Create art style classifier
+
+            # Setup LoRA on vision backbone
+            self._setup_lora_vision_model(lora_config)
+
+            # Create art style classifier (smaller now, as LoRA handles feature adaptation)
             self.classifier_model = ArtStyleClassifierModel(
                 input_dim=input_dim,
                 num_styles=self.num_styles or 20,  # Default placeholder
                 feature_dim=256,
                 dropout=0.1
             )
-            
+
             # Move to device
             self.classifier_model = self.classifier_model.to(self.device)
-            
-            # Setup optimizer
-            self.optimizer = torch.optim.AdamW(
-                self.classifier_model.parameters(),
+
+            # Setup optimizer for both LoRA vision model and classifier
+            trainable_params = list(self.classifier_model.parameters())
+            if self.lora_vision_model is not None:
+                trainable_params.extend(self.lora_vision_model.parameters())
+
+            self.optimizer = AdamW(
+                trainable_params,
                 lr=1e-4,
                 weight_decay=1e-5
             )
-            
+
             # Setup loss function (multi-task loss)
             self.loss_fn = {
                 'style': nn.CrossEntropyLoss(),
                 'studio': nn.CrossEntropyLoss(),
                 'era': nn.CrossEntropyLoss()
             }
-            
-            logger.info("LoRA model setup completed")
-            
+
+            logger.info("LoRA model setup completed with vision backbone enhancement")
+
         except Exception as e:
             logger.error(f"Error setting up LoRA model: {e}")
             raise
+
+    def _setup_lora_vision_model(self, lora_config: LoraConfig):
+        """Setup LoRA-enhanced vision model using configuration settings.
+
+        Args:
+            lora_config: LoRA configuration for vision model
+        """
+        try:
+            # Check if LoRA is enabled in settings
+            if not self.settings.lora_enabled:
+                logger.info("LoRA is disabled in settings, skipping LoRA vision setup")
+                return
+
+            # Get the base vision model from the processor
+            if self.vision_processor.model is None:
+                logger.warning("Vision processor model not initialized, skipping LoRA vision setup")
+                return
+
+            base_vision_model = self.vision_processor.model.get('model')
+            if base_vision_model is None:
+                logger.warning("Base vision model not found, skipping LoRA vision setup")
+                return
+
+            # Create LoRA configuration from settings
+            vision_lora_config = LoraConfig(
+                task_type=getattr(TaskType, self.settings.lora_task_type),
+                inference_mode=False,
+                r=self.settings.lora_rank,
+                lora_alpha=self.settings.lora_alpha,
+                lora_dropout=self.settings.lora_dropout,
+                target_modules=self.settings.lora_target_modules,
+                bias=self.settings.lora_bias
+            )
+
+            # Create LoRA-enhanced vision model
+            self.lora_vision_model = LoRAEnhancedVisionModel(
+                base_vision_model=base_vision_model,
+                lora_config=vision_lora_config,
+                freeze_base=True
+            )
+
+            # Move to device
+            self.lora_vision_model = self.lora_vision_model.to(self.device)
+
+            logger.info(f"LoRA vision model setup completed with r={self.settings.lora_rank}, "
+                       f"alpha={self.settings.lora_alpha}, target_modules={self.settings.lora_target_modules}")
+
+        except Exception as e:
+            logger.error(f"Failed to setup LoRA vision model: {e}")
+            # Continue without LoRA vision model
+            self.lora_vision_model = None
     
     def prepare_for_training(self, dataset):
         """Prepare model for training with dataset vocabulary.
@@ -288,7 +563,7 @@ class ArtStyleClassifier:
             self.classifier_model = self.classifier_model.to(self.device)
             
             # Setup optimizer
-            self.optimizer = torch.optim.AdamW(
+            self.optimizer = AdamW(
                 self.classifier_model.parameters(),
                 lr=self.fine_tuning_config.learning_rate,
                 weight_decay=self.fine_tuning_config.weight_decay
@@ -348,9 +623,9 @@ class ArtStyleClassifier:
         Returns:
             Training loss
         """
-        if self.classifier_model is None:
+        if self.classifier_model is None or self.optimizer is None or self.loss_fn is None:
             raise RuntimeError("Model not initialized. Call setup_lora_model first.")
-        
+
         self.classifier_model.train()
         self.optimizer.zero_grad()
         
@@ -404,9 +679,9 @@ class ArtStyleClassifier:
         Returns:
             Evaluation metrics
         """
-        if self.classifier_model is None:
+        if self.classifier_model is None or self.loss_fn is None:
             raise RuntimeError("Model not initialized")
-        
+
         self.classifier_model.eval()
         
         total_loss = 0.0
@@ -444,31 +719,57 @@ class ArtStyleClassifier:
             'total_predictions': total_predictions
         }
     
-    def get_enhanced_embedding(self, image_embedding: np.ndarray) -> np.ndarray:
-        """Get enhanced art style-aware embedding.
-        
+    def get_enhanced_embedding(self, image_data: str) -> np.ndarray:
+        """Get enhanced art style-aware embedding using LoRA vision model.
+
         Args:
-            image_embedding: Image embedding
-            
+            image_data: Base64 encoded image data
+
         Returns:
-            Enhanced embedding
+            Enhanced embedding from LoRA-adapted vision model
         """
-        if self.classifier_model is None:
-            logger.warning("Model not initialized, returning original embedding")
-            return image_embedding
-        
-        self.classifier_model.eval()
-        
-        with torch.no_grad():
-            # Convert to tensor
-            image_tensor = torch.tensor(image_embedding, dtype=torch.float32).unsqueeze(0).to(self.device)
-            
-            # Get enhanced features
-            outputs = self.classifier_model(image_tensor)
-            
-            # Return style features
-            style_features = outputs['style_features']
-            return style_features.cpu().numpy().flatten()
+        if self.lora_vision_model is None:
+            logger.warning("LoRA vision model not initialized, falling back to original embedding")
+            # Fallback to original processor
+            original_embedding = self.vision_processor.encode_image(image_data)
+            if original_embedding is None:
+                return np.array([])
+            return np.array(original_embedding)
+
+        try:
+            self.lora_vision_model.eval()
+
+            with torch.no_grad():
+                # Decode and preprocess image
+                image = self.vision_processor._decode_base64_image(image_data)
+                if image is None:
+                    logger.error("Failed to decode image")
+                    return np.array([])
+
+                # Get preprocessing from vision processor
+                preprocess = self.vision_processor.model.get('preprocess')
+                if preprocess is None:
+                    logger.error("Preprocessor not available")
+                    return np.array([])
+
+                # Preprocess image
+                image_tensor = preprocess(image).unsqueeze(0).to(self.device)
+
+                # Get LoRA-enhanced features
+                enhanced_features = self.lora_vision_model.encode_image(image_tensor)
+
+                # Normalize features
+                enhanced_features = enhanced_features / enhanced_features.norm(dim=-1, keepdim=True)
+
+                return enhanced_features.cpu().numpy().flatten()
+
+        except Exception as e:
+            logger.error(f"Enhanced embedding generation failed: {e}")
+            # Fallback to original processor
+            original_embedding = self.vision_processor.encode_image(image_data)
+            if original_embedding is None:
+                return np.array([])
+            return np.array(original_embedding)
     
     def predict_style(self, image_embedding: np.ndarray) -> List[Tuple[str, float]]:
         """Predict art style from image embedding.
@@ -519,11 +820,11 @@ class ArtStyleClassifier:
         Args:
             save_path: Path to save model
         """
-        if self.classifier_model is None:
+        if self.classifier_model is None or self.optimizer is None:
             raise RuntimeError("Model not initialized")
-        
+
         save_path.mkdir(parents=True, exist_ok=True)
-        
+
         # Save model state
         model_state = {
             'model_state_dict': self.classifier_model.state_dict(),
@@ -532,9 +833,27 @@ class ArtStyleClassifier:
             'style_vocab': self.style_vocab,
             'studio_vocab': self.studio_vocab,
             'era_vocab': self.era_vocab,
-            'is_trained': self.is_trained
+            'is_trained': self.is_trained,
+            'has_lora_vision': self.lora_vision_model is not None
         }
-        
+
+        # Save LoRA vision model if available
+        if self.lora_vision_model is not None:
+            try:
+                # Save LoRA adapter weights
+                if (hasattr(self.lora_vision_model, 'lora_model') and
+                    hasattr(self.lora_vision_model.lora_model, 'save_pretrained') and
+                    callable(self.lora_vision_model.lora_model.save_pretrained)):
+                    lora_save_path = save_path / 'lora_vision_adapter'
+                    self.lora_vision_model.lora_model.save_pretrained(lora_save_path)
+                    logger.info(f"LoRA vision adapter saved to {lora_save_path}")
+                else:
+                    # Fallback: save state dict
+                    model_state['lora_vision_state_dict'] = self.lora_vision_model.state_dict()
+                    logger.info("LoRA vision model state saved to main checkpoint")
+            except Exception as e:
+                logger.warning(f"Failed to save LoRA vision model: {e}")
+
         torch.save(model_state, save_path / 'art_style_classifier.pth')
         logger.info(f"Art style classifier saved to {save_path}")
     
@@ -551,52 +870,134 @@ class ArtStyleClassifier:
         
         # Load model state
         model_state = torch.load(model_path, map_location=self.device)
-        
+
         # Restore configuration
         self.num_styles = model_state['num_styles']
         self.style_vocab = model_state['style_vocab']
         self.studio_vocab = model_state['studio_vocab']
         self.era_vocab = model_state['era_vocab']
         self.is_trained = model_state['is_trained']
-        
-        # Recreate model with correct configuration
+
+        # Load LoRA vision model if available
+        has_lora_vision = model_state.get('has_lora_vision', False)
+        if has_lora_vision:
+            try:
+                # Try to load LoRA adapter
+                lora_adapter_path = load_path / 'lora_vision_adapter'
+                if lora_adapter_path.exists():
+                    # Recreate LoRA vision model
+                    base_vision_model = self.vision_processor.model.get('model') if self.vision_processor.model else None
+                    if base_vision_model:
+                        # Create minimal LoRA config for loading
+                        lora_config = LoraConfig(
+                            task_type=TaskType.FEATURE_EXTRACTION,
+                            inference_mode=True,  # For inference
+                            r=16,  # Default values
+                            lora_alpha=32,
+                            lora_dropout=0.1
+                        )
+                        self.lora_vision_model = LoRAEnhancedVisionModel(
+                            base_vision_model=base_vision_model,
+                            lora_config=lora_config,
+                            freeze_base=True
+                        )
+                        # Load LoRA weights
+                        if hasattr(self.lora_vision_model, 'lora_model'):
+                            try:
+                                if isinstance(self.lora_vision_model.lora_model, PeftModel):
+                                    self.lora_vision_model.lora_model = PeftModel.from_pretrained(
+                                        self.lora_vision_model.lora_model.base_model,
+                                        str(lora_adapter_path)
+                                    )
+                                    logger.info("LoRA vision adapter loaded successfully")
+                                else:
+                                    logger.warning("LoRA model is not a PeftModel, skipping adapter loading")
+                            except Exception as e:
+                                logger.warning(f"Failed to load LoRA adapter: {e}")
+                elif 'lora_vision_state_dict' in model_state:
+                    # Load from state dict
+                    base_vision_model = self.vision_processor.model.get('model') if self.vision_processor.model else None
+                    if base_vision_model:
+                        lora_config = LoraConfig(
+                            task_type=TaskType.FEATURE_EXTRACTION,
+                            inference_mode=True,
+                            r=16,
+                            lora_alpha=32,
+                            lora_dropout=0.1
+                        )
+                        self.lora_vision_model = LoRAEnhancedVisionModel(
+                            base_vision_model=base_vision_model,
+                            lora_config=lora_config,
+                            freeze_base=True
+                        )
+                        self.lora_vision_model.load_state_dict(model_state['lora_vision_state_dict'])
+                        logger.info("LoRA vision model loaded from state dict")
+            except Exception as e:
+                logger.warning(f"Failed to load LoRA vision model: {e}")
+                self.lora_vision_model = None
+
+        # Recreate classifier model with correct configuration
         self.classifier_model = ArtStyleClassifierModel(
             input_dim=512,  # Default dimension
             num_styles=self.num_styles,
             feature_dim=256,
             dropout=0.1
         )
-        
+
         # Update auxiliary classifiers
         self.classifier_model.studio_classifier = nn.Linear(256, len(self.studio_vocab))
         self.classifier_model.era_classifier = nn.Linear(256, len(self.era_vocab))
-        
+
         # Load state dict
         self.classifier_model.load_state_dict(model_state['model_state_dict'])
         self.classifier_model = self.classifier_model.to(self.device)
-        
-        # Setup optimizer
-        self.optimizer = torch.optim.AdamW(
-            self.classifier_model.parameters(),
+
+        # Setup optimizer with both models
+        trainable_params = list(self.classifier_model.parameters())
+        if self.lora_vision_model is not None:
+            trainable_params.extend(self.lora_vision_model.parameters())
+
+        self.optimizer = AdamW(
+            trainable_params,
             lr=1e-4,
             weight_decay=1e-5
         )
         self.optimizer.load_state_dict(model_state['optimizer_state_dict'])
-        
+
         logger.info(f"Art style classifier loaded from {load_path}")
     
     def get_model_info(self) -> Dict[str, Any]:
-        """Get model information.
-        
+        """Get model information including LoRA enhancement status.
+
         Returns:
             Model information dictionary
         """
-        return {
+        info = {
             'num_styles': self.num_styles,
             'style_vocab_size': len(self.style_vocab),
             'studio_vocab_size': len(self.studio_vocab),
             'era_vocab_size': len(self.era_vocab),
             'is_trained': self.is_trained,
             'device': str(self.device),
-            'model_type': 'art_style_classifier'
+            'model_type': 'art_style_classifier',
+            'has_lora_vision': self.lora_vision_model is not None
         }
+
+        # Add LoRA-specific information
+        if self.lora_vision_model is not None:
+            try:
+                lora_config = self.lora_vision_model.lora_config
+                info.update({
+                    'lora_rank': lora_config.r,
+                    'lora_alpha': lora_config.lora_alpha,
+                    'lora_dropout': lora_config.lora_dropout,
+                    'lora_target_modules': lora_config.target_modules,
+                    'vision_enhancement': 'LoRA-enhanced'
+                })
+            except Exception as e:
+                logger.warning(f"Failed to get LoRA info: {e}")
+                info['vision_enhancement'] = 'LoRA-enhanced (info unavailable)'
+        else:
+            info['vision_enhancement'] = 'Standard'
+
+        return info

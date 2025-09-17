@@ -117,7 +117,7 @@ class AnimePlanetScraper(BaseScraper):
 
     def _extract_info_table(self, soup) -> Dict[str, Any]:
         """Extract information from the anime info table."""
-        info_data = {}
+        info_data: Dict[str, Any] = {}
 
         # Look for info table in various locations
         info_containers = [
@@ -143,7 +143,10 @@ class AnimePlanetScraper(BaseScraper):
                     if key in ["type"]:
                         info_data["type"] = value
                     elif key in ["episodes", "episode count"]:
-                        info_data["episodes"] = value
+                        try:
+                            info_data["episodes"] = int(value)
+                        except ValueError:
+                            info_data["episodes"] = value
                     elif key in ["status"]:
                         info_data["status"] = value
                     elif key in ["aired", "air date"]:
@@ -334,7 +337,7 @@ class AnimePlanetScraper(BaseScraper):
             # Parse the tooltip HTML
             tooltip_soup = self._parse_html(decoded_html)
             
-            tooltip_data = {}
+            tooltip_data: Dict[str, Any] = {}
             
             # Extract title (should match main title, but might be more complete)
             title_elem = tooltip_soup.find("h5", class_="theme-font")
@@ -352,7 +355,7 @@ class AnimePlanetScraper(BaseScraper):
             
             # Extract entry bar info (type, studio, year, rating)
             entry_bar = tooltip_soup.find("ul", class_="entryBar")
-            if entry_bar:
+            if entry_bar and hasattr(entry_bar, 'find_all'):
                 li_elements = entry_bar.find_all("li")
                 for li in li_elements:
                     li_classes = li.get("class", [])
@@ -396,7 +399,7 @@ class AnimePlanetScraper(BaseScraper):
             
             # Extract tags
             tags_section = tooltip_soup.find("div", class_="tags")
-            if tags_section:
+            if tags_section and hasattr(tags_section, 'find_all'):
                 tag_items = tags_section.find_all("li")
                 if tag_items:
                     tags = [self._clean_text(tag.text) for tag in tag_items if tag.text.strip()]
@@ -466,7 +469,7 @@ class AnimePlanetScraper(BaseScraper):
 
     def _extract_enhanced_json_ld(self, soup) -> Dict[str, Any]:
         """Extract enhanced data from JSON-LD structured data."""
-        data = {}
+        data: Dict[str, Any] = {}
         json_ld = self._extract_json_ld(soup)
 
         if not json_ld:
@@ -617,7 +620,7 @@ class AnimePlanetScraper(BaseScraper):
 
     def _extract_alternative_titles(self, soup) -> Dict[str, Any]:
         """Extract alternative titles including English, native, and synonyms."""
-        title_data = {}
+        title_data: Dict[str, Any] = {}
 
         # Look for alternative titles section
         alt_title_containers = [
@@ -764,7 +767,7 @@ class AnimePlanetScraper(BaseScraper):
 
     def _extract_enhanced_status(self, soup) -> Dict[str, Any]:
         """Extract status information with enhanced date logic."""
-        status_data = {}
+        status_data: Dict[str, Any] = {}
 
         # Get JSON-LD data for dates
         json_ld = self._extract_json_ld(soup)
@@ -831,7 +834,7 @@ class AnimePlanetScraper(BaseScraper):
 
     def _extract_related_anime(self, soup) -> Dict[str, Any]:
         """Extract related anime from same franchise section."""
-        related_data = {}
+        related_data: Dict[str, Any] = {}
 
         # Look for the same franchise relations section
         same_franchise_section = soup.find(id="tabs--relations--anime--same_franchise")
