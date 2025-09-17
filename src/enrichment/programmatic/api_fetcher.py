@@ -51,8 +51,8 @@ class ParallelAPIFetcher:
         self.anime_planet_helper = None
         
         # Track API performance
-        self.api_timings = {}
-        self.api_errors = {}
+        self.api_timings: Dict[str, float] = {}
+        self.api_errors: Dict[str, str] = {}
         
     async def initialize_helpers(self):
         """Initialize async API helpers."""
@@ -87,7 +87,7 @@ class ParallelAPIFetcher:
         await self.initialize_helpers()
         
         start_time = time.time()
-        tasks = []
+        tasks: List[Tuple[str, Any]] = []
         
         # Create parallel tasks for each API
         if ids.get('mal_id'):
@@ -123,7 +123,7 @@ class ParallelAPIFetcher:
         
         return results
     
-    async def _fetch_jikan_complete(self, mal_id: str, offline_data: Dict) -> Dict:
+    async def _fetch_jikan_complete(self, mal_id: str, offline_data: Dict) -> Optional[Dict[str, Any]]:
         """
         Fetch ALL Jikan data using the JikanDetailedFetcher helper.
         This properly handles rate limiting and batch processing for large series.
@@ -294,6 +294,8 @@ class ParallelAPIFetcher:
             
             # The helper handles everything - pagination, rate limiting, etc.
             # Just call it and let it work
+            if self.anilist_helper is None:
+                raise RuntimeError("AniList helper not initialized")
             result = await self.anilist_helper.fetch_all_data_by_anilist_id(int(anilist_id))
             
             elapsed = time.time() - start
@@ -323,6 +325,8 @@ class ParallelAPIFetcher:
             try:
                 # Try as numeric ID first
                 numeric_id = int(kitsu_id)
+                if self.kitsu_helper is None:
+                    raise RuntimeError("Kitsu helper not initialized")
                 result = await self.kitsu_helper.fetch_all_data(numeric_id)
             except ValueError:
                 # If not numeric, it's a slug - need to resolve to ID first
@@ -338,6 +342,8 @@ class ParallelAPIFetcher:
                             if data.get('data'):
                                 numeric_id = int(data['data'][0]['id'])
                                 logger.info(f"Resolved slug '{kitsu_id}' to ID {numeric_id}")
+                                if self.kitsu_helper is None:
+                                    raise RuntimeError("Kitsu helper not initialized")
                                 result = await self.kitsu_helper.fetch_all_data(numeric_id)
                             else:
                                 logger.warning(f"No Kitsu anime found for slug: {kitsu_id}")
@@ -357,6 +363,8 @@ class ParallelAPIFetcher:
         """Fetch AniDB data using async helper."""
         try:
             start = time.time()
+            if self.anidb_helper is None:
+                raise RuntimeError("AniDB helper not initialized")
             result = await self.anidb_helper.fetch_all_data(int(anidb_id))
             self.api_timings['anidb'] = time.time() - start
             return result
@@ -369,6 +377,8 @@ class ParallelAPIFetcher:
         """Fetch Anime-Planet data using scraper."""
         try:
             start = time.time()
+            if self.anime_planet_helper is None:
+                raise RuntimeError("Anime Planet helper not initialized")
             result = await self.anime_planet_helper.fetch_all_data(offline_data)
             self.api_timings['anime_planet'] = time.time() - start
             return result

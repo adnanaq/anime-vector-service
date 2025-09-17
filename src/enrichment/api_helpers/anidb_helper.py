@@ -13,7 +13,7 @@ import json
 import logging
 import os
 import xml.etree.ElementTree as ET
-from typing import Dict, Any, Optional, List, Set
+from typing import Dict, Any, Optional, List, Set, Union, cast
 import aiohttp
 import time
 import hashlib
@@ -61,7 +61,7 @@ class AniDBRequestMetrics:
 class AniDBEnrichmentHelper:
     """Enhanced AniDB XML API helper with production-level rate limiting and session management."""
     
-    def __init__(self, client_name: str = None, client_version: str = None):
+    def __init__(self, client_name: Optional[str] = None, client_version: Optional[str] = None):
         """Initialize AniDB enrichment helper with enhanced reliability features."""
         self.base_url = "http://api.anidb.net:9001/httpapi"
         
@@ -129,10 +129,10 @@ class AniDBEnrichmentHelper:
         else:
             self.metrics.consecutive_failures += 1
             
-            if (self.circuit_breaker_state == CircuitBreakerState.CLOSED and 
+            if (self.circuit_breaker_state == CircuitBreakerState.CLOSED and
                 self.metrics.consecutive_failures >= self.circuit_breaker_threshold):
                 self.circuit_breaker_state = CircuitBreakerState.OPEN
-                self.circuit_breaker_opened_at = time.time()
+                self.circuit_breaker_opened_at = int(time.time())
                 logger.error(f"Circuit breaker OPENED after {self.metrics.consecutive_failures} consecutive failures")
     
     async def _adaptive_rate_limit(self, is_retry: bool = False):
@@ -288,6 +288,8 @@ class AniDBEnrichmentHelper:
         
         logger.debug(f"AniDB request attempt {attempt + 1}: {self.base_url} with params: {request_params}")
         
+        if self.session is None:
+            raise RuntimeError("Session not initialized")
         async with self.session.get(self.base_url, params=request_params) as response:
             logger.debug(f"AniDB response status: {response.status}")
             
@@ -311,7 +313,7 @@ class AniDBEnrichmentHelper:
                 if text_content and not text_content.strip().startswith("<error"):
                     logger.debug(f"Successfully decoded response: {text_content[:100]}...")
                     return text_content
-                elif "<error" in text_content:
+                elif text_content and "<error" in text_content:
                     logger.warning(f"AniDB returned error response: {text_content[:200]}")
                     return None
                 else:
@@ -328,7 +330,7 @@ class AniDBEnrichmentHelper:
                 self.metrics.last_error_time = time.time()
                 # Force circuit breaker open for ban scenarios
                 self.circuit_breaker_state = CircuitBreakerState.OPEN
-                self.circuit_breaker_opened_at = time.time()
+                self.circuit_breaker_opened_at = int(time.time())
                 return None
                 
             else:
@@ -365,25 +367,33 @@ class AniDBEnrichmentHelper:
             return {}
 
         # Extract basic anime information
-        anime_data = {
+        type_elem = root.find("type")
+        episodecount_elem = root.find("episodecount")
+        startdate_elem = root.find("startdate")
+        enddate_elem = root.find("enddate")
+        description_elem = root.find("description")
+        url_elem = root.find("url")
+        picture_elem = root.find("picture")
+
+        anime_data: Dict[str, Any] = {
             "anidb_id": root.get("id"),
-            "type": root.find("type").text if root.find("type") is not None else None,
-            "episodecount": root.find("episodecount").text if root.find("episodecount") is not None else None,
-            "startdate": root.find("startdate").text if root.find("startdate") is not None else None,
-            "enddate": root.find("enddate").text if root.find("enddate") is not None else None,
-            "description": root.find("description").text if root.find("description") is not None else None,
-            "url": root.find("url").text if root.find("url") is not None else None,
-            "picture": root.find("picture").text if root.find("picture") is not None else None,
+            "type": type_elem.text if type_elem is not None else None,
+            "episodecount": episodecount_elem.text if episodecount_elem is not None else None,
+            "startdate": startdate_elem.text if startdate_elem is not None else None,
+            "enddate": enddate_elem.text if enddate_elem is not None else None,
+            "description": description_elem.text if description_elem is not None else None,
+            "url": url_elem.text if url_elem is not None else None,
+            "picture": picture_elem.text if picture_elem is not None else None,
         }
 
         # Extract titles
         titles_element = root.find("titles")
-        titles = {}
+        titles: Dict[str, Union[str, List[str], None]] = {}
         if titles_element is not None:
             for title in titles_element.findall("title"):
                 title_type = title.get("type", "unknown")
                 lang = title.get("xml:lang", "unknown")
-                
+
                 if title_type == "main":
                     titles["main"] = title.text
                 elif title_type == "official":
@@ -394,7 +404,9 @@ class AniDBEnrichmentHelper:
                 elif title_type == "synonym":
                     if "synonyms" not in titles:
                         titles["synonyms"] = []
-                    titles["synonyms"].append(title.text)
+                    if title.text:
+                        synonyms = cast(List[str], titles["synonyms"])
+                        synonyms.append(title.text)
         anime_data["titles"] = titles
 
         # Extract tags
@@ -473,7 +485,7 @@ class AniDBEnrichmentHelper:
         characters = []
         if characters_element is not None:
             for character in characters_element.findall("character"):
-                char_data = {
+                char_data: Dict[str, Any] = {
                     "id": character.get("id"),
                     "type": character.get("type"),
                     "update": character.get("update"),
@@ -497,17 +509,17 @@ class AniDBEnrichmentHelper:
                 if description_element is not None:
                     char_data["description"] = description_element.text
                 
-                # Character rating
+                        # Character rating
                 rating_element = character.find("rating")
                 if rating_element is not None:
                     char_data["rating"] = float(rating_element.text) if rating_element.text else None
                     char_data["rating_votes"] = int(rating_element.get("votes", 0))
-                
+
                 # Character picture
                 picture_element = character.find("picture")
                 if picture_element is not None:
                     char_data["picture"] = picture_element.text
-                
+
                 # Voice actor (seiyuu)
                 seiyuu_element = character.find("seiyuu")
                 if seiyuu_element is not None:
@@ -531,19 +543,26 @@ class AniDBEnrichmentHelper:
             logger.error(f"XML parsing error: {str(e)}")
             return {}
 
-        episode_data = {
+        epno_elem = root.find("epno")
+        length_elem = root.find("length")
+        airdate_elem = root.find("airdate")
+        rating_elem = root.find("rating")
+        votes_elem = root.find("votes")
+        summary_elem = root.find("summary")
+
+        episode_data: Dict[str, Any] = {
             "anidb_id": root.get("id"),
             "anime_id": root.get("aid"),
-            "episode_number": root.find("epno").text if root.find("epno") is not None else None,
-            "length": int(root.find("length").text) if root.find("length") is not None and root.find("length").text else None,
-            "airdate": root.find("airdate").text if root.find("airdate") is not None else None,
-            "rating": float(root.find("rating").text) if root.find("rating") is not None and root.find("rating").text else None,
-            "votes": int(root.find("votes").text) if root.find("votes") is not None and root.find("votes").text else None,
-            "summary": root.find("summary").text if root.find("summary") is not None else None,
+            "episode_number": epno_elem.text if epno_elem is not None else None,
+            "length": int(length_elem.text) if length_elem is not None and length_elem.text else None,
+            "airdate": airdate_elem.text if airdate_elem is not None else None,
+            "rating": float(rating_elem.text) if rating_elem is not None and rating_elem.text else None,
+            "votes": int(votes_elem.text) if votes_elem is not None and votes_elem.text else None,
+            "summary": summary_elem.text if summary_elem is not None else None,
         }
 
         # Extract episode titles
-        titles = {}
+        titles: Dict[str, Union[str, List[Dict[str, str]], None]] = {}
         for title in root.findall("title"):
             lang = title.get("xml:lang") or title.get("{http://www.w3.org/XML/1998/namespace}lang", "unknown")
             if lang == "en":
@@ -555,7 +574,9 @@ class AniDBEnrichmentHelper:
             else:
                 if "other" not in titles:
                     titles["other"] = []
-                titles["other"].append({"lang": lang, "title": title.text})
+                if title.text:
+                    other_titles = cast(List[Dict[str, str]], titles["other"])
+                    other_titles.append({"lang": lang or "unknown", "title": title.text})
         episode_data["titles"] = titles
 
         return episode_data

@@ -28,8 +28,8 @@ class AniDBUDPHelper:
         """Initialize AniDB UDP helper."""
         self.host = "api.anidb.net"
         self.port = 9000
-        self.client_name = os.getenv("ANIDB_CLIENT", "dimeapi")
-        self.client_version = os.getenv("ANIDB_CLIENTVER", "2")
+        self.client_name = os.getenv("ANIDB_CLIENT")
+        self.client_version = os.getenv("ANIDB_CLIENTVER")
         self.protocol_version = os.getenv("ANIDB_PROTOVER", "1")
         self.socket = None
         self.session_key = None
