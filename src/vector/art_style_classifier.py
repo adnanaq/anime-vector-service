@@ -17,7 +17,7 @@ from transformers import AutoModel, AutoTokenizer, PreTrainedModel
 from peft import LoraConfig, get_peft_model, TaskType, PeftModel
 import numpy as np
 try:
-    import open_clip
+    import open_clip  # type: ignore[import-untyped]
 except ImportError:
     open_clip = None
 

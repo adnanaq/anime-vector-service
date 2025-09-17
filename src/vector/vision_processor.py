@@ -143,15 +143,10 @@ class VisionProcessor:
                 cache_dir=self.cache_dir
             )
 
-            # Load tokenizer - try with pretrained info first, fallback to model name
-            try:
-                # Some pretrained weights have specialized tokenizers
-                tokenizer = open_clip.get_tokenizer(f"{clip_model_name}/{pretrained}")
-                logger.debug(f"Loaded tokenizer for {clip_model_name}/{pretrained}")
-            except Exception as e:
-                # Fallback to model name only
-                logger.debug(f"Tokenizer fallback for {clip_model_name}: {e}")
-                tokenizer = open_clip.get_tokenizer(clip_model_name)
+            # Load tokenizer using model architecture name only
+            # Per OpenCLIP documentation: get_tokenizer() expects model name, not model/pretrained
+            tokenizer = open_clip.get_tokenizer(clip_model_name)
+            logger.debug(f"Loaded tokenizer for model architecture: {clip_model_name}")
 
             model.eval()
 

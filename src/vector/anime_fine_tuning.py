@@ -392,9 +392,9 @@ class AnimeFineTuner:
             embeddings['character'] = self.character_finetuner.get_enhanced_embedding(text_array, image_array)
             embeddings['genre'] = self.genre_enhancer.get_enhanced_embedding(text_array)
 
-        if image_embedding is not None:
+        if image_embedding is not None and image_data is not None:
             image_array = np.array(image_embedding) if isinstance(image_embedding, list) else image_embedding
-            embeddings['art_style'] = self.art_style_classifier.get_enhanced_embedding(image_array)
+            embeddings['art_style'] = self.art_style_classifier.get_enhanced_embedding(image_data)
         
         return embeddings
     
