@@ -5,7 +5,7 @@ for optimal performance.
 """
 
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Any
 from pathlib import Path
 
 import numpy as np
@@ -35,10 +35,10 @@ class TextProcessor:
         self.cache_dir = settings.model_cache_dir
         
         # Model instance
-        self.model = None
+        self.model: Optional[Dict[str, Any]] = None
         
         # Model metadata
-        self.model_info = {}
+        self.model_info: Dict[str, Any] = {}
         
         # Initialize models
         self._init_models()
@@ -94,10 +94,10 @@ class TextProcessor:
             from fastembed import TextEmbedding
             
             # Initialize FastEmbed model
-            init_kwargs = {"model_name": model_name}
+            init_kwargs: Dict[str, Any] = {"model_name": model_name}
             if self.cache_dir:
                 init_kwargs["cache_dir"] = self.cache_dir
-                
+
             model = TextEmbedding(**init_kwargs)
             
             # Get model info
@@ -284,14 +284,18 @@ class TextProcessor:
                 return self._create_zero_vector()
             
             # Encode with model
-            embedding = self._encode_text_with_model(text, self.model)
-            return embedding
+            if self.model is not None:
+                embedding = self._encode_text_with_model(text, self.model)
+                return embedding
+            else:
+                logger.error("Model not initialized")
+                return self._create_zero_vector()
             
         except Exception as e:
             logger.error(f"Text encoding failed: {e}")
             return None
     
-    def _encode_text_with_model(self, text: str, model_dict: Dict) -> Optional[List[float]]:
+    def _encode_text_with_model(self, text: str, model_dict: Dict[str, Any]) -> Optional[List[float]]:
         """Encode text with specific model.
         
         Args:
@@ -433,7 +437,7 @@ class TextProcessor:
         """
         try:
             if batch_size is None:
-                batch_size = self.model.get("batch_size", 32)
+                batch_size = self.model.get("batch_size", 32) if self.model else 32
                 
             embeddings = []
             total_texts = len(texts)
@@ -512,13 +516,12 @@ class TextProcessor:
         """
         version = self.settings.bge_model_version
         size = self.settings.bge_model_size
-        multilingual = self.settings.bge_enable_multilingual
-        
-        if multilingual or version == "m3":
-            return "BAAI/bge-m3"
+
+        if version == "m3":
+            return "BAAI/bge-m3"  # Always multilingual
         elif version == "reranker":
             return f"BAAI/bge-reranker-{size}"
-        else:
+        else:  # v1.5 series
             return f"BAAI/bge-{size}-en-{version}"
     
     def validate_text(self, text: str) -> bool:

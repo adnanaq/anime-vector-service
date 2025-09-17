@@ -23,7 +23,7 @@ import requests
 import time
 import re
 from typing import Optional, Dict, Any
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 import logging
 
 logger = logging.getLogger(__name__)
@@ -116,12 +116,14 @@ def _extract_title_from_page(soup: BeautifulSoup) -> Optional[str]:
     
     # Strategy 2: Try OpenGraph title
     og_title = soup.find('meta', property='og:title')
-    if og_title and og_title.get('content'):
-        title = og_title['content'].strip()
-        # Clean AniSearch-specific parts
-        title = re.sub(r' - AniSearch.*$', '', title)
-        if title and not title.lower().startswith('anisearch'):
-            return title
+    if og_title and isinstance(og_title, Tag):
+        content = og_title.get('content')
+        if isinstance(content, str):
+            title = content.strip()
+            # Clean AniSearch-specific parts
+            title = re.sub(r' - AniSearch.*$', '', title)
+            if title and not title.lower().startswith('anisearch'):
+                return title
     
     # Strategy 3: Try page title
     title_tag = soup.find('title')
@@ -134,10 +136,11 @@ def _extract_title_from_page(soup: BeautifulSoup) -> Optional[str]:
     
     # Strategy 4: Try JSON-LD structured data
     json_ld_script = soup.find('script', type='application/ld+json')
-    if json_ld_script:
+    if json_ld_script and hasattr(json_ld_script, 'string') and json_ld_script.string:
         try:
             import json
-            data = json.loads(json_ld_script.string)
+            script_text = json_ld_script.string if isinstance(json_ld_script.string, str) else str(json_ld_script.string)
+            data = json.loads(script_text)
             if isinstance(data, dict) and 'name' in data:
                 name = data['name'].strip()
                 if name and not name.lower().startswith('anisearch'):
@@ -154,23 +157,28 @@ def _extract_context_data(soup: BeautifulSoup) -> Dict[str, Any]:
     
     Instead of hardcoded regex patterns, extract rich context that AI can analyze.
     """
-    context = {}
+    context: Dict[str, Any] = {}
     
     # Extract description from OpenGraph or meta description
     og_desc = soup.find('meta', property='og:description')
-    if og_desc and og_desc.get('content'):
-        context['description'] = og_desc['content'].strip()
+    if og_desc and isinstance(og_desc, Tag):
+        content = og_desc.get('content')
+        if isinstance(content, str):
+            context['description'] = content.strip()
     elif soup.find('meta', attrs={'name': 'description'}):
         meta_desc = soup.find('meta', attrs={'name': 'description'})
-        if meta_desc and meta_desc.get('content'):
-            context['description'] = meta_desc['content'].strip()
+        if meta_desc and isinstance(meta_desc, Tag):
+            content = meta_desc.get('content')
+            if isinstance(content, str):
+                context['description'] = content.strip()
     
     # Extract JSON-LD structured data for rich context
     json_ld_script = soup.find('script', type='application/ld+json')
-    if json_ld_script:
+    if json_ld_script and hasattr(json_ld_script, 'string') and json_ld_script.string:
         try:
             import json
-            json_data = json.loads(json_ld_script.string)
+            script_text = json_ld_script.string if isinstance(json_ld_script.string, str) else str(json_ld_script.string)
+            json_data = json.loads(script_text)
             if isinstance(json_data, dict):
                 # Extract relevant structured data
                 if 'startDate' in json_data:
@@ -201,11 +209,12 @@ def _extract_context_data(soup: BeautifulSoup) -> Dict[str, Any]:
         # Try to extract some related titles for context
         related_titles = []
         for section in related_sections:
-            anime_links = section.find_all('a', href=re.compile(r'/anime/'))
-            for link in anime_links:
-                title = link.get_text().strip()
-                if title and len(title) < 100:
-                    related_titles.append(title)
+            if isinstance(section, Tag):
+                anime_links = section.find_all('a', href=re.compile(r'/anime/'))
+                for link in anime_links:
+                    title = link.get_text().strip()
+                    if title and len(title) < 100:
+                        related_titles.append(title)
         if related_titles:
             context['related_titles'] = related_titles[:3]  # Limit to 3 for context
     

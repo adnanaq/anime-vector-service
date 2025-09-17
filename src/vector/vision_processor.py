@@ -1,7 +1,7 @@
-"""Vision processor supporting multiple embedding models for anime image search.
+"""Vision processor using OpenCLIP for anime image search.
 
-Supports CLIP, SigLIP, and JinaCLIP v2 models with dynamic model selection
-for optimal performance.
+Uses OpenCLIP ViT-L/14 model for high-quality image embeddings
+with commercial-friendly licensing.
 """
 
 import asyncio
@@ -10,7 +10,7 @@ import hashlib
 import io
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union, Any
 from urllib.parse import urlparse
 
 import aiohttp
@@ -43,13 +43,13 @@ class VisionProcessor:
         self.cache_dir = settings.model_cache_dir
 
         # Model instance
-        self.model = None
+        self.model: Optional[Dict[str, Any]] = None
 
         # Device configuration
-        self.device = None
+        self.device: Optional[str] = None
 
         # Model metadata
-        self.model_info = {}
+        self.model_info: Dict[str, Any] = {}
 
         # Image caching configuration
         self.image_cache_dir = (
@@ -60,7 +60,7 @@ class VisionProcessor:
         self.image_cache_dir.mkdir(parents=True, exist_ok=True)
 
         # Field mapper for anime data extraction
-        self._field_mapper = None
+        self._field_mapper: Optional[AnimeFieldMapper] = None
 
         # Initialize models
         self._init_models()
@@ -83,161 +83,112 @@ class VisionProcessor:
             logger.error(f"Failed to initialize modern vision processor: {e}")
             raise
 
-    def _create_model(self, provider: str, model_name: str) -> Dict:
-        """Create a model instance based on provider and model name.
+    def _create_model(self, provider: str, model_name: str) -> Dict[str, Any]:
+        """Create OpenCLIP model instance.
 
         Args:
-            provider: Model provider (clip, siglip, jinaclip)
-            model_name: Model name/path
+            provider: Model provider (must be "openclip")
+            model_name: OpenCLIP model name
 
         Returns:
             Dictionary containing model instance and metadata
         """
-        if provider == "clip":
-            return self._create_clip_model(model_name)
-        elif provider == "siglip":
-            return self._create_siglip_model(model_name)
-        elif provider == "jinaclip":
-            return self._create_jinaclip_model(model_name)
-        else:
-            raise ValueError(f"Unsupported provider: {provider}")
+        if provider != "openclip":
+            raise ValueError(f"Only 'openclip' provider is supported, got: {provider}")
 
-    def _create_clip_model(self, model_name: str) -> Dict:
-        """Create CLIP model instance.
+        return self._create_openclip_model(model_name)
+
+    def _create_openclip_model(self, model_name: str) -> Dict[str, Any]:
+        """Create OpenCLIP model instance.
 
         Args:
-            model_name: CLIP model name
+            model_name: OpenCLIP model name (e.g., 'laion/CLIP-ViT-L-14-laion2B-s32B-b82K')
 
         Returns:
-            Dictionary with CLIP model and metadata
+            Dictionary with OpenCLIP model and metadata
         """
         try:
-            import clip
             import torch
+            import open_clip  # type: ignore[import-untyped]
+            from PIL import Image
 
             # Set device
             device = "cuda" if torch.cuda.is_available() else "cpu"
 
-            # Load CLIP model
-            model, preprocess = clip.load(
-                model_name, device=device, download_root=self.cache_dir
+            # Parse model name to extract OpenCLIP model and pretrained weights
+            # Format: 'laion/CLIP-ViT-L-14-laion2B-s32B-b82K'
+            if "/" in model_name:
+                # HuggingFace style name
+                _, model_part = model_name.split("/", 1)
+                if "ViT-L-14" in model_part:
+                    clip_model_name = "ViT-L-14"
+                    pretrained = model_part  # Use full model part as pretrained identifier
+                elif "ViT-B-32" in model_part:
+                    clip_model_name = "ViT-B-32"
+                    pretrained = model_part
+                else:
+                    # Default fallback
+                    clip_model_name = "ViT-L-14"
+                    pretrained = "laion2b_s32b_b82k"
+            else:
+                # Direct OpenCLIP model name
+                clip_model_name = model_name
+                pretrained = "laion2b_s32b_b82k"  # Default for ViT-L-14
+
+            # Load OpenCLIP model
+            model, _, preprocess = open_clip.create_model_and_transforms(
+                clip_model_name,
+                pretrained=pretrained,
+                device=device,
+                cache_dir=self.cache_dir
             )
+
+            # Load tokenizer - try with pretrained info first, fallback to model name
+            try:
+                # Some pretrained weights have specialized tokenizers
+                tokenizer = open_clip.get_tokenizer(f"{clip_model_name}/{pretrained}")
+                logger.debug(f"Loaded tokenizer for {clip_model_name}/{pretrained}")
+            except Exception as e:
+                # Fallback to model name only
+                logger.debug(f"Tokenizer fallback for {clip_model_name}: {e}")
+                tokenizer = open_clip.get_tokenizer(clip_model_name)
+
             model.eval()
+
+            # Dynamically determine embedding size
+            try:
+                embedding_size = model.text_projection.shape[1]
+            except AttributeError:
+                embedding_size = model.visual.output_dim  # fallback for some OpenCLIP builds
+
+            # Dynamically determine input resolution from preprocess
+            input_resolution = getattr(preprocess.transforms[0], "size", 224)
 
             return {
                 "model": model,
                 "preprocess": preprocess,
+                "tokenizer": tokenizer,
                 "device": device,
-                "provider": "clip",
+                "provider": "openclip",
                 "model_name": model_name,
-                "embedding_size": 512,
-                "input_resolution": 224,
-                "supports_text": True,
-                "supports_image": True,
-                "batch_size": 32,
-            }
-
-        except ImportError as e:
-            logger.error(
-                "CLIP dependencies not installed. Install with: pip install torch torchvision clip-by-openai"
-            )
-            raise ImportError("CLIP dependencies missing") from e
-
-    def _create_siglip_model(self, model_name: str) -> Dict:
-        """Create SigLIP model instance.
-
-        Args:
-            model_name: SigLIP model name
-
-        Returns:
-            Dictionary with SigLIP model and metadata
-        """
-        try:
-            import torch
-            from transformers import SiglipModel, SiglipProcessor
-
-            # Set device
-            device = "cuda" if torch.cuda.is_available() else "cpu"
-
-            # Load SigLIP model
-            model = SiglipModel.from_pretrained(model_name, cache_dir=self.cache_dir)
-            processor = SiglipProcessor.from_pretrained(
-                model_name, cache_dir=self.cache_dir
-            )
-
-            model.to(device)
-            model.eval()
-
-            # Get input resolution from settings
-            input_resolution = self.settings.siglip_input_resolution
-
-            return {
-                "model": model,
-                "processor": processor,
-                "device": device,
-                "provider": "siglip",
-                "model_name": model_name,
-                "embedding_size": model.config.projection_dim,
+                "clip_model_name": clip_model_name,
+                "pretrained": pretrained,
+                "embedding_size": embedding_size,
                 "input_resolution": input_resolution,
                 "supports_text": True,
                 "supports_image": True,
-                "batch_size": 16,  # SigLIP works well with smaller batches
+                "batch_size": getattr(self.settings, "image_batch_size", 16),
             }
 
         except ImportError as e:
             logger.error(
-                "SigLIP dependencies not installed. Install with: pip install transformers torch"
+                "OpenCLIP dependencies not installed. Install with: pip install open-clip-torch"
             )
-            raise ImportError("SigLIP dependencies missing") from e
+            raise ImportError("OpenCLIP dependencies missing") from e
+        except Exception as e:
+            logger.error(f"Failed to load OpenCLIP model {model_name}: {e}")
+            raise
 
-    def _create_jinaclip_model(self, model_name: str) -> Dict:
-        """Create JinaCLIP model instance.
-
-        Args:
-            model_name: JinaCLIP model name
-
-        Returns:
-            Dictionary with JinaCLIP model and metadata
-        """
-        try:
-            import torch
-            from transformers import AutoModel, AutoProcessor
-
-            # Set device
-            device = "cuda" if torch.cuda.is_available() else "cpu"
-
-            # Load JinaCLIP model
-            model = AutoModel.from_pretrained(
-                model_name, trust_remote_code=True, cache_dir=self.cache_dir
-            )
-            processor = AutoProcessor.from_pretrained(
-                model_name, trust_remote_code=True, cache_dir=self.cache_dir
-            )
-
-            model.to(device)
-            model.eval()
-
-            # Get input resolution from settings
-            input_resolution = self.settings.jinaclip_input_resolution
-
-            return {
-                "model": model,
-                "processor": processor,
-                "device": device,
-                "provider": "jinaclip",
-                "model_name": model_name,
-                "embedding_size": 1024,  # JinaCLIP v2 embedding size
-                "input_resolution": input_resolution,
-                "supports_text": True,
-                "supports_image": True,
-                "batch_size": 8,  # JinaCLIP v2 works with smaller batches due to higher resolution
-            }
-
-        except ImportError as e:
-            logger.error(
-                "JinaCLIP dependencies not installed. Install with: pip install transformers torch"
-            )
-            raise ImportError("JinaCLIP dependencies missing") from e
 
     def _detect_model_provider(self, model_name: str) -> str:
         """Detect model provider from model name.
@@ -246,19 +197,10 @@ class VisionProcessor:
             model_name: Model name or path
 
         Returns:
-            Provider name (clip, siglip, jinaclip)
+            Provider name (always "openclip")
         """
-        model_lower = model_name.lower()
-
-        if "siglip" in model_lower or "google/siglip" in model_lower:
-            return "siglip"
-        elif "jina" in model_lower or "jinaai" in model_lower:
-            return "jinaclip"
-        elif "vit" in model_lower or "rn" in model_lower:
-            return "clip"
-        else:
-            # Default to CLIP for unknown models
-            return "clip"
+        # Only OpenCLIP is supported now
+        return "openclip"
 
     def _warm_up_model(self):
         """Warm up model with dummy data."""
@@ -299,15 +241,19 @@ class VisionProcessor:
         """
         try:
             # Encode with model
-            embedding = self._encode_image_with_model(image_data, self.model)
-            return embedding
+            if self.model is not None:
+                embedding = self._encode_image_with_model(image_data, self.model)
+                return embedding
+            else:
+                logger.error("Model not initialized")
+                return None
 
         except Exception as e:
             logger.error(f"Image encoding failed: {e}")
             return None
 
     def _encode_image_with_model(
-        self, image_data: str, model_dict: Dict
+        self, image_data: str, model_dict: Dict[str, Any]
     ) -> Optional[List[float]]:
         """Encode image with specific model.
 
@@ -327,12 +273,8 @@ class VisionProcessor:
             # Encode based on provider
             provider = model_dict["provider"]
 
-            if provider == "clip":
-                return self._encode_with_clip(image, model_dict)
-            elif provider == "siglip":
-                return self._encode_with_siglip(image, model_dict)
-            elif provider == "jinaclip":
-                return self._encode_with_jinaclip(image, model_dict)
+            if provider == "openclip":
+                return self._encode_with_openclip(image, model_dict)
             else:
                 logger.error(f"Unsupported provider: {provider}")
                 return None
@@ -449,6 +391,45 @@ class VisionProcessor:
             logger.error(f"JinaCLIP encoding failed: {e}")
             return None
 
+    def _encode_with_openclip(
+        self, image: Image.Image, model_dict: Dict
+    ) -> Optional[List[float]]:
+        """Encode image using OpenCLIP model.
+
+        Args:
+            image: PIL Image to encode
+            model_dict: Dictionary containing OpenCLIP model and preprocessing
+
+        Returns:
+            Embedding vector as list of floats or None if encoding fails
+        """
+        try:
+            import torch
+
+            model = model_dict["model"]
+            preprocess = model_dict["preprocess"]
+
+            # Preprocess image
+            image_tensor = preprocess(image).unsqueeze(0)
+
+            # Move to device if available
+            device = model_dict.get("device", "cpu")
+            if device != "cpu":
+                image_tensor = image_tensor.to(device)
+
+            # Generate embedding
+            with torch.no_grad():
+                image_features = model.encode_image(image_tensor)
+                # Normalize features
+                image_features = image_features / image_features.norm(dim=-1, keepdim=True)
+                embedding = image_features.cpu().numpy().flatten().tolist()
+
+            return embedding
+
+        except Exception as e:
+            logger.error(f"OpenCLIP encoding failed: {e}")
+            return None
+
     def _decode_base64_image(self, image_data: str) -> Optional[Image.Image]:
         """Decode base64 image data to PIL Image.
 
@@ -469,7 +450,7 @@ class VisionProcessor:
             image_bytes = base64.b64decode(base64_part)
 
             # Create PIL Image
-            image = Image.open(io.BytesIO(image_bytes))
+            image: Image.Image = Image.open(io.BytesIO(image_bytes))
 
             # Convert to RGB if necessary
             if image.mode != "RGB":
@@ -495,7 +476,7 @@ class VisionProcessor:
         """
         try:
             if batch_size is None:
-                batch_size = self.model.get("batch_size", 8)
+                batch_size = self.model.get("batch_size", 8) if self.model else 8
 
             embeddings = []
             total_images = len(image_data_list)
@@ -770,7 +751,7 @@ class VisionProcessor:
 
                         # Validate image
                         try:
-                            image = Image.open(io.BytesIO(image_bytes))
+                            image: Image.Image = Image.open(io.BytesIO(image_bytes))
                             if image.mode != "RGB":
                                 image = image.convert("RGB")
 

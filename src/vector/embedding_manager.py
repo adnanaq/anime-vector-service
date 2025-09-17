@@ -6,7 +6,7 @@ for the comprehensive anime search system with error handling and validation.
 
 import asyncio
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from ..config import Settings
 from ..models.anime import AnimeEntry
@@ -164,7 +164,7 @@ class MultiVectorEmbeddingManager:
         """
         try:
             # Basic anime information
-            payload = {
+            payload: Dict[str, Any] = {
                 "id": anime.id,
                 "title": anime.title,
                 "synopsis": anime.synopsis or "",
@@ -200,7 +200,7 @@ class MultiVectorEmbeddingManager:
             if anime.statistics:
                 payload["statistics"] = {}
                 for platform, stats in anime.statistics.items():
-                    payload["statistics"][platform] = {
+                    stats_dict: Dict[str, Any] = {
                         "score": getattr(stats, "score", None),
                         "scored_by": getattr(stats, "scored_by", None),
                         "popularity_rank": getattr(stats, "popularity_rank", None),
@@ -208,6 +208,7 @@ class MultiVectorEmbeddingManager:
                         "favorites": getattr(stats, "favorites", None),
                         "rank": getattr(stats, "rank", None),
                     }
+                    payload["statistics"][platform] = stats_dict
 
             # Add sources for platform availability filtering
             if anime.sources:
@@ -251,7 +252,7 @@ class MultiVectorEmbeddingManager:
             # Missing vectors
             missing_vectors = [v for v in self.vector_names if v not in vectors]
 
-            metadata = {
+            metadata: Dict[str, Any] = {
                 "processing_timestamp": None,  # Will be set by caller
                 "total_vectors_expected": total_expected,
                 "total_vectors_generated": total_generated,
@@ -267,7 +268,7 @@ class MultiVectorEmbeddingManager:
             }
 
             # Add vector dimensions for validation
-            vector_dimensions = {}
+            vector_dimensions: Dict[str, int] = {}
             for vector_name, vector_data in vectors.items():
                 if vector_data:
                     vector_dimensions[vector_name] = len(vector_data)
@@ -303,18 +304,18 @@ class MultiVectorEmbeddingManager:
             for i, result in enumerate(results):
                 if isinstance(result, Exception):
                     logger.error(f"Batch processing error for anime {i}: {result}")
-                    processed_results.append(
-                        {
-                            "vectors": {},
-                            "payload": {},
-                            "metadata": {
-                                "error": str(result),
-                                "processing_failed": True,
-                            },
-                        }
-                    )
+                    error_result: Dict[str, Any] = {
+                        "vectors": {},
+                        "payload": {},
+                        "metadata": {
+                            "error": str(result),
+                            "processing_failed": True,
+                        },
+                    }
+                    processed_results.append(error_result)
                 else:
-                    processed_results.append(result)
+                    # result is not an Exception, it's a Dict[str, Any]
+                    processed_results.append(result)  # type: ignore[arg-type]
 
             # Log batch statistics
             successful = sum(
@@ -342,7 +343,7 @@ class MultiVectorEmbeddingManager:
             Validation report dictionary
         """
         try:
-            validation_report = {
+            validation_report: Dict[str, Any] = {
                 "valid": True,
                 "errors": [],
                 "warnings": [],

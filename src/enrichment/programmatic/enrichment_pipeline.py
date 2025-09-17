@@ -8,7 +8,7 @@ import asyncio
 import json
 import os
 import time
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional, Any, cast
 from pathlib import Path
 import logging
 
@@ -42,7 +42,7 @@ class ProgrammaticEnrichmentPipeline:
         self.episode_processor = EpisodeProcessor()
         
         # Performance tracking
-        self.timing_breakdown = {}
+        self.timing_breakdown: Dict[str, float] = {}
         
         # Log configuration if verbose
         if self.config.verbose_logging:
@@ -155,15 +155,16 @@ class ProgrammaticEnrichmentPipeline:
         results = await asyncio.gather(*tasks, return_exceptions=True)
         
         # Handle results and exceptions
-        successful = []
+        successful: List[Dict[str, Any]] = []
         failed = []
-        
+
         for anime, result in zip(anime_list, results):
             if isinstance(result, Exception):
                 logger.error(f"Failed to enrich {anime.get('title')}: {result}")
                 failed.append(anime)
             else:
-                successful.append(result)
+                # result is guaranteed to be Dict[str, Any] here due to the isinstance check above
+                successful.append(cast(Dict[str, Any], result))
         
         logger.info(f"Batch complete: {len(successful)} successful, {len(failed)} failed")
         

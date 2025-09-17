@@ -6,8 +6,8 @@ import re
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
 
-import cloudscraper
-from bs4 import BeautifulSoup
+import cloudscraper  # type: ignore
+from bs4 import BeautifulSoup, Tag, NavigableString
 
 from .simple_base_client import SimpleBaseClient as BaseClient
 
@@ -51,9 +51,13 @@ class BaseScraper(BaseClient):
         try:
             # Use working approach: run in thread pool without complex headers
             loop = asyncio.get_event_loop()
+            if not self.scraper:
+                raise Exception("Scraper not initialized")
+
             response = await loop.run_in_executor(
                 None, lambda: self.scraper.get(url, timeout=kwargs.get("timeout", 10))
             )
+
 
             # Check response status
             if response.status_code >= 400:
@@ -99,11 +103,13 @@ class BaseScraper(BaseClient):
         scripts = soup.find_all("script", type="application/ld+json")
 
         for script in scripts:
-            if not script.string:
+            if not hasattr(script, 'string') or not script.string:
                 continue
 
             try:
-                data = json.loads(script.string)
+                # script.string is guaranteed to exist here due to the check above
+                script_text = script.string if isinstance(script.string, str) else str(script.string)
+                data = json.loads(script_text)
 
                 # Look for relevant schema types
                 if isinstance(data, dict):
@@ -140,10 +146,13 @@ class BaseScraper(BaseClient):
         # Find all OpenGraph meta tags
         og_tags = soup.find_all("meta", property=re.compile(r"^og:"))
         for tag in og_tags:
-            property_name = tag.get("property", "").replace("og:", "")
-            content = tag.get("content", "")
-            if property_name and content:
-                og_data[property_name] = content
+            if isinstance(tag, Tag):
+                property_name = tag.get("property", "")
+                content = tag.get("content", "")
+                if isinstance(property_name, str) and isinstance(content, str):
+                    property_name = property_name.replace("og:", "")
+                    if property_name and content:
+                        og_data[property_name] = content
 
         return og_data
 
@@ -155,8 +164,10 @@ class BaseScraper(BaseClient):
         meta_names = ["description", "keywords", "author", "title"]
         for name in meta_names:
             tag = soup.find("meta", {"name": name})
-            if tag and tag.get("content"):
-                meta_data[name] = tag.get("content")
+            if tag and isinstance(tag, Tag):
+                content = tag.get("content")
+                if isinstance(content, str):
+                    meta_data[name] = content
 
         return meta_data
 
@@ -178,7 +189,7 @@ class BaseScraper(BaseClient):
 
     def _extract_base_data(self, soup: BeautifulSoup, url: str) -> Dict[str, Any]:
         """Extract basic data common to all anime sites."""
-        base_data = {
+        base_data: Dict[str, Any] = {
             "domain": urlparse(url).netloc,
             "page_title": None,
             "meta_description": None,
@@ -193,8 +204,10 @@ class BaseScraper(BaseClient):
 
         # Meta description
         meta_desc = soup.find("meta", {"name": "description"})
-        if meta_desc:
-            base_data["meta_description"] = meta_desc.get("content", "")
+        if meta_desc and isinstance(meta_desc, Tag):
+            content = meta_desc.get("content", "")
+            if isinstance(content, str):
+                base_data["meta_description"] = content
 
         # Structured data
         json_ld = self._extract_json_ld(soup)

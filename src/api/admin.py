@@ -20,7 +20,10 @@ router = APIRouter()
 
 class UpsertRequest(BaseModel):
     """Request model for upserting vectors."""
-    documents: List[Dict[str, Any]] = Field(..., description="List of documents to upsert")
+    documents: List[Dict[str, Any]] = Field(
+        ...,
+        description="List of AnimeEntry-compatible documents to upsert. Required fields: id, status, title, type, sources"
+    )
     batch_size: int = Field(default=100, ge=1, le=1000, description="Batch size for processing")
 
 
@@ -155,9 +158,35 @@ async def upsert_vectors(request: UpsertRequest) -> UpsertResponse:
         # Start timing
         start_time = time.time()
         
+        # Convert documents to AnimeEntry objects
+        from ..models.anime import AnimeEntry
+        from pydantic import ValidationError
+
+        anime_entries = []
+        errors = []
+
+        for i, doc in enumerate(request.documents):
+            try:
+                anime_entry = AnimeEntry(**doc)
+                anime_entries.append(anime_entry)
+            except ValidationError as e:
+                error_msg = f"Document {i}: {str(e)}"
+                errors.append(error_msg)
+                logger.error(f"Failed to parse document {i} as AnimeEntry: {e}")
+            except Exception as e:
+                error_msg = f"Document {i}: Unexpected error - {str(e)}"
+                errors.append(error_msg)
+                logger.error(f"Unexpected error parsing document {i}: {e}")
+
+        if errors:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid document format. Errors: {'; '.join(errors[:3])}{'...' if len(errors) > 3 else ''}"
+            )
+
         # Process documents
         success = await qdrant_client.add_documents(
-            documents=request.documents,
+            documents=anime_entries,
             batch_size=request.batch_size
         )
         

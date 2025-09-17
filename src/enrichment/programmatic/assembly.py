@@ -15,8 +15,14 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Optional, Tuple, Type, Union
 from dataclasses import dataclass
+
+# Type annotations for optional imports
+_AnimeEntry: Optional[Type[Any]] = None
+_EnrichmentMetadata: Optional[Type[Any]] = None
+_EnrichmentValidator: Optional[Type[Any]] = None
+_ValidationError: Type[Exception] = Exception
 
 try:
     from src.models.anime import AnimeEntry, EnrichmentMetadata
@@ -26,10 +32,15 @@ try:
     from pathlib import Path
     sys.path.append(str(Path(__file__).parent.parent.parent.parent))
     from validate_enrichment_database import EnrichmentValidator
+
+    # Set the type markers for successful imports
+    _AnimeEntry = AnimeEntry
+    _EnrichmentMetadata = EnrichmentMetadata
+    _EnrichmentValidator = EnrichmentValidator
+    _ValidationError = ValidationError
 except ImportError:
     print("Warning: Could not import Pydantic models or validator. Assembly will be limited.")
-    AnimeEntry = EnrichmentMetadata = EnrichmentValidator = None
-    ValidationError = Exception
+    # Keep the None values already assigned above
 
 logger = logging.getLogger(__name__)
 
@@ -417,12 +428,12 @@ class EnrichmentAssembler:
     
     def _validate_final_output(self, entry: Dict[str, Any]) -> bool:
         """Run validator on final merged output"""
-        if not EnrichmentValidator:
+        if not _EnrichmentValidator:
             self.warnings.append("EnrichmentValidator not available, skipping validation")
             return True
-            
+
         try:
-            validator = EnrichmentValidator()
+            validator = _EnrichmentValidator()
             
             # First validate the merged entry
             validation_result = validator.validate_entry(entry, 0)
@@ -508,11 +519,11 @@ def validate_and_fix_entry(anime_entry: Dict[str, Any]) -> Tuple[Dict[str, Any],
     Returns:
         Tuple of (fixed_entry, is_valid, validation_messages)
     """
-    if not EnrichmentValidator:
+    if not _EnrichmentValidator:
         return anime_entry, True, ["EnrichmentValidator not available"]
-    
+
     try:
-        validator = EnrichmentValidator()
+        validator = _EnrichmentValidator()
         
         # First validate
         validation_result = validator.validate_entry(anime_entry, 0)

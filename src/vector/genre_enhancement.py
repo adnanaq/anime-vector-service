@@ -5,13 +5,14 @@ text models for better anime genre classification and semantic understanding.
 """
 
 import logging
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Dict, List, Optional, Tuple, Any, Union
 from pathlib import Path
 
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
+from torch.optim import AdamW
 from transformers import AutoModel, AutoTokenizer
 from peft import LoraConfig, get_peft_model, TaskType
 import numpy as np
@@ -208,16 +209,16 @@ class GenreEnhancementFinetuner:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
         # Model components
-        self.enhancement_model = None
-        self.optimizer = None
-        self.loss_fn = None
-        
+        self.enhancement_model: Optional[GenreEnhancementModel] = None
+        self.optimizer: Optional[AdamW] = None
+        self.loss_fn: Optional[Dict[str, nn.Module]] = None
+
         # Training state
         self.num_genres = 0
-        self.genre_vocab = {}
-        self.theme_vocab = {}
-        self.target_vocab = {}
-        self.mood_vocab = {}
+        self.genre_vocab: Dict[str, int] = {}
+        self.theme_vocab: Dict[str, int] = {}
+        self.target_vocab: Dict[str, int] = {}
+        self.mood_vocab: Dict[str, int] = {}
         self.is_trained = False
         
         logger.info(f"Genre enhancement fine-tuner initialized on {self.device}")
@@ -248,7 +249,7 @@ class GenreEnhancementFinetuner:
             self.enhancement_model = self.enhancement_model.to(self.device)
             
             # Setup optimizer
-            self.optimizer = torch.optim.AdamW(
+            self.optimizer = AdamW(
                 self.enhancement_model.parameters(),
                 lr=1e-4,
                 weight_decay=1e-5
@@ -396,7 +397,8 @@ class GenreEnhancementFinetuner:
             raise RuntimeError("Model not initialized. Call setup_lora_model first.")
         
         self.enhancement_model.train()
-        self.optimizer.zero_grad()
+        if self.optimizer is not None:
+            self.optimizer.zero_grad()
         
         # Get inputs
         text_embeddings = batch.get('text_embedding')
@@ -439,17 +441,21 @@ class GenreEnhancementFinetuner:
         outputs = self.enhancement_model(text_embeddings)
         
         # Calculate losses
-        genre_loss = self.loss_fn['genre'](outputs['genre_logits'], genre_labels)
-        theme_loss = self.loss_fn['theme'](outputs['theme_logits'], theme_labels)
-        target_loss = self.loss_fn['target'](outputs['target_logits'], target_labels)
-        mood_loss = self.loss_fn['mood'](outputs['mood_logits'], mood_labels)
+        if self.loss_fn is not None:
+            genre_loss = self.loss_fn['genre'](outputs['genre_logits'], genre_labels)
+            theme_loss = self.loss_fn['theme'](outputs['theme_logits'], theme_labels)
+            target_loss = self.loss_fn['target'](outputs['target_logits'], target_labels)
+            mood_loss = self.loss_fn['mood'](outputs['mood_logits'], mood_labels)
+        else:
+            return 0.0
         
         # Combined loss
         total_loss = genre_loss + 0.3 * theme_loss + 0.2 * target_loss + 0.2 * mood_loss
         
         # Backward pass
         total_loss.backward()
-        self.optimizer.step()
+        if self.optimizer is not None:
+            self.optimizer.step()
         
         return total_loss.item()
     
@@ -485,7 +491,10 @@ class GenreEnhancementFinetuner:
                 outputs = self.enhancement_model(text_embeddings)
                 
                 # Calculate loss
-                genre_loss = self.loss_fn['genre'](outputs['genre_logits'], genre_labels)
+                if self.loss_fn is not None:
+                    genre_loss = self.loss_fn['genre'](outputs['genre_logits'], genre_labels)
+                else:
+                    continue
                 total_loss += genre_loss.item()
                 
                 # Calculate accuracy
@@ -588,7 +597,7 @@ class GenreEnhancementFinetuner:
         # Save model state
         model_state = {
             'model_state_dict': self.enhancement_model.state_dict(),
-            'optimizer_state_dict': self.optimizer.state_dict(),
+            'optimizer_state_dict': self.optimizer.state_dict() if self.optimizer is not None else {},
             'num_genres': self.num_genres,
             'genre_vocab': self.genre_vocab,
             'theme_vocab': self.theme_vocab,
@@ -631,21 +640,23 @@ class GenreEnhancementFinetuner:
         )
         
         # Update auxiliary classifiers
-        self.enhancement_model.theme_classifier = nn.Linear(384, len(self.theme_vocab))
-        self.enhancement_model.target_classifier = nn.Linear(384, len(self.target_vocab))
-        self.enhancement_model.mood_classifier = nn.Linear(384, len(self.mood_vocab))
-        
-        # Load state dict
-        self.enhancement_model.load_state_dict(model_state['model_state_dict'])
-        self.enhancement_model = self.enhancement_model.to(self.device)
-        
-        # Setup optimizer
-        self.optimizer = torch.optim.AdamW(
-            self.enhancement_model.parameters(),
-            lr=1e-4,
-            weight_decay=1e-5
-        )
-        self.optimizer.load_state_dict(model_state['optimizer_state_dict'])
+        if self.enhancement_model is not None:
+            self.enhancement_model.theme_classifier = nn.Linear(384, len(self.theme_vocab))
+            self.enhancement_model.target_classifier = nn.Linear(384, len(self.target_vocab))
+            self.enhancement_model.mood_classifier = nn.Linear(384, len(self.mood_vocab))
+
+            # Load state dict
+            self.enhancement_model.load_state_dict(model_state['model_state_dict'])
+            self.enhancement_model = self.enhancement_model.to(self.device)
+
+            # Setup optimizer
+            self.optimizer = AdamW(
+                self.enhancement_model.parameters(),
+                lr=1e-4,
+                weight_decay=1e-5
+            )
+            if self.optimizer is not None:
+                self.optimizer.load_state_dict(model_state['optimizer_state_dict'])
         
         logger.info(f"Genre enhancement model loaded from {load_path}")
     

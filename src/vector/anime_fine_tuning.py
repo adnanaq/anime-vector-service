@@ -85,8 +85,8 @@ class AnimeFineTuner:
         self.genre_enhancer = GenreEnhancementFinetuner(settings, self.text_processor)
         
         # Training state
-        self.training_stats = {}
-        self.best_model_path = None
+        self.training_stats: Dict[str, Any] = {}
+        self.best_model_path: Optional[Path] = None
         
     def prepare_dataset(self, data_path: str) -> Optional[AnimeDataset]:
         """Prepare anime dataset for fine-tuning.
@@ -186,7 +186,7 @@ class AnimeFineTuner:
         self.setup_models_for_finetuning()
         
         # Training loop
-        training_stats = {
+        training_stats: Dict[str, Any] = {
             'character_loss': [],
             'art_style_loss': [],
             'genre_loss': [],
@@ -200,7 +200,8 @@ class AnimeFineTuner:
             
             # Update training stats
             for key, value in epoch_stats.items():
-                training_stats[key].append(value)
+                if key in training_stats and isinstance(training_stats[key], list):
+                    training_stats[key].append(value)
             
             # Save best model
             if epoch_stats['total_loss'] < training_stats['best_loss']:
@@ -290,7 +291,7 @@ class AnimeFineTuner:
             with open(config_path, 'w') as f:
                 json.dump(self.config.__dict__, f, indent=2)
             
-            self.best_model_path = output_dir
+            self.best_model_path = Path(output_dir)
             logger.info(f"Saved best model at epoch {epoch} to {output_dir}")
         except PermissionError:
             logger.error(f"Permission denied to write to {self.config.model_output_dir}")
@@ -386,11 +387,14 @@ class AnimeFineTuner:
         
         # Get enhanced embeddings
         if text_embedding is not None:
-            embeddings['character'] = self.character_finetuner.get_enhanced_embedding(text_embedding, image_embedding)
-            embeddings['genre'] = self.genre_enhancer.get_enhanced_embedding(text_embedding)
-        
+            text_array = np.array(text_embedding) if isinstance(text_embedding, list) else text_embedding
+            image_array = np.array(image_embedding) if isinstance(image_embedding, list) and image_embedding is not None else image_embedding
+            embeddings['character'] = self.character_finetuner.get_enhanced_embedding(text_array, image_array)
+            embeddings['genre'] = self.genre_enhancer.get_enhanced_embedding(text_array)
+
         if image_embedding is not None:
-            embeddings['art_style'] = self.art_style_classifier.get_enhanced_embedding(image_embedding)
+            image_array = np.array(image_embedding) if isinstance(image_embedding, list) else image_embedding
+            embeddings['art_style'] = self.art_style_classifier.get_enhanced_embedding(image_array)
         
         return embeddings
     

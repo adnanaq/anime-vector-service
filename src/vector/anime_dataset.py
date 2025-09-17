@@ -36,15 +36,15 @@ class DataSample:
     image_data: Optional[str] = None
     
     # Labels for different tasks
-    character_labels: List[str] = None
-    art_style_label: str = None
-    genre_labels: List[str] = None
-    
+    character_labels: Optional[List[str]] = None
+    art_style_label: Optional[str] = None
+    genre_labels: Optional[List[str]] = None
+
     # Additional metadata
-    studio: str = None
-    year: int = None
-    type: str = None
-    tags: List[str] = None
+    studio: Optional[str] = None
+    year: Optional[int] = None
+    type: Optional[str] = None
+    tags: Optional[List[str]] = None
 
 
 class AnimeDataset(Dataset):
@@ -171,7 +171,7 @@ class AnimeDataset(Dataset):
         Returns:
             List of augmented samples
         """
-        augmented_samples = []
+        augmented_samples: List[DataSample] = []
         base_sample = self._create_base_sample(anime)
         
         if not base_sample:
@@ -609,9 +609,9 @@ class AnimeDataset(Dataset):
             Class weights for each task
         """
         # Calculate character weights
-        character_counts = defaultdict(int)
-        art_style_counts = defaultdict(int)
-        genre_counts = defaultdict(int)
+        character_counts: Dict[str, int] = defaultdict(int)
+        art_style_counts: Dict[str, int] = defaultdict(int)
+        genre_counts: Dict[str, int] = defaultdict(int)
         
         for sample in self.samples:
             if sample.character_labels:

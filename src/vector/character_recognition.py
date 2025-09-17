@@ -174,14 +174,14 @@ class CharacterRecognitionFinetuner:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
         # Model components
-        self.base_model = None
-        self.recognition_model = None
-        self.optimizer = None
-        self.loss_fn = None
-        
+        self.base_model: Optional[Any] = None
+        self.recognition_model: Optional[MultimodalCharacterRecognizer] = None
+        self.optimizer: Optional[torch.optim.AdamW] = None
+        self.loss_fn: Optional[nn.BCEWithLogitsLoss] = None
+
         # Training state
         self.num_characters = 0
-        self.character_vocab = {}
+        self.character_vocab: Dict[str, int] = {}
         self.is_trained = False
         
         logger.info(f"Character recognition fine-tuner initialized on {self.device}")
@@ -283,9 +283,9 @@ class CharacterRecognitionFinetuner:
         Returns:
             Training loss
         """
-        if self.recognition_model is None:
+        if self.recognition_model is None or self.optimizer is None or self.loss_fn is None:
             raise RuntimeError("Model not initialized. Call setup_lora_model first.")
-        
+
         self.recognition_model.train()
         self.optimizer.zero_grad()
         
@@ -325,9 +325,9 @@ class CharacterRecognitionFinetuner:
         Returns:
             Evaluation metrics
         """
-        if self.recognition_model is None:
+        if self.recognition_model is None or self.loss_fn is None:
             raise RuntimeError("Model not initialized")
-        
+
         self.recognition_model.eval()
         
         total_loss = 0.0
@@ -484,9 +484,9 @@ class CharacterRecognitionFinetuner:
         Args:
             save_path: Path to save model
         """
-        if self.recognition_model is None:
+        if self.recognition_model is None or self.optimizer is None:
             raise RuntimeError("Model not initialized")
-        
+
         save_path.mkdir(parents=True, exist_ok=True)
         
         # Save model state

@@ -8,7 +8,7 @@ defined in Phase 2.5 architecture with character image semantic separation.
 """
 
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 from src.models.anime import AnimeEntry
 
@@ -30,7 +30,7 @@ class AnimeFieldMapper:
         """Initialize the anime field mapper."""
         self.logger = logger
 
-    def map_anime_to_vectors(self, anime: AnimeEntry) -> Dict[str, Any]:
+    def map_anime_to_vectors(self, anime: AnimeEntry) -> Dict[str, Union[str, List[str]]]:
         """
         Map complete anime entry to all 14 vectors.
 
@@ -40,7 +40,7 @@ class AnimeFieldMapper:
         Returns:
             Dict mapping vector names to their content for embedding
         """
-        vector_data = {}
+        vector_data: Dict[str, Union[str, List[str]]] = {}
 
         # Text vectors (12)
         vector_data["title_vector"] = self._extract_title_content(anime)
@@ -177,7 +177,7 @@ class AnimeFieldMapper:
 
         # Extract staff information from staff_data if available
         if hasattr(anime, "staff_data") and anime.staff_data:
-            staff_info = []
+            staff_info: List[str] = []
 
             # Handle different staff_data structures
             if isinstance(anime.staff_data, dict):

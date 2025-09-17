@@ -3,14 +3,14 @@
 from functools import lru_cache
 from typing import List, Optional
 
-from pydantic import ConfigDict, Field, field_validator
-from pydantic_settings import BaseSettings
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     """Vector service settings with validation and type safety."""
 
-    model_config = ConfigDict(
+    model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
@@ -76,10 +76,10 @@ class Settings(BaseSettings):
             "franchise_vector": 1024,
             "episode_vector": 1024,
             "identifiers_vector": 1024,
-            "image_vector": 1024,
-            "character_image_vector": 1024
+            "image_vector": 768,
+            "character_image_vector": 768
         },
-        description="14-vector semantic architecture with named vectors and dimensions (BGE-M3: 1024-dim, JinaCLIP v2: 1024-dim)"
+        description="14-vector semantic architecture with named vectors and dimensions (BGE-M3: 1024-dim, OpenCLIP ViT-L/14: 768-dim)"
     )
 
     # Vector Priority Classification for Optimization
@@ -103,12 +103,12 @@ class Settings(BaseSettings):
     )
     
     image_embedding_provider: str = Field(
-        default="jinaclip", 
-        description="Image embedding provider: clip, siglip, jinaclip"
+        default="openclip",
+        description="Image embedding provider: openclip"
     )
     image_embedding_model: str = Field(
-        default="jinaai/jina-clip-v2", 
-        description="Modern image embedding model name"
+        default="ViT-L-14/laion2b_s32b_b82k",
+        description="OpenCLIP ViT-L/14 model for high-quality image embeddings (768 dims)"
     )
 
     # Model-Specific Configuration
@@ -121,17 +121,17 @@ class Settings(BaseSettings):
         description="BGE model size: small, base, large"
     )
     bge_max_length: int = Field(
-        default=8192, 
+        default=8192,
         description="BGE maximum input sequence length"
     )
     
-    jinaclip_input_resolution: int = Field(
-        default=512, 
-        description="JinaCLIP input image resolution"
+    openclip_input_resolution: int = Field(
+        default=224,
+        description="OpenCLIP input image resolution"
     )
-    jinaclip_text_max_length: int = Field(
-        default=77, 
-        description="JinaCLIP maximum text sequence length"
+    openclip_text_max_length: int = Field(
+        default=77,
+        description="OpenCLIP maximum text sequence length"
     )
     
     model_cache_dir: Optional[str] = Field(
@@ -139,8 +139,16 @@ class Settings(BaseSettings):
         description="Custom cache directory for embedding models"
     )
     model_warm_up: bool = Field(
-        default=False, 
+        default=False,
         description="Pre-load and warm up models during initialization"
+    )
+
+    # Image Processing Configuration
+    image_batch_size: int = Field(
+        default=16,
+        ge=1,
+        le=128,
+        description="Batch size for image embedding processing (adjust based on GPU VRAM: 4-8 for 8GB, 16+ for 16GB+)"
     )
 
     # Qdrant Performance Optimization
@@ -340,7 +348,7 @@ class Settings(BaseSettings):
     @classmethod
     def validate_image_provider(cls, v: str) -> str:
         """Validate image embedding provider."""
-        valid_providers = ["clip", "siglip", "jinaclip"]
+        valid_providers = ["openclip"]
         if v.lower() not in valid_providers:
             raise ValueError(f"Image embedding provider must be one of: {valid_providers}")
         return v.lower()

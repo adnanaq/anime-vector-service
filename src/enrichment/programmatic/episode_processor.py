@@ -59,7 +59,7 @@ class EpisodeProcessor:
         logger.debug(f"Processed {len(processed)}/{len(episodes_data)} episodes")
         return processed
     
-    def _extract_episode_fields(self, episode: Dict) -> Dict:
+    def _extract_episode_fields(self, episode: Dict) -> Optional[Dict[str, Any]]:
         """
         Extract specific fields from episode data.
         
