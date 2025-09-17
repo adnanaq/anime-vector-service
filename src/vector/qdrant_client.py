@@ -7,7 +7,7 @@ with advanced filtering, cross-platform ID lookups, and hybrid search.
 import asyncio
 import hashlib
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TypeGuard
 
 # fastembed import moved to _init_encoder method for lazy loading
 from qdrant_client import QdrantClient as QdrantSDK
@@ -41,6 +41,7 @@ from qdrant_client.models import (  # Qdrant optimization models; Multi-vector s
     ScalarType,
     VectorParams,
     WalConfig,
+    WalConfigDiff,
 )
 
 from ..config import Settings
@@ -48,6 +49,15 @@ from ..models.anime import AnimeEntry
 from .embedding_manager import MultiVectorEmbeddingManager
 
 logger = logging.getLogger(__name__)
+
+
+def is_float_vector(vector: Any) -> TypeGuard[List[float]]:
+    """Type guard to check if vector is a List[float]."""
+    return (
+        isinstance(vector, list)
+        and len(vector) > 0
+        and all(isinstance(x, (int, float)) for x in vector)
+    )
 
 
 class QdrantClient:
@@ -93,7 +103,7 @@ class QdrantClient:
         # Create collection if it doesn't exist
         self._initialize_collection()
 
-    def _init_processors(self):
+    def _init_processors(self) -> None:
         """Initialize embedding processors."""
         try:
             # Import processors
@@ -122,7 +132,7 @@ class QdrantClient:
             logger.error(f"Failed to initialize processors: {e}")
             raise
 
-    def _initialize_collection(self):
+    def _initialize_collection(self) -> None:
         """Initialize and validate anime collection with 14-vector architecture and performance optimization."""
         try:
             # Check if collection exists and validate its configuration
@@ -141,10 +151,7 @@ class QdrantClient:
 
                 # Add performance optimization configurations
                 quantization_config = self._create_quantization_config()
-                optimizers_config = (
-                    self._create_optimized_optimizers_config()
-                    or self._create_optimizers_config()
-                )
+                optimizers_config = self._create_optimized_optimizers_config()
                 wal_config = self._create_wal_config()
 
                 # Create collection with optimization
@@ -303,13 +310,13 @@ class QdrantClient:
             return OptimizersConfigDiff(
                 default_segment_number=4,
                 indexing_threshold=20000,
-                memmap_threshold_kb=self.settings.memory_mapping_threshold_mb * 1024,
+                memmap_threshold=self.settings.memory_mapping_threshold_mb * 1024,
             )
         except Exception as e:
             logger.error(f"Failed to create optimized optimizers config: {e}")
             return None
 
-    def _create_quantization_config(self) -> Optional[QuantizationConfig]:
+    def _create_quantization_config(self) -> Optional[BinaryQuantization | ScalarQuantization | ProductQuantization]:
         """Create quantization configuration for performance optimization."""
         if not getattr(self.settings, "qdrant_enable_quantization", False):
             return None
@@ -319,25 +326,24 @@ class QdrantClient:
 
         try:
             if quantization_type == "binary":
-                quantization = BinaryQuantization(always_ram=always_ram)
+                binary_config = BinaryQuantizationConfig(always_ram=always_ram)
                 logger.info("Enabling binary quantization for 40x speedup potential")
+                return BinaryQuantization(binary=binary_config)
             elif quantization_type == "scalar":
-                quantization = ScalarQuantization(
-                    type="int8",  # 8-bit quantization for good balance
+                scalar_config = ScalarQuantizationConfig(
+                    type=ScalarType.INT8,  # 8-bit quantization for good balance
                     always_ram=always_ram,
                 )
                 logger.info("Enabling scalar quantization for memory optimization")
+                return ScalarQuantization(scalar=scalar_config)
             elif quantization_type == "product":
-                quantization = ProductQuantization(
-                    compression=16,  # Good compression ratio for anime vectors
-                    always_ram=always_ram,
-                )
+                from qdrant_client.models import ProductQuantizationConfig, CompressionRatio
+                product_config = ProductQuantizationConfig(compression=CompressionRatio.X16)
                 logger.info("Enabling product quantization for storage optimization")
+                return ProductQuantization(product=product_config)
             else:
                 logger.warning(f"Unknown quantization type: {quantization_type}")
                 return None
-
-            return QuantizationConfig(quantization)
         except Exception as e:
             logger.error(f"Failed to create quantization config: {e}")
             return None
@@ -369,19 +375,19 @@ class QdrantClient:
             logger.error(f"Failed to create optimizers config: {e}")
             return None
 
-    def _create_wal_config(self) -> Optional[WalConfig]:
+    def _create_wal_config(self) -> Optional[WalConfigDiff]:
         """Create Write-Ahead Logging configuration."""
         enable_wal = getattr(self.settings, "qdrant_enable_wal", None)
         if enable_wal is not None:
             try:
-                config = WalConfig(wal_capacity_mb=32, wal_segments_ahead=0)
+                config = WalConfigDiff(wal_capacity_mb=32, wal_segments_ahead=0)
                 logger.info(f"WAL configuration: enabled={enable_wal}")
                 return config
             except Exception as e:
                 logger.error(f"Failed to create WAL config: {e}")
         return None
 
-    def _setup_payload_indexing(self):
+    def _setup_payload_indexing(self) -> None:
         """Setup payload field indexing for faster filtering.
 
         Creates indexes only for searchable metadata fields while keeping
@@ -640,10 +646,15 @@ class QdrantClient:
                 isinstance(reference_vectors, dict)
                 and "title_vector" in reference_vectors
             ):
-                query_vector = NamedVector(
-                    name="title_vector",
-                    vector=reference_vectors["title_vector"],
-                )
+                title_vector = reference_vectors["title_vector"]
+                if is_float_vector(title_vector):
+                    query_vector = NamedVector(
+                        name="title_vector",
+                        vector=title_vector,
+                    )
+                else:
+                    logger.warning(f"title_vector is not a valid float list: {type(title_vector)}")
+                    return []
             else:
                 logger.warning(f"No 'title_vector' found for anime: {anime_id}")
                 return []
@@ -663,7 +674,7 @@ class QdrantClient:
             # Format results
             results = []
             for hit in search_result:
-                result = dict(hit.payload)
+                result = dict(hit.payload) if hit.payload else {}
                 result["similarity_score"] = hit.score
                 results.append(result)
 
@@ -673,7 +684,7 @@ class QdrantClient:
             logger.error(f"Similar anime search failed: {e}")
             return []
 
-    def _build_filter(self, filters: Dict) -> Filter:
+    def _build_filter(self, filters: Dict) -> Optional[Filter]:
         """Build Qdrant filter from filter dictionary.
 
         Args:
@@ -715,13 +726,13 @@ class QdrantClient:
                         FieldCondition(key=key, match=MatchAny(any=value))
                     )
             else:
-                # Exact match - only add if value is not None
-                if value is not None:
+                # Exact match - only add if value is not None and is a valid type
+                if value is not None and isinstance(value, (str, int, bool)):
                     conditions.append(
                         FieldCondition(key=key, match=MatchValue(value=value))
                     )
 
-        return Filter(must=conditions) if conditions else None
+        return Filter(must=conditions) if conditions else None  # type: ignore[arg-type]
 
     async def get_by_id(self, anime_id: str) -> Optional[Dict[str, Any]]:
         """Get anime by ID.
@@ -748,7 +759,7 @@ class QdrantClient:
             )
 
             if points:
-                return dict(points[0].payload)
+                return dict(points[0].payload) if points[0].payload else {}
             return None
 
         except Exception as e:
@@ -781,7 +792,12 @@ class QdrantClient:
 
             # Perform similarity search
             loop = asyncio.get_event_loop()
-            embedding = self._create_embedding(search_text)
+            embedding = self.text_processor.encode_text(search_text)
+
+            # Validate embedding
+            if not embedding:
+                logger.warning(f"Failed to create embedding for search text: {search_text}")
+                return []
 
             # Filter to exclude the reference anime itself
             filter_out_self = Filter(
@@ -806,7 +822,7 @@ class QdrantClient:
             # Format results
             results = []
             for hit in search_result:
-                result = dict(hit.payload)
+                result = dict(hit.payload) if hit.payload else {}
                 result["similarity_score"] = hit.score
                 results.append(result)
 
@@ -969,14 +985,16 @@ class QdrantClient:
             # Convert response to our format
             results = []
             for point in response.points:
+                payload = point.payload if point.payload else {}
                 result = {
                     "id": str(point.id),
                     "anime_id": str(point.id),
                     "_id": str(point.id),
+                    **payload,
+                    # Search scores override any payload scores
                     "score": point.score,
                     "_score": point.score,
                     "fusion_score": point.score,
-                    **point.payload,
                 }
                 results.append(result)
 
@@ -1286,6 +1304,10 @@ class QdrantClient:
                 and "image_vector" in reference_vectors
             ):
                 image_vector = reference_vectors["image_vector"]
+                # Ensure image_vector is a list of floats
+                if not is_float_vector(image_vector):
+                    logger.warning(f"image_vector is not a valid float list: {type(image_vector)}")
+                    return []
                 # Check if image vector is all zeros (no image processed)
                 if all(v == 0.0 for v in image_vector):
                     logger.warning(
@@ -1317,7 +1339,7 @@ class QdrantClient:
             # Format results
             results = []
             for hit in search_result:
-                result = dict(hit.payload)
+                result = dict(hit.payload) if hit.payload else {}
                 result["visual_similarity_score"] = hit.score
                 results.append(result)
 

@@ -209,13 +209,13 @@ async def get_batch_similarity(request: BatchSimilarityRequest):
                     "similar_anime": [],
                     "total_found": 0,
                     "error": str(e),
-                    "similarity_type": similarity_type
+                    "similarity_type": request.similarity_type
                 }
         
         return {
             "batch_results": batch_results,
-            "total_processed": len(anime_ids),
-            "similarity_type": similarity_type
+            "total_processed": len(request.anime_ids),
+            "similarity_type": request.similarity_type
         }
         
     except HTTPException:

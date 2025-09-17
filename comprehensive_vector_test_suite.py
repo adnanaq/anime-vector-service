@@ -1217,7 +1217,7 @@ class ComprehensiveVectorTester:
                 "passed": suite_passed,
                 "total": suite_total,
                 "success_rate": (suite_passed / suite_total * 100) if suite_total > 0 else 0,
-                "avg_score": sum(result.top_score for result in suite.results) / suite_total if suite_total > 0 else 0,
+                "avg_score": sum(result.top_score for result in suite.results if isinstance(result.top_score, (int, float))) / suite_total if suite_total > 0 else 0,
                 "avg_time": sum(result.execution_time for result in suite.results) / suite_total if suite_total > 0 else 0
             })
 

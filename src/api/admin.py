@@ -43,7 +43,7 @@ class StatsResponse(BaseModel):
 
 
 @router.get("/stats", response_model=StatsResponse)
-async def get_database_stats():
+async def get_database_stats() -> StatsResponse:
     """
     Get comprehensive database statistics.
     
@@ -83,7 +83,7 @@ async def get_database_stats():
 
 
 @router.get("/health")
-async def admin_health_check():
+async def admin_health_check() -> Dict[str, Any]:
     """
     Detailed health check for admin purposes.
     
@@ -128,7 +128,7 @@ async def admin_health_check():
 
 
 @router.post("/vectors/upsert", response_model=UpsertResponse)
-async def upsert_vectors(request: UpsertRequest):
+async def upsert_vectors(request: UpsertRequest) -> UpsertResponse:
     """
     Add or update vectors in the database.
     
@@ -181,7 +181,7 @@ async def upsert_vectors(request: UpsertRequest):
 
 
 @router.delete("/vectors/{anime_id}")
-async def delete_vector(anime_id: str):
+async def delete_vector(anime_id: str) -> Dict[str, Any]:
     """
     Delete a vector from the database.
     
@@ -217,7 +217,7 @@ async def delete_vector(anime_id: str):
 
 
 @router.post("/reindex")
-async def reindex_collection():
+async def reindex_collection() -> Dict[str, Any]:
     """
     Rebuild the vector index.
     
@@ -250,7 +250,7 @@ async def reindex_collection():
 
 
 @router.get("/collection/info")
-async def get_collection_info():
+async def get_collection_info() -> Dict[str, Any]:
     """
     Get detailed collection information.
     
