@@ -33,6 +33,31 @@
 - **Dependency Mapping**: Clear prerequisites and dependencies between sub-phases
 - **Risk Assessment**: Each sub-phase includes rollback procedures and risk mitigation
 
+## Critical Cross-Phase Dependencies and Prerequisites
+
+### **Phase Execution Order (MANDATORY)**
+```
+Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) → Phase 5 (Integration) → Phase 6 (Production)
+```
+
+### **Critical Dependencies Map**
+- **Phase 3.0** (Data Pipeline Validation) → **MUST COMPLETE** before Phase 4 (sparse vectors need validated data)
+- **Phase 3.1-3.2** (ML Validation Framework) → **MUST COMPLETE** before Phase 4.2 (learnable weights need validation metrics)
+- **Phase 4.1** (Static Sparse Vectors) → **MUST COMPLETE** before Phase 4.2 (learnable weights need baseline)
+- **Phase 5.1-5.2** (Integration) → **MUST COMPLETE** before Phase 6 (production infrastructure needs working integration)
+
+### **Shared Infrastructure Requirements**
+- **Validation Framework** (Phase 3) → Used by Sparse Vector evaluation (Phase 4.3)
+- **API Logging** (Phase 3.2.2a) → Required for Weight Learning (Phase 4.2.1a)
+- **Performance Monitoring** (Phase 3) → Required for Model Management (Phase 4.4)
+- **Security Framework** (Phase 6.0) → Must integrate with all API endpoints from previous phases
+
+### **Resource and Environment Dependencies**
+- **Development Environment**: Phases 3-4 can run in development/staging
+- **Production Environment**: Phase 5-6 require production-like environment with 38K+ anime data
+- **Data Dependencies**: All phases require access to current anime_database collection
+- **Model Dependencies**: Phases 4+ require validated BGE-M3 and OpenCLIP models from Phase 3
+
 ## In-Depth Tasks List
 
 ### ✅ Phase 1: Core Foundation - COMPLETED
@@ -310,27 +335,396 @@
 - **Memory Usage**: ~8GB RAM during search operations
 - **Semantic Coverage**: 100% of enriched dataset fields searchable
 
-### 📋 Phase 3: Production Scale Optimization - PLANNED
+### 📋 Phase 3: ML Validation Framework - PLANNED (LOGICAL PRIORITY: Foundation for all future ML work)
 
-#### **Sub-Phase 3.1: Infrastructure Performance** (Rollback-Safe: parallel deployment)
-**Sub-Phase 3.1.1: Database Scaling Foundation** (Est: 8 hours)
-- [ ] **3.1.1a: Connection Optimization** (Est: 2 hours)
-  - [ ] Implement connection pooling for Qdrant
-  - [ ] Add connection health monitoring
-  - [ ] Configure timeout and retry policies
-  - [ ] Test connection performance under load
+**Rationale**: Validation framework must be established before implementing new features (sparse vectors) to ensure quality measurement and regression prevention.
 
-- [ ] **3.1.1b: Memory Management** (Est: 3 hours)
-  - [ ] Implement memory mapping configuration
-  - [ ] Add garbage collection optimization
-  - [ ] Configure swap usage policies
-  - [ ] Monitor memory allocation patterns
+#### **Sub-Phase 3.0: Data Pipeline Validation and ETL Quality** (Rollback-Safe: data integrity)
+**Sub-Phase 3.0.1: Data Quality Assurance Framework** (Est: 6 hours)
+- [ ] **3.0.1a: AnimeEntry Schema Validation** (Est: 2 hours)
+  - [ ] Implement comprehensive validation for all 65+ AnimeEntry fields
+  - [ ] Add data completeness scoring (required vs optional fields)
+  - [ ] Create data quality metrics dashboard (missing fields, invalid formats)
+  - [ ] Set up automated data quality regression testing
 
-- [ ] **3.1.1c: Storage Optimization** (Est: 3 hours)
-  - [ ] Configure disk-based vs memory vectors by priority
-  - [ ] Implement storage tiering for hot/cold data
-  - [ ] Add storage monitoring and alerting
-  - [ ] Test storage performance with large datasets
+- [ ] **3.0.1b: Data Consistency Validation** (Est: 2 hours)
+  - [ ] Validate cross-field consistency (episode count vs status, year vs release date)
+  - [ ] Check data relationship integrity (character images exist for character entries)
+  - [ ] Implement duplicate detection across different data sources
+  - [ ] Create data lineage tracking for enrichment pipeline sources
+
+- [ ] **3.0.1c: ETL Pipeline Health Monitoring** (Est: 2 hours)
+  - [ ] Add monitoring for enrichment pipeline data flow (6 APIs + AI stages)
+  - [ ] Implement data freshness tracking and stale data alerts
+  - [ ] Create ETL failure recovery and retry mechanisms
+  - [ ] Set up data volume and processing rate monitoring
+
+#### **Sub-Phase 3.1: Embedding Quality Validation** (Rollback-Safe: monitoring only)
+**Sub-Phase 3.1.1: Model Drift Detection Framework** (Est: 6 hours)
+- [ ] **3.1.1a: Historical Metrics Storage** (Est: 2 hours)
+  - [ ] Implement rolling window storage for embedding quality metrics
+  - [ ] Create alert band configuration (excellent/good/warning/critical)
+  - [ ] Add trend analysis for 7-day and 30-day windows
+  - [ ] Test with synthetic data drift scenarios
+
+- [ ] **3.1.1b: Distribution Shift Detection** (Est: 2 hours)
+  - [ ] Implement Wasserstein distance calculation for embedding drift
+  - [ ] Add dimension-wise drift analysis for BGE-M3 (1024-dim)
+  - [ ] Configure drift thresholds (>10% dimensions = alert)
+  - [ ] Create drift visualization dashboard
+
+- [ ] **3.1.1c: Semantic Coherence Monitoring** (Est: 2 hours)
+  - [ ] Implement genre clustering purity measurement
+  - [ ] Add studio visual consistency validation
+  - [ ] Create temporal consistency checks for sequels/franchises
+  - [ ] Add character archetype clustering validation
+
+- [ ] **3.1.1d: Anime-Specific Validation Patterns** (Est: 2 hours)
+  - [ ] Validate sequel/prequel semantic similarity (Attack on Titan → Attack on Titan: Final Season)
+  - [ ] Check franchise consistency (One Piece episodes should cluster together)
+  - [ ] Implement character consistency across series (Naruto → Naruto Shippuden)
+  - [ ] Add studio style consistency validation (Studio Ghibli films should show visual similarity)
+
+**Sub-Phase 3.1.2: Embedding Space Analysis** (Est: 4 hours)
+- [ ] **3.1.2a: Vector Space Visualization** (Est: 2 hours)
+  - [ ] Implement t-SNE/UMAP dimensionality reduction
+  - [ ] Create interactive embedding space plots with metadata
+  - [ ] Add cluster analysis for semantic categories
+  - [ ] Generate embedding quality reports
+
+- [ ] **3.1.2b: Cross-Modal Consistency Testing** (Est: 2 hours)
+  - [ ] Implement contrastive validation (same anime text vs image)
+  - [ ] Add statistical significance testing (Mann-Whitney U)
+  - [ ] Create positive/negative similarity distribution analysis
+  - [ ] Set up automated consistency monitoring
+
+- [ ] **3.1.2c: Character vs General Image Vector Validation** (Est: 2 hours)
+  - [ ] Validate character_image_vector vs image_vector separation logic
+  - [ ] Test character image clustering vs general image clustering
+  - [ ] Implement cross-validation for character identification accuracy
+  - [ ] Add character-specific visual consistency checks
+
+#### **Sub-Phase 3.2: Search Quality Validation** (Rollback-Safe: validation only)
+**Sub-Phase 3.2.1: Gold Standard Dataset Creation** (Est: 8 hours)
+- [ ] **3.2.1a: Expert-Curated Test Cases** (Est: 4 hours)
+  - [ ] Create 500 human-validated query-result pairs
+  - [ ] Design test cases for shounen, shoujo, seinen, josei categories
+  - [ ] Add studio style, character archetype, and temporal queries
+  - [ ] Include edge cases and ambiguous queries
+
+- [ ] **3.2.1b: Hard Negative Sampling** (Est: 2 hours)
+  - [ ] Create genre confusion test cases (romance vs action)
+  - [ ] Add temporal confusion negatives (modern vs classic)
+  - [ ] Design demographic confusion tests (shounen vs shoujo)
+  - [ ] Implement negative validation pipeline
+
+- [ ] **3.2.1c: Automated Metrics Pipeline** (Est: 2 hours)
+  - [ ] Implement Precision@K, Recall@K, NDCG calculations
+  - [ ] Add Mean Reciprocal Rank (MRR) for specific anime queries
+  - [ ] Create semantic consistency measurement
+  - [ ] Set up automated quality regression testing
+
+**Sub-Phase 3.2.2: Hybrid A/B Testing Framework** (Est: 8 hours)
+- [ ] **3.2.2a: API-Level Real Data Collection** (Est: 3 hours)
+  - [ ] Implement search query logging with anonymized request patterns
+  - [ ] Add API endpoint usage analytics (which endpoints, response times)
+  - [ ] Create query result position analysis (which results in top-K get requested)
+  - [ ] Set up optional feedback endpoints for future frontend integration
+
+- [ ] **3.2.2b: Simulation Models Calibrated from API Data** (Est: 3 hours)
+  - [ ] Implement Cascade Click Model using query→result request patterns
+  - [ ] Add Dependent Click Model calibrated from API response patterns
+  - [ ] Create hybrid validation: API patterns (real) + click simulation (synthetic)
+  - [ ] Build relevance inference from query repetition and result selection
+
+- [ ] **3.2.2c: Backend A/B Testing Infrastructure** (Est: 2 hours)
+  - [ ] Create search algorithm comparison using query logs
+  - [ ] Implement statistical significance testing on API performance metrics
+  - [ ] Add experiment framework for different fusion weights/algorithms
+  - [ ] Create analysis dashboard comparing algorithm effectiveness
+
+- [ ] **3.2.2b: Search Algorithm Comparison** (Est: 3 hours)
+  - [ ] Create A/B testing infrastructure for search configs
+  - [ ] Implement statistical significance testing
+  - [ ] Add user engagement metrics tracking (CTR, satisfaction)
+  - [ ] Create experiment result analysis dashboard
+
+#### **Sub-Phase 3.3: Scalable Validation Strategy** (Rollback-Safe: sampling framework)
+**Sub-Phase 3.3.1: Intelligent Sampling Framework** (Est: 4 hours)
+- [ ] **3.3.1a: Stratified Sampling Implementation** (Est: 2 hours)
+  - [ ] Create sampling strategy for 50K+ anime collections
+  - [ ] Implement stratification by genre, year, popularity, studio
+  - [ ] Add proportional sampling within each stratum
+  - [ ] Test sampling representativeness
+
+- [ ] **3.3.1b: Temporal Validation Framework** (Est: 2 hours)
+  - [ ] Implement time-period specific validation
+  - [ ] Add temporal bias detection (recency bias)
+  - [ ] Create historical consistency validation
+  - [ ] Set up longitudinal quality tracking
+
+#### **Sub-Phase 3.4: Comprehensive Testing Framework** (Rollback-Safe: testing infrastructure)
+**Sub-Phase 3.4.1: Test Suite Enhancement** (Est: 10 hours)
+- [ ] **3.4.1a: Unit and Integration Testing** (Est: 4 hours)
+  - [ ] Expand test coverage for all vector processing modules (target: >95%)
+  - [ ] Add integration tests for multi-vector search combinations
+  - [ ] Create property-based testing for embedding consistency
+  - [ ] Implement regression tests for API contract maintenance
+
+- [ ] **3.4.1b: Performance and Load Testing** (Est: 3 hours)
+  - [ ] Create automated performance benchmarking suite
+  - [ ] Implement load testing for concurrent search requests (50+ RPS)
+  - [ ] Add memory usage and leak detection testing
+  - [ ] Create stress testing for large batch operations
+
+- [ ] **3.4.1d: Quantization Performance Validation** (Est: 2 hours)
+  - [ ] Benchmark 40x speedup potential with product quantization
+  - [ ] Validate 75% memory reduction target (15GB → 4GB for 30K anime)
+  - [ ] Test scalar vs binary vs product quantization trade-offs
+  - [ ] Measure query latency impact of different quantization strategies
+
+- [ ] **3.4.1c: End-to-End and Production Testing** (Est: 3 hours)
+  - [ ] Implement full pipeline testing (enrichment → vectorization → search)
+  - [ ] Add chaos engineering tests for service resilience
+  - [ ] Create data corruption and recovery testing
+  - [ ] Set up production smoke tests and health validation
+
+### 📋 Phase 4: Sparse Vector Integration - PLANNED (Extend Existing Collection + Static→Learnable Evolution)
+
+**Architecture Decision**: Extend existing 14-vector collection with sparse vectors for unified search capabilities.
+**Weight Strategy**: Start with static information-theoretic weights, evolve to learnable weights from API usage patterns.
+
+#### **Sub-Phase 4.1: Collection Extension and Static Weight Implementation** (Rollback-Safe: feature flags)
+**Sub-Phase 4.1.1: Feature Informativeness Analysis** (Est: 6 hours)
+- [ ] **4.1.1a: IDF Weight Calculation** (Est: 2 hours)
+  - [ ] Implement Inverse Document Frequency for anime features
+  - [ ] Calculate genre, studio, demographic discriminative power
+  - [ ] Add entropy-based informativeness scoring
+  - [ ] Create feature importance ranking
+
+- [ ] **4.1.1b: Mutual Information Analysis** (Est: 2 hours)
+  - [ ] Calculate mutual information with user preferences
+  - [ ] Implement adaptive weight learning from click data
+  - [ ] Add L1-regularized logistic regression for feature selection
+  - [ ] Create interpretable feature importance reports
+
+- [ ] **4.1.1c: Optimized Weight Configuration** (Est: 2 hours)
+  - [ ] Implement genre (1.0), demographics (0.9), studio (0.7) weighting
+  - [ ] Add year bucket (0.4) and episode count (0.5) reduced weights
+  - [ ] Create award winner boost (1.2) and franchise handling (0.6)
+  - [ ] Test weight effectiveness on validation set
+
+- [ ] **4.1.1d: Anime Domain-Specific Feature Engineering** (Est: 3 hours)
+  - [ ] Implement complete anime feature space (genre, demographic, studio, source, format, status)
+  - [ ] Add content rating features (G, PG, PG-13, R, etc.) with appropriate weights
+  - [ ] Create episode format features (TV, Movie, OVA, Special) with viewing preference weights
+  - [ ] Add seasonal and trending features (current season boost, historical popularity)
+
+**Sub-Phase 4.1.2: Extending Existing 14-Vector Collection** (Est: 10 hours)
+- [ ] **4.1.2a: Backwards-Compatible Collection Extension** (Est: 4 hours)
+  - [ ] Analyze existing anime_database collection compatibility with sparse vectors
+  - [ ] Design migration strategy that preserves 38K+ existing anime entries
+  - [ ] Extend QdrantClient._create_multi_vector_config() to include sparse vectors
+  - [ ] Implement collection update with zero-downtime migration
+
+- [ ] **4.1.2b: Static-Weight Sparse Vector Generation** (Est: 3 hours)
+  - [ ] Modify existing add_documents() method to generate sparse vectors alongside dense
+  - [ ] Implement anime-domain static weights (genre: 1.0, studio: 0.7, year: 0.4)
+  - [ ] Add feature flag ENABLE_SPARSE_VECTORS (default: false) for gradual rollout
+  - [ ] Create sparse vector validation within existing test suite
+
+- [ ] **4.1.2c: Unified Dense+Sparse Search Integration** (Est: 3 hours)
+  - [ ] Extend existing search methods to optionally include sparse vector scoring
+  - [ ] Implement static fusion weights (dense: 0.6, sparse: 0.4) with configuration
+  - [ ] Add sparse vector support to existing /api/v1/search endpoints
+  - [ ] Update health checks to monitor sparse vector generation performance
+
+#### **Sub-Phase 4.2: Evolution to Learnable Weights** (Rollback-Safe: API data driven)
+**Sub-Phase 4.2.1: API Usage Pattern Learning** (Est: 8 hours)
+- [ ] **4.2.1a: API Pattern Collection and Analysis** (Est: 3 hours)
+  - [ ] Implement query→result selection pattern tracking from existing API logs
+  - [ ] Analyze repeated search patterns to infer user preferences
+  - [ ] Create implicit feedback signals from API usage (query frequency, result selection)
+  - [ ] Build anime preference profiles from API interaction patterns
+
+- [ ] **4.2.1b: Weight Learning from API Data** (Est: 3 hours)
+  - [ ] Implement scipy-based weight optimization using API pattern data
+  - [ ] Add preference learning from query repetition and result selection patterns
+  - [ ] Create automated sparse weight tuning based on observed user behavior
+  - [ ] Validate learned weights against static baseline using A/B testing framework
+
+- [ ] **4.2.1c: Adaptive Weight Updates** (Est: 2 hours)
+  - [ ] Design online learning system for continuous weight refinement
+  - [ ] Implement gradual weight transitions (0.9 * old + 0.1 * new) for stability
+  - [ ] Add weight change monitoring and rollback capabilities
+  - [ ] Create performance tracking for learned vs static weight effectiveness
+
+- [ ] **4.2.1d: Real-Time Learning and Concept Drift Adaptation** (Est: 3 hours)
+  - [ ] Implement sliding window learning for seasonal anime preference changes
+  - [ ] Add concept drift detection for evolving user preferences (genre trends)
+  - [ ] Create adaptive learning rates based on confidence and data volume
+  - [ ] Set up A/B testing for real-time weight adaptation validation
+
+**Sub-Phase 4.2.2: Hybrid Search API** (Est: 6 hours)
+- [ ] **4.2.2a: New Search Endpoints** (Est: 3 hours)
+  - [ ] Create hybrid search API endpoints
+  - [ ] Implement dense + sparse + behavioral fusion
+  - [ ] Add configurable fusion weight parameters
+  - [ ] Create comprehensive API documentation
+
+- [ ] **4.2.2b: Recommendation Engine** (Est: 3 hours)
+  - [ ] Implement content-based collaborative filtering
+  - [ ] Add personalized recommendation endpoints
+  - [ ] Create user preference learning from interactions
+  - [ ] Test recommendation quality and diversity
+
+#### **Sub-Phase 4.3: Recommendation Quality Evaluation** (Rollback-Safe: evaluation only)
+**Sub-Phase 4.3.1: Diversity and Personalization Metrics** (Est: 6 hours)
+- [ ] **4.3.1a: Intra-List Diversity** (Est: 2 hours)
+  - [ ] Implement multi-dimensional anime diversity calculation
+  - [ ] Add genre, studio, temporal, demographic diversity scoring
+  - [ ] Create "shounen + MAPPA" collapse detection
+  - [ ] Set diversity quality thresholds
+
+- [ ] **4.3.1b: Personalization Coverage** (Est: 2 hours)
+  - [ ] Implement user profile clustering analysis
+  - [ ] Add inter-group recommendation diversity measurement
+  - [ ] Create personalization effectiveness scoring
+  - [ ] Test personalization across different user types
+
+- [ ] **4.3.1c: Fairness and Bias Evaluation** (Est: 2 hours)
+  - [ ] Add popularity bias detection and measurement
+  - [ ] Implement demographic fairness evaluation
+  - [ ] Create catalog coverage analysis
+  - [ ] Set up bias monitoring and alerting
+
+#### **Sub-Phase 4.4: Model Management and Deployment** (Rollback-Safe: versioning strategy)
+**Sub-Phase 4.4.1: Model Lifecycle Management** (Est: 8 hours)
+- [ ] **4.4.1a: Model Versioning and Registry** (Est: 3 hours)
+  - [ ] Implement model versioning system for BGE-M3 and OpenCLIP models
+  - [ ] Create model registry with metadata (performance, training date, accuracy)
+  - [ ] Add model rollback capabilities and A/B testing for model updates
+  - [ ] Set up automated model validation before deployment
+
+- [ ] **4.4.1b: Model Performance Monitoring** (Est: 3 hours)
+  - [ ] Implement real-time model performance tracking and alerting
+  - [ ] Add model accuracy degradation detection and automatic rollback
+  - [ ] Create model comparison metrics (latency, accuracy, memory usage)
+  - [ ] Set up model retraining triggers based on performance thresholds
+
+- [ ] **4.4.1c: Model Optimization and Quantization** (Est: 2 hours)
+  - [ ] Implement dynamic model quantization based on hardware capabilities
+  - [ ] Add model pruning and optimization for production deployment
+  - [ ] Create model warm-up and cold start optimization
+  - [ ] Set up GPU/CPU model deployment switching based on load
+
+- [ ] **4.4.1d: BGE-M3 and OpenCLIP Specific Optimizations** (Est: 3 hours)
+  - [ ] Optimize BGE-M3 8192 token context utilization for anime descriptions
+  - [ ] Implement OpenCLIP ViT-L/14 batch processing optimization for image vectors
+  - [ ] Add anime-specific fine-tuning evaluation (LoRA integration points)
+  - [ ] Create model-specific performance profiling and bottleneck analysis
+
+### 📋 Phase 5: Current Codebase Integration - PLANNED (Integration with Existing Systems)
+
+**Purpose**: Seamless integration of validation framework and sparse vectors with current 38K+ anime dataset and existing API infrastructure.
+
+#### **Sub-Phase 5.1: Validation Framework Integration** (Rollback-Safe: monitoring addition)
+**Sub-Phase 5.1.1: Integration with Existing QdrantClient** (Est: 6 hours)
+- [ ] **5.1.1a: Existing Search Method Enhancement** (Est: 2 hours)
+  - [ ] Add validation hooks to existing search(), search_by_image(), search_multimodal() methods
+  - [ ] Integrate embedding quality monitoring into current text_processor and vision_processor
+  - [ ] Add validation metrics to existing /health and /api/v1/admin/stats endpoints
+  - [ ] Create validation dashboard accessible through existing API structure
+
+- [ ] **5.1.1b: Current Dataset Validation** (Est: 2 hours)
+  - [ ] Run validation framework against existing 38K+ anime entries
+  - [ ] Establish baseline quality metrics for current BGE-M3 and OpenCLIP embeddings
+  - [ ] Create validation reports for existing semantic coherence and cross-modal consistency
+  - [ ] Document current performance benchmarks as regression prevention baseline
+
+- [ ] **5.1.1c: API Pattern Analysis Setup** (Est: 2 hours)
+  - [ ] Integrate query logging into existing FastAPI middleware
+  - [ ] Add API usage pattern tracking to current search endpoints
+  - [ ] Create analytics collection compatible with existing docker-compose setup
+  - [ ] Set up pattern analysis for future sparse weight learning
+
+#### **Sub-Phase 5.2: Sparse Vector Integration with Current Architecture** (Rollback-Safe: feature flags)
+**Sub-Phase 5.2.1: Existing Collection Migration** (Est: 8 hours)
+- [ ] **5.2.1a: Current anime_database Collection Analysis** (Est: 3 hours)
+  - [ ] Analyze existing collection structure and 38K+ anime point compatibility
+  - [ ] Test sparse vector addition on copy of current collection with sample data
+  - [ ] Validate zero-downtime migration strategy preserving all current functionality
+  - [ ] Create migration rollback procedures maintaining data integrity
+
+- [ ] **5.2.1b: Gradual Sparse Vector Rollout** (Est: 3 hours)
+  - [ ] Implement sparse vector generation for new anime entries (future additions)
+  - [ ] Create batched backfill process for existing 38K+ entries without service disruption
+  - [ ] Add sparse vector monitoring to existing health check and admin endpoints
+  - [ ] Test hybrid search performance impact on current response time targets
+
+- [ ] **5.2.1c: Current API Endpoint Enhancement** (Est: 2 hours)
+  - [ ] Add optional sparse vector parameters to existing /api/v1/search endpoints
+  - [ ] Integrate hybrid search capability with current search, similarity, admin routers
+  - [ ] Maintain full backwards compatibility with existing API contracts
+  - [ ] Update existing OpenAPI documentation with new sparse vector options
+
+#### **Sub-Phase 5.3: Documentation and Knowledge Management** (Rollback-Safe: documentation updates)
+**Sub-Phase 5.3.1: Comprehensive Documentation Strategy** (Est: 8 hours)
+- [ ] **5.3.1a: Technical Documentation** (Est: 3 hours)
+  - [ ] Create comprehensive architecture documentation with diagrams
+  - [ ] Document all vector processing pipelines and data flows
+  - [ ] Add troubleshooting guides and common issues resolution
+  - [ ] Create performance tuning and optimization guides
+
+- [ ] **5.3.1b: Developer Documentation** (Est: 3 hours)
+  - [ ] Create developer onboarding guides and setup instructions
+  - [ ] Document code architecture, design patterns, and conventions
+  - [ ] Add contribution guidelines and code review standards
+  - [ ] Create API integration examples and client library documentation
+
+- [ ] **5.3.1c: Operational Documentation** (Est: 2 hours)
+  - [ ] Create deployment guides and infrastructure setup documentation
+  - [ ] Document monitoring, alerting, and incident response procedures
+  - [ ] Add capacity planning and scaling guides
+  - [ ] Create maintenance schedules and update procedures
+
+### 📋 Phase 6: Security and Production Infrastructure - PLANNED
+
+#### **Sub-Phase 6.0: Security Hardening and Authentication** (Rollback-Safe: additive security)
+**Sub-Phase 6.0.1: API Security Implementation** (Est: 8 hours)
+- [ ] **6.0.1a: Authentication and Authorization** (Est: 3 hours)
+  - [ ] Implement JWT-based API authentication with configurable providers
+  - [ ] Add role-based access control (admin, user, read-only)
+  - [ ] Create API key management system for client applications
+  - [ ] Set up rate limiting and request throttling per user/API key
+
+- [ ] **6.0.1b: Input Validation and Security** (Est: 3 hours)
+  - [ ] Implement comprehensive input sanitization and validation
+  - [ ] Add SQL injection and NoSQL injection protection
+  - [ ] Create request size limiting and upload validation
+  - [ ] Implement CORS policy enforcement and origin validation
+
+- [ ] **6.0.1c: Security Monitoring and Auditing** (Est: 2 hours)
+  - [ ] Add security event logging and audit trails
+  - [ ] Implement suspicious activity detection and alerting
+  - [ ] Create security metrics dashboard and reporting
+  - [ ] Set up automated security scanning and vulnerability assessment
+
+#### **Sub-Phase 6.1: Disaster Recovery and Business Continuity** (Rollback-Safe: backup systems)
+**Sub-Phase 6.1.1: Data Backup and Recovery** (Est: 6 hours)
+- [ ] **6.1.1a: Automated Backup Strategy** (Est: 3 hours)
+  - [ ] Implement automated Qdrant database backups with versioning
+  - [ ] Create incremental backup system for vector data and metadata
+  - [ ] Set up cross-region backup replication for disaster recovery
+  - [ ] Add backup integrity validation and corruption detection
+
+- [ ] **6.1.1b: Recovery Testing and Procedures** (Est: 3 hours)
+  - [ ] Create disaster recovery runbooks and automated procedures
+  - [ ] Implement point-in-time recovery for database operations
+  - [ ] Add service failover and automatic recovery mechanisms
+  - [ ] Set up recovery time objective (RTO) and recovery point objective (RPO) monitoring
+
+#### **Sub-Phase 6.2: Infrastructure Performance** (Rollback-Safe: parallel deployment)
 
 **Sub-Phase 3.1.2: Caching Architecture** (Est: 6 hours)
 - [ ] **3.1.2a: Redis Integration** (Est: 2 hours)
@@ -1031,3 +1425,166 @@
 3. **Schema Compliance**: Automated validation against data models
 4. **Quality Scoring**: Data completeness validation and correlation
 5. **Enrichment Tracking**: Metadata tracking for quality control
+
+## 📋 Phase 2.6: LangGraph Smart Query Integration - TENTATIVE (NEW)
+
+**Purpose**: Add intelligent LLM-powered query routing to enhance search capabilities without modifying existing 14-vector architecture.
+
+### **Sub-Phase 2.6.1: Core LangGraph Infrastructure** (Rollback-Safe: new modules only)
+**Sub-Phase 2.6.1a: Basic LangGraph Setup** (Est: 3 hours)
+- [ ] **2.6.1a.1: Dependencies and Environment** (Est: 1 hour)
+  - [ ] Add LangGraph and LangChain dependencies to requirements.txt
+  - [ ] Configure LLM provider environment variables (OpenAI/Anthropic)
+  - [ ] Create basic LangGraph configuration module
+  - [ ] Test LLM connectivity and basic workflow execution
+
+- [ ] **2.6.1a.2: Workflow State Definition** (Est: 1 hour)
+  - [ ] Create QueryState TypedDict for workflow data flow
+  - [ ] Define state fields: user_query, intent, enhanced_query, vector_weights, results
+  - [ ] Add state validation and type checking
+  - [ ] Test state transitions and data preservation
+
+- [ ] **2.6.1a.3: Basic Workflow Structure** (Est: 1 hour)
+  - [ ] Create unified query workflow with LangGraph StateGraph
+  - [ ] Add basic nodes: analyze_intent, route_query, format_results
+  - [ ] Implement simple conditional routing logic
+  - [ ] Test workflow execution with mock data
+
+**Sub-Phase 2.6.1b: Tool Integration Foundation** (Est: 2 hours)
+- [ ] **2.6.1b.1: Tool Method Implementation** (Est: 1 hour)
+  - [ ] Create smart_search_tool() method in QdrantClient
+  - [ ] Create smart_recommendation_tool() method in QdrantClient
+  - [ ] Implement weighted vector search using existing search_multi_vector()
+  - [ ] Test tool methods independently with sample data
+
+- [ ] **2.6.1b.2: LangGraph Tool Registration** (Est: 1 hour)
+  - [ ] Register tool methods with LangGraph ToolNode
+  - [ ] Configure tool descriptions and parameter schemas
+  - [ ] Add tool validation and error handling
+  - [ ] Test tool invocation from workflow
+
+### **Sub-Phase 2.6.2: LLM Intelligence Layer** (Rollback-Safe: LLM prompts only)
+**Sub-Phase 2.6.2a: Intent Detection System** (Est: 4 hours)
+- [ ] **2.6.2a.1: Intent Classification Prompt** (Est: 2 hours)
+  - [ ] Design LLM prompt for search vs recommendation intent detection
+  - [ ] Create prompt examples for different query types
+  - [ ] Add confidence scoring and fallback strategies
+  - [ ] Test intent detection accuracy with sample queries
+
+- [ ] **2.6.2a.2: Vector Selection Intelligence** (Est: 2 hours)
+  - [ ] Design LLM prompt for intelligent vector selection from 14 vectors
+  - [ ] Create vector description context for LLM decision-making
+  - [ ] Add vector weight assignment logic
+  - [ ] Test vector selection relevance with domain-specific queries
+
+**Sub-Phase 2.6.2b: Query Enhancement System** (Est: 3 hours)
+- [ ] **2.6.2b.1: Query Optimization Prompts** (Est: 1.5 hours)
+  - [ ] Create search-focused query enhancement prompts
+  - [ ] Create recommendation-focused query enhancement prompts
+  - [ ] Add anime domain knowledge to prompt context
+  - [ ] Test query enhancement quality and relevance
+
+- [ ] **2.6.2b.2: Error Handling and Fallbacks** (Est: 1.5 hours)
+  - [ ] Implement LLM error handling and retries
+  - [ ] Add fallback to existing search methods when LLM fails
+  - [ ] Create timeout handling for LLM requests
+  - [ ] Test system resilience under various failure scenarios
+
+### **Sub-Phase 2.6.3: API Integration and Routing** (Rollback-Safe: new endpoints only)
+**Sub-Phase 2.6.3a: Unified Query Endpoint** (Est: 3 hours)
+- [ ] **2.6.3a.1: Single API Endpoint Design** (Est: 1.5 hours)
+  - [ ] Create POST /api/v1/query endpoint in FastAPI
+  - [ ] Design unified request/response models
+  - [ ] Add input validation and sanitization
+  - [ ] Test basic endpoint functionality
+
+- [ ] **2.6.3a.2: Workflow Integration** (Est: 1.5 hours)
+  - [ ] Connect API endpoint to LangGraph workflow
+  - [ ] Implement async workflow execution
+  - [ ] Add response formatting and error handling
+  - [ ] Test end-to-end API flow
+
+**Sub-Phase 2.6.3b: Backwards Compatibility** (Est: 2 hours)
+- [ ] **2.6.3b.1: Existing Endpoint Preservation** (Est: 1 hour)
+  - [ ] Ensure all existing search endpoints remain unchanged
+  - [ ] Add feature flag for smart query functionality
+  - [ ] Test existing API contracts are unaffected
+  - [ ] Validate no performance degradation for existing endpoints
+
+- [ ] **2.6.3b.2: Migration Strategy** (Est: 1 hour)
+  - [ ] Create gradual rollout plan for smart query features
+  - [ ] Add A/B testing capability between old and new methods
+  - [ ] Design rollback procedures for production issues
+  - [ ] Test migration scenarios and rollback procedures
+
+### **Sub-Phase 2.6.4: Testing and Validation** (Rollback-Safe: testing only)
+**Sub-Phase 2.6.4a: Unit and Integration Testing** (Est: 4 hours)
+- [ ] **2.6.4a.1: LLM Integration Testing** (Est: 2 hours)
+  - [ ] Create test suite for LLM prompt responses
+  - [ ] Add mock LLM responses for consistent testing
+  - [ ] Test intent detection accuracy across query types
+  - [ ] Validate vector selection logic with domain queries
+
+- [ ] **2.6.4a.2: Tool Method Testing** (Est: 2 hours)
+  - [ ] Test smart_search_tool with various vector weight configurations
+  - [ ] Test smart_recommendation_tool with different query types
+  - [ ] Validate weighted search performance vs unweighted
+  - [ ] Test error handling and graceful degradation
+
+**Sub-Phase 2.6.4b: Performance and Quality Validation** (Est: 3 hours)
+- [ ] **2.6.4b.1: Response Time Benchmarking** (Est: 1.5 hours)
+  - [ ] Measure LLM analysis overhead (target: <2 seconds)
+  - [ ] Benchmark smart query vs traditional search performance
+  - [ ] Test concurrent request handling with LLM integration
+  - [ ] Validate performance targets and identify bottlenecks
+
+- [ ] **2.6.4b.2: Search Quality Assessment** (Est: 1.5 hours)
+  - [ ] Compare smart query results vs traditional search relevance
+  - [ ] Test vector selection accuracy for domain-specific queries
+  - [ ] Validate recommendation quality improvement
+  - [ ] Create quality metrics and monitoring framework
+
+### **Sub-Phase 2.6.5: Documentation and Deployment** (Rollback-Safe: documentation only)
+**Sub-Phase 2.6.5a: Technical Documentation** (Est: 2 hours)
+- [ ] **2.6.5a.1: Architecture Documentation** (Est: 1 hour)
+  - [ ] Document LangGraph workflow architecture and design decisions
+  - [ ] Create vector selection strategy documentation
+  - [ ] Add LLM integration patterns and best practices
+  - [ ] Document tool method interfaces and usage
+
+- [ ] **2.6.5a.2: API Documentation** (Est: 1 hour)
+  - [ ] Update OpenAPI schemas for new query endpoint
+  - [ ] Create usage examples for smart query functionality
+  - [ ] Add migration guide from existing search endpoints
+  - [ ] Document feature flags and configuration options
+
+**Sub-Phase 2.6.5b: Deployment Preparation** (Est: 2 hours)
+- [ ] **2.6.5b.1: Environment Configuration** (Est: 1 hour)
+  - [ ] Add LLM provider configuration to Docker setup
+  - [ ] Create environment variable templates
+  - [ ] Add health checks for LLM connectivity
+  - [ ] Test deployment scenarios and configurations
+
+- [ ] **2.6.5b.2: Monitoring Integration** (Est: 1 hour)
+  - [ ] Add smart query metrics to existing monitoring
+  - [ ] Create LLM usage and performance dashboards
+  - [ ] Add alerting for LLM failures and performance issues
+  - [ ] Test monitoring integration and alert triggers
+
+### **Expected Performance Impact**
+- **Query Processing**: +1-3 seconds for LLM analysis (one-time per query)
+- **Search Accuracy**: 15-25% improvement for complex queries
+- **System Resources**: +100-200MB RAM for LLM client
+- **API Compatibility**: 100% backwards compatible with existing endpoints
+
+### **Success Criteria**
+- [ ] Smart query endpoint operational with <3 second total response time
+- [ ] LLM intent detection >85% accuracy on test query set
+- [ ] Vector selection relevance >80% for domain-specific queries
+- [ ] No degradation to existing search endpoint performance
+- [ ] Successful A/B testing framework for quality comparison
+
+### **Rollback Plan**
+- **Immediate**: Disable feature flag to revert to existing search methods
+- **Emergency**: Remove smart query endpoint, preserve all existing functionality
+- **Data Safety**: No changes to existing 14-vector architecture or data

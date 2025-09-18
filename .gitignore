@@ -134,6 +134,7 @@ dmypy.json
 # Model cache directories
 cache/
 .cache/
+model_cache/
 *.model
 *.bin
 
