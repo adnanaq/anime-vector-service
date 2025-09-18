@@ -301,7 +301,7 @@ class QdrantClient:
         """Determine priority level for vector."""
         for priority, vectors in self.settings.vector_priorities.items():
             if vector_name in vectors:
-                return priority
+                return str(priority)
         return "medium"  # default
 
     def _create_optimized_optimizers_config(self) -> Optional[OptimizersConfigDiff]:
@@ -684,7 +684,7 @@ class QdrantClient:
             logger.error(f"Similar anime search failed: {e}")
             return []
 
-    def _build_filter(self, filters: Dict) -> Optional[Filter]:
+    def _build_filter(self, filters: Dict[str, Any]) -> Optional[Filter]:
         """Build Qdrant filter from filter dictionary.
 
         Args:

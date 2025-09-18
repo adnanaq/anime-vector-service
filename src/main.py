@@ -28,7 +28,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Global instances
-qdrant_client = None
+qdrant_client: QdrantClient | None = None
 
 
 @asynccontextmanager
@@ -80,6 +80,9 @@ app.add_middleware(
 async def health_check() -> Dict[str, Any]:
     """Health check endpoint."""
     try:
+        if qdrant_client is None:
+            raise HTTPException(status_code=503, detail="Qdrant client not initialized")
+
         qdrant_status = await qdrant_client.health_check()
         return {
             "status": "healthy" if qdrant_status else "unhealthy",
