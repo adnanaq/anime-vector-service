@@ -6,7 +6,7 @@ for the comprehensive anime search system with error handling and validation.
 
 import asyncio
 import logging
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from ..config import Settings
 from ..models.anime import AnimeEntry
@@ -185,7 +185,7 @@ class MultiVectorEmbeddingManager:
             if anime.anime_season:
                 payload["anime_season"] = {
                     "season": anime.anime_season.season,
-                    "year": anime.anime_season.year
+                    "year": anime.anime_season.year,
                 }
 
             # Add aggregated score calculations if available

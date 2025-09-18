@@ -1,8 +1,8 @@
 # src/models/anime.py - Pydantic Models for Anime Data
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Union
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 
 
 class CharacterEntry(BaseModel):
@@ -190,8 +190,6 @@ class EnrichmentMetadata(BaseModel):
     error_message: Optional[str] = Field(
         None, description="Error message if enrichment failed"
     )
-
-
 
 
 class RelationEntry(BaseModel):
@@ -508,7 +506,9 @@ class AnimeEntry(BaseModel):
     aired_dates: Optional["AiredDates"] = Field(
         None, description="Detailed airing dates"
     )
-    anime_season: Optional[AnimeSeason] = Field(None, description="Season and year information")
+    anime_season: Optional[AnimeSeason] = Field(
+        None, description="Season and year information"
+    )
     broadcast: Optional["Broadcast"] = Field(
         None, description="Broadcast schedule information"
     )
@@ -534,7 +534,8 @@ class AnimeEntry(BaseModel):
         default_factory=dict, description="External links (official site, social media)"
     )
     images: Dict[str, List[str]] = Field(
-        default_factory=dict, description="Images organized by type (covers, posters, banners) with URLs only"
+        default_factory=dict,
+        description="Images organized by type (covers, posters, banners) with URLs only",
     )
     popularity_trends: Optional[Dict[str, Any]] = Field(
         None, description="Popularity trend data"

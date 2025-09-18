@@ -64,7 +64,7 @@ Ready to assist with backend-focused solutions.
 ```
 🧠 ROLE ADOPTED: Data Scientist
 Expertise Focus: ML models, embeddings, vector optimization, research analysis
-Knowledge Areas: BGE-M3, JinaCLIP, vector similarity, model evaluation, benchmarks
+Knowledge Areas: BGE-M3, OpenCLIP, vector similarity, model evaluation, benchmarks
 Session Context: Data science perspective applied to all tasks
 Ready to assist with ML and research-focused solutions.
 ```
@@ -297,13 +297,16 @@ This is a specialized microservice for semantic search over anime content using 
 
 ```bash
 # Install dependencies
-pip install -r requirements.txt
+uv sync
+
+# Install with dev dependencies (includes pytest, mypy, etc.)
+uv sync --extra dev
 
 # Start Qdrant database only
 docker compose -f docker/docker-compose.yml up -d qdrant
 
 # Run service locally for development
-python -m src.main
+uv run python -m src.main
 ```
 
 ### Docker Development (Recommended)
@@ -323,19 +326,41 @@ docker compose -f docker/docker-compose.yml down
 
 ```bash
 # Run tests
-pytest
+uv run pytest
 
 # Run specific test file
-pytest test/test_filename.py
+uv run pytest test_filename.py
 
 # Run tests with coverage
-pytest --cov=src
+uv run pytest --cov=src
+
+# Type checking (MANDATORY before commits)
+uv run mypy --strict src/
 
 # Code formatting
-black src/
-isort src/
-autoflake --remove-all-unused-imports --in-place --recursive src/
+uv run black src/
+uv run isort src/
+uv run autoflake --remove-all-unused-imports --in-place --recursive src/
 ```
+
+### Type Safety Protocol
+
+**MANDATORY**: All code must pass strict mypy type checking before commits.
+
+```bash
+# Check all source files with strict typing
+uv run mypy --strict src/ --show-error-codes
+
+# Check specific file
+uv run mypy --strict src/vector/text_processor.py --show-error-codes
+```
+
+**Type Safety Guidelines:**
+- All function parameters and return values must be properly typed
+- Use `Dict[str, Any]` instead of bare `Dict`
+- Use `cast()` for external library types when needed
+- Add null checks for Optional types before usage
+- Test all type fixes with real functionality before committing
 
 ### Service Health Checks
 
@@ -377,8 +402,8 @@ The service follows a layered microservice architecture with clear separation of
 #### 3. Multi-Vector Processing (`src/vector/`)
 
 - **QdrantClient**: Advanced vector database operations with quantization support
-- **TextProcessor**: BGE-M3 embeddings for semantic text search (384-dim)
-- **VisionProcessor**: JinaCLIP v2 embeddings for image search (512-dim)
+- **TextProcessor**: BGE-M3 embeddings for semantic text search (1024-dim)
+- **VisionProcessor**: OpenCLIP ViT-L/14 embeddings for image search (768-dim)
 - **Fine-tuning modules**: Character recognition, art style classification, genre enhancement
 
 #### 4. API Endpoints (`src/api/`)
@@ -397,9 +422,9 @@ The service follows a layered microservice architecture with clear separation of
 
 The service uses a single Qdrant collection with named vectors:
 
-- `text`: 384-dimensional BGE-M3 embeddings for semantic search
-- `picture`: 512-dimensional JinaCLIP v2 embeddings for cover art
-- `thumbnail`: 512-dimensional JinaCLIP v2 embeddings for thumbnails
+- `text`: 1024-dimensional BGE-M3 embeddings for semantic search
+- `image_vector`: 768-dimensional OpenCLIP ViT-L/14 embeddings for cover art, posters, banners
+- `character_image_vector`: 768-dimensional OpenCLIP ViT-L/14 embeddings for character images
 
 This design enables efficient multimodal search while maintaining data locality and reducing storage overhead.
 
@@ -408,7 +433,7 @@ This design enables efficient multimodal search while maintaining data locality 
 The service supports multiple embedding providers through configuration:
 
 - **Text Models**: BGE-M3, BGE-small/base/large-v1.5, custom HuggingFace models
-- **Vision Models**: JinaCLIP v2, CLIP ViT-B/32, SigLIP-384
+- **Vision Models**: OpenCLIP ViT-L/14, OpenCLIP ViT-B/32 (primary: ViT-L/14)
 - **Provider Flexibility**: Easy switching between embedding providers per modality
 
 ### Performance Optimization Features
@@ -426,7 +451,7 @@ The service supports multiple embedding providers through configuration:
 - `QDRANT_URL`: Vector database URL (default: http://localhost:6333)
 - `QDRANT_COLLECTION_NAME`: Collection name (default: anime_database)
 - `TEXT_EMBEDDING_MODEL`: Text model (default: BAAI/bge-m3)
-- `IMAGE_EMBEDDING_MODEL`: Image model (default: jinaai/jina-clip-v2)
+- `IMAGE_EMBEDDING_MODEL`: Image model (default: ViT-L-14/laion2b_s32b_b82k)
 
 ### Performance Tuning
 

@@ -21,7 +21,7 @@ class AnimeFieldMapper:
 
     Extracts and processes anime data for embedding into:
     - 12 text vectors (BGE-M3, 1024-dim each) for semantic search
-    - 2 visual vectors (JinaCLIP v2, 1024-dim each) for image search
+    - 2 visual vectors (OpenCLIP ViT-L/14, 768-dim each) for image search
       * image_vector: covers, posters, banners, trailer thumbnails
       * character_image_vector: character images for character identification
     """
@@ -30,7 +30,9 @@ class AnimeFieldMapper:
         """Initialize the anime field mapper."""
         self.logger = logger
 
-    def map_anime_to_vectors(self, anime: AnimeEntry) -> Dict[str, Union[str, List[str]]]:
+    def map_anime_to_vectors(
+        self, anime: AnimeEntry
+    ) -> Dict[str, Union[str, List[str]]]:
         """
         Map complete anime entry to all 14 vectors.
 
@@ -58,7 +60,9 @@ class AnimeFieldMapper:
 
         # Visual vectors (2)
         vector_data["image_vector"] = self._extract_image_content(anime)
-        vector_data["character_image_vector"] = self._extract_character_image_content(anime)
+        vector_data["character_image_vector"] = self._extract_character_image_content(
+            anime
+        )
 
         return vector_data
 
@@ -228,7 +232,6 @@ class AnimeFieldMapper:
             if hasattr(anime.aired_dates, "to_date") and anime.aired_dates.to_date:
                 content_parts.append(f"Aired To: {anime.aired_dates.to_date}")
 
-
         # Broadcast information
         if hasattr(anime, "broadcast") and anime.broadcast:
             if hasattr(anime.broadcast, "day") and anime.broadcast.day:
@@ -351,7 +354,6 @@ class AnimeFieldMapper:
 
         return " | ".join(content_parts)
 
-
     def _extract_identifiers_content(self, anime: AnimeEntry) -> str:
         """Extract IDs as semantic relationships from List and Dict objects."""
         content_parts = []
@@ -378,7 +380,7 @@ class AnimeFieldMapper:
         return " | ".join(content_parts)
 
     # ============================================================================
-    # VISUAL VECTOR EXTRACTORS (JinaCLIP v2, 1024-dim)
+    # VISUAL VECTOR EXTRACTORS (OpenCLIP ViT-L/14, 768-dim)
     # ============================================================================
 
     def _extract_image_content(self, anime: AnimeEntry) -> List[str]:
@@ -459,7 +461,7 @@ class AnimeFieldMapper:
             "franchise_vector": "text",
             "episode_vector": "text",
             "identifiers_vector": "text",
-            # Visual vectors (JinaCLIP v2, 1024-dim)
+            # Visual vectors (OpenCLIP ViT-L/14, 768-dim)
             "image_vector": "visual",
             "character_image_vector": "visual",
         }

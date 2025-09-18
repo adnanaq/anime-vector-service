@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional
 from urllib.parse import urlparse
 
 import cloudscraper  # type: ignore
-from bs4 import BeautifulSoup, Tag, NavigableString
+from bs4 import BeautifulSoup, Tag
 
 from .simple_base_client import SimpleBaseClient as BaseClient
 
@@ -58,7 +58,6 @@ class BaseScraper(BaseClient):
                 None, lambda: self.scraper.get(url, timeout=kwargs.get("timeout", 10))
             )
 
-
             # Check response status
             if response.status_code >= 400:
                 raise Exception(f"HTTP {response.status_code} error for {url}")
@@ -103,12 +102,16 @@ class BaseScraper(BaseClient):
         scripts = soup.find_all("script", type="application/ld+json")
 
         for script in scripts:
-            if not hasattr(script, 'string') or not script.string:
+            if not hasattr(script, "string") or not script.string:
                 continue
 
             try:
                 # script.string is guaranteed to exist here due to the check above
-                script_text = script.string if isinstance(script.string, str) else str(script.string)
+                script_text = (
+                    script.string
+                    if isinstance(script.string, str)
+                    else str(script.string)
+                )
                 data = json.loads(script_text)
 
                 # Look for relevant schema types

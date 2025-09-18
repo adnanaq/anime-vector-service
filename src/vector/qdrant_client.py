@@ -316,7 +316,9 @@ class QdrantClient:
             logger.error(f"Failed to create optimized optimizers config: {e}")
             return None
 
-    def _create_quantization_config(self) -> Optional[BinaryQuantization | ScalarQuantization | ProductQuantization]:
+    def _create_quantization_config(
+        self,
+    ) -> Optional[BinaryQuantization | ScalarQuantization | ProductQuantization]:
         """Create quantization configuration for performance optimization."""
         if not getattr(self.settings, "qdrant_enable_quantization", False):
             return None
@@ -337,8 +339,14 @@ class QdrantClient:
                 logger.info("Enabling scalar quantization for memory optimization")
                 return ScalarQuantization(scalar=scalar_config)
             elif quantization_type == "product":
-                from qdrant_client.models import ProductQuantizationConfig, CompressionRatio
-                product_config = ProductQuantizationConfig(compression=CompressionRatio.X16)
+                from qdrant_client.models import (
+                    CompressionRatio,
+                    ProductQuantizationConfig,
+                )
+
+                product_config = ProductQuantizationConfig(
+                    compression=CompressionRatio.X16
+                )
                 logger.info("Enabling product quantization for storage optimization")
                 return ProductQuantization(product=product_config)
             else:
@@ -653,7 +661,9 @@ class QdrantClient:
                         vector=title_vector,
                     )
                 else:
-                    logger.warning(f"title_vector is not a valid float list: {type(title_vector)}")
+                    logger.warning(
+                        f"title_vector is not a valid float list: {type(title_vector)}"
+                    )
                     return []
             else:
                 logger.warning(f"No 'title_vector' found for anime: {anime_id}")
@@ -796,7 +806,9 @@ class QdrantClient:
 
             # Validate embedding
             if not embedding:
-                logger.warning(f"Failed to create embedding for search text: {search_text}")
+                logger.warning(
+                    f"Failed to create embedding for search text: {search_text}"
+                )
                 return []
 
             # Filter to exclude the reference anime itself
@@ -1306,7 +1318,9 @@ class QdrantClient:
                 image_vector = reference_vectors["image_vector"]
                 # Ensure image_vector is a list of floats
                 if not is_float_vector(image_vector):
-                    logger.warning(f"image_vector is not a valid float list: {type(image_vector)}")
+                    logger.warning(
+                        f"image_vector is not a valid float list: {type(image_vector)}"
+                    )
                     return []
                 # Check if image vector is all zeros (no image processed)
                 if all(v == 0.0 for v in image_vector):

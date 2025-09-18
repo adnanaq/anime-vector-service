@@ -10,8 +10,7 @@ import hashlib
 import io
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union, Any
-from urllib.parse import urlparse
+from typing import Any, Dict, List, Optional
 
 import aiohttp
 import numpy as np
@@ -108,9 +107,8 @@ class VisionProcessor:
             Dictionary with OpenCLIP model and metadata
         """
         try:
-            import torch
             import open_clip  # type: ignore[import-untyped]
-            from PIL import Image
+            import torch
 
             # Set device
             device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -122,7 +120,9 @@ class VisionProcessor:
                 _, model_part = model_name.split("/", 1)
                 if "ViT-L-14" in model_part:
                     clip_model_name = "ViT-L-14"
-                    pretrained = model_part  # Use full model part as pretrained identifier
+                    pretrained = (
+                        model_part  # Use full model part as pretrained identifier
+                    )
                 elif "ViT-B-32" in model_part:
                     clip_model_name = "ViT-B-32"
                     pretrained = model_part
@@ -140,7 +140,7 @@ class VisionProcessor:
                 clip_model_name,
                 pretrained=pretrained,
                 device=device,
-                cache_dir=self.cache_dir
+                cache_dir=self.cache_dir,
             )
 
             # Load tokenizer using model architecture name only
@@ -154,7 +154,9 @@ class VisionProcessor:
             try:
                 embedding_size = model.text_projection.shape[1]
             except AttributeError:
-                embedding_size = model.visual.output_dim  # fallback for some OpenCLIP builds
+                embedding_size = (
+                    model.visual.output_dim
+                )  # fallback for some OpenCLIP builds
 
             # Dynamically determine input resolution from preprocess
             input_resolution = getattr(preprocess.transforms[0], "size", 224)
@@ -183,7 +185,6 @@ class VisionProcessor:
         except Exception as e:
             logger.error(f"Failed to load OpenCLIP model {model_name}: {e}")
             raise
-
 
     def _detect_model_provider(self, model_name: str) -> str:
         """Detect model provider from model name.
@@ -278,114 +279,6 @@ class VisionProcessor:
             logger.error(f"Model encoding failed: {e}")
             return None
 
-    def _encode_with_clip(
-        self, image: Image.Image, model_dict: Dict
-    ) -> Optional[List[float]]:
-        """Encode image with CLIP model.
-
-        Args:
-            image: PIL Image
-            model_dict: CLIP model dictionary
-
-        Returns:
-            Embedding vector or None if encoding fails
-        """
-        try:
-            import torch
-
-            model = model_dict["model"]
-            preprocess = model_dict["preprocess"]
-            device = model_dict["device"]
-
-            # Preprocess image
-            processed_image = preprocess(image).unsqueeze(0).to(device)
-
-            # Generate embedding
-            with torch.no_grad():
-                image_features = model.encode_image(processed_image)
-                image_features = image_features / image_features.norm(
-                    dim=-1, keepdim=True
-                )
-                embedding = image_features.cpu().numpy().flatten().tolist()
-
-            return embedding
-
-        except Exception as e:
-            logger.error(f"CLIP encoding failed: {e}")
-            return None
-
-    def _encode_with_siglip(
-        self, image: Image.Image, model_dict: Dict
-    ) -> Optional[List[float]]:
-        """Encode image with SigLIP model.
-
-        Args:
-            image: PIL Image
-            model_dict: SigLIP model dictionary
-
-        Returns:
-            Embedding vector or None if encoding fails
-        """
-        try:
-            import torch
-
-            model = model_dict["model"]
-            processor = model_dict["processor"]
-            device = model_dict["device"]
-
-            # Process image
-            inputs = processor(images=image, return_tensors="pt").to(device)
-
-            # Generate embedding
-            with torch.no_grad():
-                image_features = model.get_image_features(**inputs)
-                image_features = image_features / image_features.norm(
-                    dim=-1, keepdim=True
-                )
-                embedding = image_features.cpu().numpy().flatten().tolist()
-
-            return embedding
-
-        except Exception as e:
-            logger.error(f"SigLIP encoding failed: {e}")
-            return None
-
-    def _encode_with_jinaclip(
-        self, image: Image.Image, model_dict: Dict
-    ) -> Optional[List[float]]:
-        """Encode image with JinaCLIP model.
-
-        Args:
-            image: PIL Image
-            model_dict: JinaCLIP model dictionary
-
-        Returns:
-            Embedding vector or None if encoding fails
-        """
-        try:
-            import torch
-
-            model = model_dict["model"]
-            processor = model_dict["processor"]
-            device = model_dict["device"]
-
-            # Process image
-            inputs = processor(images=image, return_tensors="pt").to(device)
-
-            # Generate embedding
-            with torch.no_grad():
-                image_features = model.get_image_features(**inputs)
-                image_features = image_features / image_features.norm(
-                    dim=-1, keepdim=True
-                )
-                embedding = image_features.cpu().numpy().flatten().tolist()
-
-            return embedding
-
-        except Exception as e:
-            logger.error(f"JinaCLIP encoding failed: {e}")
-            return None
-
     def _encode_with_openclip(
         self, image: Image.Image, model_dict: Dict
     ) -> Optional[List[float]]:
@@ -416,7 +309,9 @@ class VisionProcessor:
             with torch.no_grad():
                 image_features = model.encode_image(image_tensor)
                 # Normalize features
-                image_features = image_features / image_features.norm(dim=-1, keepdim=True)
+                image_features = image_features / image_features.norm(
+                    dim=-1, keepdim=True
+                )
                 embedding = image_features.cpu().numpy().flatten().tolist()
 
             return embedding
@@ -584,7 +479,9 @@ class VisionProcessor:
                 logger.warning("No image URLs found for anime")
                 return None
 
-            logger.debug(f"Processing {len(image_urls)} general images for anime (excluding character images)")
+            logger.debug(
+                f"Processing {len(image_urls)} general images for anime (excluding character images)"
+            )
 
             # Process all images with duplicate vector detection
             successful_embeddings = []
@@ -602,9 +499,13 @@ class VisionProcessor:
                             if embedding_hash not in processed_vectors:
                                 successful_embeddings.append(embedding)
                                 processed_vectors.add(embedding_hash)
-                                logger.debug(f"Successfully encoded unique image {i+1}/{len(image_urls)}")
+                                logger.debug(
+                                    f"Successfully encoded unique image {i+1}/{len(image_urls)}"
+                                )
                             else:
-                                logger.debug(f"Skipped duplicate image {i+1}/{len(image_urls)}")
+                                logger.debug(
+                                    f"Skipped duplicate image {i+1}/{len(image_urls)}"
+                                )
                 except Exception as e:
                     logger.warning(f"Failed to process image {i+1}: {e}")
                     continue
@@ -617,18 +518,24 @@ class VisionProcessor:
                 else:
                     # Average multiple embeddings for comprehensive visual representation
                     combined_embedding = np.mean(successful_embeddings, axis=0).tolist()
-                    logger.debug(f"Combined {len(successful_embeddings)} unique image embeddings from {len(image_urls)} total images")
+                    logger.debug(
+                        f"Combined {len(successful_embeddings)} unique image embeddings from {len(image_urls)} total images"
+                    )
                     return combined_embedding
 
             # Fallback: return None to store URLs in payload instead
-            logger.info("All general image processing failed, URLs will be stored in payload")
+            logger.info(
+                "All general image processing failed, URLs will be stored in payload"
+            )
             return None
 
         except Exception as e:
             logger.error(f"General image vector processing failed: {e}")
             return None
 
-    async def process_anime_character_image_vector(self, anime) -> Optional[List[float]]:
+    async def process_anime_character_image_vector(
+        self, anime
+    ) -> Optional[List[float]]:
         """Process character images from anime data for character identification and recommendations.
 
         Args:
@@ -647,7 +554,9 @@ class VisionProcessor:
                 logger.debug("No character image URLs found for anime")
                 return None
 
-            logger.debug(f"Processing {len(character_image_urls)} character images for anime")
+            logger.debug(
+                f"Processing {len(character_image_urls)} character images for anime"
+            )
 
             # Process character images with duplicate vector detection
             successful_embeddings = []
@@ -665,9 +574,13 @@ class VisionProcessor:
                             if embedding_hash not in processed_vectors:
                                 successful_embeddings.append(embedding)
                                 processed_vectors.add(embedding_hash)
-                                logger.debug(f"Successfully encoded unique character image {i+1}/{len(character_image_urls)}")
+                                logger.debug(
+                                    f"Successfully encoded unique character image {i+1}/{len(character_image_urls)}"
+                                )
                             else:
-                                logger.debug(f"Skipped duplicate character image {i+1}/{len(character_image_urls)}")
+                                logger.debug(
+                                    f"Skipped duplicate character image {i+1}/{len(character_image_urls)}"
+                                )
                 except Exception as e:
                     logger.warning(f"Failed to process character image {i+1}: {e}")
                     continue
@@ -680,11 +593,15 @@ class VisionProcessor:
                 else:
                     # Average multiple embeddings for comprehensive character visual representation
                     combined_embedding = np.mean(successful_embeddings, axis=0).tolist()
-                    logger.debug(f"Combined {len(successful_embeddings)} unique character image embeddings from {len(character_image_urls)} total character images")
+                    logger.debug(
+                        f"Combined {len(successful_embeddings)} unique character image embeddings from {len(character_image_urls)} total character images"
+                    )
                     return combined_embedding
 
             # Fallback: return None to store character image URLs in payload instead
-            logger.debug("All character image processing failed, URLs will be stored in payload")
+            logger.debug(
+                "All character image processing failed, URLs will be stored in payload"
+            )
             return None
 
         except Exception as e:
@@ -804,7 +721,6 @@ class VisionProcessor:
         """
         try:
             import time
-            from datetime import datetime, timedelta
 
             cache_files = list(self.image_cache_dir.glob("*.jpg"))
             removed_count = 0

@@ -13,7 +13,7 @@ from typing import Any, AsyncGenerator, Dict
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from .api import search, admin, similarity
+from .api import admin, search, similarity
 from .config import get_settings
 from .vector.qdrant_client import QdrantClient
 
@@ -22,8 +22,7 @@ settings = get_settings()
 
 # Configure logging
 logging.basicConfig(
-    level=getattr(logging, settings.log_level), 
-    format=settings.log_format
+    level=getattr(logging, settings.log_level), format=settings.log_format
 )
 logger = logging.getLogger(__name__)
 
@@ -89,7 +88,7 @@ async def health_check() -> Dict[str, Any]:
             "timestamp": datetime.utcnow().isoformat(),
             "service": "anime-vector-service",
             "version": settings.api_version,
-            "qdrant_status": qdrant_status
+            "qdrant_status": qdrant_status,
         }
     except Exception as e:
         logger.error(f"Health check failed: {e}")
@@ -114,22 +113,22 @@ async def root() -> Dict[str, Any]:
             "health": "/health",
             "search": "/api/v1/search",
             "image_search": "/api/v1/search/image",
-            "multimodal_search": "/api/v1/search/multimodal", 
+            "multimodal_search": "/api/v1/search/multimodal",
             "similar": "/api/v1/similarity/anime/{anime_id}",
             "visual_similar": "/api/v1/similarity/visual/{anime_id}",
             "stats": "/api/v1/admin/stats",
-            "docs": "/docs"
-        }
+            "docs": "/docs",
+        },
     }
 
 
 if __name__ == "__main__":
     import uvicorn
-    
+
     uvicorn.run(
         "src.main:app",
         host=settings.vector_service_host,
         port=settings.vector_service_port,
         reload=settings.debug,
-        log_level=settings.log_level.lower()
+        log_level=settings.log_level.lower(),
     )

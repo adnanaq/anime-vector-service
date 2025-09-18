@@ -9,7 +9,8 @@ import argparse
 import asyncio
 import json
 import logging
-from typing import Dict, Any, Optional, List
+from typing import Any, Dict, List, Optional
+
 import aiohttp
 
 logger = logging.getLogger(__name__)
@@ -25,7 +26,9 @@ class AniListEnrichmentHelper:
         self.rate_limit_remaining = 90
         self.rate_limit_reset = None
 
-    async def _make_request(self, query: str, variables: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    async def _make_request(
+        self, query: str, variables: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """Make GraphQL request to AniList API."""
         headers = {
             "Content-Type": "application/json",
@@ -35,24 +38,34 @@ class AniListEnrichmentHelper:
 
         if not self.session:
             # No timeout - we want ALL data, even if it takes minutes
-            self.session = aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=None))
+            self.session = aiohttp.ClientSession(
+                timeout=aiohttp.ClientTimeout(total=None)
+            )
 
         try:
             if self.rate_limit_remaining < 5:
-                logging.info(f"Rate limit low ({self.rate_limit_remaining}), waiting 60 seconds...")
+                logging.info(
+                    f"Rate limit low ({self.rate_limit_remaining}), waiting 60 seconds..."
+                )
                 await asyncio.sleep(60)
                 self.rate_limit_remaining = 90
 
-            async with self.session.post(self.base_url, json=payload, headers=headers) as response:
-                if 'X-RateLimit-Remaining' in response.headers:
-                    self.rate_limit_remaining = int(response.headers['X-RateLimit-Remaining'])
+            async with self.session.post(
+                self.base_url, json=payload, headers=headers
+            ) as response:
+                if "X-RateLimit-Remaining" in response.headers:
+                    self.rate_limit_remaining = int(
+                        response.headers["X-RateLimit-Remaining"]
+                    )
 
                 if response.status == 429:
-                    retry_after = int(response.headers.get('Retry-After', 60))
-                    logger.warning(f"Rate limit exceeded. Waiting {retry_after} seconds...")
+                    retry_after = int(response.headers.get("Retry-After", 60))
+                    logger.warning(
+                        f"Rate limit exceeded. Waiting {retry_after} seconds..."
+                    )
                     await asyncio.sleep(retry_after)
                     return await self._make_request(query, variables)
-                
+
                 response.raise_for_status()
                 data = await response.json()
                 if "errors" in data:
@@ -192,20 +205,28 @@ class AniListEnrichmentHelper:
     #     response = await self._make_request(query, variables)
     #     return response.get("Media")
 
-    async def fetch_anime_by_anilist_id(self, anilist_id: int) -> Optional[Dict[str, Any]]:
+    async def fetch_anime_by_anilist_id(
+        self, anilist_id: int
+    ) -> Optional[Dict[str, Any]]:
         query = self._build_query_by_anilist_id()
         variables = {"id": anilist_id}
         response = await self._make_request(query, variables)
         return response.get("Media")
 
-    async def _fetch_paginated_data(self, anilist_id: int, query_template: str, data_key: str) -> List[Dict[str, Any]]:
+    async def _fetch_paginated_data(
+        self, anilist_id: int, query_template: str, data_key: str
+    ) -> List[Dict[str, Any]]:
         all_items = []
         page = 1
         has_next_page = True
         while has_next_page:
             variables = {"id": anilist_id, "page": page}
             response = await self._make_request(query_template, variables)
-            if not response or not response.get("Media") or not response["Media"].get(data_key):
+            if (
+                not response
+                or not response.get("Media")
+                or not response["Media"].get(data_key)
+            ):
                 break
             data = response["Media"][data_key]
             all_items.extend(data.get("edges", []))
@@ -253,7 +274,9 @@ class AniListEnrichmentHelper:
         """
         return await self._fetch_paginated_data(anilist_id, query, "airingSchedule")
 
-    async def _fetch_and_populate_details(self, anime_data: Dict[str, Any]) -> Dict[str, Any]:
+    async def _fetch_and_populate_details(
+        self, anime_data: Dict[str, Any]
+    ) -> Dict[str, Any]:
         anilist_id = anime_data.get("id")
         if not anilist_id:
             return anime_data
@@ -268,7 +291,7 @@ class AniListEnrichmentHelper:
             if data:
                 anime_data[key] = {"edges": data}
                 logger.info(f"Total {key} fetched: {len(data)}")
-        
+
         return anime_data
 
     # async def fetch_all_data_by_mal_id(self, mal_id: int) -> Optional[Dict[str, Any]]:
@@ -278,7 +301,9 @@ class AniListEnrichmentHelper:
     #         return None
     #     return await self._fetch_and_populate_details(anime_data)
 
-    async def fetch_all_data_by_anilist_id(self, anilist_id: int) -> Optional[Dict[str, Any]]:
+    async def fetch_all_data_by_anilist_id(
+        self, anilist_id: int
+    ) -> Optional[Dict[str, Any]]:
         anime_data = await self.fetch_anime_by_anilist_id(anilist_id)
         if not anime_data:
             logger.warning(f"No AniList data found for AniList ID: {anilist_id}")
@@ -289,12 +314,18 @@ class AniListEnrichmentHelper:
         if self.session:
             await self.session.close()
 
+
 async def main() -> None:
     parser = argparse.ArgumentParser(description="Test AniList data fetching")
     group = parser.add_mutually_exclusive_group(required=True)
     # group.add_argument("--mal-id", type=int, help="MyAnimeList ID to fetch")
     group.add_argument("--anilist-id", type=int, help="AniList ID to fetch")
-    parser.add_argument("--output", type=str, default="test_anilist_output.json", help="Output file path")
+    parser.add_argument(
+        "--output",
+        type=str,
+        default="test_anilist_output.json",
+        help="Output file path",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO)
@@ -307,13 +338,14 @@ async def main() -> None:
         #     anime_data = await helper.fetch_all_data_by_mal_id(args.mal_id)
 
         if anime_data:
-            with open(args.output, 'w', encoding='utf-8') as f:
+            with open(args.output, "w", encoding="utf-8") as f:
                 json.dump(anime_data, f, indent=2, ensure_ascii=False)
             logger.info(f"Data saved to {args.output}")
         else:
             logger.error("No data found for the given ID.")
     finally:
         await helper.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

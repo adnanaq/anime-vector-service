@@ -7,9 +7,9 @@ existing AniDBEnrichmentHelper with proper API authentication.
 
 Usage:
     from src.batch_enrichment.anidb_url_helper import fetch_anidb_url_data
-    
+
     result = fetch_anidb_url_data("https://anidb.net/anime/23")
-    
+
     # Result format:
     # {
     #     "title": "Anime Title",
@@ -21,9 +21,9 @@ Usage:
 """
 
 import asyncio
-import re
 import logging
-from typing import Optional, Dict, Any
+import re
+from typing import Any, Dict, Optional
 
 from .anidb_helper import AniDBEnrichmentHelper
 
@@ -33,13 +33,13 @@ logger = logging.getLogger(__name__)
 def fetch_anidb_url_data(url: str) -> Optional[Dict[str, Any]]:
     """
     Fetch title and relationship data from an AniDB URL.
-    
+
     Uses the existing AniDBEnrichmentHelper with proper API authentication
     and rate limiting.
-    
+
     Args:
         url: Full AniDB URL (e.g., "https://anidb.net/anime/23")
-        
+
     Returns:
         Dict with title, relationship, confidence, context, and original URL
         None if fetch fails
@@ -50,9 +50,9 @@ def fetch_anidb_url_data(url: str) -> Optional[Dict[str, Any]]:
         if not anidb_id:
             logger.warning(f"Could not extract AniDB ID from URL: {url}")
             return _create_fallback_result(url, "unknown")
-        
+
         logger.debug(f"Extracted AniDB ID {anidb_id} from URL: {url}")
-        
+
         # Use asyncio to run the async API call
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
@@ -60,13 +60,13 @@ def fetch_anidb_url_data(url: str) -> Optional[Dict[str, Any]]:
             anime_data = loop.run_until_complete(_fetch_anidb_data_async(anidb_id))
         finally:
             loop.close()
-        
+
         if not anime_data:
             logger.warning(f"No data returned from AniDB API for ID: {anidb_id}")
             return _create_fallback_result(url, anidb_id)
-            
+
         return _parse_anidb_response(anime_data, url, anidb_id)
-        
+
     except Exception as e:
         logger.error(f"Error fetching AniDB URL {url}: {e}")
         return _create_fallback_result(url, "error")
@@ -84,14 +84,14 @@ async def _fetch_anidb_data_async(anidb_id: int) -> Optional[Dict[str, Any]]:
 
 def _extract_anidb_id_from_url(url: str) -> Optional[int]:
     """Extract AniDB anime ID from various URL formats."""
-    
+
     # Common AniDB URL patterns
     patterns = [
-        r'anidb\.net/anime/(\d+)',        # https://anidb.net/anime/23
-        r'anidb\.info/a(\d+)',            # https://anidb.info/a23
-        r'anidb\.net/a(\d+)',             # https://anidb.net/a23
+        r"anidb\.net/anime/(\d+)",  # https://anidb.net/anime/23
+        r"anidb\.info/a(\d+)",  # https://anidb.info/a23
+        r"anidb\.net/a(\d+)",  # https://anidb.net/a23
     ]
-    
+
     for pattern in patterns:
         match = re.search(pattern, url, re.IGNORECASE)
         if match:
@@ -99,11 +99,13 @@ def _extract_anidb_id_from_url(url: str) -> Optional[int]:
                 return int(match.group(1))
             except ValueError:
                 continue
-                
+
     return None
 
 
-def _parse_anidb_response(anime_data: Dict[str, Any], url: str, anidb_id: int) -> Dict[str, Any]:
+def _parse_anidb_response(
+    anime_data: Dict[str, Any], url: str, anidb_id: int
+) -> Dict[str, Any]:
     """Parse AniDB API response to extract title and context info."""
     try:
         # Extract title from AniDB titles hierarchy
@@ -113,19 +115,19 @@ def _parse_anidb_response(anime_data: Dict[str, Any], url: str, anidb_id: int) -
             confidence = "low"
         else:
             confidence = "high"
-        
+
         # Extract rich context for AI relationship inference
         context = _extract_context_data(anime_data)
-        
+
         return {
             "title": title,
             "relationship": None,  # Let AI infer from context
             "confidence": confidence,
             "context": context,  # Provide rich context for AI inference
             "url": url,
-            "source": "anidb"
+            "source": "anidb",
         }
-        
+
     except Exception as e:
         logger.error(f"Error parsing AniDB response for URL {url}: {e}")
         return _create_fallback_result(url, anidb_id)
@@ -134,45 +136,45 @@ def _parse_anidb_response(anime_data: Dict[str, Any], url: str, anidb_id: int) -
 def _extract_best_title(anime_data: Dict[str, Any]) -> Optional[str]:
     """Extract the best title from AniDB data using title hierarchy."""
     titles = anime_data.get("titles", {})
-    
+
     # Priority order: main → english → japanese → first synonym
     if titles.get("main"):
         return titles["main"]
     elif titles.get("english"):
-        return titles["english"]  
+        return titles["english"]
     elif titles.get("japanese"):
         return titles["japanese"]
     elif titles.get("synonyms") and len(titles["synonyms"]) > 0:
         return titles["synonyms"][0]
-    
+
     return None
 
 
 def _extract_context_data(anime_data: Dict[str, Any]) -> Dict[str, Any]:
     """
     Extract contextual data for AI-powered relationship inference.
-    
+
     Extract rich context from AniDB data for AI analysis instead of
     hardcoded relationship patterns.
     """
     context = {}
-    
+
     # Basic metadata
     if anime_data.get("description"):
         context["description"] = anime_data["description"]
-    
+
     if anime_data.get("type"):
         context["type"] = anime_data["type"]
-        
+
     if anime_data.get("episodecount"):
         context["episodes"] = anime_data["episodecount"]
-        
+
     # Date information for sequels/prequels inference
     if anime_data.get("startdate"):
         context["start_date"] = anime_data["startdate"]
     if anime_data.get("enddate"):
         context["end_date"] = anime_data["enddate"]
-    
+
     # Tags/categories for genre context
     tags = anime_data.get("tags", [])
     if tags:
@@ -180,21 +182,21 @@ def _extract_context_data(anime_data: Dict[str, Any]) -> Dict[str, Any]:
         tag_names = [tag["name"] for tag in tags[:10] if tag.get("name")]
         if tag_names:
             context["tags"] = tag_names
-            
+
     categories = anime_data.get("categories", [])
     if categories:
         # Extract category names for genre context
         category_names = [cat["name"] for cat in categories if cat.get("name")]
         if category_names:
             context["categories"] = category_names
-    
+
     # Creator information for franchise context
     creators = anime_data.get("creators", [])
     if creators:
         creator_names = [creator["name"] for creator in creators if creator.get("name")]
         if creator_names:
             context["creators"] = creator_names[:5]  # Limit to 5 most relevant
-    
+
     # Character information for relationship context
     characters = anime_data.get("characters", [])
     if characters:
@@ -202,7 +204,7 @@ def _extract_context_data(anime_data: Dict[str, Any]) -> Dict[str, Any]:
         main_chars = [char["name"] for char in characters[:5] if char.get("name")]
         if main_chars:
             context["main_characters"] = main_chars
-    
+
     # Rating information for quality context
     ratings = anime_data.get("ratings", {})
     if ratings:
@@ -210,9 +212,9 @@ def _extract_context_data(anime_data: Dict[str, Any]) -> Dict[str, Any]:
         if permanent_rating.get("value"):
             context["rating"] = {
                 "value": permanent_rating["value"],
-                "count": permanent_rating.get("count", 0)
+                "count": permanent_rating.get("count", 0),
             }
-    
+
     return context
 
 
@@ -223,7 +225,7 @@ def _create_fallback_result(url: str, anidb_id) -> Dict[str, Any]:
         "relationship": None,  # Cannot determine relationship when blocked
         "confidence": "none",  # No confidence when we can't access data
         "url": url,
-        "source": "anidb"
+        "source": "anidb",
     }
 
 
@@ -231,18 +233,18 @@ def _create_fallback_result(url: str, anidb_id) -> Dict[str, Any]:
 def fetch_multiple_anidb_urls(urls: list[str]) -> Dict[str, Dict[str, Any]]:
     """
     Fetch data for multiple AniDB URLs with proper rate limiting.
-    
+
     Uses a single AniDBEnrichmentHelper instance to ensure proper rate limiting
     across all requests.
-    
+
     Args:
         urls: List of AniDB URLs
-        
+
     Returns:
         Dict mapping URL to result data
     """
     results = {}
-    
+
     # Extract all AniDB IDs first
     url_to_id = {}
     for url in urls:
@@ -252,57 +254,63 @@ def fetch_multiple_anidb_urls(urls: list[str]) -> Dict[str, Dict[str, Any]]:
         else:
             logger.warning(f"Could not extract AniDB ID from URL: {url}")
             results[url] = _create_fallback_result(url, "unknown")
-    
+
     if not url_to_id:
         logger.warning("No valid AniDB URLs found")
         return results
-    
+
     # Use single helper instance for proper rate limiting
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     try:
-        results.update(loop.run_until_complete(_fetch_multiple_anidb_data_async(url_to_id)))
+        results.update(
+            loop.run_until_complete(_fetch_multiple_anidb_data_async(url_to_id))
+        )
     finally:
         loop.close()
-    
+
     logger.info(f"Completed processing {len(results)}/{len(urls)} AniDB URLs")
     return results
 
 
-async def _fetch_multiple_anidb_data_async(url_to_id: Dict[str, int]) -> Dict[str, Dict[str, Any]]:
+async def _fetch_multiple_anidb_data_async(
+    url_to_id: Dict[str, int],
+) -> Dict[str, Dict[str, Any]]:
     """Fetch multiple AniDB URLs using single helper instance for proper rate limiting."""
     helper = AniDBEnrichmentHelper()
     results = {}
-    
+
     try:
         for i, (url, anidb_id) in enumerate(url_to_id.items()):
-            logger.info(f"Processing AniDB URL {i+1}/{len(url_to_id)}: {url} (ID: {anidb_id})")
-            
+            logger.info(
+                f"Processing AniDB URL {i+1}/{len(url_to_id)}: {url} (ID: {anidb_id})"
+            )
+
             anime_data = await helper.fetch_all_data(anidb_id)
             if anime_data:
                 results[url] = _parse_anidb_response(anime_data, url, anidb_id)
             else:
                 results[url] = _create_fallback_result(url, anidb_id)
-                
+
             # The helper already handles rate limiting, but log progress
             logger.debug(f"Completed AniDB request {i+1}/{len(url_to_id)}")
     finally:
         await helper.close()
-    
+
     return results
 
 
 if __name__ == "__main__":
     # Test the helper
     import sys
-    
+
     if len(sys.argv) != 2:
         print("Usage: python anidb_url_helper.py <anidb_url>")
         sys.exit(1)
-    
+
     url = sys.argv[1]
     result = fetch_anidb_url_data(url)
-    
+
     if result:
         print(f"Title: {result['title']}")
         print(f"Relationship: {result['relationship']}")
