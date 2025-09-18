@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class KitsuEnrichmentHelper:
     """Simple helper for Kitsu data fetching in AI enrichment pipeline."""
     
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize Kitsu enrichment helper."""
         self.base_url = "https://kitsu.io/api/edge"
         
@@ -133,7 +133,7 @@ class KitsuEnrichmentHelper:
                 "categories": []
             }
 
-async def main():
+async def main() -> None:
     if len(sys.argv) != 3:
         print("Usage: python kitsu_helper.py <anime_id> <output_file>")
         sys.exit(1)

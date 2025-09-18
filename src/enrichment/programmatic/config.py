@@ -82,7 +82,7 @@ class EnrichmentConfig(BaseSettings):
         env_prefix = "ENRICHMENT_"
         case_sensitive = False
         
-    def log_configuration(self):
+    def log_configuration(self) -> None:
         """Log current configuration for debugging (context-rich errors)."""
         logger.info("Enrichment Pipeline Configuration:")
         logger.info(f"  API Timeout: {self.api_timeout}s")

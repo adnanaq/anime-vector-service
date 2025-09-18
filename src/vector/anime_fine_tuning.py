@@ -140,7 +140,7 @@ class AnimeFineTuner:
             bias="none",
         )
     
-    def setup_models_for_finetuning(self):
+    def setup_models_for_finetuning(self) -> None:
         """Setup models for fine-tuning with LoRA."""
         logger.info("Setting up models for fine-tuning")
         
@@ -271,7 +271,7 @@ class AnimeFineTuner:
             'genre_loss': genre_loss / num_batches
         }
     
-    def _save_best_model(self, epoch: int):
+    def _save_best_model(self, epoch: int) -> None:
         """Save the best performing model.
         
         Args:
@@ -336,7 +336,7 @@ class AnimeFineTuner:
         logger.info(f"Evaluation results: {combined_metrics}")
         return combined_metrics
     
-    def load_finetuned_models(self, model_path: str):
+    def load_finetuned_models(self, model_path: str) -> None:
         """Load fine-tuned models from saved path.
         
         Args:

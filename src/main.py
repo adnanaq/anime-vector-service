@@ -8,6 +8,7 @@ with multi-modal embeddings (text + image) for anime content.
 import logging
 from contextlib import asynccontextmanager
 from datetime import datetime
+from typing import Any, AsyncGenerator, Dict
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -31,7 +32,7 @@ qdrant_client = None
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Initialize services on startup"""
     global qdrant_client
 
@@ -76,7 +77,7 @@ app.add_middleware(
 
 # Health check endpoint
 @app.get("/health")
-async def health_check():
+async def health_check() -> Dict[str, Any]:
     """Health check endpoint."""
     try:
         qdrant_status = await qdrant_client.health_check()
@@ -100,7 +101,7 @@ app.include_router(admin.router, prefix="/api/v1/admin", tags=["admin"])
 
 # Root endpoint
 @app.get("/")
-async def root():
+async def root() -> Dict[str, Any]:
     """Root endpoint with service information."""
     return {
         "service": "Anime Vector Service",

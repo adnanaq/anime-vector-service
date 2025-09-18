@@ -37,7 +37,7 @@ class BatchSimilarityRequest(BaseModel):
 async def get_similar_anime(
     anime_id: str,
     limit: int = Query(default=10, ge=1, le=50, description="Maximum number of similar anime to return")
-):
+) -> SimilarityResponse:
     """
     Find anime similar to the reference anime.
     
@@ -80,7 +80,7 @@ async def get_similar_anime(
 async def get_visually_similar_anime(
     anime_id: str,
     limit: int = Query(default=10, ge=1, le=50, description="Maximum number of visually similar anime to return")
-):
+) -> SimilarityResponse:
     """
     Find anime with similar visual style to the reference anime.
     
@@ -131,7 +131,7 @@ async def get_visually_similar_anime(
 async def get_vector_similar_anime(
     anime_id: str,
     limit: int = Query(default=10, ge=1, le=50, description="Maximum number of similar anime to return")
-):
+) -> SimilarityResponse:
     """
     Find anime similar using direct vector similarity.
     
@@ -171,7 +171,7 @@ async def get_vector_similar_anime(
 
 
 @router.post("/similarity/batch")
-async def get_batch_similarity(request: BatchSimilarityRequest):
+async def get_batch_similarity(request: BatchSimilarityRequest) -> Dict[str, Any]:
     """
     Find similar anime for multiple reference anime in batch.
     

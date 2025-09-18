@@ -54,7 +54,7 @@ class ParallelAPIFetcher:
         self.api_timings: Dict[str, float] = {}
         self.api_errors: Dict[str, str] = {}
         
-    async def initialize_helpers(self):
+    async def initialize_helpers(self) -> None:
         """Initialize async API helpers."""
         if not self.anilist_helper:
             self.anilist_helper = AniListEnrichmentHelper()
@@ -483,7 +483,7 @@ class ParallelAPIFetcher:
         
         return results
     
-    async def _save_temp_files(self, results: Dict, temp_dir: str):
+    async def _save_temp_files(self, results: Dict[str, Any], temp_dir: str) -> None:
         """Save API responses to temp files for debugging/caching."""
         os.makedirs(temp_dir, exist_ok=True)
         
@@ -497,7 +497,7 @@ class ParallelAPIFetcher:
                 except Exception as e:
                     logger.warning(f"Failed to save {api_name} response: {e}")
     
-    def _log_performance_metrics(self, total_time: float):
+    def _log_performance_metrics(self, total_time: float) -> None:
         """Log detailed performance metrics for optimization."""
         logger.info("API Performance Metrics:")
         logger.info(f"  Total Time: {total_time:.2f}s")
@@ -515,7 +515,7 @@ class ParallelAPIFetcher:
         success_rate = (len(self.api_timings) / total_apis * 100) if total_apis > 0 else 0
         logger.info(f"  Success Rate: {success_rate:.1f}%")
     
-    async def cleanup(self):
+    async def cleanup(self) -> None:
         """Clean up resources."""
         if self.anilist_helper:
             await self.anilist_helper.close()

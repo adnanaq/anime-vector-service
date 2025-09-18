@@ -290,7 +290,7 @@ class ProgrammaticEnrichmentPipeline:
         
         return programmatic_result
     
-    async def cleanup(self):
+    async def cleanup(self) -> None:
         """Clean up resources."""
         await self.api_fetcher.cleanup()
     
@@ -313,7 +313,7 @@ class ProgrammaticEnrichmentPipeline:
         return "\n".join(report)
 
 
-async def main():
+async def main() -> None:
     """Test the pipeline with a sample anime."""
     
     # Sample offline data

@@ -19,11 +19,11 @@ class SimpleCircuitBreaker:
         """Check if circuit breaker is open."""
         return self._is_open
         
-    def open(self):
+    def open(self) -> None:
         """Open the circuit breaker."""
         self._is_open = True
         
-    def close(self):
+    def close(self) -> None:
         """Close the circuit breaker."""
         self._is_open = False
 
@@ -34,7 +34,7 @@ class SimpleErrorHandler:
     def __init__(self, logger: logging.Logger):
         self.logger = logger
         
-    async def handle_error(self, error_msg: str):
+    async def handle_error(self, error_msg: str) -> None:
         """Handle error by logging it."""
         self.logger.error(error_msg)
 
@@ -42,18 +42,18 @@ class SimpleErrorHandler:
 class SimpleCacheManager:
     """Minimal in-memory cache manager implementation."""
     
-    def __init__(self):
+    def __init__(self) -> None:
         self._cache: Dict[str, Any] = {}
         
     async def get(self, key: str) -> Optional[Any]:
         """Get value from cache."""
         return self._cache.get(key)
         
-    async def set(self, key: str, value: Any, ttl: Optional[int] = None):
+    async def set(self, key: str, value: Any, ttl: Optional[int] = None) -> None:
         """Set value in cache (ignoring TTL for simplicity)."""
         self._cache[key] = value
         
-    def clear(self):
+    def clear(self) -> None:
         """Clear all cache entries."""
         self._cache.clear()
 

@@ -5,7 +5,7 @@ Performance: ~0.001 seconds vs 5+ seconds for AI extraction.
 """
 
 import re
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ class PlatformIDExtractor:
         'livechart_id': r'livechart\.me/anime/(\d+)',
     }
     
-    def extract_all_ids(self, offline_data: Dict) -> Dict[str, Optional[str]]:
+    def extract_all_ids(self, offline_data: Dict[str, Any]) -> Dict[str, Optional[str]]:
         """
         Extract all platform IDs from sources array.
         
@@ -93,7 +93,7 @@ class PlatformIDExtractor:
                 return platform.replace('_id', '').replace('_slug', '')
         return None
     
-    def extract_animeschedule_search_terms(self, offline_data: Dict) -> List[str]:
+    def extract_animeschedule_search_terms(self, offline_data: Dict[str, Any]) -> List[str]:
         """
         Extract potential search terms for AnimSchedule.
         AnimSchedule doesn't use IDs, so we need search terms.

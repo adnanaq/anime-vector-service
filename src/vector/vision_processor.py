@@ -65,7 +65,7 @@ class VisionProcessor:
         # Initialize models
         self._init_models()
 
-    def _init_models(self):
+    def _init_models(self) -> None:
         """Initialize vision embedding model."""
         try:
             # Initialize model
@@ -197,7 +197,7 @@ class VisionProcessor:
         # Only OpenCLIP is supported now
         return "openclip"
 
-    def _warm_up_model(self):
+    def _warm_up_model(self) -> None:
         """Warm up model with dummy data."""
         try:
             # Create dummy image

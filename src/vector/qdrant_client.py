@@ -221,7 +221,7 @@ class QdrantClient:
             logger.error(f"Failed to validate collection compatibility: {e}")
             return False
 
-    def _validate_vector_config(self, vectors_config: Dict[str, VectorParams]):
+    def _validate_vector_config(self, vectors_config: Dict[str, VectorParams]) -> None:
         """Validate vector configuration before collection creation."""
         if not vectors_config:
             raise ValueError("Vector configuration is empty")

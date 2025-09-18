@@ -5,13 +5,16 @@ for optimal performance.
 """
 
 import logging
-from typing import Dict, List, Optional, Union, Any
+from typing import Dict, List, Optional, Union, Any, TYPE_CHECKING
 from pathlib import Path
 
 import numpy as np
 
 from ..config import Settings
 from ..models.anime import AnimeEntry
+
+if TYPE_CHECKING:
+    from .anime_field_mapper import AnimeFieldMapper
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +49,7 @@ class TextProcessor:
         # Initialize field mapper for multi-vector processing
         self._field_mapper = None
     
-    def _init_models(self):
+    def _init_models(self) -> None:
         """Initialize text embedding model."""
         try:
             # Initialize model
@@ -259,7 +262,7 @@ class TextProcessor:
         else:
             return "huggingface"
     
-    def _warm_up_model(self):
+    def _warm_up_model(self) -> None:
         """Warm up model with dummy data."""
         try:
             dummy_text = "This is a test sentence for model warm-up."
@@ -552,7 +555,7 @@ class TextProcessor:
     # MULTI-VECTOR PROCESSING METHODS
     # ============================================================================
 
-    def _get_field_mapper(self):
+    def _get_field_mapper(self) -> 'AnimeFieldMapper':
         """Lazy initialization of field mapper."""
         if self._field_mapper is None:
             from .anime_field_mapper import AnimeFieldMapper

@@ -186,7 +186,7 @@ class CharacterRecognitionFinetuner:
         
         logger.info(f"Character recognition fine-tuner initialized on {self.device}")
     
-    def setup_lora_model(self, lora_config: LoraConfig, fine_tuning_config: Any):
+    def setup_lora_model(self, lora_config: LoraConfig, fine_tuning_config: Any) -> None:
         """Setup LoRA model for parameter-efficient fine-tuning.
         
         Args:
@@ -478,7 +478,7 @@ class CharacterRecognitionFinetuner:
             
             return predictions
     
-    def save_model(self, save_path: Path):
+    def save_model(self, save_path: Path) -> None:
         """Save fine-tuned model.
         
         Args:
@@ -501,7 +501,7 @@ class CharacterRecognitionFinetuner:
         torch.save(model_state, save_path / 'character_recognition_model.pth')
         logger.info(f"Character recognition model saved to {save_path}")
     
-    def load_model(self, load_path: Path):
+    def load_model(self, load_path: Path) -> None:
         """Load fine-tuned model.
         
         Args:

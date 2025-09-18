@@ -9,8 +9,9 @@ import json
 import requests
 import sys
 import os
+from typing import Any, Dict, Optional
 
-def fetch_animeschedule_data(search_term, save_file=False):
+def fetch_animeschedule_data(search_term: str, save_file: bool = False) -> Optional[Dict[str, Any]]:
     """Fetch AnimSchedule data for an anime"""
     
     print(f"🔄 Fetching AnimSchedule data for: {search_term}")

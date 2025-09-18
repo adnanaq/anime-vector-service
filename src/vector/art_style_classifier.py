@@ -203,7 +203,7 @@ class VisionTransformerWrapper(PreTrainedModel):
         """Forward pass through wrapped vision model."""
         return self.visual_model(x)
 
-    def get_input_embeddings(self):
+    def get_input_embeddings(self) -> None:
         """Required method for PreTrainedModel."""
         return None
 
@@ -228,7 +228,7 @@ class VisionModelWrapper(PreTrainedModel):
         """Forward pass through wrapped vision model."""
         return self.vision_model(x)
 
-    def get_input_embeddings(self):
+    def get_input_embeddings(self) -> None:
         """Required method for PreTrainedModel."""
         return None
 
@@ -427,7 +427,7 @@ class ArtStyleClassifier:
         
         logger.info(f"Art style classifier initialized on {self.device}")
     
-    def setup_lora_model(self, lora_config: LoraConfig, fine_tuning_config: Any):
+    def setup_lora_model(self, lora_config: LoraConfig, fine_tuning_config: Any) -> None:
         """Setup LoRA model for parameter-efficient fine-tuning on vision backbone.
 
         Args:
@@ -479,7 +479,7 @@ class ArtStyleClassifier:
             logger.error(f"Error setting up LoRA model: {e}")
             raise
 
-    def _setup_lora_vision_model(self, lora_config: LoraConfig):
+    def _setup_lora_vision_model(self, lora_config: LoraConfig) -> None:
         """Setup LoRA-enhanced vision model using configuration settings.
 
         Args:
@@ -814,7 +814,7 @@ class ArtStyleClassifier:
             
             return predictions
     
-    def save_model(self, save_path: Path):
+    def save_model(self, save_path: Path) -> None:
         """Save fine-tuned model.
         
         Args:
@@ -857,7 +857,7 @@ class ArtStyleClassifier:
         torch.save(model_state, save_path / 'art_style_classifier.pth')
         logger.info(f"Art style classifier saved to {save_path}")
     
-    def load_model(self, load_path: Path):
+    def load_model(self, load_path: Path) -> None:
         """Load fine-tuned model.
         
         Args:

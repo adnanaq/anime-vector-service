@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 class AniDBUDPHelper:
     """Helper for AniDB UDP API character data fetching."""
     
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize AniDB UDP helper."""
         self.host = "api.anidb.net"
         self.port = 9000
@@ -36,7 +36,7 @@ class AniDBUDPHelper:
         self.last_request_time = 0
         self.min_request_interval = 2.0  # 2 seconds between requests (0.5 req/sec)
         
-    def _wait_for_rate_limit(self):
+    def _wait_for_rate_limit(self) -> None:
         """Ensure we don't exceed AniDB rate limits."""
         current_time = time.time()
         time_since_last = current_time - self.last_request_time
@@ -192,13 +192,13 @@ class AniDBUDPHelper:
             logger.error(f"Failed to get characters for anime {anidb_id}: {e}")
             return None
     
-    def close(self):
+    def close(self) -> None:
         """Close UDP socket."""
         if self.socket:
             self.socket.close()
 
 
-async def main():
+async def main() -> None:
     """Main function for testing AniDB UDP character data fetching."""
     parser = argparse.ArgumentParser(description="Test AniDB UDP character data fetching")
     parser.add_argument("--anidb-id", type=int, required=True, help="AniDB anime ID")

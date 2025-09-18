@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class AniListEnrichmentHelper:
     """Helper for AniList data fetching in AI enrichment pipeline."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize AniList enrichment helper."""
         self.base_url = "https://graphql.anilist.co"
         self.session = None
@@ -285,11 +285,11 @@ class AniListEnrichmentHelper:
             return None
         return await self._fetch_and_populate_details(anime_data)
 
-    async def close(self):
+    async def close(self) -> None:
         if self.session:
             await self.session.close()
 
-async def main():
+async def main() -> None:
     parser = argparse.ArgumentParser(description="Test AniList data fetching")
     group = parser.add_mutually_exclusive_group(required=True)
     # group.add_argument("--mal-id", type=int, help="MyAnimeList ID to fetch")

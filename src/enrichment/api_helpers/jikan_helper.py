@@ -37,7 +37,7 @@ class JikanDetailedFetcher:
         self.max_requests_per_second = 3
         self.max_requests_per_minute = 60
         
-    def respect_rate_limits(self):
+    def respect_rate_limits(self) -> None:
         """Ensure we don't exceed Jikan API rate limits."""
         current_time = time.time()
         elapsed = current_time - self.start_time
@@ -157,7 +157,7 @@ class JikanDetailedFetcher:
         
         return len(all_data)
     
-    def fetch_detailed_data(self, input_file: str, output_file: str):
+    def fetch_detailed_data(self, input_file: str, output_file: str) -> None:
         """Main method to fetch detailed data with batch processing. When processing each object should 
         have these properties, example for characters:
         {
@@ -272,7 +272,7 @@ class JikanDetailedFetcher:
             print(f'Cleaned up progress file: {progress_file}')
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description='Fetch detailed data from Jikan API')
     parser.add_argument('data_type', choices=['episodes', 'characters'], 
                        help='Type of data to fetch')

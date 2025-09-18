@@ -87,7 +87,7 @@ class EnrichmentAssembler:
         'background', 'month', 'nsfw'
     }
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.errors = []
         self.warnings = []
     

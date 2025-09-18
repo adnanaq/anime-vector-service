@@ -221,7 +221,7 @@ class BaseScraper(BaseClient):
 
         return base_data
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the scraper session."""
         if self.scraper:
             # Cloudscraper doesn't need explicit closing like aiohttp

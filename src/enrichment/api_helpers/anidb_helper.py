@@ -119,7 +119,7 @@ class AniDBEnrichmentHelper:
                 
         return True  # CLOSED or HALF_OPEN allows requests
     
-    def _update_circuit_breaker(self, success: bool):
+    def _update_circuit_breaker(self, success: bool) -> None:
         """Update circuit breaker state based on request result."""
         if success:
             if self.circuit_breaker_state == CircuitBreakerState.HALF_OPEN:
@@ -135,7 +135,7 @@ class AniDBEnrichmentHelper:
                 self.circuit_breaker_opened_at = int(time.time())
                 logger.error(f"Circuit breaker OPENED after {self.metrics.consecutive_failures} consecutive failures")
     
-    async def _adaptive_rate_limit(self, is_retry: bool = False):
+    async def _adaptive_rate_limit(self, is_retry: bool = False) -> None:
         """Enhanced rate limiting with adaptive delays and error recovery."""
         current_time = time.time()
         time_since_last = current_time - self.metrics.last_request_time
@@ -160,7 +160,7 @@ class AniDBEnrichmentHelper:
         self.metrics.last_request_time = time.time()
         self.metrics.current_interval = adaptive_interval
     
-    async def _ensure_session_health(self):
+    async def _ensure_session_health(self) -> None:
         """Ensure session is healthy and recreate if needed."""
         current_time = time.time()
         
@@ -712,7 +712,7 @@ class AniDBEnrichmentHelper:
             return True
         return False
     
-    async def close(self):
+    async def close(self) -> None:
         """Close the HTTP session with cleanup."""
         if self.session:
             try:
@@ -725,7 +725,7 @@ class AniDBEnrichmentHelper:
                 self._session_created_at = 0
 
 
-async def main():
+async def main() -> None:
     """Main function for testing AniDB data fetching."""
     parser = argparse.ArgumentParser(description="Test AniDB data fetching")
     parser.add_argument("--anidb-id", type=int, help="AniDB ID to fetch")

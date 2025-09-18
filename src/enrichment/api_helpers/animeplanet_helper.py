@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 class AnimePlanetEnrichmentHelper:
     """Helper for Anime-Planet data fetching in AI enrichment pipeline."""
     
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize Anime-Planet enrichment helper."""
         self.scraper = AnimePlanetScraper()
         
@@ -109,11 +109,11 @@ class AnimePlanetEnrichmentHelper:
             logger.error(f"Error in fetch_all_data: {e}")
             return None
     
-    async def close(self):
+    async def close(self) -> None:
         """Close the scraper."""
         await self.scraper.close()
 
-async def main():
+async def main() -> None:
     if len(sys.argv) != 3:
         print("Usage: python animeplanet_helper.py <slug> <output_file>")
         sys.exit(1)
