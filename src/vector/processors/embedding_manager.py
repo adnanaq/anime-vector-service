@@ -8,8 +8,8 @@ import asyncio
 import logging
 from typing import Any, Dict, List, Optional
 
-from ..config import Settings
-from ..models.anime import AnimeEntry
+from ...config import Settings
+from ...models.anime import AnimeEntry
 from .anime_field_mapper import AnimeFieldMapper
 from .text_processor import TextProcessor
 from .vision_processor import VisionProcessor

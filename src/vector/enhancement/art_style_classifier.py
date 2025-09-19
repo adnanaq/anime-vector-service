@@ -22,7 +22,7 @@ try:
 except ImportError:
     open_clip = None
 
-from ..config import Settings
+from ...config import Settings
 
 logger = logging.getLogger(__name__)
 

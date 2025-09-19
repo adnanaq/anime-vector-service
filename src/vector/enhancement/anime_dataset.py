@@ -12,8 +12,8 @@ from typing import Any, Dict, List, Optional
 import torch
 from torch.utils.data import Dataset
 
-from .text_processor import TextProcessor
-from .vision_processor import VisionProcessor
+from ..processors.text_processor import TextProcessor
+from ..processors.vision_processor import VisionProcessor
 
 logger = logging.getLogger(__name__)
 

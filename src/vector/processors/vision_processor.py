@@ -16,7 +16,7 @@ import aiohttp
 import numpy as np
 from PIL import Image
 
-from ..config import Settings
+from ...config import Settings
 from .anime_field_mapper import AnimeFieldMapper
 
 logger = logging.getLogger(__name__)

@@ -15,7 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .api import admin, search, similarity
 from .config import get_settings
-from .vector.qdrant_client import QdrantClient
+from .vector.client.qdrant_client import QdrantClient
 
 # Get application settings
 settings = get_settings()

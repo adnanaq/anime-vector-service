@@ -7,8 +7,8 @@ for optimal performance.
 import logging
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, cast
 
-from ..config import Settings
-from ..models.anime import AnimeEntry
+from ...config import Settings
+from ...models.anime import AnimeEntry
 
 if TYPE_CHECKING:
     from .anime_field_mapper import AnimeFieldMapper

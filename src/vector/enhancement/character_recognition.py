@@ -15,7 +15,7 @@ import torch.nn.functional as F
 from peft import LoraConfig
 from torch.utils.data import DataLoader
 
-from ..config import Settings
+from ...config import Settings
 
 logger = logging.getLogger(__name__)
 

@@ -44,9 +44,9 @@ from qdrant_client.models import (  # Qdrant optimization models; Multi-vector s
     WalConfigDiff,
 )
 
-from ..config import Settings
-from ..models.anime import AnimeEntry
-from .embedding_manager import MultiVectorEmbeddingManager
+from ...config import Settings
+from ...models.anime import AnimeEntry
+from ..processors.embedding_manager import MultiVectorEmbeddingManager
 
 logger = logging.getLogger(__name__)
 
@@ -107,8 +107,8 @@ class QdrantClient:
         """Initialize embedding processors."""
         try:
             # Import processors
-            from .text_processor import TextProcessor
-            from .vision_processor import VisionProcessor
+            from ..processors.text_processor import TextProcessor
+            from ..processors.vision_processor import VisionProcessor
 
             # Initialize text processor
             self.text_processor = TextProcessor(self.settings)
