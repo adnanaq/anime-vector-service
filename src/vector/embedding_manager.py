@@ -42,8 +42,8 @@ class MultiVectorEmbeddingManager:
 
         # Get vector configuration
         self.vector_names = list(settings.vector_names.keys())
-        self.text_vector_names = [v for v in self.vector_names if v != "image_vector"]
-        self.image_vector_name = "image_vector"
+        self.text_vector_names = [v for v in self.vector_names if v not in ["image_vector", "character_image_vector"]]
+        self.image_vector_names = ["image_vector", "character_image_vector"]
 
         logger.info(
             f"Initialized MultiVectorEmbeddingManager with {len(self.vector_names)} vectors"
@@ -65,13 +65,11 @@ class MultiVectorEmbeddingManager:
             # Generate all text vectors
             text_vectors = await self._generate_text_vectors(anime)
 
-            # Generate image vector
-            image_vector = await self._generate_image_vector(anime)
+            # Generate image vectors
+            image_vectors = await self._generate_image_vectors(anime)
 
             # Combine all vectors
-            all_vectors = {**text_vectors}
-            if image_vector is not None:
-                all_vectors[self.image_vector_name] = image_vector
+            all_vectors = {**text_vectors, **image_vectors}
 
             # Generate payload data
             payload = self._generate_payload(anime)
@@ -127,31 +125,40 @@ class MultiVectorEmbeddingManager:
             logger.error(f"Text vector generation failed: {e}")
             return {}
 
-    async def _generate_image_vector(self, anime: AnimeEntry) -> Optional[List[float]]:
-        """Generate image embedding vector.
+    async def _generate_image_vectors(self, anime: AnimeEntry) -> Dict[str, List[float]]:
+        """Generate both image embedding vectors.
 
         Args:
             anime: AnimeEntry instance
 
         Returns:
-            Image embedding vector or None if generation fails
+            Dictionary mapping image vector names to embeddings
         """
         try:
-            # Use vision processor's async method
-            image_vector = await self.vision_processor.process_anime_image_vector(anime)
+            image_vectors = {}
 
-            if image_vector is not None:
-                logger.debug("Successfully generated image vector")
+            # Generate general image vector
+            general_image_vector = await self.vision_processor.process_anime_image_vector(anime)
+            if general_image_vector is not None:
+                image_vectors["image_vector"] = general_image_vector
+                logger.debug("Successfully generated general image vector")
             else:
-                logger.debug(
-                    "Image vector generation failed - will store URL in payload"
-                )
+                logger.debug("General image vector generation failed - will store URLs in payload")
 
-            return image_vector
+            # Generate character image vector
+            character_image_vector = await self.vision_processor.process_anime_character_image_vector(anime)
+            if character_image_vector is not None:
+                image_vectors["character_image_vector"] = character_image_vector
+                logger.debug("Successfully generated character image vector")
+            else:
+                logger.debug("Character image vector generation failed - will store URLs in payload")
+
+            logger.debug(f"Generated {len(image_vectors)}/2 image vectors")
+            return image_vectors
 
         except Exception as e:
             logger.error(f"Image vector generation failed: {e}")
-            return None
+            return {}
 
     def _generate_payload(self, anime: AnimeEntry) -> Dict[str, Any]:
         """Generate payload data for Qdrant storage.
@@ -245,9 +252,11 @@ class MultiVectorEmbeddingManager:
             total_expected = len(self.vector_names)
             total_generated = len(vectors)
             text_vectors_generated = len(
-                [v for v in vectors.keys() if v != self.image_vector_name]
+                [v for v in vectors.keys() if v not in self.image_vector_names]
             )
-            image_vector_generated = self.image_vector_name in vectors
+            image_vectors_generated = len(
+                [v for v in vectors.keys() if v in self.image_vector_names]
+            )
 
             # Missing vectors
             missing_vectors = [v for v in self.vector_names if v not in vectors]
@@ -257,7 +266,7 @@ class MultiVectorEmbeddingManager:
                 "total_vectors_expected": total_expected,
                 "total_vectors_generated": total_generated,
                 "text_vectors_generated": text_vectors_generated,
-                "image_vector_generated": image_vector_generated,
+                "image_vectors_generated": image_vectors_generated,
                 "missing_vectors": missing_vectors,
                 "success_rate": (
                     total_generated / total_expected if total_expected > 0 else 0.0
