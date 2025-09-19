@@ -489,10 +489,97 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Create data corruption and recovery testing
   - [ ] Set up production smoke tests and health validation
 
+### 📋 Phase 3.5: Episode Collection Architecture - PLANNED (Dual-Collection Strategy)
+
+**Architecture Decision**: Implement separate episode collection alongside existing anime collection for granular episode search.
+**Design Pattern**: Option 2 - Separate episode collection with slug-based ID linking and hierarchical chunking.
+
+#### **Sub-Phase 3.5.1: Episode Collection Design and Implementation** (Rollback-Safe: independent collection)
+**Sub-Phase 3.5.1a: Episode Collection Schema Design** (Est: 4 hours)
+- [ ] **3.5.1a.1: Collection Architecture Planning** (Est: 2 hours)
+  - [ ] Design episode collection schema with slug-based ID system
+  - [ ] Create episode-specific vector configuration (BGE-M3 1024-dim content vector)
+  - [ ] Plan anime-episode linking strategy using anime_id references
+  - [ ] Validate collection independence and zero-risk to existing anime data
+
+- [ ] **3.5.1a.2: Episode Content Processing Strategy** (Est: 2 hours)
+  - [ ] Design episode semantic content extraction (number + title + synopsis)
+  - [ ] Implement hierarchical chunking with equal averaging for anime collection
+  - [ ] Create individual episode embedding generation for episode collection
+  - [ ] Plan episode-specific metadata payload optimization
+
+**Sub-Phase 3.5.1b: Episode Processing Pipeline** (Est: 6 hours)
+- [ ] **3.5.1b.1: Episode Content Enhancement** (Est: 3 hours)
+  - [ ] Enhance _extract_episode_content() with improved semantic meaning
+  - [ ] Implement comprehensive episode text generation (number + title + synopsis)
+  - [ ] Add episode type flags (filler, recap) for semantic context
+  - [ ] Skip generic title patterns while preserving meaningful titles
+
+- [ ] **3.5.1b.2: Dual-Level Episode Processing** (Est: 3 hours)
+  - [ ] Create anime-level episode chunking with 512-token groups
+  - [ ] Implement equal averaging (not weighted) for anime collection episode_vector
+  - [ ] Create individual episode embedding generation for episode collection
+  - [ ] Add episode collection validation and testing framework
+
+**Sub-Phase 3.5.1c: Episode Collection Infrastructure** (Est: 8 hours)
+- [ ] **3.5.1c.1: Collection Creation and Management** (Est: 4 hours)
+  - [ ] Create episodes collection with content vector and episode-specific payload
+  - [ ] Implement slug-based ID generation (anime_slug + "_ep_" + episode_number)
+  - [ ] Add episode collection health checks and monitoring
+  - [ ] Create episode collection migration utilities
+
+- [ ] **3.5.1c.2: Cross-Collection Linking** (Est: 4 hours)
+  - [ ] Implement bidirectional anime-episode linking via anime_id
+  - [ ] Create get_anime_with_episodes() and get_episode_with_anime_context() methods
+  - [ ] Add episode-to-anime navigation and cross-collection search coordination
+  - [ ] Validate linking integrity and relationship consistency
+
+#### **Sub-Phase 3.5.2: Smart Search Integration** (Rollback-Safe: query routing)
+**Sub-Phase 3.5.2a: Intelligent Query Routing** (Est: 6 hours)
+- [ ] **3.5.2a.1: Query Type Detection** (Est: 3 hours)
+  - [ ] Implement episode-specific query detection patterns
+  - [ ] Create anime-level vs episode-level query classification
+  - [ ] Add query routing logic for optimal collection selection
+  - [ ] Test query detection accuracy with domain-specific patterns
+
+- [ ] **3.5.2a.2: Dual-Collection Search Strategy** (Est: 3 hours)
+  - [ ] Create smart_search() method with intelligent collection routing
+  - [ ] Implement episode-first vs anime-first search strategies
+  - [ ] Add result combination and ranking from both collections
+  - [ ] Create unified response format with collection metadata
+
+**Sub-Phase 3.5.2b: API Integration** (Est: 4 hours)
+- [ ] **3.5.2b.1: Episode-Specific Endpoints** (Est: 2 hours)
+  - [ ] Create GET /api/v1/anime/{anime_id}/episodes endpoint
+  - [ ] Create GET /api/v1/episodes/{episode_id} endpoint
+  - [ ] Add episode search endpoint with collection-specific filtering
+  - [ ] Update OpenAPI documentation with episode collection endpoints
+
+- [ ] **3.5.2b.2: Enhanced Search Endpoints** (Est: 2 hours)
+  - [ ] Enhance existing search endpoints with dual-collection support
+  - [ ] Add collection preference parameters to search requests
+  - [ ] Implement cross-collection result merging and ranking
+  - [ ] Create episode-anime context enrichment in responses
+
+#### **Sub-Phase 3.5.3: Testing and Validation** (Rollback-Safe: validation only)
+**Sub-Phase 3.5.3a: Episode Collection Validation** (Est: 4 hours)
+- [ ] **3.5.3a.1: Collection Independence Testing** (Est: 2 hours)
+  - [ ] Validate zero impact on existing anime collection
+  - [ ] Test episode collection creation and data integrity
+  - [ ] Verify anime-episode linking accuracy and consistency
+  - [ ] Test collection rollback and recovery procedures
+
+- [ ] **3.5.3a.2: Search Quality Validation** (Est: 2 hours)
+  - [ ] Test episode-specific query accuracy and relevance
+  - [ ] Validate anime-level episode search (chunked content) vs episode-level search
+  - [ ] Compare search quality: single collection vs dual collection approach
+  - [ ] Test cross-collection search coordination and result ranking
+
 ### 📋 Phase 4: Sparse Vector Integration - PLANNED (Extend Existing Collection + Static→Learnable Evolution)
 
 **Architecture Decision**: Extend existing 14-vector collection with sparse vectors for unified search capabilities.
 **Weight Strategy**: Start with static information-theoretic weights, evolve to learnable weights from API usage patterns.
+**Episode Integration**: Apply sparse vectors to both anime collection and episode collection independently.
 
 #### **Sub-Phase 4.1: Collection Extension and Static Weight Implementation** (Rollback-Safe: feature flags)
 **Sub-Phase 4.1.1: Feature Informativeness Analysis** (Est: 6 hours)
@@ -520,23 +607,24 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Create episode format features (TV, Movie, OVA, Special) with viewing preference weights
   - [ ] Add seasonal and trending features (current season boost, historical popularity)
 
-**Sub-Phase 4.1.2: Extending Existing 14-Vector Collection** (Est: 10 hours)
-- [ ] **4.1.2a: Backwards-Compatible Collection Extension** (Est: 4 hours)
-  - [ ] Analyze existing anime_database collection compatibility with sparse vectors
-  - [ ] Design migration strategy that preserves 38K+ existing anime entries
-  - [ ] Extend QdrantClient._create_multi_vector_config() to include sparse vectors
-  - [ ] Implement collection update with zero-downtime migration
-
-- [ ] **4.1.2b: Static-Weight Sparse Vector Generation** (Est: 3 hours)
-  - [ ] Modify existing add_documents() method to generate sparse vectors alongside dense
+**Sub-Phase 4.1.2: Dual-Collection Sparse Vector Implementation** (Est: 8 hours) **(SIMPLIFIED WITH EPISODE COLLECTION)**
+- [ ] **4.1.2a: Anime Collection Sparse Vector Extension** (Est: 3 hours)
+  - [ ] Extend existing anime_database collection with sparse vectors (gradual rollout)
   - [ ] Implement anime-domain static weights (genre: 1.0, studio: 0.7, year: 0.4)
-  - [ ] Add feature flag ENABLE_SPARSE_VECTORS (default: false) for gradual rollout
-  - [ ] Create sparse vector validation within existing test suite
+  - [ ] Add feature flag ENABLE_ANIME_SPARSE_VECTORS for zero-risk deployment
+  - [ ] Validate anime collection sparse vector generation with existing 38K+ entries
 
-- [ ] **4.1.2c: Unified Dense+Sparse Search Integration** (Est: 3 hours)
-  - [ ] Extend existing search methods to optionally include sparse vector scoring
-  - [ ] Implement static fusion weights (dense: 0.6, sparse: 0.4) with configuration
-  - [ ] Add sparse vector support to existing /api/v1/search endpoints
+- [ ] **4.1.2b: Episode Collection Sparse Vector Implementation** (Est: 3 hours)
+  - [ ] Design episode-specific sparse features (episode_number, filler, arc, character_appearances)
+  - [ ] Create episode collection with sparse vector support (independent development)
+  - [ ] Implement episode-domain static weights optimized for episode-specific queries
+  - [ ] Add feature flag ENABLE_EPISODE_SPARSE_VECTORS for independent deployment
+
+- [ ] **4.1.2c: Dual-Collection Sparse Search Integration** (Est: 2 hours)
+  - [ ] Create intelligent query routing with sparse vector support for both collections
+  - [ ] Implement collection-specific fusion weights (anime vs episode sparse features)
+  - [ ] Add sparse vector support to dual-collection search endpoints
+  - [ ] Test hybrid dense+sparse search across both anime and episode collections
   - [ ] Update health checks to monitor sparse vector generation performance
 
 #### **Sub-Phase 4.2: Evolution to Learnable Weights** (Rollback-Safe: API data driven)

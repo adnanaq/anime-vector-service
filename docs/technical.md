@@ -13,8 +13,12 @@
 - **Qdrant 1.14+**: Selected for its superior performance with HNSW indexing, multi-vector support, and production-ready features
 - **HNSW Algorithm**: Hierarchical Navigable Small World for fast approximate nearest neighbor search
 - **Advanced Quantization**: Binary, scalar, and product quantization for 40x speedup potential
-- **14-Vector Collection**: Single collection with named vectors (12×1024-dim text + 2×768-dim visual)
-- **Hybrid Dense+Sparse**: Support for both semantic embeddings and explicit feature matching
+- **14-Vector Primary Collection**: Main anime collection with named vectors (12×1024-dim text + 2×768-dim visual)
+- **Dual-Collection Architecture**:
+  - **Primary Collection**: 38K+ anime entries with comprehensive 14-vector semantic coverage
+  - **Episode Collection**: Granular episode-level search with BGE-M3 chunking (Phase 3.5)
+  - **Slug-Based Linking**: Cross-collection relationships using title-based IDs
+- **Hybrid Dense+Sparse**: Support for both semantic embeddings and explicit feature matching (Phase 4)
 
 #### AI/ML Stack
 - **BGE-M3 (BAAI/bge-m3)**: State-of-the-art multilingual embedding model with 1024 dimensions, supporting 8192 token context
@@ -337,11 +341,24 @@ Based on comprehensive AnimeEntry schema analysis and 14-vector architecture:
 - **Authentication**: JWT-based API authentication with rate limiting
 - **Load Testing**: Million-query performance validation
 
+#### Phase 3.5 Episode Collection Architecture (In Progress)
+- **Dual-Collection Design**: Separate episode collection for granular search
+- **BGE-M3 Episode Chunking**: Hierarchical averaging with equal weighting
+- **Cross-Collection Linking**: Slug-based ID strategy for anime-episode relationships
+- **Smart Search Integration**: Episode-specific search capabilities
+- **Testing and Validation**: Performance impact assessment
+
 #### Phase 4 Enterprise Data Enrichment
 - **API Pipeline Optimization**: Concurrent processing for 1,000-10,000 anime/day
 - **AI Enhancement**: 6-stage pipeline with confidence scoring and quality validation
 - **Horizontal Scaling**: Multi-agent coordination for distributed processing
 - **Advanced Analytics**: Processing optimization and predictive scaling
+
+#### Phase 4.1.2 Sparse Vector Integration (Updated for Dual Collections)
+- **Metadata Sparse Vectors**: Categorical features (genre, studio, year) with static weights
+- **Behavioral Sparse Vectors**: Future API usage patterns and user preferences
+- **Unified Search Enhancement**: RRF fusion across dense and sparse vectors
+- **Simplified Implementation**: Leveraging dual-collection architecture for cleaner integration
 
 #### Phase 5 Advanced AI Features
 - **Model Fine-tuning**: LoRA adaptation for anime-specific improvements

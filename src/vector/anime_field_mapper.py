@@ -407,24 +407,86 @@ class AnimeFieldMapper:
         return " | ".join(content_parts)
 
     def _extract_episode_content(self, anime: AnimeEntry) -> str:
-        """Extract detailed episode information, filler/recap status."""
-        content_parts = []
+        """Extract detailed episode information with all available fields and chunking for large series."""
+        if not anime.episode_details:
+            return ""
 
+        # Constants for chunking strategy
+        EPISODES_PER_CHUNK = 50  # Future-proof for rich episode data
+
+        # Extract episode info with all available semantic fields
         episode_info = []
         for episode in anime.episode_details:
-            if hasattr(episode, "title") and episode.title:
-                ep_part = f"Episode: {episode.title}"
-                if hasattr(episode, "episode_number") and episode.episode_number:
-                    ep_part = f"Episode {episode.episode_number}: {episode.title}"
-                if hasattr(episode, "filler") and episode.filler:
-                    ep_part += " (Filler)"
-                if hasattr(episode, "recap") and episode.recap:
-                    ep_part += " (Recap)"
-                episode_info.append(ep_part)
-        if episode_info:
-            content_parts.extend(episode_info)
+            ep_parts = []
 
-        return " | ".join(content_parts)
+            # Episode number
+            if hasattr(episode, "episode_number") and episode.episode_number:
+                ep_parts.append(f"Episode {episode.episode_number}")
+
+            # Season context
+            if hasattr(episode, "season_number") and episode.season_number:
+                ep_parts.append(f"Season {episode.season_number}")
+
+            # English title (if available and meaningful)
+            if hasattr(episode, "title") and episode.title and episode.title.strip():
+                title = episode.title.strip()
+                # Skip only purely generic patterns like "Episode X"
+                if not (title.startswith("Episode ") and title[8:].isdigit()):
+                    ep_parts.append(title)
+
+            # Japanese title (for cultural searches, if different from English)
+            if hasattr(episode, "title_japanese") and episode.title_japanese and episode.title_japanese.strip():
+                japanese_title = episode.title_japanese.strip()
+                # Only add if different from English title
+                english_title = getattr(episode, "title", "")
+                if japanese_title != english_title:
+                    ep_parts.append(f"Japanese: {japanese_title}")
+
+            # Synopsis (richest semantic content)
+            if hasattr(episode, "synopsis") and episode.synopsis and episode.synopsis.strip():
+                synopsis = episode.synopsis.strip()
+                ep_parts.append(synopsis)
+
+            # Aired date (temporal context)
+            if hasattr(episode, "aired") and episode.aired:
+                aired_date = str(episode.aired)
+                # Extract just the date part
+                if "T" in aired_date:
+                    aired_date = aired_date.split("T")[0]
+                ep_parts.append(f"Aired: {aired_date}")
+
+            # Build episode entry if we have any content
+            if ep_parts:
+                episode_entry = ": ".join(ep_parts) if len(ep_parts) > 1 else ep_parts[0]
+
+                # Add episode type flags
+                type_flags = []
+                if hasattr(episode, "filler") and episode.filler:
+                    type_flags.append("Filler")
+                if hasattr(episode, "recap") and episode.recap:
+                    type_flags.append("Recap")
+
+                if type_flags:
+                    episode_entry += f" ({', '.join(type_flags)})"
+
+                episode_info.append(episode_entry)
+
+        if not episode_info:
+            return ""
+
+        # For small series (≤50 episodes), return directly
+        if len(episode_info) <= EPISODES_PER_CHUNK:
+            return " | ".join(episode_info)
+
+        # For large series, chunk episodes for future hierarchical averaging
+        chunks = []
+        for i in range(0, len(episode_info), EPISODES_PER_CHUNK):
+            chunk = episode_info[i:i + EPISODES_PER_CHUNK]
+            chunk_content = " | ".join(chunk)
+            chunks.append(chunk_content)
+
+        # For now, join all chunks (hierarchical averaging to be implemented in embedding_manager)
+        return " || CHUNK_SEPARATOR || ".join(chunks)
 
     def _extract_identifiers_content(self, anime: AnimeEntry) -> str:
         """Extract IDs as semantic relationships from List and Dict objects."""
