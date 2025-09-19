@@ -159,7 +159,7 @@ Return ONLY valid JSON with ALL characters processed:
         "kitsu": null
       }},
       "images": {{
-        "jikan": "https://cdn.myanimelist.net/images/characters/11/516853.jpg",
+        "mal": "https://cdn.myanimelist.net/images/characters/11/516853.jpg",
         "anilist": "https://s4.anilist.co/file/anilistcdn/character/large/b1-ChxaldmieFlQ.png",
         "anidb": "https://cdn.anidb.net/images/main/14555.jpg"
       }},

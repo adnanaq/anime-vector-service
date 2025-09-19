@@ -163,39 +163,29 @@ class MultiVectorEmbeddingManager:
     def _generate_payload(self, anime: AnimeEntry) -> Dict[str, Any]:
         """Generate payload data for Qdrant storage.
 
+        Stores ALL fields from AnimeEntry to preserve complete data.
+
         Args:
             anime: AnimeEntry instance
 
         Returns:
-            Payload dictionary for Qdrant
+            Payload dictionary for Qdrant with ALL source fields
         """
         try:
-            # Basic anime information
-            payload: Dict[str, Any] = {
-                "id": anime.id,
-                "title": anime.title,
-                "synopsis": anime.synopsis or "",
-                "type": anime.type or "unknown",
-                "status": anime.status or "unknown",
-                "episodes": anime.episodes,
-                "genres": anime.genres or [],
-                "tags": anime.tags or [],
-                "rating": anime.rating or "",
-                "nsfw": anime.nsfw,
-            }
+            # Convert the entire AnimeEntry to dict to preserve all fields
+            payload = anime.model_dump(exclude_none=False)
 
-            # Add duration for precise numerical filtering
-            if anime.duration:
-                payload["duration"] = anime.duration
+            # Ensure ID is always present
+            if "id" not in payload or not payload["id"]:
+                payload["id"] = anime.id
 
-            # Add anime_season for precise temporal filtering
+            # Convert complex nested objects to serializable format
             if anime.anime_season:
                 payload["anime_season"] = {
                     "season": anime.anime_season.season,
                     "year": anime.anime_season.year,
                 }
 
-            # Add aggregated score calculations if available
             if anime.score:
                 payload["score"] = {
                     "arithmetic_geometric_mean": anime.score.arithmeticGeometricMean,
@@ -203,7 +193,6 @@ class MultiVectorEmbeddingManager:
                     "median": anime.score.median,
                 }
 
-            # Add all platform statistics for indexing and filtering
             if anime.statistics:
                 payload["statistics"] = {}
                 for platform, stats in anime.statistics.items():
@@ -215,19 +204,67 @@ class MultiVectorEmbeddingManager:
                         "favorites": getattr(stats, "favorites", None),
                         "rank": getattr(stats, "rank", None),
                     }
+                    if hasattr(stats, 'contextual_ranks') and stats.contextual_ranks:
+                        stats_dict["contextual_ranks"] = [
+                            rank.model_dump() for rank in stats.contextual_ranks
+                        ]
                     payload["statistics"][platform] = stats_dict
 
-            # Add sources for platform availability filtering
-            if anime.sources:
-                payload["sources"] = anime.sources
+            # Convert complex array fields to serializable format
+            if anime.characters:
+                payload["characters"] = [char.model_dump() for char in anime.characters]
 
-            # Add enrichment metadata for data quality (non-indexed operational data)
-            if hasattr(anime, "enrichment_metadata") and anime.enrichment_metadata:
-                payload["enrichment_metadata"] = anime.enrichment_metadata
+            if anime.episode_details:
+                payload["episode_details"] = [ep.model_dump() for ep in anime.episode_details]
 
-            # Add complete images structure for frontend use and fallback
-            if hasattr(anime, "images") and anime.images:
-                payload["images"] = anime.images
+            if anime.awards:
+                payload["awards"] = [award.model_dump() for award in anime.awards]
+
+            if anime.themes:
+                payload["themes"] = [theme.model_dump() for theme in anime.themes]
+
+            if anime.trailers:
+                payload["trailers"] = [trailer.model_dump() for trailer in anime.trailers]
+
+            if anime.streaming_info:
+                payload["streaming_info"] = [stream.model_dump() for stream in anime.streaming_info]
+
+            if anime.related_anime:
+                payload["related_anime"] = [rel.model_dump() for rel in anime.related_anime]
+
+            if anime.relations:
+                payload["relations"] = [rel.model_dump() for rel in anime.relations]
+
+            if anime.opening_themes:
+                payload["opening_themes"] = [theme.model_dump() for theme in anime.opening_themes]
+
+            if anime.ending_themes:
+                payload["ending_themes"] = [theme.model_dump() for theme in anime.ending_themes]
+
+            # Convert object fields to serializable format
+            if anime.aired_dates:
+                payload["aired_dates"] = anime.aired_dates.model_dump()
+
+            if anime.broadcast:
+                payload["broadcast"] = anime.broadcast.model_dump()
+
+            if anime.broadcast_schedule:
+                payload["broadcast_schedule"] = anime.broadcast_schedule.model_dump()
+
+            if anime.delay_information:
+                payload["delay_information"] = anime.delay_information.model_dump()
+
+            if anime.episode_overrides:
+                payload["episode_overrides"] = anime.episode_overrides.model_dump()
+
+            if anime.premiere_dates:
+                payload["premiere_dates"] = anime.premiere_dates.model_dump()
+
+            if anime.staff_data:
+                payload["staff_data"] = anime.staff_data.model_dump()
+
+            if anime.enrichment_metadata:
+                payload["enrichment_metadata"] = anime.enrichment_metadata.model_dump()
 
             return payload
 

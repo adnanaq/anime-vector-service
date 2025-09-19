@@ -173,30 +173,47 @@ class AnimeFieldMapper:
         if anime.licensors:
             content_parts.append(f"Licensors: {', '.join(anime.licensors)}")
 
+        # Episode overrides
+        if anime.episode_overrides:
+            if anime.episode_overrides.main_override and anime.episode_overrides.main_override.override_episode:
+                content_parts.append(f"Main Override: Episode {anime.episode_overrides.main_override.override_episode}")
+            if anime.episode_overrides.sub_override and anime.episode_overrides.sub_override.override_episode:
+                content_parts.append(f"Sub Override: Episode {anime.episode_overrides.sub_override.override_episode}")
+            if anime.episode_overrides.dub_override and anime.episode_overrides.dub_override.override_episode:
+                content_parts.append(f"Dub Override: Episode {anime.episode_overrides.dub_override.override_episode}")
+
         return " | ".join(content_parts)
 
     def _extract_staff_content(self, anime: AnimeEntry) -> str:
         """Extract staff data including directors, composers, studios, voice actors."""
         content_parts = []
 
-        # Extract staff information from staff_data if available
-        if hasattr(anime, "staff_data") and anime.staff_data:
-            staff_info: List[str] = []
+        # Extract staff information from staff_data StaffData object
+        if anime.staff_data:
+            # Production staff by role
+            if anime.staff_data.production_staff and anime.staff_data.production_staff.roles:
+                for role, staff_members in anime.staff_data.production_staff.roles.items():
+                    staff_names = [member.name for member in staff_members if member.name]
+                    if staff_names:
+                        content_parts.append(f"{role}: {', '.join(staff_names)}")
 
-            # Handle different staff_data structures
-            if isinstance(anime.staff_data, dict):
-                for role, people in anime.staff_data.items():
-                    if isinstance(people, list):
-                        staff_info.append(f"{role}: {', '.join(people)}")
-                    elif isinstance(people, str):
-                        staff_info.append(f"{role}: {people}")
-            elif isinstance(anime.staff_data, list):
-                for staff_entry in anime.staff_data:
-                    if hasattr(staff_entry, "role") and hasattr(staff_entry, "name"):
-                        staff_info.append(f"{staff_entry.role}: {staff_entry.name}")
+            # Studios
+            if anime.staff_data.studios:
+                studio_names = [studio.name for studio in anime.staff_data.studios if studio.name]
+                if studio_names:
+                    content_parts.append(f"Studios: {', '.join(studio_names)}")
 
-            if staff_info:
-                content_parts.extend(staff_info)
+            # Producers
+            if anime.staff_data.producers:
+                producer_names = [producer.name for producer in anime.staff_data.producers if producer.name]
+                if producer_names:
+                    content_parts.append(f"Producers: {', '.join(producer_names)}")
+
+            # Voice actors
+            if anime.staff_data.voice_actors and anime.staff_data.voice_actors.japanese:
+                for va in anime.staff_data.voice_actors.japanese:
+                    if va.name and va.character_assignments:
+                        content_parts.append(f"Voice Actor: {va.name} ({', '.join(va.character_assignments)})")
 
         return " | ".join(content_parts)
 
@@ -244,6 +261,31 @@ class AnimeFieldMapper:
         if anime.month:
             content_parts.append(f"Premiere Month: {anime.month}")
 
+        # Broadcast schedule
+        if anime.broadcast_schedule:
+            if anime.broadcast_schedule.jpn_time:
+                content_parts.append(f"Japan Time: {anime.broadcast_schedule.jpn_time}")
+            if anime.broadcast_schedule.sub_time:
+                content_parts.append(f"Sub Time: {anime.broadcast_schedule.sub_time}")
+            if anime.broadcast_schedule.dub_time:
+                content_parts.append(f"Dub Time: {anime.broadcast_schedule.dub_time}")
+
+        # Delay information
+        if anime.delay_information:
+            if anime.delay_information.delayed_timetable:
+                content_parts.append("Delayed Timetable: Yes")
+            if anime.delay_information.delay_reason:
+                content_parts.append(f"Delay Reason: {anime.delay_information.delay_reason}")
+
+        # Premiere dates
+        if anime.premiere_dates:
+            if anime.premiere_dates.original:
+                content_parts.append(f"Original Premiere: {anime.premiere_dates.original}")
+            if anime.premiere_dates.sub:
+                content_parts.append(f"Sub Premiere: {anime.premiere_dates.sub}")
+            if anime.premiere_dates.dub:
+                content_parts.append(f"Dub Premiere: {anime.premiere_dates.dub}")
+
         return " | ".join(content_parts)
 
     def _extract_streaming_content(self, anime: AnimeEntry) -> str:
@@ -253,10 +295,14 @@ class AnimeFieldMapper:
         # Streaming platforms
         streaming_info = []
         for stream in anime.streaming_info:
-            if hasattr(stream, "name") and stream.name:
-                stream_part = f"Platform: {stream.name}"
-                if hasattr(stream, "url") and stream.url:
+            if stream.platform:
+                stream_part = f"Platform: {stream.platform}"
+                if stream.url:
                     stream_part += f" ({stream.url})"
+                if stream.region:
+                    stream_part += f" - Region: {stream.region}"
+                if stream.free is not None:
+                    stream_part += f" - Free: {stream.free}"
                 streaming_info.append(stream_part)
         if streaming_info:
             content_parts.extend(streaming_info)
@@ -271,24 +317,50 @@ class AnimeFieldMapper:
         """Extract related anime and franchise connections."""
         content_parts = []
 
-        # Related anime entries
+        # Related anime entries (anime-to-anime relationships)
         related_info = []
         for related in anime.related_anime:
             if hasattr(related, "title") and related.title:
-                related_part = f"Related: {related.title}"
-                if hasattr(related, "relation_type") and related.relation_type:
-                    related_part += f" ({related.relation_type})"
+                relation_type = getattr(related, "relation_type", "Other")
+
+                if relation_type == "Sequel":
+                    related_part = f"Followed by {related.title}"
+                elif relation_type == "Prequel":
+                    related_part = f"Preceded by {related.title}"
+                elif relation_type == "Character":
+                    related_part = f"Shares characters with {related.title}"
+                elif relation_type in ["Parent Story", "Parent story"]:
+                    related_part = f"Side story of {related.title}"
+                elif relation_type in ["Side story", "Side Story"]:
+                    related_part = f"Has side story {related.title}"
+                elif relation_type == "Music Video":
+                    related_part = f"Has music video {related.title}"
+                elif relation_type == "Special":
+                    related_part = f"Has special {related.title}"
+                elif relation_type == "Movie":
+                    related_part = f"Has movie {related.title}"
+                elif relation_type == "ONA":
+                    related_part = f"Has online series {related.title}"
+                else:  # "Other" and unknown types
+                    related_part = f"Related to {related.title}"
+
                 related_info.append(related_part)
         if related_info:
             content_parts.extend(related_info)
 
-        # Relations with URLs
+        # Relations with URLs (anime-to-source material relationships)
         relation_info = []
         for relation in anime.relations:
             if hasattr(relation, "title") and relation.title:
-                relation_part = f"Relation: {relation.title}"
-                if hasattr(relation, "type") and relation.type:
-                    relation_part += f" ({relation.type})"
+                relation_type = getattr(relation, "relation_type", "Other")
+
+                if relation_type == "Adaptation":
+                    relation_part = f"Adapted into {relation.title}"
+                elif relation_type == "Original Work":
+                    relation_part = f"Based on {relation.title}"
+                else:
+                    relation_part = f"Related to {relation.title}"
+
                 relation_info.append(relation_part)
         if relation_info:
             content_parts.extend(relation_info)
@@ -367,6 +439,11 @@ class AnimeFieldMapper:
             content_parts.append(f"Kitsu ID: {anime.kitsu_id}")
         if hasattr(anime, "anidb_id") and anime.anidb_id:
             content_parts.append(f"AniDB ID: {anime.anidb_id}")
+
+        # External links
+        if anime.external_links:
+            for platform, url in anime.external_links.items():
+                content_parts.append(f"{platform}: {url}")
 
         # Character IDs
         id_info = []

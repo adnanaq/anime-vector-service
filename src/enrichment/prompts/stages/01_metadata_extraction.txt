@@ -95,15 +95,15 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
 - **background**: Extract background information from Jikan
 - **trailers**: Extract from all available sources with deduplication:
   - **Jikan**: Extract from trailer object:
-    - youtube_url: trailer.url 
+    - url: trailer.url
     - thumbnail_url: trailer.images.maximum_image_url (fallback to last item in trailer.images if maximum_image_url unavailable)
     - title: trailer.title (if available)
   - **AniList**: Extract from trailer object:
-    - youtube_url: Convert trailer.id to full YouTube URL "https://www.youtube.com/watch?v={trailer.id}"
-    - thumbnail_url: trailer.thumbnail 
+    - url: Convert trailer.id to full YouTube URL "https://www.youtube.com/watch?v={trailer.id}"
+    - thumbnail_url: trailer.thumbnail
     - title: trailer.site + " Trailer" (if no specific title available)
   - **Kitsu**: Extract from youtubeVideoId:
-    - youtube_url: Convert youtubeVideoId to full YouTube URL "https://www.youtube.com/watch?v={youtubeVideoId}"
+    - url: Convert youtubeVideoId to full YouTube URL "https://www.youtube.com/watch?v={youtubeVideoId}"
     - thumbnail_url: null (Kitsu doesn't provide thumbnail URLs)
     - title: "Official Trailer"
   - Ensure no duplicate YouTube URLs across all trailers
@@ -245,7 +245,7 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
   ],
   "trailers": [
     {
-      "youtube_url": "https://www.youtube.com/watch?v=qig4KOK2R2g",
+      "url": "https://www.youtube.com/watch?v=qig4KOK2R2g",
       "thumbnail_url": "https://i.ytimg.com/vi/qig4KOK2R2g/hqdefault.jpg",
       "title": "Official Trailer"
     }

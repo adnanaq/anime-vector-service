@@ -102,7 +102,7 @@ class EpisodeDetailEntry(BaseModel):
 class TrailerEntry(BaseModel):
     """Trailer information from external APIs"""
 
-    youtube_url: Optional[str] = Field(None, description="YouTube video URL")
+    url: Optional[str] = Field(None, description="Trailer video URL")
     title: Optional[str] = Field(None, description="Trailer title")
     thumbnail_url: Optional[str] = Field(None, description="Trailer thumbnail URL")
 

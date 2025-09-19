@@ -9,7 +9,7 @@
     "totalAnime": 28,
     "enrichmentVersion": "1.0.0",
     "sources": [
-      "jikan",
+      "mal",
       "anilist",
       "kitsu",
       "animeplanet",
@@ -24,12 +24,10 @@
       "episodes": 1,
       "month": "October",
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1615/149911.jpg",
       "rating": "G - All Ages",
       "source_material": "Mixed media",
       "status": "FINISHED",
       "synopsis": "Animated music video for RAISE A SUILEN's song !NVADE SHOW!. It was first released on BanG Dream's official YouTube and was later included in the limited edition Blu-ray for RAISE A SUILEN's sixth single \"mind of Prominence\". (Source: AniList)",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1615/149911t.jpg",
       "title": "!NVADE SHOW!",
       "title_japanese": "!NVADE SHOW!",
       "type": "Music",
@@ -255,7 +253,7 @@
       ],
       "trailers": [
         {
-          "youtube_url": "https://www.youtube.com/watch?v=1ipQ-_jcGyY",
+          "url": "https://www.youtube.com/watch?v=1ipQ-_jcGyY",
           "title": "Official Trailer"
         }
       ],
@@ -536,12 +534,10 @@
     {
       "episodes": 1,
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1812/149912.jpg",
       "rating": "G - All Ages",
       "source_material": "Original",
       "status": "FINISHED",
       "synopsis": "This music video tells how a shy girl with a secret love and curiosity about what surrounds her works.",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1812/149912t.jpg",
       "title": "\"0\"",
       "title_english": "0",
       "title_japanese": "「0」",
@@ -559,7 +555,7 @@
             "mal": 93863
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/4/223671.jpg"
+            "mal": "https://cdn.myanimelist.net/images/characters/4/223671.jpg"
           },
           "url": "https://myanimelist.net/character/93863/Chiaki_Kuriyama",
           "voice_actors": [
@@ -759,12 +755,10 @@
     },
     {
       "episodes": 8,
-      "picture": "https://cdn.myanimelist.net/images/anime/1602/147203.jpg",
       "rating": "Rx - Hentai",
       "source_material": "Manga",
       "status": "FINISHED",
       "synopsis": "After moving into a new share house, Ryota Ochi meets two beautiful housemates who order him to do housework, with an unusual arrangement.",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1602/147203t.jpg",
       "title": "\"1-punkan dake Furete mo Ii yo...\" Share House no Himitsu Rule.",
       "title_english": "The Share House's Secret Rule",
       "title_japanese": "「1分間だけ触れてもいいよ...」シェアハウスの秘密ルール。",
@@ -1017,12 +1011,10 @@
     {
       "episodes": 1,
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/3/65151.jpg",
       "rating": "PG - Children",
       "source_material": "Unknown",
       "status": "FINISHED",
       "synopsis": "Based on Aesop's Fables.",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/3/65151t.jpg",
       "title": "\"Aesop\" no Ohanashi yori: Ushi to Kaeru, Yokubatta Inu",
       "title_japanese": "\"いそっぷ\"のおはなしより 牛とかえる, よくばった犬",
       "type": "MOVIE",
@@ -1195,12 +1187,10 @@
     {
       "episodes": 1,
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1948/136272.jpg",
       "rating": "PG - Children",
       "source_material": "Original",
       "status": "Finished",
       "synopsis": "Graduate Work 2018 by Yuuta Watanabe, Tokyo Polytechnic University, Faculty of Arts, Department of Animation.",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1948/136272t.jpg",
       "title": "\"Ai\" wo Taberu",
       "title_english": "Eating \"Love & Sorrow\"",
       "title_japanese": "「あい」をたべる",
@@ -1301,12 +1291,10 @@
       "episodes": 1,
       "month": "January",
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1336/120560.jpg",
       "rating": "G - All Ages",
       "source_material": "Original",
       "status": "FINISHED",
       "synopsis": "The anime depicts the \"smart city\" envisioned by Kyocera, where everyone can comfortably and safely live with the use of advanced technology, and it also depicts the worries of job seekers. The anime's title and theme reflect both the vexing issue of how to describe Kyocera's extensive business in just one word, and the mood of job seekers vexed by the interview question, \"If you had to describe yourself in one word, what would it be?\"\n\n(Source: ANN)",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1336/120560t.jpg",
       "title": "\"Anata wo Hitokoto de Arawashite Kudasai\" no Shitsumon ga Nigate da.",
       "title_japanese": "『あなたを一言で表してください』の質問が苦手だ。",
       "type": "OVA",
@@ -1325,7 +1313,7 @@
             "anidb": 121607
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/9/487737.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/9/487737.jpg",
             "anidb": "https://cdn.anidb.net/images/main/268755.jpg"
           },
           "url": "https://myanimelist.net/character/205191/Michiru",
@@ -1351,7 +1339,7 @@
             "anidb": 121608
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/2/487738.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/2/487738.jpg",
             "anidb": "https://cdn.anidb.net/images/main/268756.jpg"
           },
           "url": "https://myanimelist.net/character/205187/Yuuki",
@@ -1502,7 +1490,7 @@
       ],
       "trailers": [
         {
-          "youtube_url": "https://www.youtube.com/watch?v=N5_Un6xLA6g",
+          "url": "https://www.youtube.com/watch?v=N5_Un6xLA6g",
           "title": "​Official Trailer"
         }
       ],
@@ -1788,12 +1776,10 @@
     {
       "episodes": 16,
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1580/136658.jpg",
       "rating": "PG-13 - Teens 13 or older",
       "source_material": "Original",
       "status": "FINISHED",
       "synopsis": "Chibi shorts for Ayaka that were published on the official Twitter and YouTube accounts for the series.",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1580/136658t.jpg",
       "title": "\"Ayakai Shima\" e Youkoso! Mitaman no Ayakashima Kankou Annai",
       "title_japanese": "\"あやかい島\"へようこそ！ミタマンの綾ヵ島観光案内",
       "type": "ONA",
@@ -2100,12 +2086,10 @@
     {
       "episodes": 1,
       "month": "December",
-      "picture": "https://cdn.myanimelist.net/images/anime/1671/127574.jpg",
       "rating": "PG-13 - Teens 13 or older",
       "source_material": "Light novel",
       "status": "FINISHED",
       "synopsis": "* Based on the short story \"Bungaku Shoujo\" to Ushi Maou (Minotaurus), published in volume 02 of FBSP.\nhttp://anidb.net/ch11667 Amano Tooko and http://anidb.net/ch11668 Inoue Konoha are the only members of their high school literature club. After school, they meet so that Tooko can assign topics that will guide Konoha in writing a short story — the Literature Girl Tooko`s daily \"snack\" — within fifty minutes.\nSource: ANN\nNote: Bundled with the second volume of the novel titled Bungaku Shoujo Minarai no, Shoushin.",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1671/127574t.jpg",
       "title": "\"Bungaku Shoujo\" Kyou no Oyatsu: Hatsukoi",
       "title_japanese": "“文学少女”今日のおやつ 〜はつ恋〜",
       "type": "OVA",
@@ -2118,7 +2102,7 @@
             "anidb": "11667"
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/12/98993.jpg?s=e678bc09b1f6610d9d59d1e58f9c9fe4",
+            "mal": "https://cdn.myanimelist.net/images/characters/12/98993.jpg?s=e678bc09b1f6610d9d59d1e58f9c9fe4",
             "anidb": "https://cdn.anidb.net/images/main/40614.jpg"
           },
           "url": "https://myanimelist.net/character/28451/Tooko_Amano",
@@ -2137,7 +2121,7 @@
             "anidb": "11668"
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/15/101327.jpg?s=63c7a553c67b49b1abaa94e7837bd96a",
+            "mal": "https://cdn.myanimelist.net/images/characters/15/101327.jpg?s=63c7a553c67b49b1abaa94e7837bd96a",
             "anidb": "https://cdn.anidb.net/images/main/40613.jpg"
           },
           "url": "https://myanimelist.net/character/24792/Konoha_Inoue",
@@ -4214,12 +4198,10 @@
       "episodes": 3,
       "month": "June",
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/6/26770.jpg",
       "rating": "PG-13 - Teens 13 or older",
       "source_material": "Light novel",
       "status": "FINISHED",
       "synopsis": "Episodes which depict the background stories of \"Bungaku Shoujo\" Movie's main heroines.",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/6/26770t.jpg",
       "title": "\"Bungaku Shoujo\" Memoire",
       "title_japanese": "\"文学少女\"メモワール",
       "type": "OVA",
@@ -4237,7 +4219,7 @@
             "anilist": 24792
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/15/101327.jpg"
+            "mal": "https://cdn.myanimelist.net/images/characters/15/101327.jpg"
           },
           "description": "He used to write a novel called \"Sora ni Niteiru\" (Looks Alike to the Sky) using penname Miu Inoue when he was in junior high school and sent to a magazine.  The novel was received an award and too famous that it became drama and movie.  The name was very feminine that people thought it was written by a mysterious girl.\n\nThere was an accident happened to a girl he likes (Miu Asakura) that caused him to have difficulty in breathing so he closed himself until he met Touko in high school, who was reading and eating what she read, so she forced him to join literature club.\n\n\n\nBungaku Shoujo Series is in his point of view, while Bungaku Shoujo: Minarai Series is in Nano Hinosaka's point of view.",
           "url": "https://myanimelist.net/character/24792/Konoha_Inoue",
@@ -4265,7 +4247,7 @@
             "anilist": 30494
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/13/85718.jpg"
+            "mal": "https://cdn.myanimelist.net/images/characters/13/85718.jpg"
           },
           "description": "She is a childhood friend of Konoha, who he loved very much until she attempted suicide by falling off the school building.",
           "url": "https://myanimelist.net/character/30494/Miu_Asakura",
@@ -4289,7 +4271,7 @@
             "anilist": 28937
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/13/101326.jpg"
+            "mal": "https://cdn.myanimelist.net/images/characters/13/101326.jpg"
           },
           "description": "Kotobuki is a girl in Konoha's class.  She doesn't like Konoha's way of being nice to people.  She thinks that he's faking.",
           "url": "https://myanimelist.net/character/28937/Nanase_Kotobuki",
@@ -4309,7 +4291,7 @@
             "mal": 0
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/12/98993.jpg"
+            "mal": "https://cdn.myanimelist.net/images/characters/12/98993.jpg"
           },
           "description": "Birthdate: March 15\n\nTooko is Konoha's upperclassman that's one year older than him and the president of the literature club. She likes literature to the extent that she eats what she reads and cannot taste normal food. When Konoha saw her eating the pages of a novel, she forced him to join the literature club so that she could \"watch over him\" and keep him from telling others about it.",
           "url": "https://myanimelist.net/character/28451/Tooko_Amano",
@@ -4350,7 +4332,7 @@
             "anidb": "19882"
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/4/99158.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/4/99158.jpg",
             "anidb": "https://cdn.anidb.net/images/main/238836.jpg"
           },
           "url": "https://myanimelist.net/character/36481/Sasaki",
@@ -4377,7 +4359,7 @@
             "anilist": 28933
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/14/101328.jpg"
+            "mal": "https://cdn.myanimelist.net/images/characters/14/101328.jpg"
           },
           "description": "A girl who requested to literature club to write a love letter for her. She's a first year. She works as a librarian.\n\nHer nickname is Chee (ちぃ).",
           "url": "https://myanimelist.net/character/28933/Chia_Takeda",
@@ -4433,7 +4415,7 @@
             "anilist": 36482
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/5/99159.jpg"
+            "mal": "https://cdn.myanimelist.net/images/characters/5/99159.jpg"
           },
           "description": "Touko's father.",
           "url": "https://myanimelist.net/character/36482/Fumiharu_Amano",
@@ -4457,7 +4439,7 @@
             "anilist": 36480
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/3/99157.jpg"
+            "mal": "https://cdn.myanimelist.net/images/characters/3/99157.jpg"
           },
           "url": "https://myanimelist.net/character/36480/Kanako_Sakurai",
           "voice_actors": [
@@ -4480,7 +4462,7 @@
             "anilist": 28934
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/13/109246.jpg"
+            "mal": "https://cdn.myanimelist.net/images/characters/13/109246.jpg"
           },
           "description": "Kotobuki's friend and classmate.  She doesn't want people to call her by her first name, so she goes by her nickname \"Mori-chan\".",
           "url": "https://myanimelist.net/character/28934/Kurara_Mori",
@@ -4552,7 +4534,7 @@
             "anilist": 28936
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/5/99156.jpg"
+            "mal": "https://cdn.myanimelist.net/images/characters/5/99156.jpg"
           },
           "description": "He is like a brother to Touko.  He's from a family who adopted Touko.  He is actually a 1st year in high school who likes to play with multiple girls at the same time.",
           "url": "https://myanimelist.net/character/28936/Ryuuto_Sakurai",
@@ -4576,7 +4558,7 @@
             "anilist": 36483
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/3/99160.jpg"
+            "mal": "https://cdn.myanimelist.net/images/characters/3/99160.jpg"
           },
           "description": "Touko's mother.",
           "url": "https://myanimelist.net/character/36483/Yui_Amano",
@@ -4847,7 +4829,6 @@
       "trailers": [
         {
           "url": "https://www.youtube.com/watch?v=exYR42-P_Ok",
-          "thumbnail_url": "https://img.youtube.com/vi/exYR42-P_Ok/maxresdefault.jpg",
           "title": "Official Trailer"
         }
       ],
@@ -5389,12 +5370,10 @@
       "episodes": 1,
       "month": "May",
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/8/81162.jpg",
       "rating": "PG-13 - Teens 13 or older",
       "source_material": "Light novel",
       "status": "Finished",
       "synopsis": "The protagonist of the story, Konoha Inoue, is a seemingly normal senior high 2nd year student. His high school life, other than a hinted incident 2 years ago, can be summed up as normal- if one can dismiss the secret fact that he used to be a female bestselling romance author. Due to that incident, however, he has now vowed never to write again.\n\nThis continued on until he was forced to join the literary club by the literary club president, the 3rd year female student Amano Tooko, a beautiful girl who has a taste for eating literary works. Now he has been tasked with writing her snack every day after school.\n\n(Source: To Say Nothing of the Dog)",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/8/81162t.jpg",
       "title": "\"Bungaku Shoujo\" Movie",
       "title_japanese": "劇場版\"文学少女\"",
       "type": "Movie",
@@ -5411,7 +5390,7 @@
             "mal": 28451
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/12/98993.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/12/98993.jpg",
             "anidb": "https://cdn.anidb.net/images/main/40614.jpg"
           },
           "gender": "Female",
@@ -5434,7 +5413,7 @@
             "mal": 28452
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/15/101327.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/15/101327.jpg",
             "anidb": "https://cdn.anidb.net/images/main/40613.jpg"
           },
           "gender": "Male",
@@ -5457,7 +5436,7 @@
             "mal": 28453
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/13/85718.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/13/85718.jpg",
             "anidb": "https://cdn.anidb.net/images/main/49496.jpg"
           },
           "gender": "Female",
@@ -5480,7 +5459,7 @@
             "mal": 28454
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/13/101326.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/13/101326.jpg",
             "anidb": "https://cdn.anidb.net/images/main/40612.jpg"
           },
           "gender": "Female",
@@ -5503,7 +5482,7 @@
             "mal": 28455
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/2/117552.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/2/117552.jpg",
             "anidb": "https://cdn.anidb.net/images/main/40611.jpg"
           },
           "gender": "Male",
@@ -5691,11 +5670,11 @@
       ],
       "trailers": [
         {
-          "youtube_url": "https://www.youtube.com/watch?v=DrE1XD8bw6c",
+          "url": "https://www.youtube.com/watch?v=DrE1XD8bw6c",
           "title": "Official Trailer"
         },
         {
-          "youtube_url": "https://www.youtube.com/watch?v=72YA9IDwVQI",
+          "url": "https://www.youtube.com/watch?v=72YA9IDwVQI",
           "thumbnail_url": "https://i.ytimg.com/vi/72YA9IDwVQI/hqdefault.jpg",
           "title": "Bungaku Shoujo (Book Girl～the Literature Girl～) "
         }
@@ -6033,12 +6012,10 @@
       "episodes": 1,
       "month": "April",
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1168/93236.jpg",
       "rating": "G - All Ages",
       "source_material": "Original",
       "status": "Finished",
       "synopsis": "A Calpis (Calpico in the US) commissioned short about the history of the company and how their product is made today. A few scenes use live-action footage. The short is animated by Takaharu Shimizu who used a Rube Goldberg style of story telling.",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1168/93236t.jpg",
       "title": "\"Calpis\" Hakkou Monogatari",
       "title_japanese": "「カルピス」発酵ものがたり",
       "type": "SPECIAL",
@@ -6193,8 +6170,6 @@
       "type": "MOVIE",
       "episodes": 1,
       "status": "FINISHED",
-      "picture": "https://cdn.myanimelist.net/images/anime/7/38319.jpg",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/7/38319t.jpg",
       "duration": {
         "value": 2880,
         "unit": "SECONDS"
@@ -6262,7 +6237,7 @@
             "mal": 98515
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/7/378274.jpg?s=79d27db061477a29ff2e125a16928cba"
+            "mal": "https://cdn.myanimelist.net/images/characters/7/378274.jpg?s=79d27db061477a29ff2e125a16928cba"
           }
         },
         {
@@ -6278,7 +6253,7 @@
             "mal": 98517
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/7/559475.jpg?s=7c2ba58de19381e8b6c09d5b440524e3"
+            "mal": "https://cdn.myanimelist.net/images/characters/7/559475.jpg?s=7c2ba58de19381e8b6c09d5b440524e3"
           }
         },
         {
@@ -6294,7 +6269,7 @@
             "mal": 98523
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/4/559474.jpg?s=51592172e5e65fbf8dd9653de4668fd2"
+            "mal": "https://cdn.myanimelist.net/images/characters/4/559474.jpg?s=51592172e5e65fbf8dd9653de4668fd2"
           }
         },
         {
@@ -6310,7 +6285,7 @@
             "mal": 98521
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/13/378275.jpg?s=490a0f651403c9131875523b3095947d"
+            "mal": "https://cdn.myanimelist.net/images/characters/13/378275.jpg?s=490a0f651403c9131875523b3095947d"
           }
         },
         {
@@ -6326,7 +6301,7 @@
             "mal": 169953
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/14/378276.jpg?s=585dd987da5a77c6b16137de67e6362f"
+            "mal": "https://cdn.myanimelist.net/images/characters/14/378276.jpg?s=585dd987da5a77c6b16137de67e6362f"
           }
         },
         {
@@ -6342,7 +6317,7 @@
             "mal": 253394
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/16/559473.jpg?s=3d8d6ca583aa8f525fb134823bf06dd2"
+            "mal": "https://cdn.myanimelist.net/images/characters/16/559473.jpg?s=3d8d6ca583aa8f525fb134823bf06dd2"
           }
         },
         {
@@ -6358,7 +6333,7 @@
             "mal": 253395
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/15/559472.jpg?s=7012b30c38d04f9bccaf1c989dd20ee4"
+            "mal": "https://cdn.myanimelist.net/images/characters/15/559472.jpg?s=7012b30c38d04f9bccaf1c989dd20ee4"
           }
         }
       ],
@@ -6573,11 +6548,9 @@
       "title": "\"Eikou Naki Tensai-tachi\" Kara no Monogatari",
       "type": "SPECIAL",
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/4/84552.jpg",
       "rating": "G - All Ages",
       "source_material": "Manga",
       "synopsis": "An anime/documentary series about athletes presented by NHK. The first episode adapts material from Itou Tomoyoshi and Morita Shingo's Weekly Young Jump biographical manga Eikou Naki Tensai-tachi (Geniuses Without Glory) — specifically the story about Furuhashi Hironoshin, the swimmer also known as \"the flying fish of Fujiyama.\" The episode also includes interviews with Olympic swimmer Kitajima Kousuke and other Japanese swimmers about the how Furuhashi changed the Japanese competitive swimming world, as well as what sort of training is required to be an Olympic swimmer. Source: ANN",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/4/84552t.jpg",
       "title_japanese": "\"栄光なき天才たち\"からの物語",
       "episode_details": [
         {
@@ -6818,12 +6791,10 @@
       "episodes": 1,
       "month": "November",
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1192/112238.jpg",
       "rating": "PG-13 - Teens 13 or older",
       "source_material": "Light novel",
       "status": "FINISHED",
       "synopsis": "The story centers on a boy named Yamada Uro, and a 17-year old girl named Karon. Both work as part of the \"Hero Retirement and Return to Everyday Life Assistance Agency,\" which takes heroes from another world back to Earth and helps them reintegrate into everyday life. Karon, a former hero herself, works under Uro as they tackle cases, and also lives with him, with Uro constantly failing to rein in Karon`s hero-like behavior even as he tries to ingrain the behavior of common people into her.\nSource: ANN",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1192/112238t.jpg",
       "title": "\"Eiyuu\" Kaitai",
       "title_english": "Eiyu Kaitai",
       "title_japanese": "「英雄」解体",
@@ -6852,7 +6823,7 @@
             "anidb": 84799
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/4/319921.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/4/319921.jpg",
             "anidb": "https://cdn.anidb.net/images/main/307364.jpg"
           },
           "gender": "male"
@@ -6879,7 +6850,7 @@
             "anidb": 84796
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/12/319918.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/12/319918.jpg",
             "anidb": "https://cdn.anidb.net/images/main/307366.jpg"
           },
           "gender": "female"
@@ -6906,7 +6877,7 @@
             "anidb": 84797
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/14/319919.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/14/319919.jpg",
             "anidb": "https://cdn.anidb.net/images/main/307367.jpg"
           },
           "gender": "female"
@@ -6933,7 +6904,7 @@
             "anidb": 84798
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/3/319923.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/3/319923.jpg",
             "anidb": "https://cdn.anidb.net/images/main/307365.jpg"
           },
           "gender": "female"
@@ -6960,7 +6931,7 @@
             "anidb": 84801
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/9/319984.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/9/319984.jpg",
             "anidb": "https://cdn.anidb.net/images/main/307362.jpg"
           },
           "gender": "female"
@@ -6987,7 +6958,7 @@
             "anidb": 84802
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/15/319926.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/15/319926.jpg",
             "anidb": "https://cdn.anidb.net/images/main/307363.jpg"
           },
           "gender": "female"
@@ -7013,7 +6984,7 @@
             "anidb": 84800
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/4/319924.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/4/319924.jpg",
             "anidb": "https://cdn.anidb.net/images/main/307368.jpg"
           },
           "gender": "male"
@@ -7039,7 +7010,7 @@
             "anidb": 84795
           },
           "images": {
-            "jikan": "https://cdn.myanimelist.net/images/characters/6/331178.jpg",
+            "mal": "https://cdn.myanimelist.net/images/characters/6/331178.jpg",
             "anidb": "https://cdn.anidb.net/images/main/307219.jpg"
           },
           "gender": "female"
@@ -7424,12 +7395,10 @@
       "episodes": 1,
       "month": "August",
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1390/136923.jpg",
       "rating": "G - All Ages",
       "source_material": "Original",
       "status": "FINISHED",
       "synopsis": "It's been almost 100 years since the \"salaryman\" type of office worker first appeared in Japan back in the 1920s.\n\nAs our society faces a major turning point, SmartHR decided to create a brand film to reflect upon how work styles have changed with time over the past century.\n\nWe hope that by looking back on history, we inspire people to think about how they want to work going forward.\n\n(Source: Official YouTube channel)",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1390/136923t.jpg",
       "title": "\"Hataraku\" no 100-nenshi",
       "title_english": "100 Years of Work in Japan",
       "title_japanese": "\"働く\"の100年史",
@@ -7480,7 +7449,7 @@
       ],
       "trailers": [
         {
-          "youtube_url": "https://www.youtube.com/watch?v=kNQMX--3E5Q",
+          "url": "https://www.youtube.com/watch?v=kNQMX--3E5Q",
           "thumbnail_url": "https://i.ytimg.com/vi/kNQMX--3E5Q/hqdefault.jpg",
           "title": "100 YEARS of WORK in JAPAN"
         }
@@ -7589,12 +7558,10 @@
     {
       "episodes": 1,
       "nsfw": false,
-      "picture": "https://cdn.anime-planet.com/anime/primary/hitman-bang-i-equals-fantasy-1.jpg",
       "rating": "G",
       "source_material": "Original",
       "status": "FINISHED",
       "synopsis": "Music video for the song \"I=Fantasy\" by \"hitman\" bang. featuring SeeU.",
-      "thumbnail": "https://cdn.anime-planet.com/anime/primary/hitman-bang-i-equals-fantasy-1-190x266.jpg",
       "title": "\"hitman\" bang: I=Fantasy",
       "title_english": "I=Fantasy",
       "type": "SPECIAL",
@@ -7647,7 +7614,7 @@
       ],
       "trailers": [
         {
-          "youtube_url": "https://www.youtube.com/watch?v=luWgq7_ZgnY",
+          "url": "https://www.youtube.com/watch?v=luWgq7_ZgnY",
           "title": "Official Trailer"
         }
       ],
@@ -7726,9 +7693,7 @@
     },
     {
       "episodes": 1,
-      "picture": "https://cdn.anisearch.com/images/anime/cover/18/18676_600_300.webp",
       "status": "FINISHED",
-      "thumbnail": "https://cdn.anisearch.com/images/anime/cover/18/18676_600.webp",
       "title": "\"Hitori de Ikirare Sou\" tte Sore tte Nee, Homete Iru no?",
       "type": "SPECIAL",
       "episode_details": [
@@ -7804,12 +7769,10 @@
       "episodes": 1,
       "month": "October",
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1033/105399.jpg",
       "rating": "G - All Ages",
       "source_material": "Other",
       "status": "FINISHED",
       "synopsis": "A collaboration between Inochi Sketch and Mameshiba.",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1033/105399t.jpg",
       "title": "\"Inochi Sketch\" Movie Jabow x Mameshiba Collab CM",
       "title_japanese": "映画『いのちスケッチ』ジャー坊×豆しばコラボCM",
       "type": "SPECIAL",
@@ -7937,12 +7900,10 @@
       "episodes": 1,
       "month": "July",
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/6/85893.jpg",
       "rating": "G - All Ages",
       "source_material": "Other",
       "status": "FINISHED",
       "synopsis": "A collaboration between Mameshiba and Kinako, a 2010 Japanese film based on a true story of a dog trainer, meant to promote the latter's release the following month.",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/6/85893t.jpg",
       "title": "\"Kinako\" Movie x Mameshiba",
       "title_japanese": "映画『きな子』×豆しば",
       "type": "SPECIAL",
@@ -8045,12 +8006,10 @@
     {
       "episodes": 2,
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1168/92670.jpg",
       "rating": "G - All Ages",
       "source_material": "Other",
       "status": "FINISHED",
       "synopsis": "Two televised specials collaborating the Mameshiba franchise and the feature film Kiss Dekiru Gyoza being released June 2018. \n\nThe film is about Yoko Fujita as a single mother who goes through a divorce. Afterwards, she returns to her parents' home and struggles to raise her child, also attempts to revive her parents' gyoza restaurant. She falls in love with pro golfer Ryo Iwahara.\n\nThe specials focus on shiba-ified Yoko and Ryo as they talked to Edamame. Special collaborative goods will be sold as well, including a bentou meal sold at specific train stations.\n\n(Source: IMDB)",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1168/92670t.jpg",
       "title": "\"Kiss Dekiru Gyouza\" Movie x Mameshiba",
       "title_japanese": "映画『キスできる餃子』×豆しば",
       "type": "SPECIAL",
@@ -8175,12 +8134,10 @@
       "episodes": 1,
       "month": "October",
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1553/147281.jpg",
       "rating": "PG-13 - Teens 13 or older",
       "source_material": "Light novel",
       "status": "FINISHED",
       "synopsis": "A New Year's greetings to promote the release of Mahouka Koukou no Rettousei Movie: Yotsuba Keishou-hen.",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1553/147281t.jpg",
       "title": "\"Mahouka Koukou no Rettousei\" Yori Shinnen no Goaisatsu 2025",
       "title_japanese": "「魔法科高校の劣等生」より新年のご挨拶 ２０２５",
       "type": "PV",
@@ -8188,12 +8145,16 @@
         {
           "name": "Shiba, Tatsuya",
           "role": "Main",
-          "image_url": "https://cdn.myanimelist.net/images/characters/16/236781.jpg?s=9f7943dd885f0d2a4ad7fa63c3f110eb"
+          "images": {
+            "mal": "https://cdn.myanimelist.net/images/characters/16/236781.jpg?s=9f7943dd885f0d2a4ad7fa63c3f110eb"
+        }
         },
         {
           "name": "Shiba, Miyuki",
           "role": "Main",
-          "image_url": "https://cdn.myanimelist.net/images/characters/4/240187.jpg?s=8b2f548a4b9bd2dfbd7d06720c06c02a"
+          "images" : {
+            "mal": "https://cdn.myanimelist.net/images/characters/4/240187.jpg?s=8b2f548a4b9bd2dfbd7d06720c06c02a"
+          }
         }
       ],
       "episode_details": [],
@@ -8279,12 +8240,10 @@
       "episodes": 1,
       "month": "February",
       "nsfw": false,
-      "picture": "https://raw.githubusercontent.com/manami-project/anime-offline-database/master/pics/no_pic.png",
       "rating": "G - All Ages",
       "source_material": "Original",
       "status": "FINISHED",
       "synopsis": "Moving 3D stamps of Kensaku and Enjin are now on sale.\nLiven up the talk with greetings and easy-to-use reactions!\n\n(Source: Kensaku to Enji Official YouTube Channel; translated)",
-      "thumbnail": "https://raw.githubusercontent.com/manami-project/anime-offline-database/master/pics/no_pic_thumbnail.png",
       "title": "\"Moving in 3D! Usable ♪ Kensaku and Engine",
       "title_japanese": "LINEスタンプ登場！「3Dでうごく！使える♪けんさくとえんじん」",
       "type": "ONA",
@@ -8342,10 +8301,8 @@
       "episodes": 12,
       "status": "UPCOMING",
       "title": "\"Omae Gotoki ga Maou ni Kateru to Omouna\" to Yuusha Party wo Tsuihou sareta node, Outo de Kimama ni Kurashitai",
-      "picture": "https://cdn.myanimelist.net/images/anime/1248/150792.jpg",
       "source_material": "Light novel",
       "synopsis": "Flum Apricot was never meant to be a hero. Despite zero stats across the board and a power she can't even use, she somehow finds herself included in a party of heroes. But Flum's life hits rock bottom when the party's renowned sage, Jean Inteige, decides that the useless girl is dead weight, and arranges to have her sold into slavery. Tossed to monsters to be feasted upon for her master's entertainment, Flum makes the desperate choice to reach for a cursed weapon... and something new awakens within her. A grimdark tale about one woman's blood-soaked quest to reclaim her life!\n\n(Source: Seven Seas Entertainment)",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1248/150792t.jpg",
       "title_japanese": "「お前ごときが魔王に勝てると思うな」と勇者パーティを追放されたので、王都で気ままに暮らしたい",
       "type": "TV",
       "characters": [
@@ -8601,7 +8558,7 @@
       ],
       "trailers": [
         {
-          "youtube_url": "https://www.youtube.com/watch?v=JQj0-jRAAAk",
+          "url": "https://www.youtube.com/watch?v=JQj0-jRAAAk",
           "thumbnail_url": "https://img.youtube.com/vi/JQj0-jRAAAk/maxresdefault.jpg",
           "title": "Official Trailer"
         }
@@ -8673,12 +8630,10 @@
       "episodes": 1,
       "month": "May",
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1714/102585.jpg",
       "rating": "G - All Ages",
       "source_material": "Original",
       "status": "FINISHED",
       "synopsis": "A Parade for three managers and four performers. French composer Erik Satie (1866-1925) created the ballet music piece \"Parade\" in 1916, at the age of 50, and it was first performed in 1917, with Jean Cocteau and Pablo Picasso taking part to its creation on the scene. The ballet was introduced by the poet Guillaume Apollinaire, who described it by using the term \"surrealism\" for the very first time. Mixing quotes from Satie's essays with the music performed by a Dutch jazz band, the Willem Breuker Kollektief, this film is an animated re-creation of \"realist ballet\" images going beyond reality.",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1714/102585t.jpg",
       "title": "\"Parade\" de Satie",
       "title_english": "\"Parade\" de Satie",
       "title_japanese": "サティの「パラード」",
@@ -8789,7 +8744,7 @@
       ],
       "trailers": [
         {
-          "youtube_url": "https://www.youtube.com/watch?v=xkAoXy7C6dk",
+          "url": "https://www.youtube.com/watch?v=xkAoXy7C6dk",
           "thumbnail_url": null,
           "title": "Official Trailer"
         }
@@ -8966,12 +8921,10 @@
     {
       "episodes": 1,
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1206/141774.jpg",
       "rating": "G - All Ages",
       "source_material": "Game",
       "status": "FINISHED",
       "synopsis": "From \"Pokemon shirts\" made by freely combining Pokemon patterns, \"Pokemon shirt sizing\", a body measurement service using a smartphone, is now available! A concept movie is now available to help you understand more about the service!\n\nA certain trainer tries to measure Pikachu in order to give him a shirt, but it seems like he's having a hard time.\nAt the end of the video, the secret of the \"Pokemon shirt\" logo is revealed?\n\nPlease pay attention to Pikachu's cute behavior.\n\n(Source: Pokemon official YouTube channel; translated)",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1206/141774t.jpg",
       "title": "\"Pokemon Shirt Sizing\" Concept Movie",
       "title_japanese": "「ポケモンシャツ サイジング」コンセプトムービー",
       "type": "SPECIAL",
@@ -9039,7 +8992,7 @@
       ],
       "trailers": [
         {
-          "youtube_url": "https://www.youtube.com/watch?v=JGUJB37z14M",
+          "url": "https://www.youtube.com/watch?v=JGUJB37z14M",
           "title": "Official Trailer"
         }
       ],
@@ -9142,12 +9095,10 @@
       "episodes": 1,
       "month": "October",
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1135/92193.jpg",
       "rating": "G - All Ages",
       "source_material": "Original",
       "status": "FINISHED",
       "synopsis": "A crossover collaboration commercial between the 2013 Japanese film R100 and the Mameshiba short anime series. The R100 film is about a man who enjoys being humiliated by dominatrixes.",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1135/92193t.jpg",
       "title": "\"R100\" x Mameshiba Original Manners",
       "title_japanese": "映画『R100』×「豆しば」オリジナルマナ",
       "type": "ONA",
@@ -9277,12 +9228,10 @@
       "episodes": 1,
       "month": "October",
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1108/105484.jpg",
       "rating": "G - All Ages",
       "source_material": "Original",
       "status": "FINISHED",
       "synopsis": "Official music video for the song \"Star\"t. It is the 46th song in the franchise. With a feature on Nanase Hagiwara, Nadeshiko Igarashi, and Minae Ono we assumed that it was once again about \"Maigahara Koukou Keion-bu,\" an after school club band with them. But they now have a new club member called Hana Katsuragi. Together the four of them have now renamed the band to HaNaMiNa which uses the first syllables of their names (in order: Hana, Nanase, Minae, and Nadeshiko).",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1108/105484t.jpg",
       "title": "\"Star\"t",
       "title_english": "\"Star\"t",
       "title_japanese": "\"STAR\"T",
@@ -9554,7 +9503,7 @@
       ],
       "trailers": [
         {
-          "youtube_url": "https://www.youtube.com/watch?v=C4Q9Ibuw4So",
+          "url": "https://www.youtube.com/watch?v=C4Q9Ibuw4So",
           "title": "Official Trailer"
         }
       ],
@@ -9627,12 +9576,10 @@
     {
       "episodes": 1,
       "nsfw": false,
-      "picture": "https://cdn.myanimelist.net/images/anime/1109/96789.jpg",
       "rating": "G - All Ages",
       "source_material": "Original",
       "status": "Finished Airing",
       "synopsis": "A short film spelling Tokyo in hiragana.",
-      "thumbnail": "https://cdn.myanimelist.net/images/anime/1109/96789t.jpg",
       "title": "\"Tokyo\"",
       "title_english": "Tokyo",
       "title_japanese": "「とうきょう」- Tokyo",
