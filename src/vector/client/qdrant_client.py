@@ -78,9 +78,9 @@ class QdrantClient:
         """
         # Use provided settings or import default settings
         if settings is None:
-            from ..config import get_settings
+            from ...config.settings import Settings
 
-            settings = get_settings()
+            settings = Settings()
 
         self.settings = settings
         self.url = url or settings.qdrant_url
@@ -774,6 +774,42 @@ class QdrantClient:
 
         except Exception as e:
             logger.error(f"Failed to get anime by ID {anime_id}: {e}")
+            return None
+
+    async def get_point(self, point_id: str) -> Optional[Dict[str, Any]]:
+        """Get point by Qdrant point ID including vectors and payload.
+
+        Args:
+            point_id: The Qdrant point ID to retrieve
+
+        Returns:
+            Point data dictionary with vectors and payload or None if not found
+        """
+        try:
+            loop = asyncio.get_event_loop()
+
+            # Retrieve point by ID with vectors
+            points = await loop.run_in_executor(
+                None,
+                lambda: self.client.retrieve(
+                    collection_name=self.collection_name,
+                    ids=[point_id],
+                    with_vectors=True,
+                    with_payload=True
+                ),
+            )
+
+            if points:
+                point = points[0]
+                return {
+                    "id": str(point.id),
+                    "vector": point.vector,
+                    "payload": dict(point.payload) if point.payload else {}
+                }
+            return None
+
+        except Exception as e:
+            logger.error(f"Failed to get point by ID {point_id}: {e}")
             return None
 
     async def find_similar(

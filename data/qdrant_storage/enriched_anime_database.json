@@ -1135,7 +1135,6 @@
               "primary_occupations": [
                 "Director"
               ],
-              "enhancement_status": "anilist_basic_data_only"
             }
           ],
           "series_writers": [
@@ -1149,7 +1148,6 @@
               "primary_occupations": [
                 "Script Writer"
               ],
-              "enhancement_status": "anilist_basic_data_only"
             }
           ]
         }
@@ -1421,9 +1419,6 @@
         "https://myanimelist.net/anime/50762",
         "https://simkl.com/anime/1824792",
         "https://animeschedule.net/anime/anata-wo-hitokoto-de-arawashite-kudasai-no-shitsumon-ga-nigate-da"
-      ],
-      "studios": [
-        "sunrise inc."
       ],
       "synonyms": [
         "Anahito",
@@ -1988,9 +1983,6 @@
         "https://livechart.me/anime/12190",
         "https://myanimelist.net/anime/55754"
       ],
-      "studios": [
-        "aqua aris"
-      ],
       "synonyms": [
         "\"あやかい島\"へようこそ！ミタマンの綾ヵ島観光案内",
         "AYAKA Mini Anime",
@@ -2276,9 +2268,6 @@
         "https://simkl.com/anime/37286",
         "https://animeschedule.net/anime/bungaku-shoujo-kyou-no-oyatsu-hatsukoi",
         "https://anisearch.com/anime/5970"
-      ],
-      "studios": [
-        "production i.g., inc."
       ],
       "synonyms": [
         "\"文学少女\"今日のおやつ ~はつ恋~",
@@ -6110,7 +6099,6 @@
               "name": "Takaharu Shimizu",
               "native_name": "清水貴栄",
               "role": "Director",
-              "enhancement_status": "anilist_match_found",
               "primary_occupations": [],
               "years_active": [],
               "staff_ids": {
@@ -6183,16 +6171,6 @@
         "Eiji",
         "「エイジ」",
         "エイジ"
-      ],
-      "studios": [
-        "animate film",
-        "production i.g"
-      ],
-      "producers": [
-        "animate film",
-        "movic",
-        "pony canyon",
-        "shueisha"
       ],
       "relatedAnime": [],
       "tags": [
@@ -7500,7 +7478,6 @@
               "name": "Sou Ootsuki",
               "native_name": "大月壮",
               "role": "Director",
-              "enhancement_status": "anilist_match_found",
               "primary_occupations": [],
               "years_active": [],
               "staff_ids": {
@@ -7657,7 +7634,6 @@
             {
               "name": "\"hitman\" bang",
               "role": "Music_Composer",
-              "enhancement_status": "no_external_data_available",
               "primary_occupations": [],
               "years_active": [],
               "staff_ids": {
@@ -8804,7 +8780,6 @@
               "gender": null,
               "blood_type": null,
               "community_favorites": null,
-              "enhancement_status": "anilist_matched",
               "image": null,
               "biography": null,
               "primary_occupations": [
@@ -8827,7 +8802,6 @@
               "gender": null,
               "blood_type": null,
               "community_favorites": null,
-              "enhancement_status": "anilist_matched",
               "image": null,
               "biography": "French composer and pianist (1866-1925), known for his eccentric and minimalist style. Created the ballet music 'Parade' in 1916, which was first performed in 1917 with contributions from Jean Cocteau and Pablo Picasso.",
               "primary_occupations": [
@@ -8853,7 +8827,6 @@
               "gender": null,
               "blood_type": null,
               "community_favorites": null,
-              "enhancement_status": "anilist_matched",
               "image": null,
               "biography": "French poet, playwright, novelist, designer, filmmaker, artist, and critic. Best known for his novel 'Les Enfants terribles' (1929), and the films 'Blood of a Poet' (1930), 'Beauty and the Beast' (1946), 'Les Parents terribles' (1948), and 'Testament of Orpheus' (1960).",
               "primary_occupations": [
@@ -9589,14 +9562,12 @@
         "Avant Garde",
         "Psychological"
       ],
-      "producers": [],
       "sources": [
         "https://anilist.co/anime/113199",
         "https://anime-planet.com/anime/tokyo",
         "https://kitsu.app/anime/43145",
         "https://myanimelist.net/anime/38748"
       ],
-      "studios": [],
       "tags": [
         "agender",
         "avant garde",
@@ -9650,13 +9621,15 @@
         "median": 3.94
       },
       "staff_data": {
-        "directors": [
-          {
-            "name": "Hana Ono",
-            "name_japanese": "小野ハナ",
-            "role": "Director"
-          }
-        ]
+        "production_staff": {
+          "directors": [
+            {
+              "name": "Hana Ono",
+              "name_japanese": "小野ハナ",
+              "role": "Director"
+            }
+          ]
+        },
       },
       "statistics": {
         "anilist": {
