@@ -167,7 +167,6 @@ class AnimeFieldMapper:
             content_parts.append(f"Rating: {anime.rating}")
         if anime.source_material:
             content_parts.append(f"Source: {anime.source_material}")
-        # NSFW removed - now in payload indexing for filtering
 
         # Licensing information
         if anime.licensors:
@@ -175,12 +174,27 @@ class AnimeFieldMapper:
 
         # Episode overrides
         if anime.episode_overrides:
-            if anime.episode_overrides.main_override and anime.episode_overrides.main_override.override_episode:
-                content_parts.append(f"Main Override: Episode {anime.episode_overrides.main_override.override_episode}")
-            if anime.episode_overrides.sub_override and anime.episode_overrides.sub_override.override_episode:
-                content_parts.append(f"Sub Override: Episode {anime.episode_overrides.sub_override.override_episode}")
-            if anime.episode_overrides.dub_override and anime.episode_overrides.dub_override.override_episode:
-                content_parts.append(f"Dub Override: Episode {anime.episode_overrides.dub_override.override_episode}")
+            if (
+                anime.episode_overrides.main_override
+                and anime.episode_overrides.main_override.override_episode
+            ):
+                content_parts.append(
+                    f"Main Override: Episode {anime.episode_overrides.main_override.override_episode}"
+                )
+            if (
+                anime.episode_overrides.sub_override
+                and anime.episode_overrides.sub_override.override_episode
+            ):
+                content_parts.append(
+                    f"Sub Override: Episode {anime.episode_overrides.sub_override.override_episode}"
+                )
+            if (
+                anime.episode_overrides.dub_override
+                and anime.episode_overrides.dub_override.override_episode
+            ):
+                content_parts.append(
+                    f"Dub Override: Episode {anime.episode_overrides.dub_override.override_episode}"
+                )
 
         return " | ".join(content_parts)
 
@@ -191,21 +205,35 @@ class AnimeFieldMapper:
         # Extract staff information from staff_data StaffData object
         if anime.staff_data:
             # Production staff by role
-            if anime.staff_data.production_staff and anime.staff_data.production_staff.roles:
-                for role, staff_members in anime.staff_data.production_staff.roles.items():
-                    staff_names = [member.name for member in staff_members if member.name]
+            if (
+                anime.staff_data.production_staff
+                and anime.staff_data.production_staff.roles
+            ):
+                for (
+                    role,
+                    staff_members,
+                ) in anime.staff_data.production_staff.roles.items():
+                    staff_names = [
+                        member.name for member in staff_members if member.name
+                    ]
                     if staff_names:
                         content_parts.append(f"{role}: {', '.join(staff_names)}")
 
             # Studios
             if anime.staff_data.studios:
-                studio_names = [studio.name for studio in anime.staff_data.studios if studio.name]
+                studio_names = [
+                    studio.name for studio in anime.staff_data.studios if studio.name
+                ]
                 if studio_names:
                     content_parts.append(f"Studios: {', '.join(studio_names)}")
 
             # Producers
             if anime.staff_data.producers:
-                producer_names = [producer.name for producer in anime.staff_data.producers if producer.name]
+                producer_names = [
+                    producer.name
+                    for producer in anime.staff_data.producers
+                    if producer.name
+                ]
                 if producer_names:
                     content_parts.append(f"Producers: {', '.join(producer_names)}")
 
@@ -213,7 +241,9 @@ class AnimeFieldMapper:
             if anime.staff_data.voice_actors and anime.staff_data.voice_actors.japanese:
                 for va in anime.staff_data.voice_actors.japanese:
                     if va.name and va.character_assignments:
-                        content_parts.append(f"Voice Actor: {va.name} ({', '.join(va.character_assignments)})")
+                        content_parts.append(
+                            f"Voice Actor: {va.name} ({', '.join(va.character_assignments)})"
+                        )
 
         return " | ".join(content_parts)
 
@@ -275,12 +305,16 @@ class AnimeFieldMapper:
             if anime.delay_information.delayed_timetable:
                 content_parts.append("Delayed Timetable: Yes")
             if anime.delay_information.delay_reason:
-                content_parts.append(f"Delay Reason: {anime.delay_information.delay_reason}")
+                content_parts.append(
+                    f"Delay Reason: {anime.delay_information.delay_reason}"
+                )
 
         # Premiere dates
         if anime.premiere_dates:
             if anime.premiere_dates.original:
-                content_parts.append(f"Original Premiere: {anime.premiere_dates.original}")
+                content_parts.append(
+                    f"Original Premiere: {anime.premiere_dates.original}"
+                )
             if anime.premiere_dates.sub:
                 content_parts.append(f"Sub Premiere: {anime.premiere_dates.sub}")
             if anime.premiere_dates.dub:
@@ -435,7 +469,11 @@ class AnimeFieldMapper:
                     ep_parts.append(title)
 
             # Japanese title (for cultural searches, if different from English)
-            if hasattr(episode, "title_japanese") and episode.title_japanese and episode.title_japanese.strip():
+            if (
+                hasattr(episode, "title_japanese")
+                and episode.title_japanese
+                and episode.title_japanese.strip()
+            ):
                 japanese_title = episode.title_japanese.strip()
                 # Only add if different from English title
                 english_title = getattr(episode, "title", "")
@@ -443,7 +481,11 @@ class AnimeFieldMapper:
                     ep_parts.append(f"Japanese: {japanese_title}")
 
             # Synopsis (richest semantic content)
-            if hasattr(episode, "synopsis") and episode.synopsis and episode.synopsis.strip():
+            if (
+                hasattr(episode, "synopsis")
+                and episode.synopsis
+                and episode.synopsis.strip()
+            ):
                 synopsis = episode.synopsis.strip()
                 ep_parts.append(synopsis)
 
@@ -457,7 +499,9 @@ class AnimeFieldMapper:
 
             # Build episode entry if we have any content
             if ep_parts:
-                episode_entry = ": ".join(ep_parts) if len(ep_parts) > 1 else ep_parts[0]
+                episode_entry = (
+                    ": ".join(ep_parts) if len(ep_parts) > 1 else ep_parts[0]
+                )
 
                 # Add episode type flags
                 type_flags = []
@@ -481,7 +525,7 @@ class AnimeFieldMapper:
         # For large series, chunk episodes for future hierarchical averaging
         chunks = []
         for i in range(0, len(episode_info), EPISODES_PER_CHUNK):
-            chunk = episode_info[i:i + EPISODES_PER_CHUNK]
+            chunk = episode_info[i : i + EPISODES_PER_CHUNK]
             chunk_content = " | ".join(chunk)
             chunks.append(chunk_content)
 
@@ -491,16 +535,6 @@ class AnimeFieldMapper:
     def _extract_identifiers_content(self, anime: AnimeEntry) -> str:
         """Extract IDs as semantic relationships from List and Dict objects."""
         content_parts = []
-
-        # Extract IDs from various sources
-        if hasattr(anime, "mal_id") and anime.mal_id:
-            content_parts.append(f"MAL ID: {anime.mal_id}")
-        if hasattr(anime, "anilist_id") and anime.anilist_id:
-            content_parts.append(f"AniList ID: {anime.anilist_id}")
-        if hasattr(anime, "kitsu_id") and anime.kitsu_id:
-            content_parts.append(f"Kitsu ID: {anime.kitsu_id}")
-        if hasattr(anime, "anidb_id") and anime.anidb_id:
-            content_parts.append(f"AniDB ID: {anime.anidb_id}")
 
         # External links
         if anime.external_links:
@@ -557,8 +591,6 @@ class AnimeFieldMapper:
         for trailer in anime.trailers:
             if hasattr(trailer, "thumbnail_url") and trailer.thumbnail_url:
                 image_urls.append(trailer.thumbnail_url)
-            if hasattr(trailer, "image_url") and trailer.image_url:
-                image_urls.append(trailer.image_url)
 
         # Remove duplicates while preserving order
         unique_urls = list(dict.fromkeys(image_urls))

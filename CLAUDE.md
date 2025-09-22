@@ -356,6 +356,7 @@ uv run mypy --strict src/vector/text_processor.py --show-error-codes
 ```
 
 **Type Safety Guidelines:**
+
 - All function parameters and return values must be properly typed
 - Use `Dict[str, Any]` instead of bare `Dict`
 - Use `cast()` for external library types when needed

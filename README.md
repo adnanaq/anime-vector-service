@@ -52,15 +52,18 @@ python -m src.main
 ## API Endpoints
 
 ### Search Operations
+
 - `POST /api/v1/search` - Semantic text search
 - `POST /api/v1/search/image` - Image-based search
 - `POST /api/v1/search/multimodal` - Combined text+image search
 
-### Similarity Operations  
+### Similarity Operations
+
 - `POST /api/v1/similarity/anime/{anime_id}` - Find similar anime
 - `POST /api/v1/similarity/visual/{anime_id}` - Find visually similar anime
 
 ### Administration
+
 - `GET /health` - Service health status
 - `GET /api/v1/admin/stats` - Database statistics
 - `POST /api/v1/admin/reindex` - Rebuild search index
@@ -118,3 +121,4 @@ uv lock --upgrade
 - **JinaCLIP v2**: Vision-language model for images
 - **Docker**: Containerized deployment
 - **UV**: Fast Python package manager
+

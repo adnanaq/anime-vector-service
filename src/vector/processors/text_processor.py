@@ -26,9 +26,9 @@ class TextProcessor:
             settings: Configuration settings instance
         """
         if settings is None:
-            from ..config import get_settings
+            from ...config import Settings
 
-            settings = get_settings()
+            settings = Settings()
 
         self.settings = settings
         self.provider = settings.text_embedding_provider
@@ -630,9 +630,14 @@ class TextProcessor:
 
                     # Generate embedding with hierarchical averaging for episode chunks
                     if processed_text.strip():
-                        if vector_name == "episode_vector" and "|| CHUNK_SEPARATOR ||" in processed_text:
+                        if (
+                            vector_name == "episode_vector"
+                            and "|| CHUNK_SEPARATOR ||" in processed_text
+                        ):
                             # Handle hierarchical averaging for episode chunks
-                            embedding = self._encode_with_hierarchical_averaging(processed_text)
+                            embedding = self._encode_with_hierarchical_averaging(
+                                processed_text
+                            )
                         else:
                             # Standard single embedding
                             embedding = self.encode_text(processed_text)
@@ -655,7 +660,9 @@ class TextProcessor:
             logger.error(f"Failed to process anime vectors: {e}")
             raise
 
-    def _encode_with_hierarchical_averaging(self, chunked_text: str) -> Optional[List[float]]:
+    def _encode_with_hierarchical_averaging(
+        self, chunked_text: str
+    ) -> Optional[List[float]]:
         """
         Encode text with hierarchical averaging for episode chunks.
 
@@ -667,7 +674,9 @@ class TextProcessor:
         """
         try:
             # Split text into chunks
-            chunks = [chunk.strip() for chunk in chunked_text.split("|| CHUNK_SEPARATOR ||")]
+            chunks = [
+                chunk.strip() for chunk in chunked_text.split("|| CHUNK_SEPARATOR ||")
+            ]
             chunks = [chunk for chunk in chunks if chunk]  # Remove empty chunks
 
             if not chunks:
@@ -677,7 +686,9 @@ class TextProcessor:
             if len(chunks) == 1:
                 return self.encode_text(chunks[0])
 
-            logger.debug(f"Processing {len(chunks)} episode chunks with hierarchical averaging")
+            logger.debug(
+                f"Processing {len(chunks)} episode chunks with hierarchical averaging"
+            )
 
             # Encode each chunk individually
             chunk_embeddings = []
@@ -686,7 +697,9 @@ class TextProcessor:
                 if chunk_embedding:
                     chunk_embeddings.append(chunk_embedding)
                 else:
-                    logger.warning(f"Failed to encode episode chunk {i+1}/{len(chunks)}")
+                    logger.warning(
+                        f"Failed to encode episode chunk {i+1}/{len(chunks)}"
+                    )
 
             if not chunk_embeddings:
                 logger.error("All episode chunks failed to encode")
@@ -694,17 +707,22 @@ class TextProcessor:
 
             # Hierarchical averaging: equal weight for all chunks
             # This preserves semantic coherence better than weighted averaging for BGE-M3
-            import numpy as np
             from typing import cast
+
+            import numpy as np
 
             # Convert to numpy for efficient averaging
             chunk_matrix = np.array(chunk_embeddings)
             averaged_embedding = np.mean(chunk_matrix, axis=0)
 
             # Convert back to list with proper typing
-            result_embedding: List[float] = cast(List[float], averaged_embedding.tolist())
+            result_embedding: List[float] = cast(
+                List[float], averaged_embedding.tolist()
+            )
 
-            logger.debug(f"Successfully averaged {len(chunk_embeddings)} episode chunks")
+            logger.debug(
+                f"Successfully averaged {len(chunk_embeddings)} episode chunks"
+            )
             return result_embedding
 
         except Exception as e:

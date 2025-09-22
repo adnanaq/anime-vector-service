@@ -13,6 +13,7 @@
 **Key Principle**: Every sub-phase is designed to be rollback-safe with minimal impact:
 
 ### Rollback Safety Mechanisms
+
 - **Settings Only Changes**: Sub-phases 2.5.1.x only modify configuration, easily reverted
 - **Parallel Implementation**: New methods created alongside existing ones for gradual migration
 - **Feature Flags**: Production features can be toggled on/off without code changes
@@ -21,6 +22,7 @@
 - **Validation Gates**: Comprehensive testing before affecting production systems
 
 ### Sub-Phase Size Principles
+
 - **2-4 Hour Implementation**: Each sub-task can be completed in a single focused session
 - **Atomic Changes**: Each sub-phase addresses one specific concern (e.g., only quantization config)
 - **Independent Testing**: Each sub-phase can be tested and validated independently
@@ -28,6 +30,7 @@
 - **Clear Success Criteria**: Each sub-phase has measurable success/failure criteria
 
 ### Progress Tracking
+
 - **Real-time Status**: Each sub-phase tracks implementation progress (0%, 25%, 50%, 75%, 100%)
 - **Time Estimates**: Realistic time estimates based on complexity analysis
 - **Dependency Mapping**: Clear prerequisites and dependencies between sub-phases
@@ -36,23 +39,27 @@
 ## Critical Cross-Phase Dependencies and Prerequisites
 
 ### **Phase Execution Order (MANDATORY)**
+
 ```
 Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) → Phase 5 (Integration) → Phase 6 (Production)
 ```
 
 ### **Critical Dependencies Map**
+
 - **Phase 3.0** (Data Pipeline Validation) → **MUST COMPLETE** before Phase 4 (sparse vectors need validated data)
 - **Phase 3.1-3.2** (ML Validation Framework) → **MUST COMPLETE** before Phase 4.2 (learnable weights need validation metrics)
 - **Phase 4.1** (Static Sparse Vectors) → **MUST COMPLETE** before Phase 4.2 (learnable weights need baseline)
 - **Phase 5.1-5.2** (Integration) → **MUST COMPLETE** before Phase 6 (production infrastructure needs working integration)
 
 ### **Shared Infrastructure Requirements**
+
 - **Validation Framework** (Phase 3) → Used by Sparse Vector evaluation (Phase 4.3)
 - **API Logging** (Phase 3.2.2a) → Required for Weight Learning (Phase 4.2.1a)
 - **Performance Monitoring** (Phase 3) → Required for Model Management (Phase 4.4)
 - **Security Framework** (Phase 6.0) → Must integrate with all API endpoints from previous phases
 
 ### **Resource and Environment Dependencies**
+
 - **Development Environment**: Phases 3-4 can run in development/staging
 - **Production Environment**: Phase 5-6 require production-like environment with 38K+ anime data
 - **Data Dependencies**: All phases require access to current anime_database collection
@@ -61,6 +68,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 ## In-Depth Tasks List
 
 ### ✅ Phase 1: Core Foundation - COMPLETED
+
 - [x] FastAPI service with health endpoints
 - [x] Qdrant integration with multi-vector support
 - [x] Text search with BGE-M3 embeddings (384-dim)
@@ -71,6 +79,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 ### 🔄 Phase 2: Advanced Search Features - IN PROGRESS (85% Complete)
 
 #### ✅ Completed
+
 - [x] Multimodal search with configurable text/image weighting
 - [x] Similarity search (semantic, visual, vector-based)
 - [x] Batch processing capabilities for bulk operations
@@ -78,6 +87,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 - [x] Comprehensive error handling and validation
 
 #### 🔄 Current Tasks (In Progress)
+
 - [x] **Programmatic Enrichment Pipeline Steps 1-3** (COMPLETED - 100%)
   - [x] Architecture validation and planning
   - [x] ID extractor module for platform URLs (0.001s vs 5s AI)
@@ -108,6 +118,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Performance tuning documentation
 
 #### 📋 Phase 2 Remaining Tasks
+
 - [ ] Query result caching with TTL management
 - [ ] Model warm-up configuration option
 - [ ] Benchmarking suite for performance validation
@@ -116,6 +127,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 ### ✅ Phase 2.5: Million-Query Vector Optimization - COMPLETED (100%)
 
 #### ✅ Completed Analysis
+
 - [x] **Comprehensive Repository Analysis** (100% complete)
   - [x] Analyzed all 65+ AnimeEntry schema fields
   - [x] Mapped semantic value for each field type
@@ -145,6 +157,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 #### ✅ Implementation Phase: 14-Vector Collection (95% complete)
 
 **Sub-Phase 2.5.1: Collection Configuration Foundation** (Rollback-Safe: settings only)
+
 - [x] **2.5.1a: Basic Vector Configuration** (Est: 2 hours) - COMPLETED
   - [x] Add 14-vector configuration to settings.py (12 text + 2 visual)
   - [x] Define vector names and dimensions in constants (BGE-M3: 1024-dim, JinaCLIP: 1024-dim)
@@ -164,16 +177,17 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Validate all configuration parameters
 
 **Sub-Phase 2.5.2: Core QdrantClient Updates** (Rollback-Safe: new methods only)
+
 - [x] **2.5.2a: Vector Configuration Methods** (Est: 3 hours) - COMPLETED
-  - [x] Enhanced _create_multi_vector_config() for 14-vector architecture
-  - [x] Implemented _get_quantization_config() per vector priority
-  - [x] Added _get_hnsw_config() per vector priority
-  - [x] Added _get_vector_priority() detection method
-  - [x] Created _create_optimized_optimizers_config() for million-query scale
+  - [x] Enhanced \_create_multi_vector_config() for 14-vector architecture
+  - [x] Implemented \_get_quantization_config() per vector priority
+  - [x] Added \_get_hnsw_config() per vector priority
+  - [x] Added \_get_vector_priority() detection method
+  - [x] Created \_create_optimized_optimizers_config() for million-query scale
   - [x] Tested all configuration methods with UV environment
 
 - [x] **2.5.2b: Collection Creation Updates** (Est: 2 hours) - COMPLETED
-  - [x] Enhanced _ensure_collection_exists() for enhanced vector architecture
+  - [x] Enhanced \_ensure_collection_exists() for enhanced vector architecture
   - [x] Added comprehensive collection compatibility validation
   - [x] Added vector configuration validation with dimension checking
   - [x] Fixed quantization configuration with proper Qdrant models
@@ -189,7 +203,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [x] Separated character images from general images for semantic precision
 
 #### 📊 14-Vector Architecture Reference (Complete Field Mapping)
+
 **Text Vectors (BGE-M3, 1024-dim each):**
+
 1. `title_vector` - title, title_english, title_japanese, synopsis, background, **synonyms**
 2. `character_vector` - **characters** (names, descriptions, relationships, multi-source data)
 3. `genre_vector` - **genres, tags, themes, demographics, content_warnings** (comprehensive classification)
@@ -203,30 +219,36 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 11. `episode_vector` - **episode_details** (detailed episode information, filler/recap status)
 12. `identifiers_vector` - IDs as semantic relationships (from List and Dict objects)
 
-**Visual Vectors (JinaCLIP v2, 1024-dim each):**
-13. `image_vector` - **General anime visual content** from **images** dict (covers, posters, banners, trailer thumbnails)
-   - **Process**: Download general image URLs → embed visual content → average duplicates → store embeddings
-   - **Use Cases**: Art style matching, cover aesthetics, promotional material similarity
+**Visual Vectors (JinaCLIP v2, 1024-dim each):** 13. `image_vector` - **General anime visual content** from **images** dict (covers, posters, banners, trailer thumbnails)
+
+- **Process**: Download general image URLs → embed visual content → average duplicates → store embeddings
+- **Use Cases**: Art style matching, cover aesthetics, promotional material similarity
+
 14. `character_image_vector` - **Character visual content** from **characters.images** (Dict[str, str] per character)
-   - **Process**: Download character image URLs from all platforms → embed visual content → average duplicates → store embeddings
-   - **Use Cases**: Character identification, character-based recommendations, character visual similarity
+
+- **Process**: Download character image URLs from all platforms → embed visual content → average duplicates → store embeddings
+- **Use Cases**: Character identification, character-based recommendations, character visual similarity
 
 **Dual-Indexed Fields (Vector + Payload for Different Query Patterns):**
+
 - Semantic fields like `title`, `genres`, `tags`, `demographics` appear in both:
   - **Vectors**: For semantic similarity ("find anime like X")
   - **Payload Index**: For exact filtering ("show only seinen anime")
 
 **Payload-Only Fields (Precise Filtering, No Semantic Search):**
+
 - `id`, `type`, `status`, `episodes`, `rating`, `nsfw` - Core searchable metadata
 - `anime_season`, `duration` - Precise temporal and numerical filtering
 - `sources` - Platform URLs for data provenance and filtering
 - `statistics`, `score` - Platform-specific numerical data for filtering
 
 **Non-Indexed Payload (Storage Only, No Search Performance Impact):**
+
 - `enrichment_metadata` - Technical enrichment process metadata for debugging
 - `images` - Complete image structure for display (URLs not searchable)
 
 **Sub-Phase 2.5.3: Embedding Processing Pipeline** (Rollback-Safe: parallel implementation)
+
 - [x] **2.5.3a: Text Processing Enhancement** (Est: 4 hours) - COMPLETED
   - [x] Enhanced existing TextProcessor with multi-vector architecture support
   - [x] Implemented semantic text vector generation for all 12 text vectors
@@ -251,6 +273,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [x] Test complete embedding pipeline with clean architecture
 
 **Sub-Phase 2.5.4: Payload Optimization** (Rollback-Safe: additive changes) - ✅ COMPLETED
+
 - [x] **2.5.4a: Comprehensive Payload Indexing** (Est: 2 hours) - COMPLETED
   - [x] Implemented comprehensive indexed fields configuration with dual strategy
   - [x] Added payload field extraction from AnimeEntry with dual indexing
@@ -270,6 +293,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [x] Validated dual strategy performance benefits for different query patterns
 
 **Sub-Phase 2.5.5: Database Operations Integration** (Rollback-Safe: parallel methods) - ✅ COMPLETED
+
 - [x] **2.5.5a: Document Addition Pipeline** (Est: 4 hours) - COMPLETED
   - [x] Created add_documents_14_vector() method
   - [x] Implemented batch processing for 14-vector insertion (12 text + 2 visual)
@@ -291,6 +315,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 #### ✅ Testing and Validation Phase (Rollback-Safe: validation only) - COMPLETED
 
 **Sub-Phase 2.5.6: Comprehensive Vector Testing** (Est: 7 hours total) - ✅ COMPLETED
+
 - [x] **2.5.6a: Individual Vector Validation** (Est: 2 hours) - COMPLETED
   - [x] Tested ALL 14 individual vectors with vector-specific queries (100% success rate)
   - [x] Validated character image extraction from character.images Dict[str, str]
@@ -310,6 +335,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [x] Validated multi-vector search coordination and ranking
 
 **Sub-Phase 2.5.7: Comprehensive Search Architecture** (Rollback-Safe: new methods only) - ✅ COMPLETED
+
 - [x] **2.5.7a: Multi-Vector API Research and Implementation** (Est: 3 hours) - COMPLETED
   - [x] Researched Qdrant's native multi-vector API (prefetch + fusion patterns)
   - [x] Implemented search_multi_vector() with proper RRF/DBSF fusion algorithms
@@ -330,6 +356,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [x] Validated clean architecture with no redundant methods
 
 #### 📈 Expected Performance Impact
+
 - **Storage**: ~15GB uncompressed, ~4GB with quantization (30K anime)
 - **Search Performance**: <250ms with Qdrant prefetch+refine
 - **Memory Usage**: ~8GB RAM during search operations
@@ -340,7 +367,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 **Rationale**: Validate that 14-vector search returns semantically relevant results, not just technically correct ones. Essential before any new features to establish quality baseline.
 
 #### **Sub-Phase 3.0: Semantic Quality Validation** (Rollback-Safe: validation only)
+
 **Sub-Phase 3.0.1: 14-Vector System Validation** (Est: 4 hours) - CURRENT FOCUS
+
 - [ ] **3.0.1a: Per-Vector Search Quality Testing** (Est: 2 hours)
   - [ ] Test each of 14 vectors individually with domain-specific queries
   - [ ] Validate title_vector: "Studio Ghibli" → Ghibli films in top results
@@ -356,6 +385,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Verify vector selection logic and weighting effectiveness
 
 **Sub-Phase 3.0.2: Generic ML Validation Framework** (Est: 4 hours) - FOUNDATION
+
 - [ ] **3.0.2a: SearchQualityValidator Implementation** (Est: 2 hours)
   - [ ] Implement Precision@K, Recall@K, NDCG, MRR metrics
   - [ ] Create anime domain gold standard dataset (500 expert-curated queries)
@@ -369,7 +399,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Build framework for continuous A/B testing of search improvements
 
 #### **Sub-Phase 3.1: Production Quality Monitoring** (Rollback-Safe: monitoring only)
+
 **Sub-Phase 3.0.1: Data Quality Assurance Framework** (Est: 6 hours)
+
 - [ ] **3.0.1a: AnimeEntry Schema Validation** (Est: 2 hours)
   - [ ] Implement comprehensive validation for all 65+ AnimeEntry fields
   - [ ] Add data completeness scoring (required vs optional fields)
@@ -389,7 +421,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Set up data volume and processing rate monitoring
 
 #### **Sub-Phase 3.1: Embedding Quality Validation** (Rollback-Safe: monitoring only)
+
 **Sub-Phase 3.1.1: Model Drift Detection Framework** (Est: 6 hours)
+
 - [ ] **3.1.1a: Historical Metrics Storage** (Est: 2 hours)
   - [ ] Implement rolling window storage for embedding quality metrics
   - [ ] Create alert band configuration (excellent/good/warning/critical)
@@ -415,6 +449,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Add studio style consistency validation (Studio Ghibli films should show visual similarity)
 
 **Sub-Phase 3.1.2: Embedding Space Analysis** (Est: 4 hours)
+
 - [ ] **3.1.2a: Vector Space Visualization** (Est: 2 hours)
   - [ ] Implement t-SNE/UMAP dimensionality reduction
   - [ ] Create interactive embedding space plots with metadata
@@ -434,7 +469,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Add character-specific visual consistency checks
 
 #### **Sub-Phase 3.2: Search Quality Validation** (Rollback-Safe: validation only)
+
 **Sub-Phase 3.2.1: Gold Standard Dataset Creation** (Est: 8 hours)
+
 - [ ] **3.2.1a: Expert-Curated Test Cases** (Est: 4 hours)
   - [ ] Create 500 human-validated query-result pairs
   - [ ] Design test cases for shounen, shoujo, seinen, josei categories
@@ -454,6 +491,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Set up automated quality regression testing
 
 **Sub-Phase 3.2.2: Hybrid A/B Testing Framework** (Est: 8 hours)
+
 - [ ] **3.2.2a: API-Level Real Data Collection** (Est: 3 hours)
   - [ ] Implement search query logging with anonymized request patterns
   - [ ] Add API endpoint usage analytics (which endpoints, response times)
@@ -479,7 +517,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Create experiment result analysis dashboard
 
 #### **Sub-Phase 3.3: Scalable Validation Strategy** (Rollback-Safe: sampling framework)
+
 **Sub-Phase 3.3.1: Intelligent Sampling Framework** (Est: 4 hours)
+
 - [ ] **3.3.1a: Stratified Sampling Implementation** (Est: 2 hours)
   - [ ] Create sampling strategy for 50K+ anime collections
   - [ ] Implement stratification by genre, year, popularity, studio
@@ -493,7 +533,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Set up longitudinal quality tracking
 
 #### **Sub-Phase 3.4: Comprehensive Testing Framework** (Rollback-Safe: testing infrastructure)
+
 **Sub-Phase 3.4.1: Test Suite Enhancement** (Est: 10 hours)
+
 - [ ] **3.4.1a: Unit and Integration Testing** (Est: 4 hours)
   - [ ] Expand test coverage for all vector processing modules (target: >95%)
   - [ ] Add integration tests for multi-vector search combinations
@@ -524,7 +566,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 **Design Pattern**: Option 2 - Separate episode collection with slug-based ID linking and hierarchical chunking.
 
 #### **Sub-Phase 3.5.1: Episode Collection Design and Implementation** (Rollback-Safe: independent collection)
+
 **Sub-Phase 3.5.1a: Episode Collection Schema Design** (Est: 4 hours)
+
 - [ ] **3.5.1a.1: Collection Architecture Planning** (Est: 2 hours)
   - [ ] Design episode collection schema with slug-based ID system
   - [ ] Create episode-specific vector configuration (BGE-M3 1024-dim content vector)
@@ -538,8 +582,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Plan episode-specific metadata payload optimization
 
 **Sub-Phase 3.5.1b: Episode Processing Pipeline** (Est: 6 hours)
+
 - [ ] **3.5.1b.1: Episode Content Enhancement** (Est: 3 hours)
-  - [ ] Enhance _extract_episode_content() with improved semantic meaning
+  - [ ] Enhance \_extract_episode_content() with improved semantic meaning
   - [ ] Implement comprehensive episode text generation (number + title + synopsis)
   - [ ] Add episode type flags (filler, recap) for semantic context
   - [ ] Skip generic title patterns while preserving meaningful titles
@@ -551,9 +596,10 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Add episode collection validation and testing framework
 
 **Sub-Phase 3.5.1c: Episode Collection Infrastructure** (Est: 8 hours)
+
 - [ ] **3.5.1c.1: Collection Creation and Management** (Est: 4 hours)
   - [ ] Create episodes collection with content vector and episode-specific payload
-  - [ ] Implement slug-based ID generation (anime_slug + "_ep_" + episode_number)
+  - [ ] Implement slug-based ID generation (anime*slug + "\_ep*" + episode_number)
   - [ ] Add episode collection health checks and monitoring
   - [ ] Create episode collection migration utilities
 
@@ -564,7 +610,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Validate linking integrity and relationship consistency
 
 #### **Sub-Phase 3.5.2: Smart Search Integration** (Rollback-Safe: query routing)
+
 **Sub-Phase 3.5.2a: Intelligent Query Routing** (Est: 6 hours)
+
 - [ ] **3.5.2a.1: Query Type Detection** (Est: 3 hours)
   - [ ] Implement episode-specific query detection patterns
   - [ ] Create anime-level vs episode-level query classification
@@ -578,6 +626,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Create unified response format with collection metadata
 
 **Sub-Phase 3.5.2b: API Integration** (Est: 4 hours)
+
 - [ ] **3.5.2b.1: Episode-Specific Endpoints** (Est: 2 hours)
   - [ ] Create GET /api/v1/anime/{anime_id}/episodes endpoint
   - [ ] Create GET /api/v1/episodes/{episode_id} endpoint
@@ -591,7 +640,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Create episode-anime context enrichment in responses
 
 #### **Sub-Phase 3.5.3: Testing and Validation** (Rollback-Safe: validation only)
+
 **Sub-Phase 3.5.3a: Episode Collection Validation** (Est: 4 hours)
+
 - [ ] **3.5.3a.1: Collection Independence Testing** (Est: 2 hours)
   - [ ] Validate zero impact on existing anime collection
   - [ ] Test episode collection creation and data integrity
@@ -611,7 +662,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 **Episode Integration**: Apply sparse vectors to both anime collection and episode collection independently.
 
 #### **Sub-Phase 4.1: Collection Extension and Static Weight Implementation** (Rollback-Safe: feature flags)
+
 **Sub-Phase 4.1.1: Feature Informativeness Analysis** (Est: 6 hours)
+
 - [ ] **4.1.1a: IDF Weight Calculation** (Est: 2 hours)
   - [ ] Implement Inverse Document Frequency for anime features
   - [ ] Calculate genre, studio, demographic discriminative power
@@ -637,6 +690,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Add seasonal and trending features (current season boost, historical popularity)
 
 **Sub-Phase 4.1.2: Dual-Collection Sparse Vector Implementation** (Est: 8 hours) **(SIMPLIFIED WITH EPISODE COLLECTION)**
+
 - [ ] **4.1.2a: Anime Collection Sparse Vector Extension** (Est: 3 hours)
   - [ ] Extend existing anime_database collection with sparse vectors (gradual rollout)
   - [ ] Implement anime-domain static weights (genre: 1.0, studio: 0.7, year: 0.4)
@@ -657,7 +711,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Update health checks to monitor sparse vector generation performance
 
 #### **Sub-Phase 4.2: Evolution to Learnable Weights** (Rollback-Safe: API data driven)
+
 **Sub-Phase 4.2.1: API Usage Pattern Learning** (Est: 8 hours)
+
 - [ ] **4.2.1a: API Pattern Collection and Analysis** (Est: 3 hours)
   - [ ] Implement query→result selection pattern tracking from existing API logs
   - [ ] Analyze repeated search patterns to infer user preferences
@@ -672,7 +728,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 
 - [ ] **4.2.1c: Adaptive Weight Updates** (Est: 2 hours)
   - [ ] Design online learning system for continuous weight refinement
-  - [ ] Implement gradual weight transitions (0.9 * old + 0.1 * new) for stability
+  - [ ] Implement gradual weight transitions (0.9 _ old + 0.1 _ new) for stability
   - [ ] Add weight change monitoring and rollback capabilities
   - [ ] Create performance tracking for learned vs static weight effectiveness
 
@@ -683,6 +739,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Set up A/B testing for real-time weight adaptation validation
 
 **Sub-Phase 4.2.2: Hybrid Search API** (Est: 6 hours)
+
 - [ ] **4.2.2a: New Search Endpoints** (Est: 3 hours)
   - [ ] Create hybrid search API endpoints
   - [ ] Implement dense + sparse + behavioral fusion
@@ -696,7 +753,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test recommendation quality and diversity
 
 #### **Sub-Phase 4.3: Recommendation Quality Evaluation** (Rollback-Safe: evaluation only)
+
 **Sub-Phase 4.3.1: Diversity and Personalization Metrics** (Est: 6 hours)
+
 - [ ] **4.3.1a: Intra-List Diversity** (Est: 2 hours)
   - [ ] Implement multi-dimensional anime diversity calculation
   - [ ] Add genre, studio, temporal, demographic diversity scoring
@@ -716,7 +775,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Set up bias monitoring and alerting
 
 #### **Sub-Phase 4.4: Model Management and Deployment** (Rollback-Safe: versioning strategy)
+
 **Sub-Phase 4.4.1: Model Lifecycle Management** (Est: 8 hours)
+
 - [ ] **4.4.1a: Model Versioning and Registry** (Est: 3 hours)
   - [ ] Implement model versioning system for BGE-M3 and OpenCLIP models
   - [ ] Create model registry with metadata (performance, training date, accuracy)
@@ -746,7 +807,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 **Purpose**: Seamless integration of validation framework and sparse vectors with current 38K+ anime dataset and existing API infrastructure.
 
 #### **Sub-Phase 5.1: Validation Framework Integration** (Rollback-Safe: monitoring addition)
+
 **Sub-Phase 5.1.1: Integration with Existing QdrantClient** (Est: 6 hours)
+
 - [ ] **5.1.1a: Existing Search Method Enhancement** (Est: 2 hours)
   - [ ] Add validation hooks to existing search(), search_by_image(), search_multimodal() methods
   - [ ] Integrate embedding quality monitoring into current text_processor and vision_processor
@@ -766,7 +829,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Set up pattern analysis for future sparse weight learning
 
 #### **Sub-Phase 5.2: Sparse Vector Integration with Current Architecture** (Rollback-Safe: feature flags)
+
 **Sub-Phase 5.2.1: Existing Collection Migration** (Est: 8 hours)
+
 - [ ] **5.2.1a: Current anime_database Collection Analysis** (Est: 3 hours)
   - [ ] Analyze existing collection structure and 38K+ anime point compatibility
   - [ ] Test sparse vector addition on copy of current collection with sample data
@@ -786,7 +851,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Update existing OpenAPI documentation with new sparse vector options
 
 #### **Sub-Phase 5.3: Documentation and Knowledge Management** (Rollback-Safe: documentation updates)
+
 **Sub-Phase 5.3.1: Comprehensive Documentation Strategy** (Est: 8 hours)
+
 - [ ] **5.3.1a: Technical Documentation** (Est: 3 hours)
   - [ ] Create comprehensive architecture documentation with diagrams
   - [ ] Document all vector processing pipelines and data flows
@@ -808,7 +875,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 ### 📋 Phase 6: Security and Production Infrastructure - PLANNED
 
 #### **Sub-Phase 6.0: Security Hardening and Authentication** (Rollback-Safe: additive security)
+
 **Sub-Phase 6.0.1: API Security Implementation** (Est: 8 hours)
+
 - [ ] **6.0.1a: Authentication and Authorization** (Est: 3 hours)
   - [ ] Implement JWT-based API authentication with configurable providers
   - [ ] Add role-based access control (admin, user, read-only)
@@ -828,7 +897,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Set up automated security scanning and vulnerability assessment
 
 #### **Sub-Phase 6.1: Disaster Recovery and Business Continuity** (Rollback-Safe: backup systems)
+
 **Sub-Phase 6.1.1: Data Backup and Recovery** (Est: 6 hours)
+
 - [ ] **6.1.1a: Automated Backup Strategy** (Est: 3 hours)
   - [ ] Implement automated Qdrant database backups with versioning
   - [ ] Create incremental backup system for vector data and metadata
@@ -844,6 +915,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 #### **Sub-Phase 6.2: Infrastructure Performance** (Rollback-Safe: parallel deployment)
 
 **Sub-Phase 3.1.2: Caching Architecture** (Est: 6 hours)
+
 - [ ] **3.1.2a: Redis Integration** (Est: 2 hours)
   - [ ] Add Redis service to docker-compose
   - [ ] Configure Redis connection and clustering
@@ -863,7 +935,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test cache performance under load
 
 #### **Sub-Phase 3.2: API Performance Optimization** (Rollback-Safe: feature flags)
+
 **Sub-Phase 3.2.1: Request Processing** (Est: 6 hours)
+
 - [ ] **3.2.1a: Async Optimization** (Est: 2 hours)
   - [ ] Optimize async request handling
   - [ ] Implement request queuing and prioritization
@@ -883,7 +957,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test response time improvements
 
 #### **Sub-Phase 3.3: Monitoring and Observability** (Rollback-Safe: additive only)
+
 **Sub-Phase 3.3.1: Metrics Collection** (Est: 8 hours)
+
 - [ ] **3.3.1a: Application Metrics** (Est: 3 hours)
   - [ ] Add Prometheus metrics integration
   - [ ] Implement custom metrics for vector operations
@@ -903,6 +979,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test monitoring system reliability
 
 **Sub-Phase 3.3.2: Visualization and Alerting** (Est: 6 hours)
+
 - [ ] **3.3.2a: Grafana Dashboards** (Est: 3 hours)
   - [ ] Create performance monitoring dashboards
   - [ ] Add vector-specific visualization
@@ -916,7 +993,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test alert notification systems
 
 #### **Sub-Phase 3.4: Security Implementation** (Rollback-Safe: feature flags)
+
 **Sub-Phase 3.4.1: Authentication and Authorization** (Est: 8 hours)
+
 - [ ] **3.4.1a: API Authentication** (Est: 3 hours)
   - [ ] Implement JWT-based authentication
   - [ ] Add API key management system
@@ -936,7 +1015,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test security controls
 
 #### **Sub-Phase 3.5: Production Deployment** (Rollback-Safe: blue-green deployment)
+
 **Sub-Phase 3.5.1: Containerization Optimization** (Est: 6 hours)
+
 - [ ] **3.5.1a: Docker Optimization** (Est: 3 hours)
   - [ ] Optimize Docker images for production
   - [ ] Implement multi-stage builds
@@ -950,6 +1031,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test orchestration deployment
 
 **Sub-Phase 3.5.2: Load Testing and Validation** (Est: 8 hours)
+
 - [ ] **3.5.2a: Performance Testing** (Est: 4 hours)
   - [ ] Create comprehensive load testing suite
   - [ ] Test million-query scenarios
@@ -965,7 +1047,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 ### 📋 Phase 4: Enterprise-Scale Data Enrichment - PLANNED
 
 #### **Sub-Phase 4.1: API Pipeline Optimization** (Rollback-Safe: parallel implementation)
+
 **Sub-Phase 4.1.1: Concurrent API Processing** (Est: 12 hours)
+
 - [ ] **4.1.1a: Async API Coordination** (Est: 4 hours)
   - [ ] Enhance ParallelAPIFetcher with advanced coordination
   - [ ] Implement intelligent API prioritization and scheduling
@@ -985,6 +1069,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test API throughput improvements (target: 5-10s total)
 
 **Sub-Phase 4.1.2: Error Resilience System** (Est: 8 hours)
+
 - [ ] **4.1.2a: Circuit Breaker Implementation** (Est: 3 hours)
   - [ ] Add per-API circuit breakers
   - [ ] Configure failure thresholds and recovery times
@@ -1004,7 +1089,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test checkpoint reliability
 
 #### **Sub-Phase 4.2: Intelligent Caching System** (Rollback-Safe: layered caching)
+
 **Sub-Phase 4.2.1: Multi-Level Caching Architecture** (Est: 10 hours)
+
 - [ ] **4.2.1a: Content-Aware Caching** (Est: 4 hours)
   - [ ] Implement content fingerprinting for cache keys
   - [ ] Add semantic similarity detection for cache hits
@@ -1024,6 +1111,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test predictive caching effectiveness
 
 **Sub-Phase 4.2.2: Performance Optimization** (Est: 6 hours)
+
 - [ ] **4.2.2a: Cache Performance Tuning** (Est: 3 hours)
   - [ ] Optimize cache serialization and compression
   - [ ] Add cache performance monitoring
@@ -1037,7 +1125,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test memory usage patterns under load
 
 #### **Sub-Phase 4.3: AI Pipeline Enhancement** (Rollback-Safe: parallel AI processing)
+
 **Sub-Phase 4.3.1: AI Processing Optimization** (Est: 14 hours)
+
 - [ ] **4.3.1a: Confidence Scoring System** (Est: 5 hours)
   - [ ] Implement confidence scoring for 6-stage AI pipeline
   - [ ] Add quality assessment metrics for each stage
@@ -1057,6 +1147,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test processing adaptation effectiveness
 
 **Sub-Phase 4.3.2: Quality Assurance System** (Est: 10 hours)
+
 - [ ] **4.3.2a: Automated Quality Monitoring** (Est: 4 hours)
   - [ ] Add comprehensive quality metrics collection
   - [ ] Implement automated quality scoring (target: 98%+)
@@ -1076,7 +1167,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test continuous improvement effectiveness
 
 #### **Sub-Phase 4.4: Production Scaling Infrastructure** (Rollback-Safe: horizontal scaling)
+
 **Sub-Phase 4.4.1: Horizontal Scaling System** (Est: 12 hours)
+
 - [ ] **4.4.1a: Multi-Agent Coordination** (Est: 5 hours)
   - [ ] Implement distributed processing coordination
   - [ ] Add agent health monitoring and recovery
@@ -1096,6 +1189,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test high-throughput scenarios (target: 1,000-10,000/day)
 
 **Sub-Phase 4.4.2: Enterprise Monitoring and Analytics** (Est: 10 hours)
+
 - [ ] **4.4.2a: Comprehensive Monitoring** (Est: 4 hours)
   - [ ] Add end-to-end pipeline monitoring
   - [ ] Implement SLA tracking (99.9% uptime target)
@@ -1115,6 +1209,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test dashboard responsiveness and accuracy
 
 #### AI Enhancement (Weeks 3-4)
+
 - [ ] **AI Processing Optimization**
   - [ ] Confidence scoring for AI outputs (6-stage pipeline)
   - [ ] Quality assessment for metadata extraction
@@ -1140,6 +1235,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Statistical significance testing
 
 #### Advanced Features (Weeks 5-6)
+
 - [ ] **Pattern-Based Caching**
   - [ ] Content fingerprinting and similarity matching
   - [ ] Decision pattern recognition for AI tasks
@@ -1165,6 +1261,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Automated optimization recommendations
 
 #### Production Scaling (Weeks 7-8)
+
 - [ ] **Horizontal Scaling Implementation**
   - [ ] Multi-agent coordination system
   - [ ] Load balancing across processing nodes
@@ -1192,7 +1289,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 ### 📋 Phase 5: Advanced AI and Enterprise Features - PLANNED
 
 #### **Sub-Phase 5.1: Domain-Specific AI Enhancement** (Rollback-Safe: optional features)
+
 **Sub-Phase 5.1.1: Fine-Tuning Infrastructure** (Est: 16 hours)
+
 - [ ] **5.1.1a: LoRA Adaptation Framework** (Est: 6 hours)
   - [ ] Implement parameter-efficient fine-tuning with LoRA
   - [ ] Add anime-specific fine-tuning datasets
@@ -1212,6 +1311,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test visual style matching accuracy
 
 **Sub-Phase 5.1.2: Advanced Embedding Models** (Est: 12 hours)
+
 - [ ] **5.1.2a: Custom Embedding Support** (Est: 4 hours)
   - [ ] Add support for anime-specific custom embeddings
   - [ ] Implement model switching and A/B testing
@@ -1231,7 +1331,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test embedding fusion effectiveness
 
 #### **Sub-Phase 5.2: Enterprise Infrastructure** (Rollback-Safe: infrastructure add-ons)
+
 **Sub-Phase 5.2.1: Global Distribution System** (Est: 14 hours)
+
 - [ ] **5.2.1a: Edge Caching Implementation** (Est: 5 hours)
   - [ ] Add CDN integration for global distribution
   - [ ] Implement edge-side caching strategies
@@ -1251,6 +1353,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test global performance improvements
 
 **Sub-Phase 5.2.2: Advanced Analytics and Insights** (Est: 12 hours)
+
 - [ ] **5.2.2a: Search Analytics Platform** (Est: 4 hours)
   - [ ] Implement comprehensive search analytics
   - [ ] Add user behavior tracking and analysis
@@ -1270,7 +1373,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test business intelligence accuracy
 
 #### **Sub-Phase 5.3: Advanced Search Features** (Rollback-Safe: feature additions)
+
 **Sub-Phase 5.3.1: Intelligent Search Enhancement** (Est: 10 hours)
+
 - [ ] **5.3.1a: Context-Aware Search** (Est: 4 hours)
   - [ ] Implement search context understanding
   - [ ] Add session-based search optimization
@@ -1290,6 +1395,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test suggestion relevance and performance
 
 **Sub-Phase 5.3.2: Advanced Filtering and Faceting** (Est: 8 hours)
+
 - [ ] **5.3.2a: Dynamic Faceting System** (Est: 4 hours)
   - [ ] Implement dynamic facet generation
   - [ ] Add facet relevance scoring
@@ -1305,6 +1411,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 ## What Works (Verified Functionality)
 
 ### Core Services
+
 - ✅ **FastAPI Application**: Stable async service with proper lifecycle management
 - ✅ **Vector Database**: Qdrant integration with multi-vector collections (38,894+ anime entries from MCP server)
 - ✅ **Text Search**: BGE-M3 semantic search (~80ms response time, upgraded from BGE-small-en-v1.5)
@@ -1313,12 +1420,14 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 - ✅ **Modern Embedding Architecture**: Support for multiple providers (CLIP, SigLIP, JinaCLIP v2)
 
 ### API Endpoints
+
 - ✅ **Search APIs**: `/api/v1/search`, `/api/v1/search/image`, `/api/v1/search/multimodal`
 - ✅ **Similarity APIs**: `/api/v1/similarity/anime/{id}`, `/api/v1/similarity/visual/{id}`
 - ✅ **Admin APIs**: `/api/v1/admin/stats`, `/api/v1/admin/reindex`
 - ✅ **Health Check**: `/health` with detailed status reporting
 
 ### Performance Metrics (Current)
+
 - ✅ Text search: 80ms average (target: <100ms)
 - ✅ Image search: 250ms average (target: <300ms)
 - ✅ Multimodal search: 350ms average (target: <400ms)
@@ -1326,6 +1435,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 - ✅ Search accuracy: >80% relevance (target: >85%)
 
 ### Infrastructure
+
 - ✅ **Docker Environment**: Development and production containers
 - ✅ **Database**: Qdrant with HNSW indexing and quantization support
 - ✅ **Vector Optimizations**: Binary/Scalar/Product quantization (40x speedup potential)
@@ -1337,6 +1447,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 ## What's Left to Build
 
 ### Immediate (This Sprint)
+
 1. **Redis Caching Layer**
    - Query result caching with configurable TTL
    - Cache invalidation strategies
@@ -1359,6 +1470,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
    - Performance optimization best practices
 
 ### Short-term (Next Sprint - Phase 3)
+
 1. **Enhanced Repository Security** (Priority: High)
    - [ ] **GitHub Security Rulesets Enhancement**
      - [ ] File path restrictions (block .env, secrets, config files)
@@ -1387,13 +1499,14 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
    - Load balancing and auto-scaling
 
 ### Long-term (Phase 4 - Data Enrichment Pipeline)
+
 1. **API Processing Optimization**
    - Parallel API fetching (6+ external APIs)
    - Intelligent caching and retry mechanisms
    - Error handling and recovery systems
    - Target: 50%+ processing time reduction
 
-2. **AI Pipeline Enhancement** 
+2. **AI Pipeline Enhancement**
    - 6-stage AI enrichment pipeline optimization
    - Confidence scoring and quality validation
    - Cross-source data conflict resolution
@@ -1406,6 +1519,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
    - Horizontal scaling capabilities
 
 ### Very Long-term (Phase 5)
+
 1. **Advanced AI Features** (from MCP server proven implementations)
    - **Fine-tuning Infrastructure**: LoRA-based parameter-efficient fine-tuning
    - **Character Recognition**: Domain-specific character search capabilities
@@ -1429,6 +1543,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 ## Known Issues
 
 ### High Priority
+
 1. **Memory Usage**: 3.5GB RAM with both models loaded
    - Impact: Limits scalability and concurrent processing
    - Target: Reduce to <2GB through optimization
@@ -1438,6 +1553,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
    - Target: Reduce to <5 seconds with model warm-up
 
 ### Medium Priority
+
 1. **Large Image Processing**: Images >5MB cause timeouts
    - Impact: Limited input size for image search
    - Workaround: Client-side image resizing
@@ -1447,6 +1563,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
    - Target: Enhanced error reporting with item-level details
 
 ### Low Priority
+
 1. **Debug Logging Volume**: Excessive logs in debug mode
    - Impact: Storage costs and performance overhead
    - Workaround: Use INFO level for production
@@ -1454,22 +1571,26 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 ## Success Metrics Tracking
 
 ### Technical KPIs
+
 - **Response Time**: 95th percentile within SLA targets ✅
 - **Throughput**: 100+ concurrent requests ⚠️ (currently 50+)
 - **Availability**: 99.9% uptime target ✅ (currently 99.5%)
 - **Error Rate**: <0.1% for valid requests ✅
 
 ### Development Progress
+
 - **Phase 2 Completion**: Target 100% by end of week ⚠️ (currently 85%)
 - **API Documentation**: Target 100% coverage ⚠️ (currently 70%)
 - **Performance Optimization**: Target 20% improvement ⚠️ (in progress)
 
 ### Quality Metrics
+
 - **Search Accuracy**: >85% relevance ⚠️ (currently 80%)
 - **Code Coverage**: Target >90% ⚠️ (not measured)
 - **Documentation Coverage**: Target 100% ⚠️ (currently 70%)
 
 ### Enrichment Pipeline KPIs (Phase 4)
+
 - **Processing Time**: Target 2-6 minutes per anime (currently 5-15 minutes)
 - **API Fetching**: Target 5-10 seconds (currently 30-60 seconds)
 - **AI Processing**: Target 1-4 minutes (currently 3-10 minutes)
@@ -1481,6 +1602,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 ### Million-Query Vector Database Performance (Optimized Targets)
 
 #### **Phase 2.5 Optimization Targets**
+
 - **Memory Usage**: Target 75% reduction (15GB → 4GB with quantization for 30K anime)
 - **Search Latency**: Target <100ms average (current: 80-350ms)
 - **Query Throughput**: Target 300-600 RPS mixed workload (current: 50+ RPS)
@@ -1488,18 +1610,21 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 - **Storage Efficiency**: Target 175GB total for 1M anime (vs 500GB unoptimized)
 
 #### **Phase 3 Production Scale Targets**
+
 - **Response Time**: Target 95th percentile <200ms for complex queries
 - **Availability**: Target 99.9% uptime with graceful degradation
 - **Cache Hit Rate**: Target >80% for frequently accessed content
 - **Error Rate**: Target <0.1% for valid requests
 
 #### **Database Architecture Proven Scale**
+
 - **Current Proven**: 38,894+ anime entries in MCP server
 - **Target Scale**: 1M+ anime entries with optimized architecture
 - **Vector Efficiency**: 13-vector architecture with priority-based optimization
 - **Model Accuracy**: JinaCLIP v2 + BGE-M3 state-of-the-art performance
 
 #### **Performance Validation Benchmarks**
+
 - **Single Collection Design**: Data locality benefits proven at scale
 - **Quantization Effectiveness**: 75% memory reduction with maintained accuracy
 - **HNSW Optimization**: Anime-specific parameters for optimal similarity matching
@@ -1508,6 +1633,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 ## Next Phase Preparation
 
 ### Phase 3 Prerequisites
+
 - [ ] Complete Phase 2 performance optimization
 - [ ] Validate all API documentation
 - [ ] Establish performance baselines
@@ -1515,6 +1641,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 - [ ] Design monitoring and alerting architecture
 
 ### Resource Requirements for Phase 3
+
 - **Development Time**: 4 weeks full-time
 - **Infrastructure**: Kubernetes cluster access
 - **External Services**: Prometheus/Grafana setup
@@ -1523,6 +1650,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 ## Integration Patterns from MCP Server
 
 ### Proven Architecture Patterns
+
 1. **Multi-Vector Collections**: Single collection with named vectors (text, picture, thumbnail)
 2. **Modular Processing**: 5-6 stage AI pipeline with fault tolerance
 3. **Configuration-Driven Models**: 20+ embedding options with provider flexibility
@@ -1530,6 +1658,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 5. **Progressive Enhancement**: Tier-based data enrichment (offline → API → scraping)
 
 ### Performance Optimizations Applied
+
 1. **Vector Quantization**: Binary/Scalar/Product quantization for 40x speedup
 2. **HNSW Tuning**: Optimized ef_construct and M parameters for anime data
 3. **Payload Indexing**: Efficient filtering on genre, year, type, status fields
@@ -1537,6 +1666,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 5. **GPU Acceleration**: 10x indexing performance improvement potential
 
 ### Data Quality Strategies
+
 1. **Multi-Source Validation**: Cross-platform data consistency checking
 2. **AI-Powered Merging**: Intelligent conflict resolution across sources
 3. **Schema Compliance**: Automated validation against data models
@@ -1548,7 +1678,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 **Purpose**: Add intelligent LLM-powered query routing to enhance search capabilities without modifying existing 14-vector architecture.
 
 ### **Sub-Phase 2.6.1: Core LangGraph Infrastructure** (Rollback-Safe: new modules only)
+
 **Sub-Phase 2.6.1a: Basic LangGraph Setup** (Est: 3 hours)
+
 - [ ] **2.6.1a.1: Dependencies and Environment** (Est: 1 hour)
   - [ ] Add LangGraph and LangChain dependencies to requirements.txt
   - [ ] Configure LLM provider environment variables (OpenAI/Anthropic)
@@ -1568,6 +1700,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test workflow execution with mock data
 
 **Sub-Phase 2.6.1b: Tool Integration Foundation** (Est: 2 hours)
+
 - [ ] **2.6.1b.1: Tool Method Implementation** (Est: 1 hour)
   - [ ] Create smart_search_tool() method in QdrantClient
   - [ ] Create smart_recommendation_tool() method in QdrantClient
@@ -1581,7 +1714,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test tool invocation from workflow
 
 ### **Sub-Phase 2.6.2: LLM Intelligence Layer** (Rollback-Safe: LLM prompts only)
+
 **Sub-Phase 2.6.2a: Intent Detection System** (Est: 4 hours)
+
 - [ ] **2.6.2a.1: Intent Classification Prompt** (Est: 2 hours)
   - [ ] Design LLM prompt for search vs recommendation intent detection
   - [ ] Create prompt examples for different query types
@@ -1595,6 +1730,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test vector selection relevance with domain-specific queries
 
 **Sub-Phase 2.6.2b: Query Enhancement System** (Est: 3 hours)
+
 - [ ] **2.6.2b.1: Query Optimization Prompts** (Est: 1.5 hours)
   - [ ] Create search-focused query enhancement prompts
   - [ ] Create recommendation-focused query enhancement prompts
@@ -1608,7 +1744,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test system resilience under various failure scenarios
 
 ### **Sub-Phase 2.6.3: API Integration and Routing** (Rollback-Safe: new endpoints only)
+
 **Sub-Phase 2.6.3a: Unified Query Endpoint** (Est: 3 hours)
+
 - [ ] **2.6.3a.1: Single API Endpoint Design** (Est: 1.5 hours)
   - [ ] Create POST /api/v1/query endpoint in FastAPI
   - [ ] Design unified request/response models
@@ -1622,6 +1760,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test end-to-end API flow
 
 **Sub-Phase 2.6.3b: Backwards Compatibility** (Est: 2 hours)
+
 - [ ] **2.6.3b.1: Existing Endpoint Preservation** (Est: 1 hour)
   - [ ] Ensure all existing search endpoints remain unchanged
   - [ ] Add feature flag for smart query functionality
@@ -1635,7 +1774,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test migration scenarios and rollback procedures
 
 ### **Sub-Phase 2.6.4: Testing and Validation** (Rollback-Safe: testing only)
+
 **Sub-Phase 2.6.4a: Unit and Integration Testing** (Est: 4 hours)
+
 - [ ] **2.6.4a.1: LLM Integration Testing** (Est: 2 hours)
   - [ ] Create test suite for LLM prompt responses
   - [ ] Add mock LLM responses for consistent testing
@@ -1649,6 +1790,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test error handling and graceful degradation
 
 **Sub-Phase 2.6.4b: Performance and Quality Validation** (Est: 3 hours)
+
 - [ ] **2.6.4b.1: Response Time Benchmarking** (Est: 1.5 hours)
   - [ ] Measure LLM analysis overhead (target: <2 seconds)
   - [ ] Benchmark smart query vs traditional search performance
@@ -1662,7 +1804,9 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Create quality metrics and monitoring framework
 
 ### **Sub-Phase 2.6.5: Documentation and Deployment** (Rollback-Safe: documentation only)
+
 **Sub-Phase 2.6.5a: Technical Documentation** (Est: 2 hours)
+
 - [ ] **2.6.5a.1: Architecture Documentation** (Est: 1 hour)
   - [ ] Document LangGraph workflow architecture and design decisions
   - [ ] Create vector selection strategy documentation
@@ -1676,6 +1820,7 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Document feature flags and configuration options
 
 **Sub-Phase 2.6.5b: Deployment Preparation** (Est: 2 hours)
+
 - [ ] **2.6.5b.1: Environment Configuration** (Est: 1 hour)
   - [ ] Add LLM provider configuration to Docker setup
   - [ ] Create environment variable templates
@@ -1689,12 +1834,14 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [ ] Test monitoring integration and alert triggers
 
 ### **Expected Performance Impact**
+
 - **Query Processing**: +1-3 seconds for LLM analysis (one-time per query)
 - **Search Accuracy**: 15-25% improvement for complex queries
 - **System Resources**: +100-200MB RAM for LLM client
 - **API Compatibility**: 100% backwards compatible with existing endpoints
 
 ### **Success Criteria**
+
 - [ ] Smart query endpoint operational with <3 second total response time
 - [ ] LLM intent detection >85% accuracy on test query set
 - [ ] Vector selection relevance >80% for domain-specific queries
@@ -1702,6 +1849,8 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 - [ ] Successful A/B testing framework for quality comparison
 
 ### **Rollback Plan**
+
 - **Immediate**: Disable feature flag to revert to existing search methods
 - **Emergency**: Remove smart query endpoint, preserve all existing functionality
 - **Data Safety**: No changes to existing 14-vector architecture or data
+

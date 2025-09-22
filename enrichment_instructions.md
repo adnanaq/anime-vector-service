@@ -21,20 +21,17 @@ The primary goal is to take a raw anime data object (from an offline database) a
 **MULTI-AGENT PROCESSING MODEL**: This system supports concurrent processing by multiple agents using numbered processing files to prevent conflicts and enable scalability.
 
 1.  **Agent Slot Detection:**
-
     - Scan for existing processing files: `current_anime.json`, `current_anime_2.json`, `current_anime_3.json`, etc.
     - Determine next available agent slot (e.g., if `current_anime.json` and `current_anime_2.json` exist, create `current_anime_3.json`)
     - This enables multiple agents to work simultaneously without conflicts
 
 2.  **Load Source Database:**
-
     - Load `data/anime-offline-database.json` from the project root
     - Extract anime entries sequentially from the `data` array (first available entry not being processed)
     - If the `data` array is empty, all anime have been processed - stop here
     - Skip entries that match any currently processing anime (check against all existing `current_anime*.json` files)
 
 3.  **Prepare Current Anime (Agent-Specific):**
-
     - Save the extracted anime entry to your agent's numbered file (e.g., `data/current_anime_2.json`)
     - Add `processing: true` to the entry to indicate this agent is currently processing it
     - This numbered file becomes the `offline_anime_data` for all subsequent processing steps
@@ -183,7 +180,6 @@ This is the core of the process, where AI is used to process the collected data.
 ### Step 5: Programmatic Assembly
 
 1.  **Synchronization Check:** Verify all 6 stage output files from the 4 agents exist before proceeding:
-
     - `temp/<first word from anime title>/stage1_metadata.json` (Agent 1)
     - `temp/<first word from anime title>/stage2_episodes.json` (Agent 2)
     - `temp/<first word from anime title>/stage3_relationships.json` (Agent 3)
@@ -228,7 +224,6 @@ This is the core of the process, where AI is used to process the collected data.
 Receive confirmation from user before procesing this step.
 
 1.  **Update Enriched Database:**
-
     - Load `data/enriched_anime_database.json`
     - If file doesn't exist, create with initial structure following anime-offline-database.json format
     - Append the final enriched anime object to the `data` array
@@ -237,7 +232,6 @@ Receive confirmation from user before procesing this step.
     - Save file with proper JSON formatting using `ensure_ascii=False` and `encoding='utf-8'`
 
 2.  **Update Source Database (Agent-Safe Removal):**
-
     - Load `anime-offline-database.json`
     - **CRITICAL**: Remove the processed anime entry by matching against the exact anime from your agent's processing file
     - **Verification**: Verify removal by matching both `title` and `sources` array against your processed anime
@@ -246,7 +240,6 @@ Receive confirmation from user before procesing this step.
     - Save the updated source database with proper JSON formatting
 
 3.  **Agent Cleanup (Multi-Agent Environment):**
-
     - Remove your agent's processing file (e.g., `data/current_anime_2.json`)
     - Clean up your agent's temp directory (e.g., `temp/<anime_title>/`)
     - **Do NOT** remove other agents' processing files or temp directories

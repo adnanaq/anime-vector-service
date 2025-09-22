@@ -17,6 +17,7 @@ import numpy as np
 from PIL import Image
 
 from ...config import Settings
+from ...models.anime import AnimeEntry
 from .anime_field_mapper import AnimeFieldMapper
 
 logger = logging.getLogger(__name__)
@@ -32,9 +33,9 @@ class VisionProcessor:
             settings: Configuration settings instance
         """
         if settings is None:
-            from ..config import get_settings
+            from ...config import Settings
 
-            settings = get_settings()
+            settings = Settings()
 
         self.settings = settings
         self.provider = settings.image_embedding_provider
@@ -206,7 +207,8 @@ class VisionProcessor:
             dummy_image_b64 = self._pil_to_base64(dummy_image)
 
             # Warm up model
-            self._encode_image_with_model(dummy_image_b64, self.model)
+            if self.model is not None:
+                self._encode_image_with_model(dummy_image_b64, self.model)
             logger.info("Model warmed up successfully")
 
         except Exception as e:
@@ -280,7 +282,7 @@ class VisionProcessor:
             return None
 
     def _encode_with_openclip(
-        self, image: Image.Image, model_dict: Dict
+        self, image: Image.Image, model_dict: Dict[str, Any]
     ) -> Optional[List[float]]:
         """Encode image using OpenCLIP model.
 
@@ -312,7 +314,7 @@ class VisionProcessor:
                 image_features = image_features / image_features.norm(
                     dim=-1, keepdim=True
                 )
-                embedding = image_features.cpu().numpy().flatten().tolist()
+                embedding: List[float] = image_features.cpu().numpy().flatten().tolist()
 
             return embedding
 
@@ -393,7 +395,7 @@ class VisionProcessor:
             logger.error(f"Batch image encoding failed: {e}")
             return [None] * len(image_data_list)
 
-    def get_model_info(self) -> Dict:
+    def get_model_info(self) -> Dict[str, Any]:
         """Get information about the current model.
 
         Returns:
@@ -460,7 +462,9 @@ class VisionProcessor:
             self._field_mapper = AnimeFieldMapper()
         return self._field_mapper
 
-    async def process_anime_image_vector(self, anime) -> Optional[List[float]]:
+    async def process_anime_image_vector(
+        self, anime: AnimeEntry
+    ) -> Optional[List[float]]:
         """Process general anime images (covers, posters, banners, trailers) excluding character images.
 
         Args:
@@ -517,7 +521,9 @@ class VisionProcessor:
                     return successful_embeddings[0]
                 else:
                     # Average multiple embeddings for comprehensive visual representation
-                    combined_embedding = np.mean(successful_embeddings, axis=0).tolist()
+                    combined_embedding: List[float] = np.mean(
+                        successful_embeddings, axis=0
+                    ).tolist()
                     logger.debug(
                         f"Combined {len(successful_embeddings)} unique image embeddings from {len(image_urls)} total images"
                     )
@@ -534,7 +540,7 @@ class VisionProcessor:
             return None
 
     async def process_anime_character_image_vector(
-        self, anime
+        self, anime: AnimeEntry
     ) -> Optional[List[float]]:
         """Process character images from anime data for character identification and recommendations.
 
@@ -592,7 +598,9 @@ class VisionProcessor:
                     return successful_embeddings[0]
                 else:
                     # Average multiple embeddings for comprehensive character visual representation
-                    combined_embedding = np.mean(successful_embeddings, axis=0).tolist()
+                    combined_embedding: List[float] = np.mean(
+                        successful_embeddings, axis=0
+                    ).tolist()
                     logger.debug(
                         f"Combined {len(successful_embeddings)} unique character image embeddings from {len(character_image_urls)} total character images"
                     )
@@ -690,7 +698,7 @@ class VisionProcessor:
             logger.error(f"Error downloading image from {image_url}: {e}")
             return None
 
-    def get_cache_stats(self) -> Dict:
+    def get_cache_stats(self) -> Dict[str, Any]:
         """Get image cache statistics.
 
         Returns:
@@ -710,7 +718,7 @@ class VisionProcessor:
             logger.error(f"Error getting cache stats: {e}")
             return {"cache_enabled": False, "error": str(e)}
 
-    def clear_cache(self, max_age_days: Optional[int] = None) -> Dict:
+    def clear_cache(self, max_age_days: Optional[int] = None) -> Dict[str, Any]:
         """Clear image cache.
 
         Args:

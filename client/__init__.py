@@ -7,3 +7,4 @@ for applications that need vector database operations.
 from .vector_client import VectorServiceClient, VectorServiceError
 
 __all__ = ["VectorServiceClient", "VectorServiceError"]
+

@@ -27,9 +27,9 @@ class MultiVectorEmbeddingManager:
             settings: Configuration settings instance
         """
         if settings is None:
-            from ..config import get_settings
+            from ...config import Settings
 
-            settings = get_settings()
+            settings = Settings()
 
         self.settings = settings
 
@@ -42,7 +42,11 @@ class MultiVectorEmbeddingManager:
 
         # Get vector configuration
         self.vector_names = list(settings.vector_names.keys())
-        self.text_vector_names = [v for v in self.vector_names if v not in ["image_vector", "character_image_vector"]]
+        self.text_vector_names = [
+            v
+            for v in self.vector_names
+            if v not in ["image_vector", "character_image_vector"]
+        ]
         self.image_vector_names = ["image_vector", "character_image_vector"]
 
         logger.info(
@@ -125,7 +129,9 @@ class MultiVectorEmbeddingManager:
             logger.error(f"Text vector generation failed: {e}")
             return {}
 
-    async def _generate_image_vectors(self, anime: AnimeEntry) -> Dict[str, List[float]]:
+    async def _generate_image_vectors(
+        self, anime: AnimeEntry
+    ) -> Dict[str, List[float]]:
         """Generate both image embedding vectors.
 
         Args:
@@ -138,20 +144,28 @@ class MultiVectorEmbeddingManager:
             image_vectors = {}
 
             # Generate general image vector
-            general_image_vector = await self.vision_processor.process_anime_image_vector(anime)
+            general_image_vector = (
+                await self.vision_processor.process_anime_image_vector(anime)
+            )
             if general_image_vector is not None:
                 image_vectors["image_vector"] = general_image_vector
                 logger.debug("Successfully generated general image vector")
             else:
-                logger.debug("General image vector generation failed - will store URLs in payload")
+                logger.debug(
+                    "General image vector generation failed - will store URLs in payload"
+                )
 
             # Generate character image vector
-            character_image_vector = await self.vision_processor.process_anime_character_image_vector(anime)
+            character_image_vector = (
+                await self.vision_processor.process_anime_character_image_vector(anime)
+            )
             if character_image_vector is not None:
                 image_vectors["character_image_vector"] = character_image_vector
                 logger.debug("Successfully generated character image vector")
             else:
-                logger.debug("Character image vector generation failed - will store URLs in payload")
+                logger.debug(
+                    "Character image vector generation failed - will store URLs in payload"
+                )
 
             logger.debug(f"Generated {len(image_vectors)}/2 image vectors")
             return image_vectors
@@ -204,7 +218,7 @@ class MultiVectorEmbeddingManager:
                         "favorites": getattr(stats, "favorites", None),
                         "rank": getattr(stats, "rank", None),
                     }
-                    if hasattr(stats, 'contextual_ranks') and stats.contextual_ranks:
+                    if hasattr(stats, "contextual_ranks") and stats.contextual_ranks:
                         stats_dict["contextual_ranks"] = [
                             rank.model_dump() for rank in stats.contextual_ranks
                         ]
@@ -215,7 +229,9 @@ class MultiVectorEmbeddingManager:
                 payload["characters"] = [char.model_dump() for char in anime.characters]
 
             if anime.episode_details:
-                payload["episode_details"] = [ep.model_dump() for ep in anime.episode_details]
+                payload["episode_details"] = [
+                    ep.model_dump() for ep in anime.episode_details
+                ]
 
             if anime.awards:
                 payload["awards"] = [award.model_dump() for award in anime.awards]
@@ -224,22 +240,32 @@ class MultiVectorEmbeddingManager:
                 payload["themes"] = [theme.model_dump() for theme in anime.themes]
 
             if anime.trailers:
-                payload["trailers"] = [trailer.model_dump() for trailer in anime.trailers]
+                payload["trailers"] = [
+                    trailer.model_dump() for trailer in anime.trailers
+                ]
 
             if anime.streaming_info:
-                payload["streaming_info"] = [stream.model_dump() for stream in anime.streaming_info]
+                payload["streaming_info"] = [
+                    stream.model_dump() for stream in anime.streaming_info
+                ]
 
             if anime.related_anime:
-                payload["related_anime"] = [rel.model_dump() for rel in anime.related_anime]
+                payload["related_anime"] = [
+                    rel.model_dump() for rel in anime.related_anime
+                ]
 
             if anime.relations:
                 payload["relations"] = [rel.model_dump() for rel in anime.relations]
 
             if anime.opening_themes:
-                payload["opening_themes"] = [theme.model_dump() for theme in anime.opening_themes]
+                payload["opening_themes"] = [
+                    theme.model_dump() for theme in anime.opening_themes
+                ]
 
             if anime.ending_themes:
-                payload["ending_themes"] = [theme.model_dump() for theme in anime.ending_themes]
+                payload["ending_themes"] = [
+                    theme.model_dump() for theme in anime.ending_themes
+                ]
 
             # Convert object fields to serializable format
             if anime.aired_dates:

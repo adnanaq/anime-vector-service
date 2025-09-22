@@ -5,11 +5,13 @@
 ### Technology Choices
 
 #### Core Framework
+
 - **FastAPI 0.115+**: Chosen for high-performance async capabilities, automatic OpenAPI documentation, and excellent type safety with Pydantic
 - **Python 3.12+**: Latest Python for performance improvements, improved type hints, and modern language features
 - **Uvicorn**: ASGI server for production-grade async request handling
 
 #### Vector Database Architecture
+
 - **Qdrant 1.14+**: Selected for its superior performance with HNSW indexing, multi-vector support, and production-ready features
 - **HNSW Algorithm**: Hierarchical Navigable Small World for fast approximate nearest neighbor search
 - **Advanced Quantization**: Binary, scalar, and product quantization for 40x speedup potential
@@ -21,6 +23,7 @@
 - **Hybrid Dense+Sparse**: Support for both semantic embeddings and explicit feature matching (Phase 4)
 
 #### AI/ML Stack
+
 - **BGE-M3 (BAAI/bge-m3)**: State-of-the-art multilingual embedding model with 1024 dimensions, supporting 8192 token context
 - **OpenCLIP ViT-L/14**: Vision transformer for 768-dimensional image embeddings with commercial-friendly licensing
 - **Multi-Provider Support**: FastEmbed, HuggingFace, Sentence Transformers for dynamic model selection
@@ -29,7 +32,9 @@
 ### Development Setup
 
 #### Prerequisites
+
 **System Requirements:**
+
 - Python 3.12+ for modern language features
 - Docker and Docker Compose for containerization
 - Git for version control
@@ -37,7 +42,9 @@
 - GPU optional but recommended for image processing
 
 #### Local Development
+
 **Setup Process:**
+
 1. Clone repository from version control
 2. Install Python dependencies via requirements.txt
 3. Start Qdrant database using Docker Compose
@@ -45,7 +52,9 @@
 5. Access API documentation at localhost:8002/docs
 
 #### Docker Development
+
 **Container-based Development:**
+
 - Full stack deployment using docker compose
 - Service health verification via health endpoint
 - Isolated development environment
@@ -53,26 +62,32 @@
 ### Configuration Management
 
 #### Environment Variables
+
 The service uses Pydantic Settings for type-safe configuration:
 
 **Vector Service Configuration:**
+
 - VECTOR_SERVICE_HOST: Service host address (default: 0.0.0.0)
 - VECTOR_SERVICE_PORT: Service port (default: 8002)
 - DEBUG: Enable debug mode (default: true)
 
 **Qdrant Database Configuration:**
+
 - QDRANT_URL: Database server URL (default: http://localhost:6333)
 - QDRANT_COLLECTION_NAME: Collection name (default: anime_database)
 
 **Embedding Models Configuration:**
+
 - TEXT_EMBEDDING_MODEL: Text model (default: BAAI/bge-m3)
 - IMAGE_EMBEDDING_MODEL: Image model (default: jinaai/jina-clip-v2)
 
 **Performance Tuning:**
+
 - QDRANT_ENABLE_QUANTIZATION: Enable quantization (default: false)
 - MODEL_WARM_UP: Pre-load models (default: false)
 
 #### Configuration Validation
+
 - **Field Validation**: Pydantic validators ensure valid distance metrics, embedding providers, and log levels
 - **Type Safety**: All configuration fields are strictly typed
 - **Environment Override**: Settings can be overridden via environment variables or `.env` file
@@ -80,21 +95,25 @@ The service uses Pydantic Settings for type-safe configuration:
 ### Key Technical Decisions
 
 #### Multi-Vector Architecture
+
 - **Decision**: Store text, picture, and thumbnail vectors separately in same collection
 - **Rationale**: Enables targeted search types while maintaining data locality
 - **Implementation**: Named vectors in Qdrant with different dimensions
 
 #### Embedding Model Selection
+
 - **BGE-M3**: Chosen for multilingual support, large context window, and state-of-the-art performance
 - **JinaCLIP v2**: Selected for superior vision-language understanding compared to OpenAI CLIP
 - **Model Caching**: HuggingFace cache directory for faster subsequent loads
 
 #### Async Architecture
+
 - **FastAPI Async**: All endpoints are async for non-blocking I/O
 - **Qdrant Async Client**: Ensures database operations don't block request handling
 - **Lifespan Management**: Proper async initialization and cleanup
 
 #### Error Handling Strategy
+
 - **HTTP Exceptions**: Proper status codes with detailed error messages
 - **Validation Errors**: Pydantic automatically handles request validation
 - **Database Errors**: Graceful degradation when Qdrant is unavailable
@@ -103,37 +122,44 @@ The service uses Pydantic Settings for type-safe configuration:
 ### Design Patterns in Use
 
 #### Dependency Injection
+
 - **Settings**: Cached settings instance using `@lru_cache`
 - **Qdrant Client**: Global instance initialized during lifespan
 - **Router Dependencies**: Future support for authentication/authorization
 
 #### Factory Pattern
+
 - **Client Creation**: QdrantClient factory with configuration-based initialization
 - **Embedding Processors**: Factory methods for different embedding providers
 
 #### Repository Pattern
+
 - **Vector Operations**: Abstracted through QdrantClient interface
 - **Data Models**: Pydantic models for request/response validation
 - **Configuration**: Settings class encapsulates all configuration logic
 
 #### Observer Pattern (Future)
+
 - **Health Monitoring**: Health check observers for different components
 - **Metrics Collection**: Performance metric observers
 
 ### Performance Optimization
 
 #### Vector Database Optimization
+
 - **HNSW Parameters**: Configurable `ef_construct` and `M` parameters for index tuning
 - **Quantization**: Optional scalar/binary quantization for memory efficiency
 - **Payload Indexing**: Indexed fields for fast metadata filtering
 - **Memory Mapping**: Configurable threshold for disk vs memory storage
 
 #### Model Performance
+
 - **Model Warming**: Optional pre-loading during service startup
 - **Cache Management**: HuggingFace model cache with configurable directory
 - **Batch Processing**: Efficient batch embedding generation
 
 #### API Performance
+
 - **Async Processing**: Non-blocking request handling
 - **Connection Pooling**: Efficient Qdrant client connection management
 - **Response Compression**: Automatic FastAPI compression
@@ -142,16 +168,19 @@ The service uses Pydantic Settings for type-safe configuration:
 ### Technical Constraints
 
 #### Memory Constraints
+
 - **Model Loading**: BGE-M3 + JinaCLIP v2 require ~4GB RAM combined
 - **Vector Storage**: 384-dim + 2�512-dim vectors per anime = ~5KB per document
 - **Index Memory**: HNSW index requires additional memory proportional to dataset size
 
 #### Performance Constraints
+
 - **Embedding Generation**: Text: ~50ms, Image: ~200ms per item
 - **Vector Search**: ~10ms for 100K vectors with HNSW
 - **Concurrent Limits**: ~100 simultaneous requests before degradation
 
 #### Storage Constraints
+
 - **Vector Size**: 100K anime � 5KB vectors = ~500MB vector storage
 - **Payload Size**: Metadata adds ~2KB per anime document
 - **Index Overhead**: HNSW index adds ~30% storage overhead
@@ -159,23 +188,27 @@ The service uses Pydantic Settings for type-safe configuration:
 ### Development Tools
 
 #### Code Quality
+
 - **Black**: Code formatting (configured in pyproject.toml)
 - **isort**: Import sorting
 - **autoflake**: Unused import removal
 - **mypy**: Static type checking (future)
 
 #### Testing Framework
+
 - **pytest**: Unit and integration testing
 - **pytest-asyncio**: Async test support
 - **httpx**: HTTP client for API testing
 - **pytest-mock**: Mocking for isolated tests
 
 #### API Documentation
+
 - **FastAPI OpenAPI**: Automatic API documentation
 - **Swagger UI**: Interactive API explorer at `/docs`
 - **ReDoc**: Alternative documentation at `/redoc`
 
 #### Monitoring and Observability
+
 - **Structured Logging**: JSON-formatted logs with timestamps
 - **Health Endpoints**: `/health` for service and database status
 - **Error Tracking**: Exception logging with context
@@ -184,18 +217,21 @@ The service uses Pydantic Settings for type-safe configuration:
 ### Deployment Considerations
 
 #### Container Optimization
+
 - **Multi-stage Build**: Separate build and runtime stages
 - **Layer Caching**: Optimized Dockerfile layer ordering
 - **Security**: Non-root user, minimal base image
 - **Size Optimization**: .dockerignore for build context reduction
 
 #### Production Settings
+
 - **Debug Mode**: Disabled in production
 - **Logging**: INFO level with structured format
 - **CORS**: Restricted origins for security
 - **Health Checks**: Docker health check configuration
 
 #### Scaling Considerations
+
 - **Stateless Design**: No local state, suitable for horizontal scaling
 - **Database Sharing**: Multiple instances can share same Qdrant cluster
 - **Load Balancing**: Standard HTTP load balancing compatible
@@ -204,17 +240,20 @@ The service uses Pydantic Settings for type-safe configuration:
 ### Security Considerations
 
 #### API Security
+
 - **Input Validation**: Pydantic models prevent injection attacks
 - **CORS Configuration**: Configurable origin restrictions
 - **Error Information**: Careful error message exposure
 - **Request Limits**: Configurable batch and search limits
 
 #### Data Security
+
 - **No Sensitive Data**: Only public anime metadata stored
 - **TLS Termination**: HTTPS recommended for production
 - **Access Logging**: Request logging for audit trails
 
 #### Infrastructure Security
+
 - **Container Security**: Non-root user, minimal privileges
 - **Network Security**: Internal Qdrant communication
 - **Secret Management**: Environment variable configuration
@@ -225,6 +264,7 @@ The service uses Pydantic Settings for type-safe configuration:
 #### **Comprehensive Architecture Assessment (Phase 2.5)**
 
 **Current State Analysis:**
+
 - Repository contains 65+ AnimeEntry schema fields with comprehensive anime metadata
 - Existing 3-vector architecture: text (384-dim BGE-M3) + picture + thumbnail (512-dim JinaCLIP v2)
 - Proven scale: 38,894+ anime entries in MCP server implementation
@@ -233,7 +273,9 @@ The service uses Pydantic Settings for type-safe configuration:
 **Optimization Strategy for Million-Query Scale:**
 
 #### **14-Vector Semantic Architecture**
+
 **Technical Decision:** Single comprehensive collection with 14 named vectors
+
 - **13 Text Vectors (384-dim BGE-M3 each):** title_vector, character_vector, genre_vector, technical_vector, staff_vector, review_vector, temporal_vector, streaming_vector, related_vector, franchise_vector, episode_vector, sources_vector, identifiers_vector
 - **1 Visual Vector (512-dim JinaCLIP v2):** image_vector (unified picture/thumbnail/images)
 - **Rationale:** Data locality optimization, atomic consistency, reduced complexity
@@ -241,12 +283,14 @@ The service uses Pydantic Settings for type-safe configuration:
 #### **Performance Optimization Configuration**
 
 **Vector Quantization Strategy:**
+
 - **High-Priority Vectors:** Scalar quantization (int8) for semantic-rich vectors (title, character, genre, review, image)
 - **Medium-Priority Vectors:** Scalar quantization with disk storage for moderate-usage vectors
 - **Low-Priority Vectors:** Binary quantization (32x compression) for utility vectors (franchise, episode, sources, identifiers)
 - **Memory Reduction Target:** 75% reduction (15GB → 4GB for 30K anime, 500GB → 125GB for 1M anime)
 
 **HNSW Parameter Optimization:**
+
 ```python
 # Anime-specific HNSW optimization
 high_priority_hnsw = {
@@ -269,6 +313,7 @@ low_priority_hnsw = {
 ```
 
 **Payload Optimization Strategy:**
+
 - **Index Almost Everything (~60+ fields):** All structured data fields for filtering, sorting, and frontend functionality
 - **Payload-Only (No Index):** Only URLs, technical metadata (enrichment_metadata, enhanced_metadata), and possibly large embedded text that's fully vectorized
 - **Computed Fields:** popularity_score, content_richness_score, search_boost_factor, character_count
@@ -276,6 +321,7 @@ low_priority_hnsw = {
 #### **Scalability Projections**
 
 **Performance Targets Validated:**
+
 - **Query Latency:** 100-500ms for complex multi-vector searches (85% improvement from current)
 - **Memory Usage:** ~32GB peak for 1M anime with optimization (vs ~200GB unoptimized)
 - **Throughput:** 300-600 RPS sustained mixed workload (12x improvement)
@@ -285,6 +331,7 @@ low_priority_hnsw = {
 #### **Technical Implementation Patterns**
 
 **Rollback-Safe Implementation Strategy:**
+
 - **Configuration-First:** All optimizations start with settings.py changes
 - **Parallel Methods:** New 14-vector methods alongside existing 3-vector methods
 - **Graceful Fallbacks:** All systems degrade to current functionality on failure
@@ -292,6 +339,7 @@ low_priority_hnsw = {
 - **Atomic Sub-Phases:** 2-4 hour implementation windows with independent testing
 
 **Memory Management Patterns:**
+
 - **Priority-Based Storage:** High-priority vectors in memory, medium on disk-cached, low on disk-only
 - **Connection Pooling:** 50 concurrent connections with health monitoring
 - **Memory Mapping:** 50MB threshold for large collection optimization
@@ -301,6 +349,7 @@ low_priority_hnsw = {
 
 **Customer-Facing Payload Design:**
 Based on comprehensive AnimeEntry schema analysis and 14-vector architecture:
+
 - **Search Results (Fast Loading):** Essential display fields for listing pages
 - **Detail View (Complete):** All 65+ fields for comprehensive anime pages
 - **Filtering (Performance):** ~60+ indexed fields for real-time filtering on all structured data
@@ -308,6 +357,7 @@ Based on comprehensive AnimeEntry schema analysis and 14-vector architecture:
 - **Vector Coverage:** All semantic content embedded in 14 specialized vectors for similarity search
 
 **API Performance Optimization:**
+
 - **Response Compression:** Automatic FastAPI gzip compression
 - **Field Selection:** Dynamic payload field selection based on request type
 - **Batch Operations:** Optimized for 1000-item batch processing
@@ -316,12 +366,14 @@ Based on comprehensive AnimeEntry schema analysis and 14-vector architecture:
 #### **Production Deployment Technical Requirements**
 
 **Infrastructure Specifications:**
+
 - **Minimum System:** 64GB RAM, 16 CPU cores for 1M anime scale
 - **Database Configuration:** Qdrant cluster with 3 replicas, sharding by vector priority
 - **Caching Architecture:** Redis cluster with L1 (in-memory) + L2 (Redis) + L3 (disk) tiers
 - **Network:** 10Gbps for inter-service communication under load
 
 **Monitoring and Observability:**
+
 - **Vector-Specific Metrics:** Per-vector performance, quantization effectiveness, memory allocation
 - **Search Analytics:** Query patterns, latency distribution, cache hit rates
 - **Resource Monitoring:** Memory usage per vector type, CPU utilization patterns
@@ -330,18 +382,21 @@ Based on comprehensive AnimeEntry schema analysis and 14-vector architecture:
 ### Future Technical Enhancements
 
 #### Phase 2.5 Vector Optimization (Current Focus)
+
 - **14-Vector Collection Implementation**: Complete semantic search coverage
 - **Quantization Deployment**: 75% memory reduction with maintained accuracy
 - **Performance Validation**: Million-query scalability testing
 - **Frontend Integration**: Customer-facing payload optimization
 
 #### Phase 3 Production Scale Optimization
+
 - **Redis Caching**: Multi-tier query result caching layer
 - **Prometheus Metrics**: Comprehensive vector database monitoring
 - **Authentication**: JWT-based API authentication with rate limiting
 - **Load Testing**: Million-query performance validation
 
 #### Phase 3.5 Episode Collection Architecture (In Progress)
+
 - **Dual-Collection Design**: Separate episode collection for granular search
 - **BGE-M3 Episode Chunking**: Hierarchical averaging with equal weighting
 - **Cross-Collection Linking**: Slug-based ID strategy for anime-episode relationships
@@ -349,18 +404,21 @@ Based on comprehensive AnimeEntry schema analysis and 14-vector architecture:
 - **Testing and Validation**: Performance impact assessment
 
 #### Phase 4 Enterprise Data Enrichment
+
 - **API Pipeline Optimization**: Concurrent processing for 1,000-10,000 anime/day
 - **AI Enhancement**: 6-stage pipeline with confidence scoring and quality validation
 - **Horizontal Scaling**: Multi-agent coordination for distributed processing
 - **Advanced Analytics**: Processing optimization and predictive scaling
 
 #### Phase 4.1.2 Sparse Vector Integration (Updated for Dual Collections)
+
 - **Metadata Sparse Vectors**: Categorical features (genre, studio, year) with static weights
 - **Behavioral Sparse Vectors**: Future API usage patterns and user preferences
 - **Unified Search Enhancement**: RRF fusion across dense and sparse vectors
 - **Simplified Implementation**: Leveraging dual-collection architecture for cleaner integration
 
 #### Phase 5 Advanced AI Features
+
 - **Model Fine-tuning**: LoRA adaptation for anime-specific improvements
 - **Global Distribution**: CDN integration and multi-region deployment
 - **Advanced Search**: Context-aware search and intelligent query understanding
@@ -371,7 +429,9 @@ Based on comprehensive AnimeEntry schema analysis and 14-vector architecture:
 ### Embedding Quality Validation
 
 #### Model Drift Detection
+
 **Implementation Strategy:**
+
 ```python
 # Historical metrics with rolling windows
 class EmbeddingQualityMonitor:
@@ -383,12 +443,15 @@ class EmbeddingQualityMonitor:
 ```
 
 **Key Metrics:**
+
 - **Distribution Shift Detection**: Wasserstein distance across BGE-M3 1024 dimensions
 - **Semantic Coherence**: Genre clustering purity, studio visual consistency
 - **Trend Analysis**: 7-day and 30-day rolling windows with statistical significance testing
 
 #### Cross-Modal Validation
+
 **Contrastive Testing Protocol:**
+
 ```python
 # Same anime text+image should be more similar than random pairs
 positive_similarities = cosine_similarity(text_embedding, same_anime_image)
@@ -401,14 +464,18 @@ assert mannwhitneyu(positive_similarities, negative_similarities).pvalue < 0.001
 ### Search Quality Validation
 
 #### Gold Standard Dataset
+
 **Expert-Curated Test Cases (500 queries):**
+
 - **Genre Categories**: Shounen, shoujo, seinen, josei with character archetypes
 - **Studio Styles**: Visual consistency validation across production houses
 - **Temporal Queries**: Era-specific anime and sequel/franchise relationships
 - **Edge Cases**: Ambiguous queries and boundary conditions
 
 #### Hard Negative Sampling
+
 **Critical Validation Tests:**
+
 ```python
 hard_negatives = {
     "genre_confusion": {
@@ -420,6 +487,7 @@ hard_negatives = {
 ```
 
 #### Automated Metrics Pipeline
+
 - **Precision@K, Recall@K, NDCG**: Traditional relevance metrics
 - **Mean Reciprocal Rank (MRR)**: Critical for "find specific anime" queries
 - **Semantic Consistency**: Within-result coherence measurement
@@ -427,7 +495,9 @@ hard_negatives = {
 ### A/B Testing Framework
 
 #### User Simulation Models
+
 **Advanced Click Modeling:**
+
 ```python
 class CascadeClickModel:
     """Users scan top-to-bottom, click first satisfying result"""
@@ -438,6 +508,7 @@ class DependentClickModel:
 ```
 
 #### Search Algorithm Comparison
+
 - **Statistical Significance Testing**: Proper experimental design
 - **Engagement Metrics**: CTR, satisfaction scores, dwell time simulation
 - **Performance Analysis**: Response time vs quality trade-offs
@@ -447,7 +518,9 @@ class DependentClickModel:
 ### Information-Theoretic Feature Weighting
 
 #### Feature Discriminative Power Analysis
+
 **Optimized Weight Configuration:**
+
 ```python
 optimized_weights = {
     "genre": 1.0,           # Strong semantic signal
@@ -460,7 +533,9 @@ optimized_weights = {
 ```
 
 #### Adaptive Weight Learning
+
 **From User Interaction Data:**
+
 ```python
 # Learn from click logs using L1-regularized logistic regression
 def learn_weights_from_clicks(click_data):
@@ -473,7 +548,9 @@ def learn_weights_from_clicks(click_data):
 ### Behavioral Sparse Vectors
 
 #### Implicit Feedback Processing
+
 **Sophisticated Signal Weighting:**
+
 ```python
 feedback_weights = {
     # Positive signals
@@ -490,7 +567,9 @@ feedback_weights = {
 ```
 
 #### Collaborative Filtering Integration
+
 **"Users who liked this also liked" features:**
+
 ```python
 def add_collaborative_features(anime_id, user_interactions):
     similar_users = find_similar_users(user_interactions)
@@ -505,7 +584,9 @@ def add_collaborative_features(anime_id, user_interactions):
 ### Advanced Fusion Algorithms
 
 #### Learnable Fusion Implementation
+
 **Context-Aware Weight Adaptation:**
+
 ```python
 context_weights = {
     "exploratory": {"dense": 0.8, "sparse_meta": 0.2, "sparse_behavior": 0.0},
@@ -515,7 +596,9 @@ context_weights = {
 ```
 
 #### Neural Fusion Networks
+
 **For Large-Scale Systems:**
+
 ```python
 class NeuralFusionNetwork(nn.Module):
     def __init__(self):
@@ -530,7 +613,9 @@ class NeuralFusionNetwork(nn.Module):
 ### Recommendation Quality Evaluation
 
 #### Diversity and Personalization Metrics
+
 **Multi-Dimensional Diversity Calculation:**
+
 ```python
 def calculate_anime_diversity(anime_i, anime_j):
     return (
@@ -542,7 +627,9 @@ def calculate_anime_diversity(anime_i, anime_j):
 ```
 
 #### Anti-Pattern Detection
+
 **"Shounen + MAPPA" Collapse Prevention:**
+
 ```python
 def detect_recommendation_collapse(recommendations):
     genre_entropy = calculate_genre_distribution_entropy(recommendations)
@@ -553,7 +640,9 @@ def detect_recommendation_collapse(recommendations):
 ```
 
 #### Personalization Coverage Analysis
+
 **Inter-Group Diversity Measurement:**
+
 ```python
 def personalization_coverage(recommendations, user_profiles):
     profile_groups = cluster_user_profiles(user_profiles)
@@ -571,9 +660,11 @@ def personalization_coverage(recommendations, user_profiles):
 ### Implementation Architecture
 
 #### Extending Existing 14-Vector Collection (CHOSEN APPROACH)
+
 **Rationale**: Preserve 38K+ anime entries, maintain data locality, unified search capabilities.
 
 **Collection Extension Strategy:**
+
 ```python
 # src/vector/qdrant_client.py - Modify existing collection creation
 def _create_multi_vector_config(self) -> Dict:
@@ -606,6 +697,7 @@ ENABLE_SPARSE_VECTORS = self.settings.enable_sparse_vectors  # Default: False
 ```
 
 **Zero-Downtime Migration:**
+
 ```python
 async def migrate_collection_with_sparse_vectors(self):
     """Add sparse vectors to existing collection without data loss"""
@@ -633,6 +725,7 @@ async def migrate_collection_with_sparse_vectors(self):
 ```
 
 **Static Weight Implementation:**
+
 ```python
 # src/vector/sparse_processor.py - New module for sparse vector generation
 class AnimeStaticSparseProcessor:
@@ -703,6 +796,7 @@ class AnimeStaticSparseProcessor:
 ```
 
 **Unified Search Integration:**
+
 ```python
 # src/vector/qdrant_client.py - Extend existing search methods
 async def search_with_sparse_fusion(
@@ -782,7 +876,9 @@ def _generate_query_sparse_vector(self, query: str) -> SparseVector:
 ```
 
 #### Real-Time Adaptation
+
 **Online Learning Framework:**
+
 ```python
 def online_weight_adaptation(recent_feedback_window=7):
     recent_data = get_recent_interactions(recent_feedback_window)
@@ -796,12 +892,15 @@ def online_weight_adaptation(recent_feedback_window=7):
 ### Performance Targets
 
 #### Validation Framework Benchmarks
+
 - **Embedding Quality**: >0.75 genre clustering, >0.70 studio consistency
 - **Search Quality**: >0.80 Precision@5, >0.75 NDCG, <0.001 statistical significance
 - **Recommendation Quality**: >0.70 diversity, >0.30 personalization coverage
 
 #### Sparse Vector Performance Benchmarks
+
 **Current Baseline (Dense-Only 14-Vector Architecture):**
+
 ```python
 # Performance metrics from existing 38K+ anime dataset
 baseline_performance = {
@@ -817,6 +916,7 @@ baseline_performance = {
 ```
 
 **Target Performance with Sparse Vector Integration:**
+
 ```python
 # Projected performance after Phase 4 implementation
 sparse_enhanced_performance = {
@@ -845,6 +945,7 @@ sparse_enhanced_performance = {
 ```
 
 **Integration Performance Validation:**
+
 ```python
 # Phase 5 integration benchmarks with existing codebase
 integration_benchmarks = {
@@ -867,6 +968,7 @@ integration_benchmarks = {
 ```
 
 **Performance Testing Framework:**
+
 ```python
 # Comprehensive benchmarking for validation
 class PerformanceBenchmarkSuite:
@@ -958,7 +1060,8 @@ class PerformanceBenchmarkSuite:
 ```
 
 **Real-World Performance Validation:**
-```python
+
+````python
 # Continuous performance monitoring for production deployment
 class ProductionPerformanceMonitor:
     def __init__(self):
@@ -1012,11 +1115,12 @@ User Query → LangGraph Workflow → Intent Analysis → Vector Selection → T
 3. Vector Selector: Intelligent vector and weight selection
 4. Tool Router: smart_search_tool vs smart_recommendation_tool
 5. Result Formatter: Unified response structure
-```
+````
 
 ### **Technical Implementation**
 
 #### **1. LangGraph Workflow Architecture**
+
 ```python
 # src/ai/langgraph_workflow.py
 from langgraph import StateGraph, END
@@ -1063,6 +1167,7 @@ def create_unified_query_workflow() -> StateGraph:
 ```
 
 #### **2. LLM Intelligence System**
+
 ```python
 # src/ai/query_analyzer.py
 class SmartQueryAnalyzer:
@@ -1178,6 +1283,7 @@ class SmartQueryAnalyzer:
 ```
 
 #### **3. Enhanced Tool Methods**
+
 ```python
 # src/vector/qdrant_client.py - NEW methods
 async def smart_search_tool(
@@ -1275,6 +1381,7 @@ def _format_smart_search_results(
 ```
 
 #### **4. Unified API Endpoint**
+
 ```python
 # src/api/smart_query.py - NEW router
 from langgraph import CompiledGraph
@@ -1379,6 +1486,7 @@ async def unified_query_endpoint(request: UnifiedQueryRequest):
 ### **Performance Considerations**
 
 #### **Response Time Breakdown**
+
 ```python
 # Expected performance profile
 smart_query_latency = {
@@ -1401,6 +1509,7 @@ optimization_strategies = {
 ```
 
 #### **Resource Requirements**
+
 ```python
 # Additional resource usage
 resource_overhead = {
@@ -1422,6 +1531,7 @@ cost_analysis = {
 ### **Error Handling and Fallbacks**
 
 #### **Graceful Degradation Strategy**
+
 ```python
 # Multi-level fallback system
 fallback_hierarchy = [
@@ -1445,6 +1555,7 @@ fallback_conditions = {
 ### **Monitoring and Observability**
 
 #### **Smart Query Metrics**
+
 ```python
 # Key performance indicators
 smart_query_metrics = {
@@ -1476,6 +1587,7 @@ monitoring_integration = {
 ### **Testing Strategy**
 
 #### **Comprehensive Test Suite**
+
 ```python
 # Test categories for smart query functionality
 test_coverage = {
@@ -1505,6 +1617,7 @@ test_coverage = {
 ### **Deployment Strategy**
 
 #### **Feature Flag Rollout**
+
 ```python
 # Gradual deployment approach
 rollout_strategy = {
@@ -1528,6 +1641,7 @@ feature_flags = {
 ### **Future Enhancements**
 
 #### **Advanced Features (Post-MVP)**
+
 ```python
 # Planned enhancements after initial implementation
 future_features = {
@@ -1539,4 +1653,8 @@ future_features = {
     "advanced_fusion": "Neural fusion networks for vector combination",
 }
 ```
+
 ```
+
+```
+
