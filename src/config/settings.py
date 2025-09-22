@@ -1,7 +1,7 @@
 """Vector Service Configuration Settings."""
 
 from functools import lru_cache
-from typing import List, Literal, Optional
+from typing import Dict, List, Literal, Optional
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -48,7 +48,7 @@ class Settings(BaseSettings):
     )
 
     # 14-Vector Semantic Architecture Configuration
-    vector_names: dict = Field(
+    vector_names: Dict[str, int] = Field(
         default={
             "title_vector": 1024,
             "character_vector": 1024,
@@ -69,7 +69,7 @@ class Settings(BaseSettings):
     )
 
     # Vector Priority Classification for Optimization
-    vector_priorities: dict = Field(
+    vector_priorities: Dict[str, List[str]] = Field(
         default={
             "high": [
                 "title_vector",
@@ -201,7 +201,7 @@ class Settings(BaseSettings):
     )
 
     # Advanced Quantization Configuration per Vector Priority
-    quantization_config: dict = Field(
+    quantization_config: Dict[str, Dict[str, object]] = Field(
         default={
             "high": {"type": "scalar", "scalar_type": "int8", "always_ram": True},
             "medium": {"type": "scalar", "scalar_type": "int8", "always_ram": False},
@@ -220,7 +220,7 @@ class Settings(BaseSettings):
     )
 
     # Anime-Optimized HNSW Parameters per Vector Priority
-    hnsw_config: dict = Field(
+    hnsw_config: Dict[str, Dict[str, int]] = Field(
         default={
             "high": {"ef_construct": 256, "m": 64, "ef": 128},
             "medium": {"ef_construct": 200, "m": 48, "ef": 64},
@@ -247,32 +247,34 @@ class Settings(BaseSettings):
     qdrant_enable_payload_indexing: bool = Field(
         default=True, description="Enable payload field indexing"
     )
-    qdrant_indexed_payload_fields: List[str] = Field(
-        default=[
+    qdrant_indexed_payload_fields: Dict[str, str] = Field(
+        default={
             # Core searchable fields
-            "id",
-            "title",
-            "type",
-            "status",
-            "episodes",
-            "rating",
-            "nsfw",
+            "id": "keyword",
+            "title": "keyword",           # Exact title matching
+            "title_text": "text",        # Full-text title search
+            "type": "keyword",
+            "status": "keyword",
+            "episodes": "integer",
+            "rating": "keyword",
+            "nsfw": "bool",
             # Categorical fields
-            "genres",
-            "tags",
-            "demographics",
-            "content_warnings",
-            # Temporal fields
-            "anime_season",
-            "duration",
+            "genres": "keyword",
+            "tags": "keyword",
+            "demographics": "text",       # Descriptive text content
+            "content_warnings": "text",   # Descriptive text content
+            # Temporal fields (flattened)
+            "anime_season.year": "integer",
+            "anime_season.season": "keyword",
+            "duration": "integer",        # Episode duration in seconds
             # Platform fields
-            "sources",
+            "sources": "keyword",
             # Statistics for numerical filtering
-            "statistics",
-            "score",
+            "statistics": "keyword",      # Keep as-is for now
+            "score.median": "float",      # Representative score for range queries
             # Note: enrichment_metadata intentionally excluded (non-indexed operational data)
-        ],
-        description="Payload fields to index for search filtering (excludes operational metadata)",
+        },
+        description="Payload fields with their types for optimized indexing (excludes operational metadata)",
     )
 
     # API Configuration

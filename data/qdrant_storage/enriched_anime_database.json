@@ -8170,7 +8170,8 @@
         "year": 2025
       },
       "duration": {
-        
+        "value": 37,
+        "unit": "SECONDS"
       },
       "external_links": {
         "officialsite": "https://mahouka.jp/",

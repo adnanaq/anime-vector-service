@@ -411,14 +411,14 @@ class QdrantClient:
         Non-indexed operational data:
         - enrichment_metadata: Development/debugging data not needed for search
         """
-        indexed_fields = getattr(self.settings, "qdrant_indexed_payload_fields", [])
+        indexed_fields = getattr(self.settings, "qdrant_indexed_payload_fields", {})
         if not indexed_fields:
             logger.info("No payload indexing configured")
             return
 
         try:
             logger.info(
-                f"Setting up payload indexing for {len(indexed_fields)} searchable fields"
+                f"Setting up payload indexing for {len(indexed_fields)} searchable fields with optimized types"
             )
             logger.info(
                 "Indexed fields enable fast filtering on: core metadata, genres, temporal data, platform stats"
@@ -427,20 +427,35 @@ class QdrantClient:
                 "Non-indexed fields (enrichment_metadata) stored for debugging but don't impact search performance"
             )
 
-            for field in indexed_fields:
-                # Create index for each field to optimize filtering
+            # Map string types to PayloadSchemaType enums
+            type_mapping = {
+                "keyword": PayloadSchemaType.KEYWORD,
+                "integer": PayloadSchemaType.INTEGER,
+                "float": PayloadSchemaType.FLOAT,
+                "bool": PayloadSchemaType.BOOL,
+                "text": PayloadSchemaType.TEXT,
+                "geo": PayloadSchemaType.GEO,
+                "datetime": PayloadSchemaType.DATETIME,
+                "uuid": PayloadSchemaType.UUID,
+            }
+
+            for field_name, field_type in indexed_fields.items():
+                # Get the appropriate schema type
+                schema_type = type_mapping.get(field_type.lower(), PayloadSchemaType.KEYWORD)
+
+                # Create index for each field with its specific type
                 self.client.create_payload_index(
                     collection_name=self.collection_name,
-                    field_name=field,
-                    field_schema=PayloadSchemaType.KEYWORD,  # Most anime fields are keywords/strings
+                    field_name=field_name,
+                    field_schema=schema_type,
                 )
-                logger.debug(f"✓ Created payload index for searchable field: {field}")
+                logger.debug(f"✓ Created {field_type.upper()} index for field: {field_name}")
 
             logger.info(
-                f"Successfully indexed {len(indexed_fields)} searchable payload fields"
+                f"Successfully indexed {len(indexed_fields)} searchable payload fields with optimized types"
             )
             logger.info(
-                "Payload optimization complete: fast filtering enabled, operational metadata preserved"
+                "Payload optimization complete: type-specific indexing enabled for better filtering performance"
             )
 
         except Exception as e:

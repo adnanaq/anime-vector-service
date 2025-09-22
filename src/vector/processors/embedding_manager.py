@@ -292,11 +292,46 @@ class MultiVectorEmbeddingManager:
             if anime.enrichment_metadata:
                 payload["enrichment_metadata"] = anime.enrichment_metadata.model_dump()
 
+            # Add flattened fields for optimized indexing
+            self._add_flattened_fields(payload, anime)
+
             return payload
 
         except Exception as e:
             logger.error(f"Payload generation failed: {e}")
             return {"error": str(e)}
+
+    def _add_flattened_fields(self, payload: Dict[str, Any], anime: AnimeEntry) -> None:
+        """Add flattened fields for optimized Qdrant indexing.
+
+        Creates flattened fields that enable efficient filtering:
+        - anime_season.year/season for temporal filtering
+        - score.median for numerical score filtering
+        - title_text for full-text title search
+
+        Args:
+            payload: Existing payload dictionary to modify
+            anime: AnimeEntry with source data
+        """
+        try:
+            # Flatten anime_season for temporal filtering
+            if anime.anime_season:
+                payload["anime_season.year"] = anime.anime_season.year
+                payload["anime_season.season"] = anime.anime_season.season
+
+            # Flatten score for numerical filtering
+            if anime.score and anime.score.median is not None:
+                payload["score.median"] = anime.score.median
+
+            # Add title_text field for full-text search (duplicate of title)
+            if anime.title:
+                payload["title_text"] = anime.title
+
+            logger.debug("Added flattened fields for optimized indexing")
+
+        except Exception as e:
+            logger.warning(f"Failed to add flattened fields: {e}")
+            # Don't fail payload generation if flattening fails
 
     def _generate_metadata(
         self, vectors: Dict[str, List[float]], anime: AnimeEntry
