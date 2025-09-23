@@ -225,8 +225,8 @@ Examples:
     parser.add_argument(
         "--num-epochs",
         type=int,
-        default=3,
-        help="Number of training epochs (default: 3)"
+        default=15,
+        help="Number of training epochs (default: 15 for 90%+ accuracy)"
     )
 
     # LoRA configuration
