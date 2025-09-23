@@ -57,6 +57,10 @@ class TextProcessor:
             if self.settings.model_warm_up:
                 self._warm_up_model()
 
+            # Enhanced genre model (loaded separately if available)
+            self._enhanced_genre_model = None
+            self._try_load_enhanced_genre_model()
+
             logger.info(
                 f"Initialized modern text processor with {self.provider} model: {self.model_name}"
             )
@@ -640,7 +644,12 @@ class TextProcessor:
                             )
                         else:
                             # Standard single embedding
-                            embedding = self.encode_text(processed_text)
+                            if vector_name == "genre_vector" and self._enhanced_genre_model is not None:
+                                # Use enhanced model for genre_vector
+                                embedding = self._get_enhanced_genre_embedding(processed_text)
+                            else:
+                                # Standard BGE-M3 embedding
+                                embedding = self.encode_text(processed_text)
 
                         if embedding:
                             text_embeddings[vector_name] = embedding
@@ -771,6 +780,58 @@ class TextProcessor:
             processed = processed.replace("External:", "External Platform:")
 
         return processed
+
+    def _try_load_enhanced_genre_model(self) -> None:
+        """Try to load enhanced genre model if available."""
+        try:
+            from pathlib import Path
+            model_path = Path("models/genre_enhanced/genre_model")
+
+            if model_path.exists():
+                from ..enhancement.genre_enhancement import GenreEnhancementFinetuner
+
+                # Load the enhanced model
+                self._enhanced_genre_model = GenreEnhancementFinetuner(self.settings, self)
+                self._enhanced_genre_model.load_model(model_path)
+
+                logger.info("✅ Enhanced genre model loaded successfully - genre_vector will use improved embeddings")
+            else:
+                logger.info("ℹ️ No enhanced genre model found - using standard BGE-M3 for genre_vector")
+
+        except Exception as e:
+            logger.warning(f"Failed to load enhanced genre model: {e} - falling back to standard BGE-M3")
+            self._enhanced_genre_model = None
+
+    def _get_enhanced_genre_embedding(self, text: str) -> Optional[List[float]]:
+        """Get enhanced embedding for genre text using fine-tuned model."""
+        try:
+            if self._enhanced_genre_model is None:
+                return None
+
+            # First get the base BGE-M3 embedding
+            base_embedding = self._encode_text_with_model(text, self.model)
+            if base_embedding is None:
+                return None
+
+            # Convert to numpy array
+            import numpy as np
+            if isinstance(base_embedding, list):
+                base_embedding = np.array(base_embedding)
+
+            # Get enhanced embedding from fine-tuned model
+            enhanced_embedding = self._enhanced_genre_model.get_enhanced_embedding(base_embedding)
+
+            if enhanced_embedding is not None:
+                # Convert numpy array to list
+                if isinstance(enhanced_embedding, np.ndarray):
+                    return enhanced_embedding.tolist()
+                return enhanced_embedding
+
+            return None
+
+        except Exception as e:
+            logger.warning(f"Failed to get enhanced genre embedding: {e} - falling back to standard BGE-M3")
+            return None
 
     def _get_zero_embedding(self) -> List[float]:
         """Get zero embedding vector for empty/failed content."""

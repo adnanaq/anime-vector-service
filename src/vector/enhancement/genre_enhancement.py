@@ -656,6 +656,8 @@ class GenreEnhancementFinetuner:
             "optimizer_state_dict": (
                 self.optimizer.state_dict() if self.optimizer is not None else {}
             ),
+            "input_dim": self.enhancement_model.input_dim,  # Save input dimension
+            "hidden_dim": self.enhancement_model.hidden_dim,  # Save hidden dimension
             "num_genres": self.num_genres,
             "genre_vocab": self.genre_vocab,
             "theme_vocab": self.theme_vocab,
@@ -689,24 +691,28 @@ class GenreEnhancementFinetuner:
         self.mood_vocab = model_state["mood_vocab"]
         self.is_trained = model_state["is_trained"]
 
+        # Get saved dimensions or use defaults
+        input_dim = model_state.get("input_dim", 384)
+        hidden_dim = model_state.get("hidden_dim", 512)
+
         # Recreate model with correct configuration
         self.enhancement_model = GenreEnhancementModel(
-            input_dim=384,  # Default dimension
+            input_dim=input_dim,
             num_genres=self.num_genres,
-            hidden_dim=512,
+            hidden_dim=hidden_dim,
             dropout=0.1,
         )
 
         # Update auxiliary classifiers
         if self.enhancement_model is not None:
             self.enhancement_model.theme_classifier = nn.Linear(
-                384, len(self.theme_vocab)
+                input_dim, len(self.theme_vocab)
             )
             self.enhancement_model.target_classifier = nn.Linear(
-                384, len(self.target_vocab)
+                input_dim, len(self.target_vocab)
             )
             self.enhancement_model.mood_classifier = nn.Linear(
-                384, len(self.mood_vocab)
+                input_dim, len(self.mood_vocab)
             )
 
             # Load state dict

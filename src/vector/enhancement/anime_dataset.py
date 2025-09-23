@@ -570,24 +570,33 @@ class AnimeDataset(Dataset):
                 if genre in self.genre_vocab:
                     genre_labels[self.genre_vocab[genre]] = 1.0
 
+        # Handle None embeddings by creating zero tensors for consistent collation
+        if text_embedding is not None:
+            text_embedding_tensor = torch.tensor(text_embedding)
+        else:
+            # Create zero tensor with expected BGE-M3 dimensions (1024)
+            text_embedding_tensor = torch.zeros(1024)
+
+        if image_embedding is not None:
+            image_embedding_tensor = torch.tensor(image_embedding)
+        else:
+            # Create zero tensor with expected OpenCLIP dimensions (768)
+            image_embedding_tensor = torch.zeros(768)
+
         return {
             "anime_id": sample.anime_id,
             "title": sample.title,
             "text": sample.text,
-            "text_embedding": (
-                torch.tensor(text_embedding) if text_embedding is not None else None
-            ),
-            "image_embedding": (
-                torch.tensor(image_embedding) if image_embedding is not None else None
-            ),
+            "text_embedding": text_embedding_tensor,
+            "image_embedding": image_embedding_tensor,
             "character_labels": character_labels,
             "art_style_label": art_style_label,
             "genre_labels": genre_labels,
             "metadata": {
-                "studio": sample.studio,
-                "year": sample.year,
-                "type": sample.type,
-                "tags": sample.tags,
+                "studio": sample.studio if sample.studio is not None else "unknown",
+                "year": sample.year if sample.year is not None else 0,
+                "type": sample.type if sample.type is not None else "unknown",
+                "tags": sample.tags if sample.tags is not None else [],
             },
         }
 

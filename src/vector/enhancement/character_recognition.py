@@ -195,7 +195,7 @@ class CharacterRecognitionFinetuner:
 
         # Load base model (using text processor's model as base)
         try:
-            from .text_processor import TextProcessor
+            from ..processors.text_processor import TextProcessor
 
             text_processor = TextProcessor(self.settings)
 

@@ -2,9 +2,9 @@
 
 ## Current Work Focus
 
-**Today's Focus**: Phase 3.0 Semantic Validation Framework - Ensuring 14-vector search returns semantically relevant results
+**Today's Focus**: Phase 3.0 Genre Enhancement Training - Fix genre vector semantic accuracy from 60% to 90%+ precision
 
-**Active Task**: Phase 3.0.1 14-Vector System Validation - Validate search quality and semantic relevance (0% Complete)
+**Active Task**: Phase 3.0.1a CLI Training Script Entry Point - Create train_genre_enhancement.py (0% Complete)
 
 **Previous Achievement**: ✅ COMPLETED Phase 2.5 (100%) - Million-Query Vector Optimization
 
@@ -13,9 +13,34 @@
 - ✅ Multi-vector search architecture (5 new search methods)
 - ✅ Performance optimization (quantization, HNSW tuning, payload indexing)
 
-**Current Priority**: Semantic validation framework to ensure search results are actually relevant to users
+**Critical Quality Issue**: Genre vector search shows 60% precision vs 90%+ industry standard
 
-### Phase 3.0.1: 14-Vector System Validation (CURRENT SESSION)
+**Root Cause**: BGE-M3 creates false positives from theme descriptions ("Drama is more serious than humorous" triggers comedy) and semantic drift (entertainment content clustering with comedy)
+
+### Phase 3.0.1: Genre Enhancement Training Infrastructure Setup (CURRENT SESSION)
+
+**Problem**: Genre vector semantic accuracy at 60% vs 90%+ industry standard
+**Solution**: Domain-specific fine-tuning using existing 85% complete infrastructure in `src/vector/enhancement/`
+
+- [ ] **CLI Training Script Entry Point** (Est: 2 hours) - CURRENT TASK
+  - [ ] Create `train_genre_enhancement.py` main entry point
+  - [ ] Integrate with existing `src/vector/enhancement/anime_fine_tuning.py`
+  - [ ] Add command-line argument parsing for training configuration
+  - [ ] Test CLI script integration with UV environment
+
+- [ ] **Data Pipeline Validation** (Est: 2 hours)
+  - [ ] Verify `data/qdrant_storage/enriched_anime_database.json` compatibility with `AnimeDataset`
+  - [ ] Test data structure parsing (28 anime with genres, tags, themes as dictionaries)
+  - [ ] Validate ground truth extraction for genre classification
+  - [ ] Test data preprocessing pipeline integration
+
+- [ ] **Training Configuration Setup** (Est: 2 hours)
+  - [ ] Configure LoRA fine-tuning parameters (rank=16, alpha=32, dropout=0.1)
+  - [ ] Set up multi-task learning targets (genres, themes, demographics, mood)
+  - [ ] Test training loop initialization and GPU/CPU detection
+  - [ ] Validate model loading and enhancement architecture integration
+
+### Phase 3.1.1: 14-Vector System Validation (STILL NEEDED)
 
 - [ ] **Per-Vector Search Quality Testing**: Test each of 14 vectors individually
   - [ ] title_vector: "Studio Ghibli" → Ghibli films in results

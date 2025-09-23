@@ -102,7 +102,7 @@ class AnimeFineTuner:
         logger.info(f"Preparing anime dataset from {data_path}")
         try:
             with open(data_path, "r", encoding="utf-8") as f:
-                anime_data = json.load(f)
+                enriched_data = json.load(f)
         except FileNotFoundError:
             logger.error(f"Data file not found at path: {data_path}")
             return None
@@ -113,6 +113,17 @@ class AnimeFineTuner:
             logger.error(
                 f"An unexpected error occurred while preparing the dataset: {e}"
             )
+            return None
+
+        # Extract anime list from enriched JSON structure
+        if isinstance(enriched_data, dict) and 'data' in enriched_data:
+            anime_data = enriched_data['data']  # Extract nested anime list
+            logger.info(f"Extracted {len(anime_data)} anime entries from enriched database")
+        elif isinstance(enriched_data, list):
+            anime_data = enriched_data  # Direct anime list
+            logger.info(f"Using direct anime list with {len(anime_data)} entries")
+        else:
+            logger.error(f"Unexpected data format. Expected dict with 'data' key or list, got {type(enriched_data)}")
             return None
 
         # Create dataset
@@ -148,20 +159,26 @@ class AnimeFineTuner:
         """Setup models for fine-tuning with LoRA."""
         logger.info("Setting up models for fine-tuning")
 
-        # Setup character recognition model
-        self.character_finetuner.setup_lora_model(
-            self.create_lora_config(TaskType.FEATURE_EXTRACTION), self.config
-        )
+        # Setup character recognition model (only if weight > 0)
+        if self.config.character_weight > 0:
+            self.character_finetuner.setup_lora_model(
+                self.create_lora_config(TaskType.FEATURE_EXTRACTION), self.config
+            )
 
-        # Setup art style classification model
-        self.art_style_classifier.setup_lora_model(
-            self.create_lora_config(TaskType.IMAGE_CLASSIFICATION), self.config
-        )
+        # Setup art style classification model (only if weight > 0)
+        if self.config.art_style_weight > 0:
+            self.art_style_classifier.setup_lora_model(
+                self.create_lora_config(TaskType.SEQ_CLS), self.config
+            )
 
-        # Setup genre enhancement model
-        self.genre_enhancer.setup_lora_model(
-            self.create_lora_config(TaskType.FEATURE_EXTRACTION), self.config
-        )
+        # Setup genre enhancement model (primary focus)
+        if self.config.genre_weight > 0:
+            self.genre_enhancer.setup_lora_model(
+                self.create_lora_config(TaskType.FEATURE_EXTRACTION), self.config
+            )
+            # Prepare the model with correct vocabulary sizes from dataset
+            if hasattr(self, '_current_dataset'):
+                self.genre_enhancer.prepare_for_training(self._current_dataset)
 
     def train_multi_task(self, dataset: AnimeDataset) -> Dict[str, Any]:
         """Train all fine-tuning tasks simultaneously.
@@ -174,13 +191,33 @@ class AnimeFineTuner:
         """
         logger.info("Starting multi-task fine-tuning")
 
-        # Create data loader
+        # Store dataset for model setup
+        self._current_dataset = dataset
+
+        # Custom collate function to handle variable-length metadata
+        def collate_fn(batch):
+            """Custom collate function that handles variable-length tags."""
+            from torch.utils.data._utils.collate import default_collate
+
+            # Separate metadata from other fields
+            metadata_list = [item.pop('metadata') for item in batch]
+
+            # Collate the rest normally
+            collated = default_collate(batch)
+
+            # Add metadata back as a list (not collated)
+            collated['metadata'] = metadata_list
+
+            return collated
+
+        # Create data loader with custom collate function
         dataloader = DataLoader(
             dataset,
             batch_size=self.config.batch_size,
             shuffle=True,
-            num_workers=4,
-            pin_memory=True,
+            num_workers=0,  # Disable multiprocessing to avoid collation issues
+            pin_memory=False,  # Disable pin_memory when no GPU
+            collate_fn=collate_fn,
         )
 
         # Setup models
@@ -235,24 +272,29 @@ class AnimeFineTuner:
         num_batches = 0
 
         for batch_idx, batch in enumerate(dataloader):
-            # Character recognition task
-            char_loss = self.character_finetuner.train_step(batch)
-            character_loss += char_loss
+            batch_loss = 0.0
+            char_loss = 0.0
+            style_loss = 0.0
+            genre_loss_val = 0.0
 
-            # Art style classification task
-            style_loss = self.art_style_classifier.train_step(batch)
-            art_style_loss += style_loss
+            # Character recognition task (only if weight > 0)
+            if self.config.character_weight > 0:
+                char_loss = self.character_finetuner.train_step(batch)
+                character_loss += char_loss
+                batch_loss += char_loss * self.config.character_weight
 
-            # Genre enhancement task
-            genre_loss_val = self.genre_enhancer.train_step(batch)
-            genre_loss += genre_loss_val
+            # Art style classification task (only if weight > 0)
+            if self.config.art_style_weight > 0:
+                style_loss = self.art_style_classifier.train_step(batch)
+                art_style_loss += style_loss
+                batch_loss += style_loss * self.config.art_style_weight
 
-            # Combined loss
-            batch_loss = (
-                char_loss * self.config.character_weight
-                + style_loss * self.config.art_style_weight
-                + genre_loss_val * self.config.genre_weight
-            )
+            # Genre enhancement task (primary focus)
+            if self.config.genre_weight > 0:
+                genre_loss_val = self.genre_enhancer.train_step(batch)
+                genre_loss += genre_loss_val
+                batch_loss += genre_loss_val * self.config.genre_weight
+
             total_loss += batch_loss
             num_batches += 1
 
@@ -284,10 +326,13 @@ class AnimeFineTuner:
             output_dir = Path(self.config.model_output_dir)
             output_dir.mkdir(parents=True, exist_ok=True)
 
-            # Save individual models
-            self.character_finetuner.save_model(output_dir / "character_model")
-            self.art_style_classifier.save_model(output_dir / "art_style_model")
-            self.genre_enhancer.save_model(output_dir / "genre_model")
+            # Save individual models (only if they were trained)
+            if self.config.character_weight > 0:
+                self.character_finetuner.save_model(output_dir / "character_model")
+            if self.config.art_style_weight > 0:
+                self.art_style_classifier.save_model(output_dir / "art_style_model")
+            if self.config.genre_weight > 0:
+                self.genre_enhancer.save_model(output_dir / "genre_model")
 
             # Save configuration
             config_path = output_dir / "fine_tuning_config.json"

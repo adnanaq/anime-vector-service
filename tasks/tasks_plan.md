@@ -362,9 +362,85 @@ Phase 2.5 (95% Complete) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 - **Memory Usage**: ~8GB RAM during search operations
 - **Semantic Coverage**: 100% of enriched dataset fields searchable
 
-### 🔄 Phase 3: Semantic Validation Framework - IN PROGRESS (CURRENT PRIORITY: Ensure Search Quality)
+### 🔄 Phase 3: Genre Enhancement Training - IN PROGRESS (CURRENT PRIORITY: Fix 60% Precision Issue)
 
-**Rationale**: Validate that 14-vector search returns semantically relevant results, not just technically correct ones. Essential before any new features to establish quality baseline.
+**Rationale**: Fix genre vector semantic accuracy from 60% to 90%+ precision through BGE-M3 domain-specific fine-tuning. Critical quality issue blocking semantic search effectiveness.
+
+#### **Sub-Phase 3.0: Genre Enhancement Implementation** (Rollback-Safe: LoRA fine-tuning only)
+
+**Problem Context**: Genre vector search shows 60% precision vs 90%+ industry standard. BGE-M3 creates false positives from theme descriptions ("Drama is more serious than humorous" triggers comedy) and semantic drift (entertainment clustering with comedy).
+
+**Solution**: Domain-specific fine-tuning using existing 85% complete infrastructure in `src/vector/enhancement/` with enriched JSON database as ground truth.
+
+**Sub-Phase 3.0.1: Training Infrastructure Setup** (Est: 6 hours) - CURRENT FOCUS
+
+- [ ] **3.0.1a: CLI Training Script Entry Point** (Est: 2 hours)
+  - [ ] Create `train_genre_enhancement.py` main entry point
+  - [ ] Integrate with existing `src/vector/enhancement/anime_fine_tuning.py`
+  - [ ] Add command-line argument parsing for training configuration
+  - [ ] Test CLI script integration with UV environment
+
+- [ ] **3.0.1b: Data Pipeline Validation** (Est: 2 hours)
+  - [ ] Verify `data/qdrant_storage/enriched_anime_database.json` compatibility with `AnimeDataset`
+  - [ ] Test data structure parsing (28 anime with genres, tags, themes as dictionaries)
+  - [ ] Validate ground truth extraction for genre classification
+  - [ ] Test data preprocessing pipeline integration
+
+- [ ] **3.0.1c: Training Configuration Setup** (Est: 2 hours)
+  - [ ] Configure LoRA fine-tuning parameters (rank=16, alpha=32, dropout=0.1)
+  - [ ] Set up multi-task learning targets (genres, themes, demographics, mood)
+  - [ ] Test training loop initialization and GPU/CPU detection
+  - [ ] Validate model loading and enhancement architecture integration
+
+**Sub-Phase 3.0.2: Model Training Execution** (Est: 8 hours)
+
+- [ ] **3.0.2a: Ground Truth Processing** (Est: 3 hours)
+  - [ ] Extract genre labels from enriched JSON with proper dictionary handling
+  - [ ] Create positive/negative examples for contrastive learning
+  - [ ] Implement data augmentation for balanced genre representation
+  - [ ] Test ground truth quality and class distribution
+
+- [ ] **3.0.2b: Training Loop Implementation** (Est: 3 hours)
+  - [ ] Execute LoRA fine-tuning using existing `GenreEnhancementModel`
+  - [ ] Implement training validation with precision/recall/F1 metrics
+  - [ ] Add early stopping and checkpoint management
+  - [ ] Test training stability and convergence
+
+- [ ] **3.0.2c: Model Evaluation and Validation** (Est: 2 hours)
+  - [ ] Run validation against existing semantic validation framework
+  - [ ] Compare enhanced vs baseline BGE-M3 performance
+  - [ ] Test genre-specific accuracy improvements (target: 85-90% precision)
+  - [ ] Validate model size and inference speed
+
+**Sub-Phase 3.0.3: Integration with QdrantClient** (Est: 4 hours)
+
+- [ ] **3.0.3a: Enhanced Embedding Integration** (Est: 2 hours)
+  - [ ] Integrate fine-tuned model with `TextProcessor`
+  - [ ] Update genre vector generation in `MultiVectorEmbeddingManager`
+  - [ ] Test enhanced embeddings with existing 14-vector architecture
+  - [ ] Validate no breaking changes to other vector types
+
+- [ ] **3.0.3b: A/B Testing Framework** (Est: 2 hours)
+  - [ ] Implement model switching capability (baseline vs enhanced)
+  - [ ] Add performance comparison tools using existing validation scripts
+  - [ ] Test enhanced model deployment and rollback procedures
+  - [ ] Validate production readiness and stability
+
+**Expected Performance Impact:**
+- **Precision Improvement**: 60% → 85-90% (industry standard)
+- **Training Time**: 2-4 hours on GPU, 8-12 hours on CPU
+- **Model Size**: +50-100MB for LoRA weights (minimal impact)
+- **Inference Speed**: <5% slowdown from LoRA adapter
+
+**Success Criteria:**
+- [ ] Genre vector precision >85% on validation set
+- [ ] False positive reduction for theme description contamination
+- [ ] Semantic drift elimination in entertainment content
+- [ ] No degradation to other vector types performance
+
+### 🔄 Phase 3.1: Semantic Validation Framework Enhancement - PLANNED (Quality Assurance)
+
+**Rationale**: Expand validation framework post-genre enhancement to ensure comprehensive quality across all 14 vectors.
 
 #### **Sub-Phase 3.0: Semantic Quality Validation** (Rollback-Safe: validation only)
 
