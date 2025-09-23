@@ -16,6 +16,7 @@ from torch.optim import AdamW
 from torch.utils.data import DataLoader
 
 from ...config import Settings
+from .contrastive_loss import GenreContrastiveLearning
 
 logger = logging.getLogger(__name__)
 
@@ -246,13 +247,22 @@ class GenreEnhancementFinetuner:
                 self.enhancement_model.parameters(), lr=1e-4, weight_decay=1e-5
             )
 
-            # Setup loss function (multi-task loss)
+            # Setup loss function (multi-task loss + contrastive learning)
             self.loss_fn = {
                 "genre": nn.BCEWithLogitsLoss(),
                 "theme": nn.BCEWithLogitsLoss(),
                 "target": nn.CrossEntropyLoss(),
                 "mood": nn.CrossEntropyLoss(),
             }
+
+            # Initialize contrastive learning for genre separation
+            self.contrastive_learning = GenreContrastiveLearning(
+                temperature=0.07,
+                margin=0.2,
+                alpha_infonce=0.4,
+                alpha_triplet=0.3,
+                alpha_supcon=0.3
+            )
 
             logger.info("LoRA model setup completed")
 
@@ -491,8 +501,29 @@ class GenreEnhancementFinetuner:
         else:
             return 0.0
 
-        # Combined loss
-        total_loss = genre_loss + 0.3 * theme_loss + 0.2 * target_loss + 0.2 * mood_loss
+        # Add contrastive learning loss for better genre separation
+        contrastive_loss = torch.tensor(0.0, device=text_embeddings.device)
+        contrastive_components = {}
+
+        if hasattr(self, 'contrastive_learning') and self.contrastive_learning is not None:
+            try:
+                # Use enhanced embeddings for contrastive learning
+                enhanced_embeddings = outputs["enhanced_embeddings"]
+                contrastive_loss, contrastive_components = self.contrastive_learning(
+                    enhanced_embeddings, genre_labels
+                )
+            except Exception as e:
+                logger.warning(f"Contrastive learning failed: {e}")
+                contrastive_loss = torch.tensor(0.0, device=text_embeddings.device)
+
+        # Combined loss with contrastive learning (60% improvement target)
+        total_loss = (
+            genre_loss +
+            0.3 * theme_loss +
+            0.2 * target_loss +
+            0.2 * mood_loss +
+            0.5 * contrastive_loss  # Strong weight for contrastive learning
+        )
 
         # Backward pass
         total_loss.backward()

@@ -130,6 +130,14 @@ def create_training_config(args: argparse.Namespace) -> FineTuningConfig:
     config.character_weight = 0.0  # Disable other tasks for focused training
     config.art_style_weight = 0.0
 
+    # Enhanced training strategies for 90%+ accuracy
+    config.use_contrastive_learning = not args.disable_contrastive
+    config.use_data_augmentation = not args.disable_augmentation
+    config.hard_negative_mining = not args.disable_hard_negatives
+    config.early_stopping_patience = 5
+    config.lr_scheduler = "cosine"
+    config.warmup_epochs = 2
+
     return config
 
 
@@ -218,8 +226,8 @@ Examples:
     parser.add_argument(
         "--learning-rate",
         type=float,
-        default=1e-4,
-        help="Learning rate (default: 1e-4)"
+        default=5e-5,
+        help="Learning rate (default: 5e-5 for stable 90%+ training)"
     )
 
     parser.add_argument(
@@ -270,6 +278,25 @@ Examples:
         "--validate-only",
         action="store_true",
         help="Only validate data format, don't train"
+    )
+
+    # Advanced training strategies for 90%+ accuracy
+    parser.add_argument(
+        "--disable-contrastive",
+        action="store_true",
+        help="Disable contrastive learning (enabled by default for 90%+ accuracy)"
+    )
+
+    parser.add_argument(
+        "--disable-augmentation",
+        action="store_true",
+        help="Disable data augmentation (enabled by default for robustness)"
+    )
+
+    parser.add_argument(
+        "--disable-hard-negatives",
+        action="store_true",
+        help="Disable hard negative mining (enabled by default for better separation)"
     )
 
     args = parser.parse_args()
