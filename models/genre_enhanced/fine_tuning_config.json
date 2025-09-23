@@ -9,10 +9,10 @@
     "k_proj",
     "out_proj"
   ],
-  "batch_size": 16,
-  "learning_rate": 0.0002,
+  "batch_size": 8,
+  "learning_rate": 5e-05,
   "weight_decay": 1e-05,
-  "num_epochs": 1,
+  "num_epochs": 5,
   "warmup_steps": 100,
   "max_text_length": 512,
   "image_size": 224,
@@ -23,5 +23,11 @@
   "genre_weight": 1.0,
   "save_model": true,
   "model_output_dir": "models/genre_enhanced",
-  "checkpoint_steps": 500
+  "checkpoint_steps": 500,
+  "use_contrastive_learning": true,
+  "use_data_augmentation": true,
+  "hard_negative_mining": true,
+  "early_stopping_patience": 5,
+  "lr_scheduler": "cosine",
+  "warmup_epochs": 2
 }
