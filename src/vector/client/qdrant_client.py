@@ -570,144 +570,7 @@ class QdrantClient:
             logger.error(f"Failed to add documents: {e}")
             return False
 
-    # async def search(
-    #     self, query: str, limit: int = 20, filters: Optional[Dict] = None
-    # ) -> List[Dict[str, Any]]:
-    #     """Perform semantic search on anime collection.
 
-    #     Args:
-    #         query: Search query text
-    #         limit: Maximum number of results
-    #         filters: Optional filters for metadata
-
-    #     Returns:
-    #         List of search results with anime data and scores
-    #     """
-    #     try:
-    #         # Create query embedding using the embedding manager's text processor
-    #         query_embedding = self.embedding_manager.text_processor.encode_text(query)
-    #         if query_embedding is None:
-    #             logger.warning("Failed to create embedding for search query.")
-    #             return []
-
-    #         # Build filter if provided
-    #         qdrant_filter = None
-    #         if filters:
-    #             qdrant_filter = self._build_filter(filters)
-
-    #         loop = asyncio.get_event_loop()
-
-    #         # Perform search using named vector for multi-vector collection
-    #         search_result = await loop.run_in_executor(
-    #             None,
-    #             lambda: self.client.search(
-    #                 collection_name=self.collection_name,
-    #                 query_vector=NamedVector(name="title_vector", vector=query_embedding),
-    #                 query_filter=qdrant_filter,
-    #                 limit=limit,
-    #                 with_payload=True,
-    #                 with_vectors=False,
-    #             ),
-    #         )
-
-    #         # Format results
-    #         results = []
-    #         for hit in search_result:
-    #             result = dict(hit.payload)
-    #             result["_score"] = hit.score
-    #             result["_id"] = hit.id
-    #             results.append(result)
-
-    #         return results
-
-    #     except Exception as e:
-    #         logger.error(f"Search failed: {e}")
-    #         return []
-
-    async def get_similar_anime(
-        self, anime_id: str, limit: int = 10
-    ) -> List[Dict[str, Any]]:
-        """Find similar anime based on vector similarity.
-
-        Args:
-            anime_id: ID of the reference anime
-            limit: Maximum number of similar anime to return
-
-        Returns:
-            List of similar anime with similarity scores
-        """
-        try:
-            # Find the reference anime
-            point_id = self._generate_point_id(anime_id)
-
-            loop = asyncio.get_event_loop()
-
-            # Get the reference point
-            reference_point = await loop.run_in_executor(
-                None,
-                lambda: self.client.retrieve(
-                    collection_name=self.collection_name,
-                    ids=[point_id],
-                    with_vectors=True,
-                ),
-            )
-
-            if not reference_point:
-                logger.warning(f"Anime not found: {anime_id}")
-                return []
-
-            # Use the reference vector to find similar anime
-            reference_vectors = reference_point[0].vector
-
-            # Search excluding the reference anime itself
-            filter_out_self = Filter(
-                must_not=[FieldCondition(key="id", match=MatchValue(value=anime_id))]
-            )
-
-            # Use title_vector for similarity search
-            if (
-                isinstance(reference_vectors, dict)
-                and "title_vector" in reference_vectors
-            ):
-                title_vector = reference_vectors["title_vector"]
-                if is_float_vector(title_vector):
-                    query_vector = NamedVector(
-                        name="title_vector",
-                        vector=title_vector,
-                    )
-                else:
-                    logger.warning(
-                        f"title_vector is not a valid float list: {type(title_vector)}"
-                    )
-                    return []
-            else:
-                logger.warning(f"No 'title_vector' found for anime: {anime_id}")
-                return []
-
-            search_result = await loop.run_in_executor(
-                None,
-                lambda: self.client.search(
-                    collection_name=self.collection_name,
-                    query_vector=query_vector,
-                    query_filter=filter_out_self,
-                    limit=limit,
-                    with_payload=True,
-                    with_vectors=False,
-                ),
-            )
-
-            # Format results
-            results = []
-            for hit in search_result:
-                result = dict(hit.payload) if hit.payload else {}
-                result["similarity_score"] = hit.score
-                results.append(result)
-
-            return results
-
-        except Exception as e:
-            logger.error(f"Similar anime search failed: {e}")
-            return []
 
     def _build_filter(self, filters: Dict[str, Any]) -> Optional[Filter]:
         """Build Qdrant filter from filter dictionary.
@@ -827,73 +690,6 @@ class QdrantClient:
             logger.error(f"Failed to get point by ID {point_id}: {e}")
             return None
 
-    async def find_similar(
-        self, anime_id: str, limit: int = 10
-    ) -> List[Dict[str, Any]]:
-        """Find similar anime using vector similarity.
-
-        Args:
-            anime_id: Reference anime ID
-            limit: Number of similar anime to return
-
-        Returns:
-            List of similar anime with similarity scores
-        """
-        try:
-            # First get the reference anime
-            reference_anime = await self.get_by_id(anime_id)
-            if not reference_anime:
-                logger.warning(f"Reference anime not found: {anime_id}")
-                return []
-
-            # Use the title and tags for similarity search
-            search_text = reference_anime.get("title", "")
-            if reference_anime.get("tags"):
-                search_text += " " + " ".join(reference_anime["tags"][:5])  # Limit tags
-
-            # Perform similarity search
-            loop = asyncio.get_event_loop()
-            embedding = self.text_processor.encode_text(search_text)
-
-            # Validate embedding
-            if not embedding:
-                logger.warning(
-                    f"Failed to create embedding for search text: {search_text}"
-                )
-                return []
-
-            # Filter to exclude the reference anime itself
-            filter_out_self = Filter(
-                must_not=[
-                    FieldCondition(key="anime_id", match=MatchValue(value=anime_id))
-                ]
-            )
-
-            # Use named vector search for multi-vector collection
-            search_result = await loop.run_in_executor(
-                None,
-                lambda: self.client.search(
-                    collection_name=self.collection_name,
-                    query_vector=NamedVector(name="text", vector=embedding),
-                    query_filter=filter_out_self,
-                    limit=limit,
-                    with_payload=True,
-                    with_vectors=False,
-                ),
-            )
-
-            # Format results
-            results = []
-            for hit in search_result:
-                result = dict(hit.payload) if hit.payload else {}
-                result["similarity_score"] = hit.score
-                results.append(result)
-
-            return results
-
-        except Exception as e:
-            logger.error(f"Failed to find similar anime for {anime_id}: {e}")
-            return []
 
     async def clear_index(self) -> bool:
         """Clear all points from the collection (for fresh re-indexing)."""
@@ -935,53 +731,6 @@ class QdrantClient:
             logger.error(f"Failed to create collection: {e}")
             return False
 
-    # async def search_by_image(
-    #     self, image_data: str, limit: int = 10, use_hybrid_search: bool = True
-    # ) -> List[Dict[str, Any]]:
-    #     """Search for anime by image similarity using optimized hybrid search.
-
-    #     Args:
-    #         image_data: Base64 encoded image data
-    #         limit: Maximum number of results
-    #         use_hybrid_search: If True, uses modern hybrid search API for efficiency
-
-    #     Returns:
-    #         List of anime with visual similarity scores
-    #     """
-    #     try:
-    #         # Create image embedding
-    #         image_embedding = self.embedding_manager.vision_processor.encode_image(image_data)
-    #         if image_embedding is None:
-    #             logger.error("Failed to create image embedding")
-    #             return []
-
-    #         loop = asyncio.get_event_loop()
-
-    #         # Use image_vector for search
-    #         search_result = await loop.run_in_executor(
-    #             None,
-    #             lambda: self.client.search(
-    #                 collection_name=self.collection_name,
-    #                 query_vector=NamedVector(name="image_vector", vector=image_embedding),
-    #                 limit=limit,
-    #                 with_payload=True,
-    #                 with_vectors=False,
-    #             ),
-    #         )
-
-    #         # Format results
-    #         results = []
-    #         for hit in search_result:
-    #             result = dict(hit.payload)
-    #             result["visual_similarity_score"] = hit.score
-    #             result["_id"] = hit.id
-    #             results.append(result)
-
-    #         return results
-
-    #     except Exception as e:
-    #         logger.error(f"Image search failed: {e}")
-    #         return []
 
     async def search_multi_vector(
         self,
@@ -1284,36 +1033,50 @@ class QdrantClient:
     async def search_characters(
         self,
         query: str,
+        image_data: Optional[str] = None,
         limit: int = 10,
         fusion_method: str = "rrf",
         filters: Optional[Filter] = None,
     ) -> List[Dict[str, Any]]:
-        """Search specifically for character-related content.
+        """Search specifically for character-related content using character vectors.
 
         Args:
             query: Text search query focused on characters
+            image_data: Optional base64 encoded character image data
             limit: Maximum number of results
             fusion_method: Fusion algorithm - "rrf" or "dbsf"
             filters: Optional Qdrant filter conditions
 
         Returns:
-            List of search results focused on character similarity
+            List of search results focused on character similarity across text and image
         """
         try:
-            # Generate text embedding
+            vector_queries = []
+
+            # Generate text embedding for character_vector
             query_embedding = self.embedding_manager.text_processor.encode_text(query)
             if query_embedding is None:
-                logger.warning("Failed to create embedding for character search")
-                return []
+                logger.warning("Failed to create text embedding for character search")
+            else:
+                vector_queries.append({
+                    "vector_name": "character_vector",
+                    "vector_data": query_embedding
+                })
 
-            # Character-focused vectors
-            vector_queries = [
-                {"vector_name": "character_vector", "vector_data": query_embedding},
-                {
-                    "vector_name": "title_vector",
-                    "vector_data": query_embedding,
-                },  # For context
-            ]
+            # Generate image embedding for character_image_vector if provided
+            if image_data:
+                image_embedding = self.embedding_manager.vision_processor.encode_image(image_data)
+                if image_embedding is None:
+                    logger.warning("Failed to create image embedding for character search")
+                else:
+                    vector_queries.append({
+                        "vector_name": "character_image_vector",
+                        "vector_data": image_embedding
+                    })
+
+            if not vector_queries:
+                logger.error("No valid embeddings generated for character search")
+                return []
 
             results = await self.search_multi_vector(
                 vector_queries=vector_queries,
@@ -1322,95 +1085,11 @@ class QdrantClient:
                 filters=filters,
             )
 
-            logger.info(f"Character search returned {len(results)} results")
+            search_type = "text+image" if image_data else "text-only"
+            logger.info(f"Character search ({search_type}) returned {len(results)} results across {len(vector_queries)} vectors")
             return results
 
         except Exception as e:
             logger.error(f"Character search failed: {e}")
             return []
 
-    async def find_visually_similar_anime(
-        self, anime_id: str, limit: int = 10
-    ) -> List[Dict[str, Any]]:
-        """Find anime with similar visual style to reference anime.
-
-        Args:
-            anime_id: Reference anime ID
-            limit: Number of similar anime to return
-
-        Returns:
-            List of visually similar anime with similarity scores
-        """
-        try:
-            # Get reference anime's image vector
-            point_id = self._generate_point_id(anime_id)
-            loop = asyncio.get_event_loop()
-
-            # Retrieve reference point with vectors
-            reference_point = await loop.run_in_executor(
-                None,
-                lambda: self.client.retrieve(
-                    collection_name=self.collection_name,
-                    ids=[point_id],
-                    with_vectors=True,
-                ),
-            )
-
-            if not reference_point:
-                logger.warning(f"Reference anime not found: {anime_id}")
-                return []
-
-            # Extract image vector
-            reference_vectors = reference_point[0].vector
-            if (
-                isinstance(reference_vectors, dict)
-                and "image_vector" in reference_vectors
-            ):
-                image_vector = reference_vectors["image_vector"]
-                # Ensure image_vector is a list of floats
-                if not is_float_vector(image_vector):
-                    logger.warning(
-                        f"image_vector is not a valid float list: {type(image_vector)}"
-                    )
-                    return []
-                # Check if image vector is all zeros (no image processed)
-                if all(v == 0.0 for v in image_vector):
-                    logger.warning(
-                        f"No image embeddings available for anime: {anime_id} (all zeros)"
-                    )
-                    return []
-            else:
-                logger.warning(f"No image_vector found for anime: {anime_id}")
-                return []
-
-            # Filter to exclude the reference anime itself
-            filter_out_self = Filter(
-                must_not=[FieldCondition(key="id", match=MatchValue(value=anime_id))]
-            )
-
-            # Search using image_vector
-            search_result = await loop.run_in_executor(
-                None,
-                lambda: self.client.search(
-                    collection_name=self.collection_name,
-                    query_vector=NamedVector(name="image_vector", vector=image_vector),
-                    query_filter=filter_out_self,
-                    limit=limit,
-                    with_payload=True,
-                    with_vectors=False,
-                ),
-            )
-
-            # Format results
-            results = []
-            for hit in search_result:
-                result = dict(hit.payload) if hit.payload else {}
-                result["visual_similarity_score"] = hit.score
-                results.append(result)
-
-            return results
-
-        except Exception as e:
-            logger.error(f"Visual similarity search failed: {e}")
-            # Fallback to text-based similarity
-            return await self.find_similar(anime_id, limit)

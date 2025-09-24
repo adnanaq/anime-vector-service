@@ -289,8 +289,8 @@ class EnrichmentValidator:
         char_name = char.get("name", f"Character {char_index}")
 
         # Character fields that should be omitted when empty
-        char_empty_collections = {"name_variations", "nicknames"}
-        char_empty_objects = {"character_ids", "images"}
+        char_empty_collections = {"name_variations", "nicknames", "images"}
+        char_empty_objects = {"character_ids"}
         char_empty_scalars = {
             "name_kanji",
             "name_native",
@@ -722,7 +722,7 @@ class EnrichmentValidator:
                     )
 
                 # Remove empty collections
-                for field in ["name_variations", "nicknames"]:
+                for field in ["name_variations", "nicknames", "images"]:
                     if (
                         field in char
                         and isinstance(char[field], list)
@@ -734,7 +734,7 @@ class EnrichmentValidator:
                         )
 
                 # Remove empty objects
-                for field in ["character_ids", "images"]:
+                for field in ["character_ids"]:
                     if (
                         field in char
                         and isinstance(char[field], dict)

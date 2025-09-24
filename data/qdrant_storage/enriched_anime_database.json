@@ -47,9 +47,9 @@
           "character_ids": {
             "anilist": 136984
           },
-          "images": {
-            "anilist": "https://s4.anilist.co/file/anilistcdn/character/large/b136984-8OOTRF4R5wcy.png"
-          },
+          "images": [
+            "https://s4.anilist.co/file/anilistcdn/character/large/b136984-8OOTRF4R5wcy.png"
+          ],
           "description": "__Height:__ 168 cm (5'6\")\n__Instrument:__ Pearl Reference Twilight Fade Drums\n\nA second-year high school student. She goes by the moniker MASKING and is the drummer for the band RAISE A SUILEN. Despite her sharp gaze and rough, delinquent-like appearance, she likes cute things and is skilled at baking cakes.\n\nShe is the daughter of the owner of Galaxy Live House. Masuki's longing for her father made her start playing the drums, which she plays violently and is called a \"mad dog\" because of that.\n\n(Source: BanG Dream Wikia, edited)",
           "gender": "Female",
           "voice_actors": [
@@ -76,9 +76,9 @@
           "character_ids": {
             "anilist": 136986
           },
-          "images": {
-            "anilist": "https://s4.anilist.co/file/anilistcdn/character/large/b136986-NjsHVOR1HXdB.png"
-          },
+          "images": [
+            "https://s4.anilist.co/file/anilistcdn/character/large/b136986-NjsHVOR1HXdB.png"
+          ],
           "description": "__Height:__ 140 cm (4'7\")\n__Instruments:__ Pioneer DJ XDJ-RX2 DJ System + PIONEER DJ TORAIZ SP-16\n\nA returnee who attends an international school. She goes by the moniker CHU² (read as CHUCHU) and is the leader and DJ for the band RAISE A SUILEN. She is also a music producer who uses DTM (Desktop Music) to compose music, and she's the one who scouted PAREO as a keyboardist.\n\nChiyu is 14 years old but due to her excellent grades, she is currently a 10th grader or a first year high school student. Chiyu is both very professional and confident of her band and ideas, and although she tends to be arrogant sometimes, she's not rude. She dreams of changing the world with the strongest music.\n\nAs a result of her studying in an international school, Chiyu often talks in English or adds English words to her sentences.",
           "age": "14",
           "gender": "Female",
@@ -104,9 +104,9 @@
           "character_ids": {
             "anilist": 136983
           },
-          "images": {
-            "anilist": "https://s4.anilist.co/file/anilistcdn/character/large/b136983-cLucL6a6d9n2.png"
-          },
+          "images": [
+            "https://s4.anilist.co/file/anilistcdn/character/large/b136983-cLucL6a6d9n2.png"
+          ],
           "description": "__Height:__ 172 cm (5'8\")\n__Instrument:__ Spector EURO 4 LX RAS LAYER -Twilight Amber-\n\nA second-year high school student. She goes by the moniker LAYER and is the vocalist and bassist for the band RAISE A SUILEN. She is Tae's childhood friend. Due to Rei's mature attitude, she has a tendency keep a certain feeling of distance with others.\n\nShe has liked singing since she was young, and now she is a professional singer who can sing any song. In addition to temporary part-time singing jobs, she used to play bass in a back up band for famous artists. Rei had also attended the same music school as Tae and Arisa.\n\n(Source: BanG Dream Wikia, edited)",
           "gender": "Female",
           "voice_actors": [
@@ -131,9 +131,9 @@
           "character_ids": {
             "anilist": 133744
           },
-          "images": {
-            "anilist": "https://s4.anilist.co/file/anilistcdn/character/large/b133744-zVyRXr4pkgXZ.jpg"
-          },
+          "images": [
+            "https://s4.anilist.co/file/anilistcdn/character/large/b133744-zVyRXr4pkgXZ.jpg"
+          ],
           "description": "__Height:__ 155 cm (5'1\")\n__Instrument:__ .strandberg* Boden J6 RAS LOCK Caribbean Light Blue Guitar\n\nA first year high-school student at Haneoka Girls' High School. She goes by the moniker LOCK as the guitarist for the band RAISE A SUILEN. She is a Poppin'Party fan. Rokka usually wears large glasses, but takes them off when she performs.\n\nShe is from Gifu Prefecture. She attends Haneoka instead of Hanasakigawa, the closer school, due to Haneoka's scholarship program. She in the same class as Asuka and Ako. Rokka works at Galaxy Live House, as well as her relative's bath house where she lives.\n\nEver since she was at elementary school, Rokka failed at everything she tried, including her studies. Playing guitar was the only thing she had worked hard at. Because of that, she formed a band with her fellow schoolmates Toriko, Berry, and Pat (all monikers). However, after Rokka went to see SPACE live house's last show in Tokyo, she fell in love with Poppin'Party (who performed their song \"Mae e Susume!\" there) and began dreaming of moving to Tokyo. Rokka's middle school band disbanded when she was finally able to move to Tokyo and make her dream come true.\n\nHer father was at first against her decision to study in Tokyo, but Rokka persuaded him by finding a place to live and a school that offered a scholarship that made the tuition cheaper than that her local high school's. After intense studying and hard work, Rokka later passed Haneoka High School's entrance exam and moved to Tokyo.\n\n(Source: BanG Dream Wikia, edited)",
           "gender": "Female",
           "voice_actors": [
@@ -158,9 +158,9 @@
           "character_ids": {
             "anilist": 136985
           },
-          "images": {
-            "anilist": "https://s4.anilist.co/file/anilistcdn/character/large/b136985-LMgp0lUFzjTR.png"
-          },
+          "images": [
+            "https://s4.anilist.co/file/anilistcdn/character/large/b136985-LMgp0lUFzjTR.png"
+          ],
           "description": "__Height:__ 162 cm (5'4\")\n__Instruments:__ ROLAND FA-06 / ROLAND FA-08\n\nAn energetic second-year middle school student. She goes by the moniker PAREO and is the keyboardist for the band RAISE A SUILEN. She adores CHU² and has said she admires her deeply, calling her \"CHU²-sama\" and sometimes even \"Goshujinsama\" (lit. Master).\n\nReona was originally learning the Electone, but switched to the keyboard when she was scouted by CHU². Reona's favorite band is Pastel*Palettes. \n\n(Source: BanG Dream Wikia, edited)",
           "gender": "Female",
           "voice_actors": [
@@ -554,16 +554,18 @@
           "character_ids": {
             "mal": 93863
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/4/223671.jpg"
-          },
-          "url": "https://myanimelist.net/character/93863/Chiaki_Kuriyama",
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/4/223671.jpg"
+          ],
           "voice_actors": [
             {
               "name": "Kuriyama, Chiaki",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/93863/Chiaki_Kuriyama"
+          }
         }
       ],
       "episode_details": [],
@@ -775,9 +777,9 @@
           "character_ids": {
             "anisearch": 133080
           },
-          "images": {
-            "anisearch": "https://cdn.anisearch.com/images/character/cover/133/133080_400.webp"
-          },
+          "images": [
+            "https://cdn.anisearch.com/images/character/cover/133/133080_400.webp"
+          ],
           "gender": "Female",
           "voice_actors": [
             {
@@ -797,9 +799,9 @@
           "character_ids": {
             "anisearch": 133115
           },
-          "images": {
-            "anisearch": "https://cdn.anisearch.com/images/character/cover/133/133115_400.webp"
-          },
+          "images": [
+            "https://cdn.anisearch.com/images/character/cover/133/133115_400.webp"
+          ],
           "gender": "Female",
           "voice_actors": [
             {
@@ -819,9 +821,9 @@
           "character_ids": {
             "anisearch": 133114
           },
-          "images": {
-            "anisearch": "https://cdn.anisearch.com/images/character/cover/133/133114_400.webp"
-          },
+          "images": [
+            "https://cdn.anisearch.com/images/character/cover/133/133114_400.webp"
+          ],
           "gender": "Female",
           "voice_actors": [
             {
@@ -1310,18 +1312,20 @@
             "anilist": 261205,
             "anidb": 121607
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/9/487737.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/268755.jpg"
-          },
-          "url": "https://myanimelist.net/character/205191/Michiru",
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/9/487737.jpg",
+            "https://cdn.anidb.net/images/main/268755.jpg"
+          ],
           "gender": "Female",
           "voice_actors": [
             {
               "name": "Kitou, Akari",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/205191/Michiru"
+          }
         },
         {
           "name": "Yuuki",
@@ -1336,18 +1340,20 @@
             "anilist": 261204,
             "anidb": 121608
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/2/487738.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/268756.jpg"
-          },
-          "url": "https://myanimelist.net/character/205187/Yuuki",
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/2/487738.jpg",
+            "https://cdn.anidb.net/images/main/268756.jpg"
+          ],
           "gender": "Male",
           "voice_actors": [
             {
               "name": "Shimono, Hiro",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/205187/Yuuki"
+          }
         },
         {
           "name": "Ryoushi",
@@ -2093,17 +2099,19 @@
             "mal": 28451,
             "anidb": "11667"
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/12/98993.jpg?s=e678bc09b1f6610d9d59d1e58f9c9fe4",
-            "anidb": "https://cdn.anidb.net/images/main/40614.jpg"
-          },
-          "url": "https://myanimelist.net/character/28451/Tooko_Amano",
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/12/98993.jpg?s=e678bc09b1f6610d9d59d1e58f9c9fe4",
+            "https://cdn.anidb.net/images/main/40614.jpg"
+          ],
           "voice_actors": [
             {
               "name": "Hanazawa, Kana",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/28451/Tooko_Amano"
+          }
         },
         {
           "name": "Inoue, Konoha",
@@ -2112,17 +2120,19 @@
             "mal": 24792,
             "anidb": "11668"
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/15/101327.jpg?s=63c7a553c67b49b1abaa94e7837bd96a",
-            "anidb": "https://cdn.anidb.net/images/main/40613.jpg"
-          },
-          "url": "https://myanimelist.net/character/24792/Konoha_Inoue",
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/15/101327.jpg?s=63c7a553c67b49b1abaa94e7837bd96a",
+            "https://cdn.anidb.net/images/main/40613.jpg"
+          ],
           "voice_actors": [
             {
               "name": "Irino, Miyu",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/24792/Konoha_Inoue"
+          }
         }
       ],
       "episode_details": [
@@ -4207,11 +4217,10 @@
             "mal": 0,
             "anilist": 24792
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/15/101327.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/15/101327.jpg"
+          ],
           "description": "He used to write a novel called \"Sora ni Niteiru\" (Looks Alike to the Sky) using penname Miu Inoue when he was in junior high school and sent to a magazine.  The novel was received an award and too famous that it became drama and movie.  The name was very feminine that people thought it was written by a mysterious girl.\n\nThere was an accident happened to a girl he likes (Miu Asakura) that caused him to have difficulty in breathing so he closed himself until he met Touko in high school, who was reading and eating what she read, so she forced him to join literature club.\n\n\n\nBungaku Shoujo Series is in his point of view, while Bungaku Shoujo: Minarai Series is in Nano Hinosaka's point of view.",
-          "url": "https://myanimelist.net/character/24792/Konoha_Inoue",
           "voice_actors": [
             {
               "name": "Saitou, Chiwa",
@@ -4221,7 +4230,10 @@
               "name": "Irino, Miyu",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/24792/Konoha_Inoue"
+          }
         },
         {
           "name": "Miu Asakura",
@@ -4235,17 +4247,19 @@
             "mal": 0,
             "anilist": 30494
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/13/85718.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/13/85718.jpg"
+          ],
           "description": "She is a childhood friend of Konoha, who he loved very much until she attempted suicide by falling off the school building.",
-          "url": "https://myanimelist.net/character/30494/Miu_Asakura",
           "voice_actors": [
             {
               "name": "Hirano, Aya",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/30494/Miu_Asakura"
+          }
         },
         {
           "name": "Nanase Kotobuki",
@@ -4259,17 +4273,19 @@
             "mal": 0,
             "anilist": 28937
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/13/101326.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/13/101326.jpg"
+          ],
           "description": "Kotobuki is a girl in Konoha's class.  She doesn't like Konoha's way of being nice to people.  She thinks that he's faking.",
-          "url": "https://myanimelist.net/character/28937/Nanase_Kotobuki",
           "voice_actors": [
             {
               "name": "Mizuki, Nana",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/28937/Nanase_Kotobuki"
+          }
         },
         {
           "name": "Tooko Amano",
@@ -4279,17 +4295,19 @@
           "character_ids": {
             "mal": 0
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/12/98993.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/12/98993.jpg"
+          ],
           "description": "Birthdate: March 15\n\nTooko is Konoha's upperclassman that's one year older than him and the president of the literature club. She likes literature to the extent that she eats what she reads and cannot taste normal food. When Konoha saw her eating the pages of a novel, she forced him to join the literature club so that she could \"watch over him\" and keep him from telling others about it.",
-          "url": "https://myanimelist.net/character/28451/Tooko_Amano",
           "voice_actors": [
             {
               "name": "Hanazawa, Kana",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/28451/Tooko_Amano"
+          }
         },
         {
           "name": " Haruguchi",
@@ -4299,13 +4317,15 @@
           "character_ids": {
             "mal": 0
           },
-          "url": "https://myanimelist.net/character/140297/Haruguchi",
           "voice_actors": [
             {
               "name": "Yahagi, Sayuri",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/140297/Haruguchi"
+          }
         },
         {
           "name": " Sasaki",
@@ -4320,17 +4340,19 @@
             "anilist": 36481,
             "anidb": "19882"
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/4/99158.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/238836.jpg"
-          },
-          "url": "https://myanimelist.net/character/36481/Sasaki",
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/4/99158.jpg",
+            "https://cdn.anidb.net/images/main/238836.jpg"
+          ],
           "voice_actors": [
             {
               "name": "Chiba, Susumu",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/36481/Sasaki"
+          }
         },
         {
           "name": "Chia Takeda",
@@ -4347,17 +4369,19 @@
             "mal": 0,
             "anilist": 28933
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/14/101328.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/14/101328.jpg"
+          ],
           "description": "A girl who requested to literature club to write a love letter for her. She's a first year. She works as a librarian.\n\nHer nickname is Chee (ちぃ).",
-          "url": "https://myanimelist.net/character/28933/Chia_Takeda",
           "voice_actors": [
             {
               "name": "Toyosaki, Aki",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/28933/Chia_Takeda"
+          }
         },
         {
           "name": "Eri",
@@ -4367,13 +4391,15 @@
           "character_ids": {
             "mal": 0
           },
-          "url": "https://myanimelist.net/character/140293/Eri",
           "voice_actors": [
             {
               "name": "Nishigaki, Yuka",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/140293/Eri"
+          }
         },
         {
           "name": "Father Asakura",
@@ -4383,13 +4409,15 @@
           "character_ids": {
             "mal": 0
           },
-          "url": "https://myanimelist.net/character/140296/Father_Asakura",
           "voice_actors": [
             {
               "name": "Umezu, Hideyuki",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/140296/Father_Asakura"
+          }
         },
         {
           "name": "Fumiharu Amano",
@@ -4403,17 +4431,19 @@
             "mal": 0,
             "anilist": 36482
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/5/99159.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/5/99159.jpg"
+          ],
           "description": "Touko's father.",
-          "url": "https://myanimelist.net/character/36482/Fumiharu_Amano",
           "voice_actors": [
             {
               "name": "Fujiwara, Keiji",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/36482/Fumiharu_Amano"
+          }
         },
         {
           "name": "Kanako Sakurai",
@@ -4427,16 +4457,18 @@
             "mal": 0,
             "anilist": 36480
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/3/99157.jpg"
-          },
-          "url": "https://myanimelist.net/character/36480/Kanako_Sakurai",
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/3/99157.jpg"
+          ],
           "voice_actors": [
             {
               "name": "Mitsuishi, Kotono",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/36480/Kanako_Sakurai"
+          }
         },
         {
           "name": "Kurara Mori",
@@ -4450,17 +4482,19 @@
             "mal": 0,
             "anilist": 28934
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/13/109246.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/13/109246.jpg"
+          ],
           "description": "Kotobuki's friend and classmate.  She doesn't want people to call her by her first name, so she goes by her nickname \"Mori-chan\".",
-          "url": "https://myanimelist.net/character/28934/Kurara_Mori",
           "voice_actors": [
             {
               "name": "Shimoda, Asami",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/28934/Kurara_Mori"
+          }
         },
         {
           "name": "Miki",
@@ -4470,13 +4504,15 @@
           "character_ids": {
             "mal": 0
           },
-          "url": "https://myanimelist.net/character/140294/Miki",
           "voice_actors": [
             {
               "name": "Tamura, Chika",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/140294/Miki"
+          }
         },
         {
           "name": "Mother Asakura",
@@ -4486,13 +4522,15 @@
           "character_ids": {
             "mal": 0
           },
-          "url": "https://myanimelist.net/character/140290/Mother_Asakura",
           "voice_actors": [
             {
               "name": "Yamagata, Kaori",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/140290/Mother_Asakura"
+          }
         },
         {
           "name": "Mother Inoue",
@@ -4502,13 +4540,15 @@
           "character_ids": {
             "mal": 0
           },
-          "url": "https://myanimelist.net/character/140291/Mother_Inoue",
           "voice_actors": [
             {
               "name": "Hisakawa, Aya",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/140291/Mother_Inoue"
+          }
         },
         {
           "name": "Ryuuto Sakurai",
@@ -4522,17 +4562,19 @@
             "mal": 0,
             "anilist": 28936
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/5/99156.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/5/99156.jpg"
+          ],
           "description": "He is like a brother to Touko.  He's from a family who adopted Touko.  He is actually a 1st year in high school who likes to play with multiple girls at the same time.",
-          "url": "https://myanimelist.net/character/28936/Ryuuto_Sakurai",
           "voice_actors": [
             {
               "name": "Miyano, Mamoru",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/28936/Ryuuto_Sakurai"
+          }
         },
         {
           "name": "Yui Amano",
@@ -4546,17 +4588,19 @@
             "mal": 0,
             "anilist": 36483
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/3/99160.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/3/99160.jpg"
+          ],
           "description": "Touko's mother.",
-          "url": "https://myanimelist.net/character/36483/Yui_Amano",
           "voice_actors": [
             {
               "name": "Inoue, Kikuko",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/36483/Yui_Amano"
+          }
         }
       ],
       "demographics": [
@@ -5378,10 +5422,10 @@
           "character_ids": {
             "mal": 28451
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/12/98993.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/40614.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/12/98993.jpg",
+            "https://cdn.anidb.net/images/main/40614.jpg"
+          ],
           "gender": "Female",
           "voice_actors": [
             {
@@ -5401,10 +5445,10 @@
           "character_ids": {
             "mal": 28452
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/15/101327.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/40613.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/15/101327.jpg",
+            "https://cdn.anidb.net/images/main/40613.jpg"
+          ],
           "gender": "Male",
           "voice_actors": [
             {
@@ -5424,10 +5468,10 @@
           "character_ids": {
             "mal": 28453
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/13/85718.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/49496.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/13/85718.jpg",
+            "https://cdn.anidb.net/images/main/49496.jpg"
+          ],
           "gender": "Female",
           "voice_actors": [
             {
@@ -5447,10 +5491,10 @@
           "character_ids": {
             "mal": 28454
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/13/101326.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/40612.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/13/101326.jpg",
+            "https://cdn.anidb.net/images/main/40612.jpg"
+          ],
           "gender": "Female",
           "voice_actors": [
             {
@@ -5470,10 +5514,10 @@
           "character_ids": {
             "mal": 28455
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/2/117552.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/40611.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/2/117552.jpg",
+            "https://cdn.anidb.net/images/main/40611.jpg"
+          ],
           "gender": "Male",
           "voice_actors": [
             {
@@ -6214,9 +6258,9 @@
           "character_ids": {
             "mal": 98515
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/7/378274.jpg?s=79d27db061477a29ff2e125a16928cba"
-          }
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/7/378274.jpg?s=79d27db061477a29ff2e125a16928cba"
+          ]
         },
         {
           "name": "Akagi, Koujiro",
@@ -6230,9 +6274,9 @@
           "character_ids": {
             "mal": 98517
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/7/559475.jpg?s=7c2ba58de19381e8b6c09d5b440524e3"
-          }
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/7/559475.jpg?s=7c2ba58de19381e8b6c09d5b440524e3"
+          ]
         },
         {
           "name": "Akagi, Kimie",
@@ -6246,9 +6290,9 @@
           "character_ids": {
             "mal": 98523
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/4/559474.jpg?s=51592172e5e65fbf8dd9653de4668fd2"
-          }
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/4/559474.jpg?s=51592172e5e65fbf8dd9653de4668fd2"
+          ]
         },
         {
           "name": "Kusanagi, Aya",
@@ -6262,9 +6306,9 @@
           "character_ids": {
             "mal": 98521
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/13/378275.jpg?s=490a0f651403c9131875523b3095947d"
-          }
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/13/378275.jpg?s=490a0f651403c9131875523b3095947d"
+          ]
         },
         {
           "name": "Kusanagi, Naoya",
@@ -6278,9 +6322,9 @@
           "character_ids": {
             "mal": 169953
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/14/378276.jpg?s=585dd987da5a77c6b16137de67e6362f"
-          }
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/14/378276.jpg?s=585dd987da5a77c6b16137de67e6362f"
+          ]
         },
         {
           "name": "Nogi, Daigo",
@@ -6294,9 +6338,9 @@
           "character_ids": {
             "mal": 253394
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/16/559473.jpg?s=3d8d6ca583aa8f525fb134823bf06dd2"
-          }
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/16/559473.jpg?s=3d8d6ca583aa8f525fb134823bf06dd2"
+          ]
         },
         {
           "name": "Takasugi, Marina",
@@ -6310,9 +6354,9 @@
           "character_ids": {
             "mal": 253395
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/15/559472.jpg?s=7012b30c38d04f9bccaf1c989dd20ee4"
-          }
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/15/559472.jpg?s=7012b30c38d04f9bccaf1c989dd20ee4"
+          ]
         }
       ],
       "content_warnings": [
@@ -6800,10 +6844,10 @@
             "anilist": 135754,
             "anidb": 84799
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/4/319921.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/307364.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/4/319921.jpg",
+            "https://cdn.anidb.net/images/main/307364.jpg"
+          ],
           "gender": "male"
         },
         {
@@ -6827,10 +6871,10 @@
             "anilist": 135760,
             "anidb": 84796
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/12/319918.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/307366.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/12/319918.jpg",
+            "https://cdn.anidb.net/images/main/307366.jpg"
+          ],
           "gender": "female"
         },
         {
@@ -6854,10 +6898,10 @@
             "anilist": 135759,
             "anidb": 84797
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/14/319919.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/307367.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/14/319919.jpg",
+            "https://cdn.anidb.net/images/main/307367.jpg"
+          ],
           "gender": "female"
         },
         {
@@ -6881,10 +6925,10 @@
             "anilist": 135761,
             "anidb": 84798
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/3/319923.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/307365.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/3/319923.jpg",
+            "https://cdn.anidb.net/images/main/307365.jpg"
+          ],
           "gender": "female"
         },
         {
@@ -6908,10 +6952,10 @@
             "anilist": 135756,
             "anidb": 84801
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/9/319984.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/307362.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/9/319984.jpg",
+            "https://cdn.anidb.net/images/main/307362.jpg"
+          ],
           "gender": "female"
         },
         {
@@ -6935,10 +6979,10 @@
             "anilist": 135757,
             "anidb": 84802
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/15/319926.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/307363.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/15/319926.jpg",
+            "https://cdn.anidb.net/images/main/307363.jpg"
+          ],
           "gender": "female"
         },
         {
@@ -6961,10 +7005,10 @@
             "anilist": 135755,
             "anidb": 84800
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/4/319924.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/307368.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/4/319924.jpg",
+            "https://cdn.anidb.net/images/main/307368.jpg"
+          ],
           "gender": "male"
         },
         {
@@ -6987,10 +7031,10 @@
             "anilist": 135758,
             "anidb": 84795
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/6/331178.jpg",
-            "anidb": "https://cdn.anidb.net/images/main/307219.jpg"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/6/331178.jpg",
+            "https://cdn.anidb.net/images/main/307219.jpg"
+          ],
           "gender": "female"
         }
       ],
@@ -7723,7 +7767,6 @@
       "images": {
         "posters": [],
         "covers": [
-          "https://cdn.anisearch.com/images/anime/cover/18/18676_600_300.webp",
           "https://cdn.anisearch.com/images/anime/cover/18/18676_600.webp"
         ],
         "banners": []
@@ -8121,16 +8164,16 @@
         {
           "name": "Shiba, Tatsuya",
           "role": "Main",
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/16/236781.jpg?s=9f7943dd885f0d2a4ad7fa63c3f110eb"
-        }
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/16/236781.jpg?s=9f7943dd885f0d2a4ad7fa63c3f110eb"
+          ]
         },
         {
           "name": "Shiba, Miyuki",
           "role": "Main",
-          "images" : {
-            "mal": "https://cdn.myanimelist.net/images/characters/4/240187.jpg?s=8b2f548a4b9bd2dfbd7d06720c06c02a"
-          }
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/4/240187.jpg?s=8b2f548a4b9bd2dfbd7d06720c06c02a"
+          ]
         }
       ],
       "episode_details": [],
@@ -8287,22 +8330,24 @@
       "characters": [
         {
           "name": "Apricot, Flum",
-          "url": "https://myanimelist.net/character/187661/Flum_Apricot",
           "character_ids": {
             "mal": 187661,
             "anilist": 219037,
             "anidb": 149412
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/15/597780.jpg?s=ba30d6423a9f97223da7354d4b2bfc06"
-          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/15/597780.jpg?s=ba30d6423a9f97223da7354d4b2bfc06"
+          ],
           "role": "Main",
           "voice_actors": [
             {
               "name": "Nanase, Ayaka",
               "language": "Japanese"
             }
-          ]
+          ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/187661/Flum_Apricot"
+          }
         },
         {
           "name": "Milkit",
@@ -8911,9 +8956,9 @@
           "character_ids": {
             "mal": 3891
           },
-          "images": {
-            "mal": "https://cdn.myanimelist.net/images/characters/10/289627.jpg?s=b97db39e3126c4cc184a764059abe0f6"
-          }
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/10/289627.jpg?s=b97db39e3126c4cc184a764059abe0f6"
+          ]
         }
       ],
       "demographics": [

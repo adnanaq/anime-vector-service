@@ -30,9 +30,9 @@ class CharacterEntry(BaseModel):
         description="Character IDs across platforms (mal, anilist, etc.)",
     )
 
-    # Images from different sources
-    images: Dict[str, str] = Field(
-        default_factory=dict, description="Character images from different sources"
+    # Character image URLs (simplified from dict to list)
+    images: List[str] = Field(
+        default_factory=list, description="Character image URLs"
     )
 
     # Character details (prefer most detailed source)
@@ -42,10 +42,10 @@ class CharacterEntry(BaseModel):
     age: Optional[str] = Field(None, description="Character age")
     gender: Optional[str] = Field(None, description="Character gender")
 
-    # URLs from different sources
-    urls: Dict[str, str] = Field(
+    # Character profile page URLs from different platforms
+    character_pages: Dict[str, str] = Field(
         default_factory=dict,
-        description="Character URLs from different sources (source: url)",
+        description="Character profile page URLs from different platforms (platform: url)",
     )
 
     # Voice actors from all sources

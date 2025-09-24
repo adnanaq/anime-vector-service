@@ -76,7 +76,6 @@ Merge character data from 4 sources (Jikan, AniList, AniDB, Kitsu) into comprehe
 **Primary Character Information** (Source Priority):
 - **Name**: Jikan → AniList → AniDB (Jikan most standardized)
 - **Description**: Jikan → AniList → AniDB (Jikan has richest biographies)
-- **URL**: Jikan → AniList → AniDB (Jikan provides direct character pages)
 - **Birth Date**: AniList → Jikan → AniDB (AniList structured format)
 - **Age**: AniList → Jikan → AniDB (AniList most reliable)
 - **Gender**: AniList → AniDB → Jikan (AniList explicit field)
@@ -85,7 +84,8 @@ Merge character data from 4 sources (Jikan, AniList, AniDB, Kitsu) into comprehe
 **Multi-Source Collection** (Collect from all sources):
 - **Name Variations**: Deduplicated array from all sources
 - **Nicknames**: Direct from Jikan API (preserve when available)
-- **Images**: Source attribution for all platforms (with proper AniDB URL construction)
+- **Images**: Array of image URLs from all platforms (simplified structure)
+- **Character Pages**: Platform-attributed URLs from all sources (mal, anilist, anidb, kitsu)
 - **Voice Actors**: Language-grouped, name and language only
 - **Character IDs**: Platform mapping for cross-referencing
 
@@ -158,11 +158,15 @@ Return ONLY valid JSON with ALL characters processed:
         "anidb": 118,
         "kitsu": null
       }},
-      "images": {{
-        "mal": "https://cdn.myanimelist.net/images/characters/11/516853.jpg",
-        "anilist": "https://s4.anilist.co/file/anilistcdn/character/large/b1-ChxaldmieFlQ.png",
-        "anidb": "https://cdn.anidb.net/images/main/14555.jpg"
+      "character_pages": {{
+        "mal": "https://myanimelist.net/character/1/Spike_Spiegel",
+        "anilist": "https://anilist.co/character/1/Spike-Spiegel"
       }},
+      "images": [
+        "https://cdn.myanimelist.net/images/characters/11/516853.jpg",
+        "https://s4.anilist.co/file/anilistcdn/character/large/b1-ChxaldmieFlQ.png",
+        "https://cdn.anidb.net/images/main/14555.jpg"
+      ],
       
       // =====================================================================
       // REMAINING SCALAR FIELDS (alphabetical)

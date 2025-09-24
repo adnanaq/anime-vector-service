@@ -603,8 +603,8 @@ class AnimeFieldMapper:
         # Extract character images separately for character identification and recommendations
         for character in anime.characters:
             if character.images:
-                # character.images is Dict[str, str] with platform keys mapping to URLs
-                for platform, image_url in character.images.items():
+                # character.images is now List[str] with direct image URLs
+                for image_url in character.images:
                     if image_url:
                         character_image_urls.append(image_url)
 

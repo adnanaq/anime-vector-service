@@ -1,15 +1,15 @@
 # Anime Vector Service
 
-A microservice for semantic search over anime content using vector embeddings and Qdrant database.
+A specialized microservice for semantic search over anime content using a 14-vector architecture with Qdrant vector database.
 
 ## Features
 
-- **Semantic Search**: Text-based search using BGE-M3 embeddings
-- **Visual Search**: Image-to-image similarity with JinaCLIP v2
-- **Multimodal Search**: Combined text and image queries
-- **Similarity Analysis**: Find visually or contextually similar anime
-- **Batch Operations**: Efficient bulk vector processing
-- **Production Ready**: Health checks, monitoring, CORS support
+- **14-Vector Semantic Architecture**: 12 text vectors + 2 image vectors for comprehensive anime understanding
+- **Advanced Text Search**: BGE-M3 embeddings across multiple semantic domains (title, character, genre, technical, etc.)
+- **Visual Search**: OpenCLIP ViT-L/14 embeddings for cover art and character image similarity
+- **Character-Focused Search**: Specialized character vector + character image vector search
+- **Multi-Vector Fusion**: Native Qdrant RRF/DBSF fusion for optimal search results
+- **Production Ready**: Health checks, monitoring, database management
 
 ## Quick Start
 
@@ -49,24 +49,17 @@ docker compose up -d qdrant
 python -m src.main
 ```
 
-## API Endpoints
+## API Architecture
 
-### Search Operations
+This service provides semantic search capabilities through a 14-vector architecture:
 
-- `POST /api/v1/search` - Semantic text search
-- `POST /api/v1/search/image` - Image-based search
-- `POST /api/v1/search/multimodal` - Combined text+image search
+- **Text Vectors (12)**: title, character, genre, technical, staff, review, temporal, streaming, related, franchise, episode, identifiers
+- **Image Vectors (2)**: general image similarity, character image similarity
 
-### Similarity Operations
-
-- `POST /api/v1/similarity/anime/{anime_id}` - Find similar anime
-- `POST /api/v1/similarity/visual/{anime_id}` - Find visually similar anime
-
-### Administration
+### Available Endpoints
 
 - `GET /health` - Service health status
 - `GET /api/v1/admin/stats` - Database statistics
-- `POST /api/v1/admin/reindex` - Rebuild search index
 
 ## Configuration
 
@@ -83,7 +76,7 @@ QDRANT_COLLECTION_NAME=anime_database
 
 # Embedding Models
 TEXT_EMBEDDING_MODEL=BAAI/bge-m3
-IMAGE_EMBEDDING_MODEL=jinaai/jina-clip-v2
+IMAGE_EMBEDDING_MODEL=ViT-L-14/laion2b_s32b_b82k
 ```
 
 ## Dependency Management
@@ -116,9 +109,9 @@ uv lock --upgrade
 ## Technology Stack
 
 - **FastAPI**: REST API framework
-- **Qdrant**: Vector database with HNSW indexing
-- **BGE-M3**: Multi-lingual text embeddings
-- **JinaCLIP v2**: Vision-language model for images
+- **Qdrant**: Vector database with HNSW indexing and multi-vector support
+- **BGE-M3**: Multi-lingual text embeddings (1024-dim)
+- **OpenCLIP ViT-L/14**: High-quality image embeddings (768-dim)
 - **Docker**: Containerized deployment
 - **UV**: Fast Python package manager
 
