@@ -497,6 +497,18 @@ class AnimeFieldMapper:
                     aired_date = aired_date.split("T")[0]
                 ep_parts.append(f"Aired: {aired_date}")
 
+            # Duration (user-searchable temporal metadata)
+            if hasattr(episode, "duration") and episode.duration:
+                duration_seconds = episode.duration
+                if duration_seconds > 0:
+                    # Store in seconds to match data format
+                    ep_parts.append(f"{duration_seconds} seconds")
+
+            # Episode score (quality indicator for search)
+            if hasattr(episode, "score") and episode.score is not None:
+                # Format score for semantic search
+                ep_parts.append(f"rated {episode.score}")
+
             # Build episode entry if we have any content
             if ep_parts:
                 episode_entry = (

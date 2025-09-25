@@ -54,49 +54,42 @@ class CharacterEntry(BaseModel):
     )
 
 
-class EpisodeThumbnail(BaseModel):
-    """Episode thumbnail with source attribution"""
-
-    url: str = Field(..., description="Thumbnail image URL")
-    source: str = Field(..., description="Source platform (anilist, kitsu, etc.)")
-    platform: Optional[str] = Field(
-        None, description="Streaming platform (crunchyroll, funimation, etc.)"
-    )
-
 
 class EpisodeDetailEntry(BaseModel):
     """Comprehensive episode details with multi-source integration"""
 
-    # Primary identification
+    # =====================================================================
+    # SCALAR FIELDS (alphabetical)
+    # =====================================================================
+    aired: Optional[str] = Field(None, description="Episode air date with timezone")
+    duration: Optional[int] = Field(None, description="Episode duration in seconds")
     episode_number: int = Field(..., description="Episode number")
+    filler: bool = Field(default=False, description="Whether episode is filler")
+    recap: bool = Field(default=False, description="Whether episode is recap")
+    score: Optional[float] = Field(None, description="Episode rating score")
     season_number: Optional[int] = Field(None, description="Season number from Kitsu")
-
-    # Episode titles from different sources
+    synopsis: Optional[str] = Field(None, description="Episode synopsis/description")
     title: str = Field(..., description="Primary episode title")
     title_japanese: Optional[str] = Field(None, description="Japanese episode title")
     title_romaji: Optional[str] = Field(None, description="Romanized episode title")
 
-    # Episode content
-    synopsis: Optional[str] = Field(None, description="Episode synopsis/description")
+    # =====================================================================
+    # ARRAY FIELDS (alphabetical)
+    # =====================================================================
+    thumbnails: List[str] = Field(
+        default_factory=list, description="Episode thumbnail URLs"
+    )
 
-    # Visual content and streaming
-    thumbnails: List[EpisodeThumbnail] = Field(
-        default_factory=list, description="Episode thumbnails from all sources"
+    # =====================================================================
+    # OBJECT/DICT FIELDS (alphabetical)
+    # =====================================================================
+    episode_pages: Dict[str, str] = Field(
+        default_factory=dict,
+        description="Episode page URLs from different platforms (mal, anilist, etc.)"
     )
     streaming: Dict[str, str] = Field(
         default_factory=dict, description="Streaming platforms and URLs {platform: url}"
     )
-
-    # Technical metadata
-    aired: Optional[str] = Field(None, description="Episode air date with timezone")
-    score: Optional[float] = Field(None, description="Episode rating score")
-
-    # Episode flags
-    filler: bool = Field(default=False, description="Whether episode is filler")
-    recap: bool = Field(default=False, description="Whether episode is recap")
-
-    # Source attribution
-    url: Optional[str] = Field(None, description="Episode page URL (typically MAL)")
 
 
 class TrailerEntry(BaseModel):
@@ -428,7 +421,7 @@ class AnimeEntry(BaseModel):
         None, description="Background information from MAL"
     )
     episodes: int = Field(default=0, description="Number of episodes")
-    id: str = Field(..., description="Unique identifier for the anime entry")
+    # id: str = Field(..., description="Unique identifier for the anime entry")
     month: Optional[str] = Field(None, description="Premiere month from AnimSchedule")
     nsfw: Optional[bool] = Field(None, description="Not Safe For Work flag from Kitsu")
     rating: Optional[str] = Field(None, description="Content rating (PG-13, R, etc.)")
