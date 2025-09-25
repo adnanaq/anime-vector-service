@@ -48,6 +48,9 @@ dev = [
     "isort>=5.13.0",
     "autoflake>=2.3.0",
     "mypy>=1.18.1",
+
+    # Pretty output formatting
+    "rich>=13.0.0",
 ]
 
 [build-system]

@@ -4,16 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## SESSION INITIALIZATION (MANDATORY FIRST STEP)
 
-### **BP-0: Session Role Selection Protocol**
+### **BP-0: Session Role Selection Protocol (BLOCKING ENFORCEMENT)**
 
-**EVERY NEW SESSION MUST START WITH ROLE SELECTION**
+**EVERY NEW SESSION MUST START WITH ROLE SELECTION - NO EXCEPTIONS**
+
+**BLOCKING RULE**: Claude CANNOT proceed with any technical task, code analysis, or implementation work until a role has been explicitly selected and confirmed.
 
 **Session Greeting Template:**
 
 ```
-SESSION INITIALIZATION
+🚫 SESSION BLOCKED - ROLE SELECTION REQUIRED
 
-To provide the most relevant expertise, please select my primary role for this session:
+To provide expert-level assistance, I must first establish my role for this session.
+
+**Select Primary Role:**
 
 **Backend Engineering** - APIs, databases, system architecture, performance optimization
 **Data Science** - ML models, embeddings, vector optimization, research analysis
@@ -23,9 +27,12 @@ To provide the most relevant expertise, please select my primary role for this s
 **System Architecture** - High-level design, scalability, component relationships
 **Product Management** - Requirements analysis, feature prioritization, roadmap planning
 
-Which role should I adopt for this session?
-(You can also request a combination or custom focus area)
+Which role should I adopt? (Required before proceeding)
 ```
+
+**Enforcement Mechanism:**
+- If user attempts to bypass role selection, respond: "🚫 Role selection required. Please choose from the available roles before I can assist with technical tasks."
+- Only after role confirmation, proceed with: "✅ [ROLE] adopted. Ready to proceed with [role-specific] expertise."
 
 **Intelligent Role Suggestion:**
 Analyze the user's request topic and intelligently suggest the most appropriate role with clear rationale.
@@ -124,13 +131,24 @@ CLAUDE.md Rule BP-3 states: "NEVER start research or implementation without clar
 I cannot proceed without clarification questions. This is non-negotiable.
 ```
 
-### BP-1 (MUST): Mode Detection and Protocol Activation
+### BP-1 (MUST): Mode Detection, Protocol Activation, and TodoWrite Enforcement
 
 **BEFORE ANYTHING ELSE** - Detect mode and state protocol:
 
 - Any broad optimization/improvement request = **@PLAN_MODE** (NOT @CODE_MODE)
 - Specific implementation task = **@CODE_MODE**
 - **ALWAYS** state: "Activating [X] protocol per CLAUDE.md rules"
+
+**MANDATORY TODOWRITE USAGE**:
+- **ANY task with 3+ distinct steps** = MUST use TodoWrite
+- **ANY task spanning multiple exchanges** = MUST use TodoWrite
+- **ANY complex implementation work** = MUST use TodoWrite
+- **VIOLATION RESPONSE**: "🛑 TodoWrite required per CLAUDE.md BP-1. Creating task list now."
+
+**TodoWrite Trigger Examples**:
+- "Implement comprehensive title vector test" → TodoWrite required
+- "Analyze data structure and create tests" → TodoWrite required
+- "Fix multimodal testing with field combinations" → TodoWrite required
 
 ### BP-2 (MUST): Context Loading Before Any Action
 
@@ -240,20 +258,27 @@ Implement → @MEM_UPDATE → Document role-specific patterns
 - [ ] 🎭 Role-specific confidence thresholds applied
 - [ ] 🎭 Session context updated in memory files
 
-**GATE 1: RULE VIOLATION DETECTION**
+**GATE 1: TODOWRITE VALIDATION**
+
+- [ ] 📋 Task complexity assessed (3+ steps = TodoWrite required)
+- [ ] 📋 TodoWrite created if required
+- [ ] 📋 Task progress tracked throughout execution
+- [ ] 📋 TodoWrite updated in real-time
+
+**GATE 2: RULE VIOLATION DETECTION**
 
 - [ ] ✋ Check for "skip questions" phrases → STOP if detected
 - [ ] ✋ Check for anti-pattern triggers → STOP if detected
 - [ ] ✋ Check for error mentions → Check @ERRORS first
 
-**GATE 2: PROTOCOL COMPLIANCE**
+**GATE 3: PROTOCOL COMPLIANCE**
 
 - [ ] 📋 Protocol explicitly stated with CLAUDE.md reference
 - [ ] 📋 Context files loaded with checkmark confirmation
 - [ ] 📋 Clarification questions asked (MANDATORY - no exceptions)
 - [ ] 📋 User responses received before proceeding
 
-**GATE 3: ARCHITECTURE VALIDATION**
+**GATE 4: ARCHITECTURE VALIDATION**
 
 - [ ] 🏗️ Architecture constraints checked against docs/architecture.md
 - [ ] 🏗️ Component boundaries validated
@@ -262,12 +287,27 @@ Implement → @MEM_UPDATE → Document role-specific patterns
 
 ### **🚨 VIOLATION RESPONSE TEMPLATES**
 
+**For TodoWrite violations:**
+
+```
+🛑 TODOWRITE VIOLATION: Complex task detected per CLAUDE.md BP-1
+Task has 3+ steps and requires TodoWrite for progress tracking.
+Creating todo list now...
+```
+
 **For "skip questions" violations:**
 
 ```
 🛑 RULE VIOLATION: BP-3 Clarification Questions cannot be skipped
 CLAUDE.md states: "NEVER start implementation without clarification"
 This is non-negotiable. I need answers to proceed safely.
+```
+
+**For role selection violations:**
+
+```
+🚫 ROLE SELECTION REQUIRED: Cannot proceed with technical tasks per BP-0
+Please select your preferred expertise role from the available options.
 ```
 
 **For anti-pattern violations:**

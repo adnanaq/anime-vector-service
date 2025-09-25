@@ -732,6 +732,60 @@ class QdrantClient:
             return False
 
 
+    async def search_single_vector(
+        self,
+        vector_name: str,
+        vector_data: List[float],
+        limit: int = 10,
+        filters: Optional[Filter] = None,
+    ) -> List[Dict[str, Any]]:
+        """Search a single vector with raw similarity scores.
+
+        Args:
+            vector_name: Name of the vector to search (e.g., "title_vector")
+            vector_data: The query vector (list of floats)
+            limit: Maximum number of results to return
+            filters: Optional Qdrant filter conditions
+
+        Returns:
+            List of search results with raw similarity scores
+        """
+        try:
+            # Direct vector search with raw similarity scores
+            response = self.client.search(
+                collection_name=self.collection_name,
+                query_vector=(vector_name, vector_data),
+                limit=limit,
+                with_payload=True,
+                with_vectors=False,
+                query_filter=filters,
+            )
+
+            # Convert response to our format with raw similarity scores
+            results = []
+            for point in response:
+                payload = point.payload if point.payload else {}
+                result = {
+                    "id": str(point.id),
+                    "anime_id": str(point.id),
+                    "_id": str(point.id),
+                    **payload,
+                    # Use raw similarity scores
+                    "score": point.score,
+                    "_score": point.score,
+                    "similarity_score": point.score,
+                }
+                results.append(result)
+
+            logger.info(
+                f"Single vector search ({vector_name}) returned {len(results)} results with similarity scores"
+            )
+            return results
+
+        except Exception as e:
+            logger.error(f"Single vector search failed: {e}")
+            raise
+
     async def search_multi_vector(
         self,
         vector_queries: List[Dict[str, Any]],

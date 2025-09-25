@@ -12,19 +12,20 @@
 
 **Today's Focus**: Phase 3.1 - 14-Vector System Validation with default BGE-M3 embeddings
 
-**Active Task**: Per-Vector Search Quality Testing - Validate semantic accuracy across all 14 vectors (0% Complete)
+**Active Task**: Per-Vector Search Quality Testing - Validate semantic accuracy across all 14 vectors (29% Complete)
 
-**Current Status**: Database reindexed with 28 anime entries, 14-vector system operational with default BGE-M3, ready for validation testing
+**Current Status**: Database reindexed with 28 anime entries, 14-vector system operational with default BGE-M3, comprehensive validation testing underway
 
-**Current Priority**: Validate that default BGE-M3 vector system is working correctly across all 14 vectors before further optimization
+**Current Priority**: Systematically validate each vector's semantic accuracy with comprehensive field combination testing methodology
 
 **Current Session Tasks**:
 - [ ] **Per-Vector Search Quality Testing** (Est: 2 hours) - IN PROGRESS
   - [x] Test title_vector → COMPLETED - comprehensive validation with available data
-  - [x] Test character_vector → COMPLETED - comprehensive validation with available data
+  - [x] Test character_vector → COMPLETED - comprehensive validation including character_image_vector
+  - [x] Test related_vector → COMPLETED - comprehensive validation with 8 query patterns, 80-100% success rates
+  - [x] Test image_vector → COMPLETED - comprehensive validation with random image downloads (included in title vector test)
   - [ ] Skip genre_vector testing → insufficient data for meaningful validation
-  - [ ] Validate remaining 11 text vectors with domain-specific queries
-  - [ ] Test 2 image vectors with visual similarity queries
+  - [ ] Validate remaining 8 text vectors with domain-specific queries
 
 - [ ] **Multi-Vector Fusion Validation** (Est: 2 hours)
   - [ ] Test search_complete() with complex multi-vector queries
@@ -74,6 +75,12 @@
 - ✅ **COMPLETED**: Database reindexing with default BGE-M3 system (28/28 anime entries)
 - ✅ **UPDATED**: Tasks plan with comprehensive genre enhancement documentation
 - ✅ **UPDATED**: Active context to reflect current 14-vector validation priority
+- ✅ **COMPLETED**: Comprehensive related_vector validation test (900+ LOC)
+  - 8 comprehensive query patterns (Multi-Relation, Franchise Wide, Type Collection, etc.)
+  - True field combination testing methodology matching character_vector approach
+  - Validation of all relation types: Adaptation, Original Work, Character, Sequel, Special
+  - 80-100% success rates with high confidence scores (0.6-0.95)
+  - Systematic testing of 18/28 anime entries with related content
 
 ### This Week Context
 
@@ -81,14 +88,19 @@
 - **Key Discovery**: Fundamental data limitation preventing 90%+ accuracy achievement
 - **System Status**: 14-vector architecture operational and ready for validation
 - **Priority Shift**: From genre enhancement training to baseline system validation
+- **Vector Validation Progress**: 5/14 vectors comprehensively validated (title, character+character_image, related, image)
+- **Testing Methodology**: Established comprehensive field combination testing approach
+- **Performance Baseline**: High semantic accuracy confirmed (80-100% success rates)
+- **Remaining Vectors**: 8 text vectors left to validate
 
 ## Next Steps
 
 ### Immediate (Current Session - 4 hours)
 
 1. **14-Vector System Validation** - CURRENT PRIORITY
-   - Test each of 14 vectors individually with domain-specific queries
-   - Validate semantic accuracy of default BGE-M3 embeddings
+   - Test remaining 8 text vectors individually with comprehensive field combination testing
+   - Focus on: technical, staff, review, temporal, streaming, franchise, episode, identifiers
+   - Validate semantic accuracy of default BGE-M3 embeddings using established methodology
    - Test multi-vector fusion with search_complete() and comprehensive search methods
    - Create validation reports for each vector type performance
 
