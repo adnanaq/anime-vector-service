@@ -325,12 +325,22 @@ class CompanyEntry(BaseModel):
 
 
 class ProductionStaff(BaseModel):
-    """Production staff organized by role - supports any role dynamically"""
+    """Production staff organized by role - supports unlimited roles dynamically"""
 
-    roles: Dict[str, List[StaffMember]] = Field(
-        default_factory=dict,
-        description="Staff members organized by role (role_name: [staff_members])",
-    )
+    class Config:
+        extra = "allow"  # Accept any role field name dynamically
+
+    def get_all_roles(self) -> Dict[str, List[StaffMember]]:
+        """Get all role fields as dictionary for dynamic access"""
+        roles = {}
+        # Use model_dump() to access all fields including dynamic ones
+        all_data = self.model_dump()
+        for field_name, value in all_data.items():
+            if isinstance(value, list) and value:
+                # Validate it contains staff member objects
+                if all(isinstance(item, (dict, StaffMember)) for item in value):
+                    roles[field_name] = value
+        return roles
 
 
 class VoiceActors(BaseModel):
@@ -421,7 +431,7 @@ class AnimeEntry(BaseModel):
         None, description="Background information from MAL"
     )
     episodes: int = Field(default=0, description="Number of episodes")
-    # id: str = Field(..., description="Unique identifier for the anime entry")
+    id: str = Field(..., description="Unique identifier for the anime entry")
     month: Optional[str] = Field(None, description="Premiere month from AnimSchedule")
     nsfw: Optional[bool] = Field(None, description="Not Safe For Work flag from Kitsu")
     rating: Optional[str] = Field(None, description="Content rating (PG-13, R, etc.)")

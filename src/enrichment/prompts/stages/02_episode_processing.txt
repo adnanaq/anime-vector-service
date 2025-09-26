@@ -67,7 +67,7 @@ Merge episode data from 3 sources (Jikan, AniList, Kitsu) into comprehensive epi
 - synopsis (detailed content)
 - aired (with timezone), duration (seconds)
 - score, filler, recap (boolean flags)
-- url (MAL episode page)
+- episode_pages (episode page with platform attribution)
 
 **Enhanced Data** (from matched sources):
 - **Season Organization**: Add season_number from Kitsu (if episode numbers match)
@@ -75,10 +75,10 @@ Merge episode data from 3 sources (Jikan, AniList, Kitsu) into comprehensive epi
   - Format: {"platform_name": "streaming_url"}
   - Platform name should be lowercase (e.g., "crunchyroll", "funimation")
   - Multiple platforms supported in single episode
-- **Visual Content**: Collect ALL thumbnails from matched sources:
-  - AniList streaming episode thumbnail (if episode matched)
-  - Kitsu episode thumbnail (if episode matched)
-  - Each thumbnail includes source attribution
+- **Visual Content**: Collect ALL thumbnail URLs from matched sources:
+  - AniList streaming episode thumbnail URL (if episode matched)
+  - Kitsu episode thumbnail URL (if episode matched)
+  - Store as simple array of URL strings
 
 **Alternative Titles** (validation and fallback):
 - Use Kitsu canonicalTitle for title validation
@@ -103,46 +103,41 @@ Merge episode data from 3 sources (Jikan, AniList, Kitsu) into comprehensive epi
 
 ## OUTPUT SCHEMA
 Return ONLY valid JSON with complete episode details:
-**CRITICAL: Episode fields must be ordered exactly as shown below to match EpisodeDetailEntry schema requirements.**
+**CRITICAL: Episode fields must be ordered exactly as shown below to match EpisodeDetailEntry schema requirements (SCALAR → ARRAY → OBJECT/DICT, alphabetical within each category).**
 
 ```json
 {{
   "episode_details": [
     {{
       // =====================================================================
-      // SCALAR FIELDS (alphabetical within episode object)
+      // SCALAR FIELDS (alphabetical)
       // =====================================================================
+      "aired": "1998-10-24T00:00:00+09:00",
+      "duration": 1440,
       "episode_number": 1,
+      "filler": false,
+      "recap": false,
+      "score": null,
       "season_number": 1,
+      "synopsis": "Detailed episode synopsis from Jikan...",
       "title": "Asteroid Blues",
       "title_japanese": "アステロイド・ブルース",
       "title_romaji": "Asteroid Blues",
-      "synopsis": "Detailed episode synopsis from Jikan...",
-      "aired": "1998-10-24T00:00:00+09:00",
-      "duration": 1440,
-      "score": null,
-      "filler": false,
-      "recap": false,
-      "url": "https://myanimelist.net/anime/1/Cowboy_Bebop/episode/1",
 
       // =====================================================================
       // ARRAY FIELDS (alphabetical)
       // =====================================================================
       "thumbnails": [
-        {{
-          "url": "https://img1.ak.crunchyroll.com/i/spire2-tmb/...",
-          "source": "anilist",
-          "platform": "crunchyroll"
-        }},
-        {{
-          "url": "https://media.kitsu.app/episodes/thumbnails/229115/original.jpeg",
-          "source": "kitsu"
-        }}
+        "https://img1.ak.crunchyroll.com/i/spire2-tmb/...",
+        "https://media.kitsu.app/episodes/thumbnails/229115/original.jpeg"
       ],
 
       // =====================================================================
       // OBJECT/DICT FIELDS (alphabetical)
       // =====================================================================
+      "episode_pages": {{
+        "mal": "https://myanimelist.net/anime/1/Cowboy_Bebop/episode/1"
+      }},
       "streaming": {{
         "crunchyroll": "http://www.crunchyroll.com/watch/G7PU4VJEJ/asteroid-blues"
       }}

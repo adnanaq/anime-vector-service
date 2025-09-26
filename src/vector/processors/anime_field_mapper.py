@@ -204,20 +204,21 @@ class AnimeFieldMapper:
 
         # Extract staff information from staff_data StaffData object
         if anime.staff_data:
-            # Production staff by role
-            if (
-                anime.staff_data.production_staff
-                and anime.staff_data.production_staff.roles
-            ):
-                for (
-                    role,
-                    staff_members,
-                ) in anime.staff_data.production_staff.roles.items():
-                    staff_names = [
-                        member.name for member in staff_members if member.name
-                    ]
+            # Production staff by role - NEW: Dynamic role extraction
+            if anime.staff_data.production_staff:
+                all_roles = anime.staff_data.production_staff.get_all_roles()
+                for role_key, staff_members in all_roles.items():
+                    staff_names = []
+                    for member in staff_members:
+                        # Handle both dict and object cases
+                        if hasattr(member, 'name') and member.name:
+                            staff_names.append(member.name)
+                        elif isinstance(member, dict) and member.get('name'):
+                            staff_names.append(member['name'])
                     if staff_names:
-                        content_parts.append(f"{role}: {', '.join(staff_names)}")
+                        # Format role name for display (replace underscores, title case)
+                        role_display = role_key.replace('_', ' ').title()
+                        content_parts.append(f"{role_display}: {', '.join(staff_names)}")
 
             # Studios
             if anime.staff_data.studios:

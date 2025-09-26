@@ -848,7 +848,9 @@
           "aired": "2024-12-20T00:00:00+09:00",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/1"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/1"
+          }
         },
         {
           "episode_number": 2,
@@ -859,7 +861,9 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/2"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/2"
+          }
         },
         {
           "episode_number": 3,
@@ -870,7 +874,9 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/3"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/3"
+          }
         },
         {
           "episode_number": 4,
@@ -881,7 +887,9 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/4"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/4"
+          }
         },
         {
           "episode_number": 5,
@@ -892,7 +900,9 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/5"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/5"
+          }
         },
         {
           "episode_number": 6,
@@ -903,7 +913,9 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/6"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/6"
+          }
         },
         {
           "episode_number": 7,
@@ -914,7 +926,9 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/7"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/7"
+          }
         },
         {
           "episode_number": 8,
@@ -925,7 +939,9 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/8"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/8"
+          }
         }
       ],
       "genres": [
@@ -1037,7 +1053,9 @@
           "score": 5.57,
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/25627/Aesop_no_Ohanashi_yori__Ushi_to_Kaeru_Yokubatta_Inu"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/25627/Aesop_no_Ohanashi_yori__Ushi_to_Kaeru_Yokubatta_Inu"
+          }
         }
       ],
       "genres": [
@@ -1207,8 +1225,10 @@
           "duration": 480,
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/54496/Ai_wo_Taberu",
-          "title_romaji": "\"Ai\" wo Taberu"
+          "title_romaji": "\"Ai\" wo Taberu",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/54496/Ai_wo_Taberu"
+          }
         }
       ],
       "genres": [
@@ -1385,7 +1405,9 @@
           "duration": 300,
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/50762"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/50762"
+          }
         }
       ],
       "genres": [
@@ -1792,8 +1814,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/1",
-          "title": "Episode 1"
+          "title": "Episode 1",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/1"
+          }
         },
         {
           "episode_number": 2,
@@ -1802,8 +1826,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/2",
-          "title": "Episode 2"
+          "title": "Episode 2",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/2"
+          }
         },
         {
           "episode_number": 3,
@@ -1812,8 +1838,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/3",
-          "title": "Episode 3"
+          "title": "Episode 3",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/3"
+          }
         },
         {
           "episode_number": 4,
@@ -1822,8 +1850,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/4",
-          "title": "Episode 4"
+          "title": "Episode 4",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/4"
+          }
         },
         {
           "episode_number": 5,
@@ -1832,8 +1862,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/5",
-          "title": "Episode 5"
+          "title": "Episode 5",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/5"
+          }
         },
         {
           "episode_number": 6,
@@ -1842,8 +1874,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/6",
-          "title": "Episode 6"
+          "title": "Episode 6",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/6"
+          }
         },
         {
           "episode_number": 7,
@@ -1852,8 +1886,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/7",
-          "title": "Episode 7"
+          "title": "Episode 7",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/7"
+          }
         },
         {
           "episode_number": 8,
@@ -1862,8 +1898,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/8",
-          "title": "Episode 8"
+          "title": "Episode 8",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/8"
+          }
         },
         {
           "episode_number": 9,
@@ -1872,8 +1910,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/9",
-          "title": "Episode 9"
+          "title": "Episode 9",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/9"
+          }
         },
         {
           "episode_number": 10,
@@ -1882,8 +1922,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/10",
-          "title": "Episode 10"
+          "title": "Episode 10",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/10"
+          }
         },
         {
           "episode_number": 11,
@@ -1892,8 +1934,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/11",
-          "title": "Episode 11"
+          "title": "Episode 11",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/11"
+          }
         },
         {
           "episode_number": 12,
@@ -1902,8 +1946,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/12",
-          "title": "Episode 12"
+          "title": "Episode 12",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/12"
+          }
         },
         {
           "episode_number": 13,
@@ -1912,8 +1958,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/13",
-          "title": "Episode 13"
+          "title": "Episode 13",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/13"
+          }
         },
         {
           "episode_number": 14,
@@ -1922,8 +1970,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/14",
-          "title": "Episode 14"
+          "title": "Episode 14",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/14"
+          }
         },
         {
           "episode_number": 15,
@@ -1932,8 +1982,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/15",
-          "title": "Episode 15"
+          "title": "Episode 15",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/15"
+          }
         },
         {
           "episode_number": 16,
@@ -1942,8 +1994,10 @@
           "streaming": {},
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/16",
-          "title": "Episode 16"
+          "title": "Episode 16",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/16"
+          }
         }
       ],
       "genres": [
@@ -2149,7 +2203,9 @@
           "score": 6.84,
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/7669/episode/1"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/7669/episode/1"
+          }
         }
       ],
       "genres": [
@@ -4618,8 +4674,10 @@
           "duration": 1460,
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/8481/Bungaku_Shoujo_Memoire/episode/1",
-          "title_romaji": "Yumemiru Shoujo no Prelude"
+          "title_romaji": "Yumemiru Shoujo no Prelude",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/8481/Bungaku_Shoujo_Memoire/episode/1"
+          }
         },
         {
           "episode_number": 2,
@@ -4633,8 +4691,10 @@
           "duration": 1460,
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/8481/Bungaku_Shoujo_Memoire/episode/2",
-          "title_romaji": "Sora Mau Tenshi no Requiem"
+          "title_romaji": "Sora Mau Tenshi no Requiem",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/8481/Bungaku_Shoujo_Memoire/episode/2"
+          }
         },
         {
           "episode_number": 3,
@@ -4647,8 +4707,10 @@
           "duration": 1460,
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/8481/Bungaku_Shoujo_Memoire/episode/3",
-          "title_romaji": "Koisuru Otome no Rhapsody"
+          "title_romaji": "Koisuru Otome no Rhapsody",
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/8481/Bungaku_Shoujo_Memoire/episode/3"
+          }
         }
       ],
       "genres": [
@@ -5544,7 +5606,8 @@
           "filler": false,
           "recap": false,
           "duration": 6000,
-          "episode_number": 1
+          "episode_number": 1,
+          "thumbnails": []
         }
       ],
       "genres": [
@@ -6064,9 +6127,11 @@
           "duration": 60,
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/38045/Calpis_Hakkou_Monogatari",
           "thumbnails": [],
-          "streaming": {}
+          "streaming": {},
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/38045/Calpis_Hakkou_Monogatari"
+          }
         }
       ],
       "genres": [
@@ -6374,9 +6439,11 @@
           "duration": 2880,
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/6076/Eiji",
           "thumbnails": [],
-          "streaming": {}
+          "streaming": {},
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/6076/Eiji"
+          }
         }
       ],
       "genres": [
@@ -6585,9 +6652,11 @@
           "duration": 2940,
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/35025/Eikou_Naki_Tensai-tachi_Kara_no_Monogatari/episode/1",
           "thumbnails": [],
-          "streaming": {}
+          "streaming": {},
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/35025/Eikou_Naki_Tensai-tachi_Kara_no_Monogatari/episode/1"
+          }
         },
         {
           "episode_number": 2,
@@ -6599,9 +6668,11 @@
           "duration": 2940,
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/35025/Eikou_Naki_Tensai-tachi_Kara_no_Monogatari/episode/2",
           "thumbnails": [],
-          "streaming": {}
+          "streaming": {},
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/35025/Eikou_Naki_Tensai-tachi_Kara_no_Monogatari/episode/2"
+          }
         }
       ],
       "genres": [
@@ -7049,8 +7120,10 @@
           "duration": 1620,
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/33363/Eiyuu_Kaitai",
-          "thumbnails": []
+          "thumbnails": [],
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/33363/Eiyuu_Kaitai"
+          }
         }
       ],
       "genres": [
@@ -7805,7 +7878,8 @@
           "synopsis": "A collaboration between Inochi Sketch and Mameshiba.",
           "filler": false,
           "recap": false,
-          "title_romaji": null
+          "title_romaji": null,
+          "thumbnails": []
         }
       ],
       "genres": [
@@ -8039,9 +8113,11 @@
           "title": "Episode 1",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/37843/Kiss_Dekiru_Gyouza_Movie_x_Mameshiba/episode/1",
           "thumbnails": [],
-          "streaming": {}
+          "streaming": {},
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/37843/Kiss_Dekiru_Gyouza_Movie_x_Mameshiba/episode/1"
+          }
         },
         {
           "episode_number": 2,
@@ -8049,9 +8125,11 @@
           "title": "Episode 2",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/37843/Kiss_Dekiru_Gyouza_Movie_x_Mameshiba/episode/2",
           "thumbnails": [],
-          "streaming": {}
+          "streaming": {},
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/37843/Kiss_Dekiru_Gyouza_Movie_x_Mameshiba/episode/2"
+          }
         }
       ],
       "genres": [
@@ -8363,84 +8441,120 @@
           "title": "Episode 1",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/1"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/1"
+          },
+          "thumbnails": []
         },
         {
           "episode_number": 2,
           "title": "Episode 2",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/2"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/2"
+          },
+          "thumbnails": []
         },
         {
           "episode_number": 3,
           "title": "Episode 3",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/3"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/3"
+          },
+          "thumbnails": []
         },
         {
           "episode_number": 4,
           "title": "Episode 4",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/4"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/4"
+          },
+          "thumbnails": []
         },
         {
           "episode_number": 5,
           "title": "Episode 5",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/5"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/5"
+          },
+          "thumbnails": []
         },
         {
           "episode_number": 6,
           "title": "Episode 6",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/6"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/6"
+          },
+          "thumbnails": []
         },
         {
           "episode_number": 7,
           "title": "Episode 7",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/7"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/7"
+          },
+          "thumbnails": []
         },
         {
           "episode_number": 8,
           "title": "Episode 8",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/8"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/8"
+          },
+          "thumbnails": []
         },
         {
           "episode_number": 9,
           "title": "Episode 9",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/9"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/9"
+          },
+          "thumbnails": []
         },
         {
           "episode_number": 10,
           "title": "Episode 10",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/10"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/10"
+          },
+          "thumbnails": []
         },
         {
           "episode_number": 11,
           "title": "Episode 11",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/11"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/11"
+          },
+          "thumbnails": []
         },
         {
           "episode_number": 12,
           "title": "Episode 12",
           "filler": false,
           "recap": false,
-          "url": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/12"
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/12"
+          },
+          "thumbnails": []
         }
       ],
       "genres": [
@@ -8970,7 +9084,7 @@
           "title": "Episode 1",
           "filler": false,
           "recap": false,
-          "streaming_info": [],
+          "streaming": {},
           "thumbnails": []
         }
       ],
@@ -9284,7 +9398,8 @@
           "filler": false,
           "recap": false,
           "duration": 120,
-          "episode_number": 1
+          "episode_number": 1,
+          "thumbnails": []
         }
       ],
       "genres": [

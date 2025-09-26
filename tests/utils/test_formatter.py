@@ -653,5 +653,137 @@ class TestResultFormatter:
         )
         self.console.print(config_panel)
 
+    def print_detailed_staff_test_result(self, test_num: int, anime_data: Dict[str, Any],
+                                        field_combo: List[str], selected_pattern: Dict,
+                                        text_query: str, results: List[Dict[str, Any]],
+                                        test_passed: bool, staff_names: List[str]):
+        """Print detailed staff test result using stacked information panels."""
+
+        anime_title = anime_data.get('title', 'Unknown')
+
+        # Create the header separator
+        header = f"Staff Test #{test_num} " + "═" * (75 - len(f"Staff Test #{test_num} "))
+        self.console.print(f"\n[bold bright_cyan]{header}[/bold bright_cyan]")
+
+        # Anime Title Section
+        self.console.print(f"\n[bold bright_cyan]🎭 Anime Title[/bold bright_cyan]")
+        self.console.print(f"   {anime_title}")
+
+        # Staff Roles Panel
+        roles_display = " + ".join([role.replace('_', ' ').title() for role in field_combo])
+        roles_panel = Panel(
+            f"[yellow]{roles_display}[/yellow]",
+            title="🎭 Staff Roles",
+            border_style="magenta",
+            padding=(0, 1)
+        )
+        self.console.print(roles_panel)
+
+        # Query Pattern Panel
+        pattern_content = []
+        pattern_content.append(f"[bold blue]Pattern:[/bold blue] {selected_pattern['name']}")
+        pattern_content.append(f"[blue]Description:[/blue] {selected_pattern['description']}")
+        if staff_names:
+            staff_preview = ', '.join(staff_names[:3])
+            if len(staff_names) > 3:
+                staff_preview += f"... ({len(staff_names)} total)"
+            pattern_content.append(f"[cyan]Staff Names:[/cyan] {staff_preview}")
+
+        pattern_panel = Panel(
+            "\n".join(pattern_content),
+            title="🎲 Query Pattern",
+            border_style="blue",
+            padding=(0, 1)
+        )
+        self.console.print(pattern_panel)
+
+        # Generated Query Panel
+        # Format query for better readability
+        if len(text_query) > 100:
+            # Split at word boundaries for readability
+            words = text_query.split()
+            lines = []
+            current_line = ""
+            for word in words:
+                if len(current_line + " " + word) > 80:
+                    if current_line:
+                        lines.append(current_line)
+                    current_line = word
+                else:
+                    current_line = current_line + " " + word if current_line else word
+            if current_line:
+                lines.append(current_line)
+            query_display = "\n".join(lines)
+        else:
+            query_display = text_query
+
+        query_panel = Panel(
+            f"[cyan]{query_display}[/cyan]",
+            title="📝 Generated Staff Query",
+            border_style="cyan",
+            padding=(0, 1)
+        )
+        self.console.print(query_panel)
+
+        # Search Results Section
+        self.console.print(f"\n[bold green]📊 Staff Vector Search Results[/bold green]")
+
+        # Create a simple results table
+        results_table = Table(show_header=True, box=box.SIMPLE, padding=(0, 1))
+        results_table.add_column("#", width=3, justify="right")
+        results_table.add_column("Title", style="cyan")
+        results_table.add_column("Score", width=10, justify="right")
+        results_table.add_column("Status", width=8, justify="center")
+
+        for i, result in enumerate(results[:5], 1):
+            result_title = result.get('title', 'Unknown')
+            result_score = result.get('score', 0.0)
+
+            # Score styling
+            score_style = "bright_green" if result_score >= 0.8 else "yellow" if result_score >= 0.6 else "white"
+            score_display = f"[{score_style}]{result_score:.4f}[/{score_style}]"
+
+            # Status for first result
+            status_display = ""
+            if i == 1:
+                if test_passed:
+                    status_display = "[green]✅ PASS[/green]"
+                else:
+                    status_display = "[red]❌ FAIL[/red]"
+
+            results_table.add_row(str(i), result_title, score_display, status_display)
+
+        self.console.print(results_table)
+
+        # Analysis Section
+        if results:
+            top_score = results[0].get('score', 0.0)
+            analysis_style = "bright_green" if test_passed else "red"
+
+            if test_passed:
+                if results[0].get('title') == anime_title:
+                    analysis_text = "EXACT MATCH - Perfect staff semantic similarity!"
+                elif any(r.get('title') == anime_title for r in results[:5]):
+                    analysis_text = "TOP-5 MATCH - Found in top results!"
+                else:
+                    analysis_text = "STAFF MATCH - Cross-reference validation passed!"
+            else:
+                analysis_text = "NO MATCH - Target anime not found in top 5 results."
+
+            self.console.print(f"\n[bold {analysis_style}]🎯 Analysis[/bold {analysis_style}]: {analysis_text}")
+
+            # Additional staff-specific insights
+            if test_passed and top_score >= 0.9:
+                self.console.print(f"   [dim]Excellent staff vector quality - very high confidence match[/dim]")
+            elif test_passed and top_score >= 0.7:
+                self.console.print(f"   [dim]Good staff vector quality - strong semantic similarity[/dim]")
+
+        else:
+            self.console.print(f"\n[bold red]🎯 Analysis[/bold red]: No results returned from staff vector search.")
+
+        # Bottom separator
+        separator = "═" * 75
+        self.console.print(f"[dim]{separator}[/dim]")
+
 # Global formatter instance
 formatter = TestResultFormatter()
