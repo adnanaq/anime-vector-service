@@ -156,17 +156,10 @@ class AnimeFieldMapper:
         return " | ".join(content_parts)
 
     def _extract_technical_content(self, anime: AnimeEntry) -> str:
-        """Extract technical details like rating, status, type, source material."""
+        """Extract technical details like licensors, episode overrides."""
         content_parts = []
 
-        # Basic technical info
-        content_parts.append(f"Type: {anime.type}")
-        content_parts.append(f"Status: {anime.status}")
-
-        if anime.rating:
-            content_parts.append(f"Rating: {anime.rating}")
-        if anime.source_material:
-            content_parts.append(f"Source: {anime.source_material}")
+        # Technical metadata (excluding categorical fields like type/status/source_material/rating)
 
         # Licensing information
         if anime.licensors:

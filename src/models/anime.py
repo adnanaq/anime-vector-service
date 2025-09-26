@@ -1,8 +1,50 @@
 # src/models/anime.py - Pydantic Models for Anime Data
 from datetime import datetime
+from enum import Enum
 from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field
+
+
+class AnimeStatus(str, Enum):
+    """Anime airing status classification."""
+    FINISHED = "FINISHED"
+    UPCOMING = "UPCOMING"
+    ONGOING = "ONGOING"
+    UNKNOWN = "UNKNOWN"
+
+
+class AnimeType(str, Enum):
+    """Anime type classification."""
+    MOVIE = "MOVIE"
+    ONA = "ONA"
+    OVA = "OVA"
+    SPECIAL = "SPECIAL"
+    TV = "TV"
+    UNKNOWN = "UNKNOWN"
+    MUSIC = "MUSIC"
+    PV = "PV"
+
+
+class AnimeSourceMaterial(str, Enum):
+    """Anime source material classification."""
+    ORIGINAL = "ORIGINAL"
+    LIGHT_NOVEL = "LIGHT NOVEL"
+    MANGA = "MANGA"
+    OTHER = "OTHER"
+    MIXED_MEDIA = "MIXED MEDIA"
+    UNKNOWN = "UNKNOWN"
+    GAME = "GAME"
+
+
+class AnimeRating(str, Enum):
+    """Anime content rating classification."""
+    G = "G - All Ages"
+    PG = "PG - Children"
+    PG13 = "PG-13 - Teens 13 or older"
+    R = "R - 17+ (violence & profanity)"
+    RPLUS = "R+ - Mild Nudity"
+    RX = "Rx - Hentai"
 
 
 class CharacterEntry(BaseModel):
@@ -434,18 +476,18 @@ class AnimeEntry(BaseModel):
     id: str = Field(..., description="Unique identifier for the anime entry")
     month: Optional[str] = Field(None, description="Premiere month from AnimSchedule")
     nsfw: Optional[bool] = Field(None, description="Not Safe For Work flag from Kitsu")
-    rating: Optional[str] = Field(None, description="Content rating (PG-13, R, etc.)")
-    source_material: Optional[str] = Field(
+    rating: Optional[AnimeRating] = Field(None, description="Content rating (PG-13, R, etc.)")
+    source_material: Optional[AnimeSourceMaterial] = Field(
         None, description="Source material (manga, light novel, etc.)"
     )
-    status: str = Field(..., description="Airing status")
+    status: AnimeStatus = Field(..., description="Airing status")
     synopsis: Optional[str] = Field(
         None, description="Detailed anime synopsis from external sources"
     )
     title: str = Field(..., description="Primary anime title")
     title_english: Optional[str] = Field(None, description="English title")
     title_japanese: Optional[str] = Field(None, description="Japanese title")
-    type: str = Field(..., description="TV, Movie, OVA, etc.")
+    type: AnimeType = Field(..., description="TV, Movie, OVA, etc.")
 
     # =====================================================================
     # ARRAY FIELDS (alphabetical)

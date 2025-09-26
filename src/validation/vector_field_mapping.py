@@ -19,8 +19,8 @@ VECTOR_FIELD_MAPPINGS: Dict[str, Dict[str, List[str]]] = {
         "description": "Comprehensive classification and content categorization"
     },
     "technical_vector": {
-        "fields": ["rating", "source_material", "status", "type", "licensors", "episode_overrides"],
-        "description": "Technical metadata and format information"
+        "fields": ["licensors", "episode_overrides"],
+        "description": "Technical metadata and format information (excluding categorical fields)"
     },
     "staff_vector": {
         "fields": ["staff_data"],

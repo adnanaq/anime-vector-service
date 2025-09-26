@@ -25,12 +25,12 @@
       "month": "October",
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Mixed media",
+      "source_material": "MIXED MEDIA",
       "status": "FINISHED",
       "synopsis": "Animated music video for RAISE A SUILEN's song !NVADE SHOW!. It was first released on BanG Dream's official YouTube and was later included in the limited edition Blu-ray for RAISE A SUILEN's sixth single \"mind of Prominence\". (Source: AniList)",
       "title": "!NVADE SHOW!",
       "title_japanese": "!NVADE SHOW!",
-      "type": "Music",
+      "type": "MUSIC",
       "characters": [
         {
           "name": "Masuki Satou",
@@ -193,22 +193,22 @@
       "related_anime": [
         {
           "title": "BanG Dream! 2nd Season",
-          "relation_type": "Character",
+          "relation_type": "CHARACTER",
           "url": "https://myanimelist.net/anime/37869"
         },
         {
           "title": "BanG Dream! 2nd Season",
-          "relation_type": "Character",
+          "relation_type": "CHARACTER",
           "url": "https://anilist.co/anime/101633"
         },
         {
           "title": "BanG Dream!",
-          "relation_type": "Character",
+          "relation_type": "CHARACTER",
           "url": "https://kitsu.io/api/edge/anime/12330"
         },
         {
           "title": "BanG Dream!",
-          "relation_type": "Character",
+          "relation_type": "CHARACTER",
           "url": "https://myanimelist.net/anime/33573"
         }
       ],
@@ -535,13 +535,13 @@
       "episodes": 1,
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Original",
+      "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "This music video tells how a shy girl with a secret love and curiosity about what surrounds her works.",
       "title": "\"0\"",
       "title_english": "0",
       "title_japanese": "「0」",
-      "type": "Music",
+      "type": "MUSIC",
       "characters": [
         {
           "name": "Kuriyama, Chiaki",
@@ -758,7 +758,7 @@
     {
       "episodes": 8,
       "rating": "Rx - Hentai",
-      "source_material": "Manga",
+      "source_material": "MANGA",
       "status": "FINISHED",
       "synopsis": "After moving into a new share house, Ryota Ochi meets two beautiful housemates who order him to do housework, with an unusual arrangement.",
       "title": "\"1-punkan dake Furete mo Ii yo...\" Share House no Himitsu Rule.",
@@ -950,7 +950,7 @@
       "relations": [
         {
           "title": "The Share House's Secret Rule",
-          "relation_type": "Original Work",
+          "relation_type": "ORIGINAL WORK",
           "url": "https://anisearch.com/manga/91400,the-share-houses-secret-rule"
         }
       ],
@@ -1030,7 +1030,7 @@
       "episodes": 1,
       "nsfw": false,
       "rating": "PG - Children",
-      "source_material": "Unknown",
+      "source_material": "UNKNOWN",
       "status": "FINISHED",
       "synopsis": "Based on Aesop's Fables.",
       "title": "\"Aesop\" no Ohanashi yori: Ushi to Kaeru, Yokubatta Inu",
@@ -1206,13 +1206,13 @@
       "episodes": 1,
       "nsfw": false,
       "rating": "PG - Children",
-      "source_material": "Original",
+      "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "Graduate Work 2018 by Yuuta Watanabe, Tokyo Polytechnic University, Faculty of Arts, Department of Animation.",
       "title": "\"Ai\" wo Taberu",
       "title_english": "Eating \"Love & Sorrow\"",
       "title_japanese": "「あい」をたべる",
-      "type": "Movie",
+      "type": "MOVIE",
       "episode_details": [
         {
           "episode_number": 1,
@@ -1312,7 +1312,7 @@
       "month": "January",
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Original",
+      "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "The anime depicts the \"smart city\" envisioned by Kyocera, where everyone can comfortably and safely live with the use of advanced technology, and it also depicts the worries of job seekers. The anime's title and theme reflect both the vexing issue of how to describe Kyocera's extensive business in just one word, and the mood of job seekers vexed by the interview question, \"If you had to describe yourself in one word, what would it be?\"\n\n(Source: ANN)",
       "title": "\"Anata wo Hitokoto de Arawashite Kudasai\" no Shitsumon ga Nigate da.",
@@ -1416,22 +1416,22 @@
       "related_anime": [
         {
           "title": "Watashi no Hashtag ga Baenakute.",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://myanimelist.net/anime/54278/Watashi_no_Hashtag_ga_Baenakute"
         },
         {
           "title": "Ima wa Shourai ni Hairimasu ka.",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://myanimelist.net/anime/58141/Ima_wa_Shourai_ni_Hairimasu_ka"
         },
         {
           "title": "Watashi no Hashtag ga Baenakute.",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://anisearch.com/anime/18202"
         },
         {
           "title": "Ima wa shourai ni Hairimasu ka.",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://kitsu.app/anime/48562"
         }
       ],
@@ -1800,7 +1800,7 @@
       "episodes": 16,
       "nsfw": false,
       "rating": "PG-13 - Teens 13 or older",
-      "source_material": "Original",
+      "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "Chibi shorts for Ayaka that were published on the official Twitter and YouTube accounts for the series.",
       "title": "\"Ayakai Shima\" e Youkoso! Mitaman no Ayakashima Kankou Annai",
@@ -2008,32 +2008,32 @@
       "related_anime": [
         {
           "title": "Ayaka",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://myanimelist.net/anime/53428/Ayaka"
         },
         {
           "title": "Ayaka",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://www.anime-planet.com/anime/ayaka"
         },
         {
           "title": "Ayaka",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://anime-planet.com/anime/ayaka"
         },
         {
           "title": "AYAKA",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://kitsu.app/anime/46685"
         },
         {
           "title": "AYAKA",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://livechart.me/anime/11577"
         },
         {
           "title": "Ayaka",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://myanimelist.net/anime/53428"
         }
       ],
@@ -2139,7 +2139,7 @@
       "episodes": 1,
       "month": "December",
       "rating": "PG-13 - Teens 13 or older",
-      "source_material": "Light novel",
+      "source_material": "LIGHT NOVEL",
       "status": "FINISHED",
       "synopsis": "* Based on the short story \"Bungaku Shoujo\" to Ushi Maou (Minotaurus), published in volume 02 of FBSP.\nhttp://anidb.net/ch11667 Amano Tooko and http://anidb.net/ch11668 Inoue Konoha are the only members of their high school literature club. After school, they meet so that Tooko can assign topics that will guide Konoha in writing a short story — the Literature Girl Tooko`s daily \"snack\" — within fifty minutes.\nSource: ANN\nNote: Bundled with the second volume of the novel titled Bungaku Shoujo Minarai no, Shoushin.",
       "title": "\"Bungaku Shoujo\" Kyou no Oyatsu: Hatsukoi",
@@ -2215,109 +2215,109 @@
       "related_anime": [
         {
           "title": "\"Bungaku Shoujo\" Movie",
-          "relation_type": "Parent Story",
+          "relation_type": "PARENT STORY",
           "url": "https://myanimelist.net/anime/6408/Bungaku_Shoujo_Movie"
         },
         {
           "title": "Gekijouban Bungaku Shoujo",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://anidb.net/anime/6959"
         },
         {
           "title": "Bungaku Shoujo: Memoire",
-          "relation_type": "Parent story",
+          "relation_type": "PARENT STORY",
           "url": "https://anidb.net/anime/7441"
         },
         {
           "title": "Bungaku Shoujo",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://anilist.co/anime/6408"
         },
         {
           "title": "Bungaku Shoujo Memoire",
-          "relation_type": "Parent story",
+          "relation_type": "PARENT STORY",
           "url": "https://anime-planet.com/anime/bungaku-shoujo-memoire"
         },
         {
           "title": "Bungaku Shoujo Movie",
-          "relation_type": "Parent Story",
+          "relation_type": "PARENT STORY",
           "url": "https://anime-planet.com/anime/bungaku-shoujo-movie"
         },
         {
           "title": "Gekijouban Bungaku Shoujo",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://animecountdown.com/38239"
         },
         {
           "title": "Bungaku Shoujo Memoire",
-          "relation_type": "Parent story",
+          "relation_type": "PARENT STORY",
           "url": "https://animecountdown.com/40553"
         },
         {
           "title": "Bungaku Shoujo Movie",
-          "relation_type": "Parent Story",
+          "relation_type": "PARENT STORY",
           "url": "https://animenewsnetwork.com/encyclopedia/anime.php?id=10815"
         },
         {
           "title": "Bungaku Shoujo Movie",
-          "relation_type": "Parent Story",
+          "relation_type": "PARENT STORY",
           "url": "https://kitsu.app/anime/4550"
         },
         {
           "title": "Bungaku Shoujo Movie",
-          "relation_type": "Parent Story",
+          "relation_type": "PARENT STORY",
           "url": "https://livechart.me/anime/4198"
         },
         {
           "title": "Bungaku Shoujo Memoire",
-          "relation_type": "Parent story",
+          "relation_type": "PARENT STORY",
           "url": "https://livechart.me/anime/5640"
         },
         {
           "title": "Bungaku Shoujo Movie",
-          "relation_type": "Parent Story",
+          "relation_type": "PARENT STORY",
           "url": "https://notify.moe/anime/UUie5KimR"
         },
         {
           "title": "Gekijouban Bungaku Shoujo",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://simkl.com/anime/38239"
         },
         {
           "title": "Bungaku Shoujo Memoire",
-          "relation_type": "Parent story",
+          "relation_type": "PARENT STORY",
           "url": "https://simkl.com/anime/40553"
         },
         {
           "title": "Bungaku Shōjo Memoir II - Sora-Mau Tenshi no Requiem OVA",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://animenewsnetwork.com/encyclopedia/anime.php?id=11682"
         },
         {
           "title": "Bungaku Shōjo Memoir III - Koi Suru Otome no Rhapsody OAV",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://animenewsnetwork.com/encyclopedia/anime.php?id=11683"
         },
         {
           "title": "PENDING",
-          "relation_type": "Parent story",
+          "relation_type": "PARENT STORY",
           "url": "https://anisearch.com/anime/6169"
         }
       ],
       "relations": [
         {
           "title": "\"Bungaku Shoujo\" to Shinitagari no Pierrot",
-          "relation_type": "Adaptation",
+          "relation_type": "ADAPTATION",
           "url": "https://myanimelist.net/manga/11776/Bungaku_Shoujo_to_Shinitagari_no_Pierrot"
         },
         {
           "title": "\"Bungaku Shoujo\" to Ue Kawaku Ghost",
-          "relation_type": "Adaptation",
+          "relation_type": "ADAPTATION",
           "url": "https://myanimelist.net/manga/36037/Bungaku_Shoujo_to_Ue_Kawaku_Ghost"
         },
         {
           "title": "\"Bungaku Shoujo\" Series",
-          "relation_type": "Adaptation",
+          "relation_type": "ADAPTATION",
           "url": "https://myanimelist.net/manga/10000/Bungaku_Shoujo_Series"
         }
       ],
@@ -4254,7 +4254,7 @@
       "month": "June",
       "nsfw": false,
       "rating": "PG-13 - Teens 13 or older",
-      "source_material": "Light novel",
+      "source_material": "LIGHT NOVEL",
       "status": "FINISHED",
       "synopsis": "Episodes which depict the background stories of \"Bungaku Shoujo\" Movie's main heroines.",
       "title": "\"Bungaku Shoujo\" Memoire",
@@ -4721,104 +4721,104 @@
       "related_anime": [
         {
           "title": "Gekijouban Bungaku Shoujo",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://anidb.net/anime/6959"
         },
         {
           "title": "\"Bungaku Shoujo\": Kyou no Oyatsu - Hatsukoi",
-          "relation_type": "Side story",
+          "relation_type": "SIDE STORY",
           "url": "https://anidb.net/anime/7294"
         },
         {
           "title": "Bungaku Shoujo",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://anilist.co/anime/6408"
         },
         {
           "title": "Bungaku Shoujo: Kyou no Oyatsu - Hatsukoi",
-          "relation_type": "Side story",
+          "relation_type": "SIDE STORY",
           "url": "https://anime-planet.com/anime/bungaku-shoujo-kyou-no-oyatsu-hatsukoi"
         },
         {
           "title": "Bungaku Shoujo Movie",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://anime-planet.com/anime/bungaku-shoujo-movie"
         },
         {
           "title": "Bungaku Shoujo: Kyou no Oyatsu - Hatsukoi",
-          "relation_type": "Side story",
+          "relation_type": "SIDE STORY",
           "url": "https://animecountdown.com/37286"
         },
         {
           "title": "Gekijouban Bungaku Shoujo",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://animecountdown.com/38239"
         },
         {
           "title": "Gekijouban Bungaku Shoujo",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://anisearch.com/anime/5387"
         },
         {
           "title": "Bungaku Shoujo: Kyou no Oyatsu - Hatsukoi",
-          "relation_type": "Side story",
+          "relation_type": "SIDE STORY",
           "url": "https://anisearch.com/anime/5970"
         },
         {
           "title": "\"Bungaku Shoujo\" Movie",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://kitsu.app/anime/4550"
         },
         {
           "title": "\"Bungaku Shoujo\" Movie",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://livechart.me/anime/4198"
         },
         {
           "title": "\"Bungaku Shoujo\": Kyou no Oyatsu - Hatsukoi",
-          "relation_type": "Side story",
+          "relation_type": "SIDE STORY",
           "url": "https://livechart.me/anime/5549"
         },
         {
           "title": "\"Bungaku Shoujo\" Movie",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://myanimelist.net/anime/6408"
         },
         {
           "title": "\"Bungaku Shoujo\" Movie",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://notify.moe/anime/UUie5KimR"
         },
         {
           "title": "Bungaku Shoujo: Kyou no Oyatsu - Hatsukoi",
-          "relation_type": "Side story",
+          "relation_type": "SIDE STORY",
           "url": "https://simkl.com/anime/37286"
         },
         {
           "title": "Bungaku Shoujo: Kyou no Oyatsu - Hatsukoi",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://simkl.com/anime/38239"
         },
         {
           "title": "Gekijouban Bungaku Shoujo",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://myanimelist.net/anime/6408/Bungaku_Shoujo_Movie"
         }
       ],
       "relations": [
         {
           "title": "\"Bungaku Shoujo\" to Shinitagari no Pierrot",
-          "relation_type": "Adaptation",
+          "relation_type": "ADAPTATION",
           "url": "https://myanimelist.net/manga/11776/Bungaku_Shoujo_to_Shinitagari_no_Pierrot"
         },
         {
           "title": "\"Bungaku Shoujo\" to Ue Kawaku Ghost",
-          "relation_type": "Adaptation",
+          "relation_type": "ADAPTATION",
           "url": "https://myanimelist.net/manga/36037/Bungaku_Shoujo_to_Ue_Kawaku_Ghost"
         },
         {
           "title": "\"Bungaku Shoujo\" Series",
-          "relation_type": "Adaptation",
+          "relation_type": "ADAPTATION",
           "url": "https://myanimelist.net/manga/10000/Bungaku_Shoujo_Series"
         }
       ],
@@ -5466,12 +5466,12 @@
       "month": "May",
       "nsfw": false,
       "rating": "PG-13 - Teens 13 or older",
-      "source_material": "Light novel",
+      "source_material": "LIGHT NOVEL",
       "status": "FINISHED",
       "synopsis": "The protagonist of the story, Konoha Inoue, is a seemingly normal senior high 2nd year student. His high school life, other than a hinted incident 2 years ago, can be summed up as normal- if one can dismiss the secret fact that he used to be a female bestselling romance author. Due to that incident, however, he has now vowed never to write again.\n\nThis continued on until he was forced to join the literary club by the literary club president, the 3rd year female student Amano Tooko, a beautiful girl who has a taste for eating literary works. Now he has been tasked with writing her snack every day after school.\n\n(Source: To Say Nothing of the Dog)",
       "title": "\"Bungaku Shoujo\" Movie",
       "title_japanese": "劇場版\"文学少女\"",
-      "type": "Movie",
+      "type": "MOVIE",
       "characters": [
         {
           "name": "Amano, Tooko",
@@ -5619,29 +5619,29 @@
       "related_anime": [
         {
           "title": "\"Bungaku Shoujo\" Memoire",
-          "relation_type": "Prequel",
+          "relation_type": "PREQUEL",
           "url": "https://myanimelist.net/anime/8481"
         },
         {
           "title": "\"Bungaku Shoujo\" Kyou no Oyatsu: Hatsukoi",
-          "relation_type": "Side Story",
+          "relation_type": "SIDE STORY",
           "url": "https://myanimelist.net/anime/7669"
         }
       ],
       "relations": [
         {
           "title": "\"Bungaku Shoujo\" to Shinitagari no Pierrot",
-          "relation_type": "Adaptation",
+          "relation_type": "ADAPTATION",
           "url": "https://myanimelist.net/manga/11776/Bungaku_Shoujo_to_Shinitagari_no_Pierrot"
         },
         {
           "title": "\"Bungaku Shoujo\" to Ue Kawaku Ghost",
-          "relation_type": "Adaptation",
+          "relation_type": "ADAPTATION",
           "url": "https://myanimelist.net/manga/36037/Bungaku_Shoujo_to_Ue_Kawaku_Ghost"
         },
         {
           "title": "\"Bungaku Shoujo\" Series",
-          "relation_type": "Adaptation",
+          "relation_type": "ADAPTATION",
           "url": "https://myanimelist.net/manga/10000/Bungaku_Shoujo_Series"
         }
       ],
@@ -6109,7 +6109,7 @@
       "month": "April",
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Original",
+      "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "A Calpis (Calpico in the US) commissioned short about the history of the company and how their product is made today. A few scenes use live-action footage. The short is animated by Takaharu Shimizu who used a Rube Goldberg style of story telling.",
       "title": "\"Calpis\" Hakkou Monogatari",
@@ -6307,7 +6307,7 @@
       "month": "August",
       "nsfw": false,
       "rating": "R - 17+ (violence & profanity)",
-      "source_material": "Manga",
+      "source_material": "MANGA",
       "synopsis": "* Based on a shounen manga in Jump.\nEiji is the son of Japan's greatest boxer, but unfortunately, he happens to be a total high school loser. However, an old man is determined to make Eiji into a great boxer.",
       "title_japanese": "「エイジ」",
       "characters": [
@@ -6454,7 +6454,7 @@
       "relations": [
         {
           "title": "\"Eiji\"",
-          "relation_type": "Adaptation",
+          "relation_type": "ADAPTATION",
           "url": "https://myanimelist.net/manga/71013/Eiji"
         }
       ],
@@ -6638,7 +6638,7 @@
       "type": "SPECIAL",
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Manga",
+      "source_material": "MANGA",
       "synopsis": "An anime/documentary series about athletes presented by NHK. The first episode adapts material from Itou Tomoyoshi and Morita Shingo's Weekly Young Jump biographical manga Eikou Naki Tensai-tachi (Geniuses Without Glory) — specifically the story about Furuhashi Hironoshin, the swimmer also known as \"the flying fish of Fujiyama.\" The episode also includes interviews with Olympic swimmer Kitajima Kousuke and other Japanese swimmers about the how Furuhashi changed the Japanese competitive swimming world, as well as what sort of training is required to be an Olympic swimmer. Source: ANN",
       "title_japanese": "\"栄光なき天才たち\"からの物語",
       "episode_details": [
@@ -6885,7 +6885,7 @@
       "month": "November",
       "nsfw": false,
       "rating": "PG-13 - Teens 13 or older",
-      "source_material": "Light novel",
+      "source_material": "LIGHT NOVEL",
       "status": "FINISHED",
       "synopsis": "The story centers on a boy named Yamada Uro, and a 17-year old girl named Karon. Both work as part of the \"Hero Retirement and Return to Everyday Life Assistance Agency,\" which takes heroes from another world back to Earth and helps them reintegrate into everyday life. Karon, a former hero herself, works under Uro as they tackle cases, and also lives with him, with Uro constantly failing to rein in Karon`s hero-like behavior even as he tries to ingrain the behavior of common people into her.\nSource: ANN",
       "title": "\"Eiyuu\" Kaitai",
@@ -7140,7 +7140,7 @@
       "relations": [
         {
           "title": "\"Eiyuu\" Kaitai",
-          "relation_type": "Adaptation",
+          "relation_type": "ADAPTATION",
           "url": "https://myanimelist.net/manga/101385/Eiyuu_Kaitai"
         }
       ],
@@ -7491,7 +7491,7 @@
       "month": "August",
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Original",
+      "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "It's been almost 100 years since the \"salaryman\" type of office worker first appeared in Japan back in the 1920s.\n\nAs our society faces a major turning point, SmartHR decided to create a brand film to reflect upon how work styles have changed with time over the past century.\n\nWe hope that by looking back on history, we inspire people to think about how they want to work going forward.\n\n(Source: Official YouTube channel)",
       "title": "\"Hataraku\" no 100-nenshi",
@@ -7652,8 +7652,8 @@
     {
       "episodes": 1,
       "nsfw": false,
-      "rating": "G",
-      "source_material": "Original",
+      "rating": "G - All Ages",
+      "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "Music video for the song \"I=Fantasy\" by \"hitman\" bang. featuring SeeU.",
       "title": "\"hitman\" bang: I=Fantasy",
@@ -7862,7 +7862,7 @@
       "month": "October",
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Other",
+      "source_material": "OTHER",
       "status": "FINISHED",
       "synopsis": "A collaboration between Inochi Sketch and Mameshiba.",
       "title": "\"Inochi Sketch\" Movie Jabow x Mameshiba Collab CM",
@@ -7889,22 +7889,22 @@
       "related_anime": [
         {
           "title": "Mameshiba",
-          "relation_type": "Special",
+          "relation_type": "SPECIAL",
           "url": "https://myanimelist.net/anime/7261/Mameshiba"
         },
         {
           "title": "Mameshiba",
-          "relation_type": "Special",
+          "relation_type": "SPECIAL",
           "url": "https://anime-planet.com/anime/mameshiba"
         },
         {
           "title": "Mameshiba",
-          "relation_type": "Special",
+          "relation_type": "SPECIAL",
           "url": "https://kitsu.app/anime/4918"
         },
         {
           "title": "Mameshiba",
-          "relation_type": "Special",
+          "relation_type": "SPECIAL",
           "url": "https://kitsu.app/anime/4918"
         }
       ],
@@ -7994,7 +7994,7 @@
       "month": "July",
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Other",
+      "source_material": "OTHER",
       "status": "FINISHED",
       "synopsis": "A collaboration between Mameshiba and Kinako, a 2010 Japanese film based on a true story of a dog trainer, meant to promote the latter's release the following month.",
       "title": "\"Kinako\" Movie x Mameshiba",
@@ -8007,12 +8007,12 @@
       "related_anime": [
         {
           "title": "Mameshiba",
-          "relation_type": "Special",
+          "relation_type": "SPECIAL",
           "url": "https://anime-planet.com/anime/mameshiba"
         },
         {
           "title": "Mameshiba",
-          "relation_type": "Special",
+          "relation_type": "SPECIAL",
           "url": "https://myanimelist.net/anime/7261"
         }
       ],
@@ -8100,7 +8100,7 @@
       "episodes": 2,
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Other",
+      "source_material": "OTHER",
       "status": "FINISHED",
       "synopsis": "Two televised specials collaborating the Mameshiba franchise and the feature film Kiss Dekiru Gyoza being released June 2018. \n\nThe film is about Yoko Fujita as a single mother who goes through a divorce. Afterwards, she returns to her parents' home and struggles to raise her child, also attempts to revive her parents' gyoza restaurant. She falls in love with pro golfer Ryo Iwahara.\n\nThe specials focus on shiba-ified Yoko and Ryo as they talked to Edamame. Special collaborative goods will be sold as well, including a bentou meal sold at specific train stations.\n\n(Source: IMDB)",
       "title": "\"Kiss Dekiru Gyouza\" Movie x Mameshiba",
@@ -8141,22 +8141,22 @@
       "related_anime": [
         {
           "title": "Mameshiba",
-          "relation_type": "Special",
+          "relation_type": "SPECIAL",
           "url": "https://anime-planet.com/anime/mameshiba"
         },
         {
           "title": "Mameshiba",
-          "relation_type": "Special",
+          "relation_type": "SPECIAL",
           "url": "https://kitsu.app/anime/4918"
         },
         {
           "title": "Mameshiba",
-          "relation_type": "Special",
+          "relation_type": "SPECIAL",
           "url": "https://myanimelist.net/anime/7261"
         },
         {
           "title": "Mameshiba",
-          "relation_type": "Special",
+          "relation_type": "SPECIAL",
           "url": "https://notify.moe/anime/JpERpKiiR"
         }
       ],
@@ -8232,7 +8232,7 @@
       "month": "October",
       "nsfw": false,
       "rating": "PG-13 - Teens 13 or older",
-      "source_material": "Light novel",
+      "source_material": "LIGHT NOVEL",
       "status": "FINISHED",
       "synopsis": "A New Year's greetings to promote the release of Mahouka Koukou no Rettousei Movie: Yotsuba Keishou-hen.",
       "title": "\"Mahouka Koukou no Rettousei\" Yori Shinnen no Goaisatsu 2025",
@@ -8267,7 +8267,7 @@
       "related_anime": [
         {
           "title": "Mahouka Koukou no Rettousei Movie: Yotsuba Keishou-hen",
-          "relation_type": "Movie",
+          "relation_type": "MOVIE",
           "url": "https://myanimelist.net/anime/59174"
         }
       ],
@@ -8341,7 +8341,7 @@
       "month": "February",
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Original",
+      "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "Moving 3D stamps of Kensaku and Enjin are now on sale.\nLiven up the talk with greetings and easy-to-use reactions!\n\n(Source: Kensaku to Enji Official YouTube Channel; translated)",
       "title": "\"Moving in 3D! Usable ♪ Kensaku and Engine",
@@ -8401,7 +8401,7 @@
       "episodes": 12,
       "status": "UPCOMING",
       "title": "\"Omae Gotoki ga Maou ni Kateru to Omouna\" to Yuusha Party wo Tsuihou sareta node, Outo de Kimama ni Kurashitai",
-      "source_material": "Light novel",
+      "source_material": "LIGHT NOVEL",
       "synopsis": "Flum Apricot was never meant to be a hero. Despite zero stats across the board and a power she can't even use, she somehow finds herself included in a party of heroes. But Flum's life hits rock bottom when the party's renowned sage, Jean Inteige, decides that the useless girl is dead weight, and arranges to have her sold into slavery. Tossed to monsters to be feasted upon for her master's entertainment, Flum makes the desperate choice to reach for a cursed weapon... and something new awakens within her. A grimdark tale about one woman's blood-soaked quest to reclaim her life!\n\n(Source: Seven Seas Entertainment)",
       "title_japanese": "「お前ごときが魔王に勝てると思うな」と勇者パーティを追放されたので、王都で気ままに暮らしたい",
       "type": "TV",
@@ -8576,12 +8576,12 @@
       "relations": [
         {
           "title": "\"Omae Gotoki ga Maou ni Kateru to Omouna\" to Yuusha Party wo Tsuihou sareta node, Outo de Kimama ni Kurashitai the Comic",
-          "relation_type": "Adaptation",
+          "relation_type": "ADAPTATION",
           "url": "https://myanimelist.net/manga/123365/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai_the_Comic"
         },
         {
           "title": "\"Omae Gotoki ga Maou ni Kateru to Omouna\" to Yuusha Party wo Tsuihou sareta node, Outo de Kimama ni Kurashitai",
-          "relation_type": "Adaptation",
+          "relation_type": "ADAPTATION",
           "url": "https://myanimelist.net/manga/115587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai"
         }
       ],
@@ -8769,7 +8769,7 @@
       "month": "May",
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Original",
+      "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "A Parade for three managers and four performers. French composer Erik Satie (1866-1925) created the ballet music piece \"Parade\" in 1916, at the age of 50, and it was first performed in 1917, with Jean Cocteau and Pablo Picasso taking part to its creation on the scene. The ballet was introduced by the poet Guillaume Apollinaire, who described it by using the term \"surrealism\" for the very first time. Mixing quotes from Satie's essays with the music performed by a Dutch jazz band, the Willem Breuker Kollektief, this film is an animated re-creation of \"realist ballet\" images going beyond reality.",
       "title": "\"Parade\" de Satie",
@@ -9057,7 +9057,7 @@
       "episodes": 1,
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Game",
+      "source_material": "GAME",
       "status": "FINISHED",
       "synopsis": "From \"Pokemon shirts\" made by freely combining Pokemon patterns, \"Pokemon shirt sizing\", a body measurement service using a smartphone, is now available! A concept movie is now available to help you understand more about the service!\n\nA certain trainer tries to measure Pikachu in order to give him a shirt, but it seems like he's having a hard time.\nAt the end of the video, the secret of the \"Pokemon shirt\" logo is revealed?\n\nPlease pay attention to Pikachu's cute behavior.\n\n(Source: Pokemon official YouTube channel; translated)",
       "title": "\"Pokemon Shirt Sizing\" Concept Movie",
@@ -9094,17 +9094,17 @@
       "related_anime": [
         {
           "title": "Pokemon",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://myanimelist.net/anime/527/Pokemon"
         },
         {
           "title": "Pokemon (Original Series)",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://kitsu.app/anime/486"
         },
         {
           "title": "Pokemon (Original Series)",
-          "relation_type": "Other",
+          "relation_type": "OTHER",
           "url": "https://myanimelist.net/anime/527"
         }
       ],
@@ -9231,7 +9231,7 @@
       "month": "October",
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Original",
+      "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "A crossover collaboration commercial between the 2013 Japanese film R100 and the Mameshiba short anime series. The R100 film is about a man who enjoys being humiliated by dominatrixes.",
       "title": "\"R100\" x Mameshiba Original Manners",
@@ -9261,17 +9261,17 @@
       "related_anime": [
         {
           "title": "Mameshiba",
-          "relation_type": "Special",
+          "relation_type": "SPECIAL",
           "url": "https://myanimelist.net/anime/7261/Mameshiba"
         },
         {
           "title": "Mameshiba",
-          "relation_type": "Special",
+          "relation_type": "SPECIAL",
           "url": "https://www.anime-planet.com/anime/mameshiba"
         },
         {
           "title": "Mameshiba",
-          "relation_type": "Special",
+          "relation_type": "SPECIAL",
           "url": "https://anisearch.com/anime/8629"
         }
       ],
@@ -9364,7 +9364,7 @@
       "month": "October",
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Original",
+      "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "Official music video for the song \"Star\"t. It is the 46th song in the franchise. With a feature on Nanase Hagiwara, Nadeshiko Igarashi, and Minae Ono we assumed that it was once again about \"Maigahara Koukou Keion-bu,\" an after school club band with them. But they now have a new club member called Hana Katsuragi. Together the four of them have now renamed the band to HaNaMiNa which uses the first syllables of their names (in order: Hana, Nanase, Minae, and Nadeshiko).",
       "title": "\"Star\"t",
@@ -9409,207 +9409,207 @@
       "related_anime": [
         {
           "title": "Shout Our Evidence!",
-          "relation_type": "Prequel",
+          "relation_type": "PREQUEL",
           "url": "https://myanimelist.net/anime/40360/Shout_Our_Evidence"
         },
         {
           "title": "Tanitsu Shikousei Overbloom",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://myanimelist.net/anime/41091/Tanitsu_Shikousei_Overbloom"
         },
         {
           "title": "Irodorimidori",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://anisearch.com/anime/16720"
         },
         {
           "title": "Shout Our Evidence!",
-          "relation_type": "Prequel",
+          "relation_type": "PREQUEL",
           "url": "https://kitsu.app/anime/43239"
         },
         {
           "title": "Tanitsu Shikousei Overbloom",
-          "relation_type": "Sequel",
+          "relation_type": "SEQUEL",
           "url": "https://kitsu.app/anime/44891"
         },
         {
           "title": "Irodorimidori: Agitation!",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-agitation"
         },
         {
           "title": "Irodorimidori: Bang Babang Bang!!!",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-bang-babang-bang"
         },
         {
           "title": "Irodorimidori: Black'n White JAMMIN' CATS",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-blackn-white-jammin-cats"
         },
         {
           "title": "Irodorimidori: Brilliant Better",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-brilliant-better"
         },
         {
           "title": "Irodorimidori: Change Our Mirai! (Our 7 Lights)",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-change-our-mirai-our-7-lights"
         },
         {
           "title": "Irodorimidori: Change Our Mirai!",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-change-our-mirai"
         },
         {
           "title": "Irodorimidori: Crescendo Story",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-crescendo-story"
         },
         {
           "title": "Irodorimidori: Detarame Rock & Roll Theory",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-detarame-rock-and-roll-theory"
         },
         {
           "title": "Irodorimidori: Dokidoki Dream!!!",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-dokidoki-dream"
         },
         {
           "title": "Irodorimidori: Ever Green Never End",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-ever-green-never-end"
         },
         {
           "title": "Irodorimidori: Fire Me Up",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-fire-me-up"
         },
         {
           "title": "Irodorimidori: Fortissimo Bell",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-fortissimo-bell"
         },
         {
           "title": "Irodorimidori: Heart Beat",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-heart-beat"
         },
         {
           "title": "Irodorimidori: Irotoridori no Melody",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-irotoridori-no-melody"
         },
         {
           "title": "Irodorimidori: Issei Kiyuukyoku",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-issei-kiyuukyoku-divertimento"
         },
         {
           "title": "Irodorimidori: Light Speed Days",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-light-speed-days"
         },
         {
           "title": "Irodorimidori: Minna e wo Check!",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-minna-e-wo-check"
         },
         {
           "title": "Irodorimidori: Moushin Soloist Life!",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-moushin-soloist-life"
         },
         {
           "title": "Irodorimidori: Muteki We Are One!!",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-muteki-we-are-one"
         },
         {
           "title": "Irodorimidori: My Dearest Song",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-my-dearest-song"
         },
         {
           "title": "Irodorimidori: Neko Matsuri",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-neko-matsuri"
         },
         {
           "title": "Irodorimidori: Ok? Alright!",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-ok-alright"
         },
         {
           "title": "Irodorimidori: Outsider Requiem",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-outsider-requiem"
         },
         {
           "title": "Irodorimidori: Polka Dot",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-polka-dot"
         },
         {
           "title": "Irodorimidori: Prism",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-prism"
         },
         {
           "title": "Irodorimidori: Sayonara Freeway",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-sayonara-freeway"
         },
         {
           "title": "Irodorimidori: Session High⤴",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-session-high"
         },
         {
           "title": "Irodorimidori: Shout Our Evidence!",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-shout-our-evidence"
         },
         {
           "title": "Irodorimidori: Sousha wa Tada Senaka to Teikin de Kataru Nomi",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-sousha-wa-tada-senaka-to-teikin-de-kataru-nomi"
         },
         {
           "title": "Irodorimidori: Spicy Swingy Style",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-spicy-swingy-style"
         },
         {
           "title": "Irodorimidori: Still",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-still"
         },
         {
           "title": "Irodorimidori: Tanitsu Shikousei Overbloom",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-tanitsu-shikousei-overbloom"
         },
         {
           "title": "Irodorimidori: Tic Tac DREAMIN’",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-tic-tac-dreamin"
         },
         {
           "title": "Irodorimidori: Trust",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-trust"
         },
         {
           "title": "Irodorimidori: Very! Merry!! Session!!!",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-very-merry-session"
         },
         {
           "title": "Irodorimidori: Watashi no Naka no Gensou-teki Sekaikan Oyobi Sono Kengen wo Souki Saseta Aru Genjitsu de no Dekigot",
-          "relation_type": "Music Video",
+          "relation_type": "MUSIC",
           "url": "https://www.anime-planet.com/anime/irodorimidori-watashi-no-naka-no-gensou-teki-sekaikan-oyobi-sono-kengen-wo-souki-saseta-aru-genjitsu-de-no-dekigot"
         }
       ],
@@ -9713,13 +9713,13 @@
       "episodes": 1,
       "nsfw": false,
       "rating": "G - All Ages",
-      "source_material": "Original",
+      "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "A short film spelling Tokyo in hiragana.",
       "title": "\"Tokyo\"",
       "title_english": "Tokyo",
       "title_japanese": "「とうきょう」- Tokyo",
-      "type": "Movie",
+      "type": "MOVIE",
       "episode_details": [],
       "genres": [
         "Avant Garde",

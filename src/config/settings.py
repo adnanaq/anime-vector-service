@@ -257,6 +257,7 @@ class Settings(BaseSettings):
             "status": "keyword",
             "episodes": "integer",
             "rating": "keyword",
+            "source_material": "keyword",
             "nsfw": "bool",
             # Categorical fields
             "genres": "keyword",
