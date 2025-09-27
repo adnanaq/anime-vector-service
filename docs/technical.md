@@ -272,11 +272,11 @@ The service uses Pydantic Settings for type-safe configuration:
 
 **Optimization Strategy for Million-Query Scale:**
 
-#### **14-Vector Semantic Architecture**
+#### **12-Vector Semantic Architecture**
 
-**Technical Decision:** Single comprehensive collection with 14 named vectors
+**Technical Decision:** Single comprehensive collection with 12 named vectors
 
-- **11 Text Vectors (384-dim BGE-M3 each):** title_vector, character_vector, genre_vector, staff_vector, review_vector, temporal_vector, streaming_vector, related_vector, franchise_vector, episode_vector, identifiers_vector
+- **10 Text Vectors (1024-dim BGE-M3 each):** title_vector, character_vector, genre_vector, staff_vector, review_vector, temporal_vector, streaming_vector, related_vector, franchise_vector, episode_vector
 - **1 Visual Vector (512-dim JinaCLIP v2):** image_vector (unified picture/thumbnail/images)
 - **Rationale:** Data locality optimization, atomic consistency, reduced complexity
 
@@ -681,7 +681,6 @@ def _create_multi_vector_config(self) -> Dict:
         "related_vector": VectorParams(size=1024, distance=Distance.COSINE),
         "franchise_vector": VectorParams(size=1024, distance=Distance.COSINE),
         "episode_vector": VectorParams(size=1024, distance=Distance.COSINE),
-        "identifiers_vector": VectorParams(size=1024, distance=Distance.COSINE),
         "image_vector": VectorParams(size=768, distance=Distance.COSINE),
         "character_image_vector": VectorParams(size=768, distance=Distance.COSINE),
 
@@ -1214,7 +1213,6 @@ class SmartQueryAnalyzer:
             "related_vector": "Franchise connections, sequels - relationship mapping",
             "franchise_vector": "Multimedia content, themes - franchise context",
             "episode_vector": "Episode details, filler status - episode-specific search",
-            "identifiers_vector": "Cross-platform IDs - data consistency",
             "image_vector": "Cover art, posters, visual style - aesthetic matching",
             "character_image_vector": "Character visual recognition - character identification"
         }

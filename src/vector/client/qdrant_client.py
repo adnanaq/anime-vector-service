@@ -912,7 +912,6 @@ class QdrantClient:
                 "related_vector",
                 "franchise_vector",
                 "episode_vector",
-                "identifiers_vector",
             ]
 
             # Create vector queries for all text vectors
@@ -1035,7 +1034,6 @@ class QdrantClient:
                     "related_vector",
                     "franchise_vector",
                     "episode_vector",
-                    "identifiers_vector",
                 ]
 
                 for vector_name in text_vector_names:

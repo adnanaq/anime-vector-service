@@ -41,7 +41,6 @@ Comprehensive mapping of all 14 vectors to their respective data fields:
 - `related_vector`: Franchise connections with URLs
 - `franchise_vector`: Multimedia content and franchise materials
 - `episode_vector`: Detailed episode information
-- `identifiers_vector`: IDs as semantic relationships
 
 **Visual Vectors (OpenCLIP ViT-L/14, 768-dim each):**
 - `image_vector`: General anime visual content (covers, posters, banners)

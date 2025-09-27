@@ -236,9 +236,7 @@ Phase 2.5 (✅ COMPLETE) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 8. `related_vector` - **related_anime, relations** (franchise connections with URLs)
 9. `franchise_vector` - **trailers, opening_themes, ending_themes** (multimedia content)
 10. `episode_vector` - **episode_details** (detailed episode information, filler/recap status)
-11. `identifiers_vector` - IDs as semantic relationships (from List and Dict objects)
-
-**Visual Vectors (JinaCLIP v2, 1024-dim each):** 13. `image_vector` - **General anime visual content** from **images** dict (covers, posters, banners, trailer thumbnails)
+**Visual Vectors (JinaCLIP v2, 1024-dim each):** 12. `image_vector` - **General anime visual content** from **images** dict (covers, posters, banners, trailer thumbnails)
 
 - **Process**: Download general image URLs → embed visual content → average duplicates → store embeddings
 - **Use Cases**: Art style matching, cover aesthetics, promotional material similarity

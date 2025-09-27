@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Vector field mapping definitions based on 13-vector architecture."""
+"""Vector field mapping definitions based on 12-vector architecture."""
 
 from typing import Dict, List
 
-# 13-Vector Architecture Field Mappings (from tasks/tasks_plan.md)
+# 12-Vector Architecture Field Mappings (from tasks/tasks_plan.md)
 VECTOR_FIELD_MAPPINGS: Dict[str, Dict[str, List[str]]] = {
     # Text Vectors (BGE-M3, 1024-dim each)
     "title_vector": {
@@ -45,10 +45,6 @@ VECTOR_FIELD_MAPPINGS: Dict[str, Dict[str, List[str]]] = {
     "episode_vector": {
         "fields": ["episode_details"],
         "description": "Detailed episode information, filler/recap status"
-    },
-    "identifiers_vector": {
-        "fields": ["ids"],
-        "description": "IDs as semantic relationships from List and Dict objects"
     },
 
     # Visual Vectors (JinaCLIP v2, 1024-dim each)

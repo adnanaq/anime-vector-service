@@ -114,8 +114,6 @@ class DatasetAnalyzer:
                     dynamic_queries[vector_name] = self._generate_temporal_queries()
                 elif vector_name == "episode_vector":
                     dynamic_queries[vector_name] = self._generate_episode_queries()
-                elif vector_name == "identifiers_vector":
-                    dynamic_queries[vector_name] = self._generate_identifier_queries()
                 elif vector_name == "character_vector":
                     dynamic_queries[vector_name] = self._generate_character_queries()
                 elif vector_name == "franchise_vector":
@@ -210,7 +208,7 @@ class DatasetAnalyzer:
         vector_names = [
             "title_vector", "episode_vector", "character_vector", "franchise_vector",
             "genre_vector", "staff_vector", "temporal_vector",
-            "identifiers_vector", "related_vector", "streaming_vector", "review_vector",
+            "related_vector", "streaming_vector", "review_vector",
             "image_vector", "character_image_vector"
         ]
 
@@ -391,15 +389,6 @@ class DatasetAnalyzer:
             }
         ]
 
-    def _generate_identifier_queries(self) -> List[Dict[str, Any]]:
-        """Generate identifier-based validation queries."""
-        return [
-            {
-                "query": "anime database",
-                "expected_content": ["id", "identifier"],
-                "min_results": 5
-            }
-        ]
 
     def _generate_character_queries(self) -> List[Dict[str, Any]]:
         """Generate character-based validation queries."""

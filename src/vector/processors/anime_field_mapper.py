@@ -55,7 +55,6 @@ class AnimeFieldMapper:
         vector_data["related_vector"] = self._extract_related_content(anime)
         vector_data["franchise_vector"] = self._extract_franchise_content(anime)
         vector_data["episode_vector"] = self._extract_episode_content(anime)
-        vector_data["identifiers_vector"] = self._extract_identifiers_content(anime)
 
         # Visual vectors (2)
         vector_data["image_vector"] = self._extract_image_content(anime)
@@ -512,25 +511,6 @@ class AnimeFieldMapper:
         # For now, join all chunks (hierarchical averaging to be implemented in embedding_manager)
         return " || CHUNK_SEPARATOR || ".join(chunks)
 
-    def _extract_identifiers_content(self, anime: AnimeEntry) -> str:
-        """Extract IDs as semantic relationships from List and Dict objects."""
-        content_parts = []
-
-        # External links
-        if anime.external_links:
-            for platform, url in anime.external_links.items():
-                content_parts.append(f"{platform}: {url}")
-
-        # Character IDs
-        id_info = []
-        for character in anime.characters:
-            if character.character_ids:
-                for platform, char_id in character.character_ids.items():
-                    id_info.append(f"Character {platform} ID: {char_id}")
-        if id_info:
-            content_parts.extend(id_info)
-
-        return " | ".join(content_parts)
 
     # ============================================================================
     # VISUAL VECTOR EXTRACTORS (OpenCLIP ViT-L/14, 768-dim)
@@ -610,7 +590,6 @@ class AnimeFieldMapper:
             "related_vector": "text",
             "franchise_vector": "text",
             "episode_vector": "text",
-            "identifiers_vector": "text",
             # Visual vectors (OpenCLIP ViT-L/14, 768-dim)
             "image_vector": "visual",
             "character_image_vector": "visual",
