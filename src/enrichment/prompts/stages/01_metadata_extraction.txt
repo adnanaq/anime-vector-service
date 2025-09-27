@@ -138,7 +138,8 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
 ### CROSS-VALIDATION PROPERTIES:
 - **episodes**: Cross-validate across all sources with offline database episode count (use offline DB if consistent, otherwise hierarchy: Offline DB → Jikan → AniList → Kitsu)
 - **status**: Cross-validate across sources with offline database status (use offline DB if consistent, otherwise hierarchy: Offline DB → Jikan → AniList → Kitsu)
-- **anime_season**: Cross-validate existing offline database animeSeason.season and animeSeason.year with external sources (use offline DB if consistent, otherwise hierarchy: Offline DB → Jikan → AniList → AnimSchedule)
+- **year**: Cross-validate existing offline database animeSeason.year with external sources (use offline DB if consistent, otherwise hierarchy: Offline DB → Jikan → AniList → AnimSchedule)
+- **season**: Cross-validate existing offline database animeSeason.season with external sources (use offline DB if consistent, otherwise hierarchy: Offline DB → Jikan → AniList → AnimSchedule)
 - **duration**: Cross-validate existing offline database duration (int seconds or dict with value/unit) with external sources (use offline DB if consistent, otherwise hierarchy: Offline DB → Jikan → AniList → Kitsu)
 
 ### ANIME-PLANET ENHANCEMENTS:
@@ -223,6 +224,7 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
   "month": "January", // EXAMPLE - Extract actual premiere month
   "nsfw": false, // EXAMPLE - Extract actual nsfw flag from Kitsu
   "rating": "R - 17+ (violence & profanity)", // EXAMPLE - Extract actual rating
+  "season": "SPRING", // EXAMPLE - Cross-validate with offline database season
   "source_material": "Manga", // EXAMPLE - Extract from Jikan, fallback to AniList if null
   "status": "Finished", // EXAMPLE - Cross-validate with offline database status
   "synopsis": "Edward Elric, a young, brilliant alchemist, has lost much in his twelve-year life...", // EXAMPLE - Extract actual synopsis
@@ -230,6 +232,7 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
   "title_english": "Fullmetal Alchemist", // EXAMPLE - Extract actual English title
   "title_japanese": "鋼の錬金術師", // EXAMPLE - Extract actual Japanese title
   "type": "TV", // EXAMPLE - Extract from Jikan type field, use AniList format as cross-validation/fallback
+  "year": 2020, // EXAMPLE - Cross-validate with offline database year
 
   // =====================================================================
   // ARRAY FIELDS (alphabetical)
@@ -259,7 +262,6 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
     "to": "2004-10-02T00:00:00+00:00",
     "string": "Oct 4, 2003 to Oct 2, 2004"
   }, // EXAMPLE - Extract actual aired dates
-  "anime_season": {"season": "SPRING", "year": 1998}, // EXAMPLE - Cross-validate offline database animeSeason with external sources
   "broadcast": {
     "day": "Saturdays",
     "time": "18:00",

@@ -194,11 +194,7 @@ class MultiVectorEmbeddingManager:
                 payload["id"] = anime.id
 
             # Convert complex nested objects to serializable format
-            if anime.anime_season:
-                payload["anime_season"] = {
-                    "season": anime.anime_season.season,
-                    "year": anime.anime_season.year,
-                }
+            # Note: year and season are now direct fields, no conversion needed
 
             if anime.score:
                 payload["score"] = {
@@ -305,7 +301,7 @@ class MultiVectorEmbeddingManager:
         """Add flattened fields for optimized Qdrant indexing.
 
         Creates flattened fields that enable efficient filtering:
-        - anime_season.year/season for temporal filtering
+        - year/season for temporal filtering (already flattened in model)
         - score.median for numerical score filtering
         - title_text for full-text title search
 
@@ -314,11 +310,6 @@ class MultiVectorEmbeddingManager:
             anime: AnimeEntry with source data
         """
         try:
-            # Flatten anime_season for temporal filtering
-            if anime.anime_season:
-                payload["anime_season.year"] = anime.anime_season.year
-                payload["anime_season.season"] = anime.anime_season.season
-
             # Flatten score for numerical filtering
             if anime.score and anime.score.median is not None:
                 payload["score.median"] = anime.score.median

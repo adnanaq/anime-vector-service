@@ -47,6 +47,14 @@ class AnimeRating(str, Enum):
     RX = "Rx - Hentai"
 
 
+class AnimeSeason(str, Enum):
+    """Anime season classification."""
+    SPRING = "SPRING"
+    SUMMER = "SUMMER"
+    FALL = "FALL"
+    WINTER = "WINTER"
+
+
 class CharacterEntry(BaseModel):
     """Character information from external APIs with multi-source support"""
 
@@ -454,14 +462,6 @@ class ScoreCalculations(BaseModel):
     median: Optional[float] = Field(None, description="Median of scores")
 
 
-class AnimeSeason(BaseModel):
-    """Anime season information with year and season details"""
-
-    year: Optional[int] = Field(None, description="Release year")
-    season: Optional[str] = Field(
-        None, description="Season (SPRING, SUMMER, FALL, WINTER)"
-    )
-
 
 class AnimeEntry(BaseModel):
     """Anime entry from anime-offline-database with comprehensive enhancement support"""
@@ -473,10 +473,11 @@ class AnimeEntry(BaseModel):
         None, description="Background information from MAL"
     )
     episodes: int = Field(default=0, description="Number of episodes")
-    id: str = Field(..., description="Unique identifier for the anime entry")
+    # id: str = Field(..., description="Unique identifier for the anime entry")
     month: Optional[str] = Field(None, description="Premiere month from AnimSchedule")
     nsfw: Optional[bool] = Field(None, description="Not Safe For Work flag from Kitsu")
     rating: Optional[AnimeRating] = Field(None, description="Content rating (PG-13, R, etc.)")
+    season: Optional[AnimeSeason] = Field(None, description="Anime season (SPRING, SUMMER, FALL, WINTER)")
     source_material: Optional[AnimeSourceMaterial] = Field(
         None, description="Source material (manga, light novel, etc.)"
     )
@@ -488,6 +489,7 @@ class AnimeEntry(BaseModel):
     title_english: Optional[str] = Field(None, description="English title")
     title_japanese: Optional[str] = Field(None, description="Japanese title")
     type: AnimeType = Field(..., description="TV, Movie, OVA, etc.")
+    year: Optional[int] = Field(None, description="Release year")
 
     # =====================================================================
     # ARRAY FIELDS (alphabetical)
@@ -547,9 +549,6 @@ class AnimeEntry(BaseModel):
     # =====================================================================
     aired_dates: Optional["AiredDates"] = Field(
         None, description="Detailed airing dates"
-    )
-    anime_season: Optional[AnimeSeason] = Field(
-        None, description="Season and year information"
     )
     broadcast: Optional["Broadcast"] = Field(
         None, description="Broadcast schedule information"

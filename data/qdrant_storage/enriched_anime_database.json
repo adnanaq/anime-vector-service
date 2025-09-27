@@ -261,10 +261,6 @@
         "from": "2020-10-07T00:00:00+00:00",
         "string": "Oct 7, 2020"
       },
-      "anime_season": {
-        "season": "FALL",
-        "year": 2020
-      },
       "delay_information": {
         "delayed_timetable": false
       },
@@ -529,7 +525,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-24T19:42:09.282039Z",
         "success": true
-      }
+      },
+      "year": 2020,
+      "season": "FALL"
     },
     {
       "episodes": 1,
@@ -630,10 +628,6 @@
           }
         },
         "string": "Sep 11, 2013"
-      },
-      "anime_season": {
-        "season": "SUMMER",
-        "year": 2013
       },
       "duration": {
         "value": 240,
@@ -753,7 +747,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-24T19:42:09.282039Z",
         "success": true
-      }
+      },
+      "year": 2013,
+      "season": "SUMMER"
     },
     {
       "episodes": 8,
@@ -983,10 +979,6 @@
         "from": "2025-01-05T00:00:00+00:00",
         "to": "2025-03-10T00:00:00+00:00"
       },
-      "anime_season": {
-        "season": "WINTER",
-        "year": 2025
-      },
       "duration": {
         "value": 360,
         "unit": "SECONDS"
@@ -1024,7 +1016,9 @@
         "source": "multi-source",
         "enriched_at": "2025-01-25T12:00:00.000Z",
         "success": true
-      }
+      },
+      "year": 2025,
+      "season": "WINTER"
     },
     {
       "episodes": 1,
@@ -1111,10 +1105,6 @@
         "to": "1970-03-21T00:00:00+00:00",
         "string": "Mar 21, 1970"
       },
-      "anime_season": {
-        "season": "WINTER",
-        "year": 1970
-      },
       "delay_information": {
         "delayed_timetable": false
       },
@@ -1200,7 +1190,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-25T15:45:08.270624Z",
         "success": true
-      }
+      },
+      "year": 1970,
+      "season": "WINTER"
     },
     {
       "episodes": 1,
@@ -1258,10 +1250,6 @@
         "from": "2018-01-01T00:00:00+00:00",
         "string": "2018"
       },
-      "anime_season": {
-        "season": "WINTER",
-        "year": 2018
-      },
       "duration": {
         "value": 480,
         "unit": "SECONDS"
@@ -1305,7 +1293,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-25T15:57:47.063849Z",
         "success": true
-      }
+      },
+      "year": 2018,
+      "season": "WINTER"
     },
     {
       "episodes": 1,
@@ -1520,10 +1510,6 @@
       "aired_dates": {
         "from": "2022-01-11T00:00:00+00:00",
         "string": "Jan 11, 2022"
-      },
-      "anime_season": {
-        "season": "WINTER",
-        "year": 2022
       },
       "delay_information": {
         "delayed_timetable": false
@@ -1794,7 +1780,9 @@
         "source": "multi-source",
         "enriched_at": "2025-01-26T14:42:09.282039Z",
         "success": true
-      }
+      },
+      "year": 2022,
+      "season": "WINTER"
     },
     {
       "episodes": 16,
@@ -2070,10 +2058,6 @@
         "to": "2023-10-03T00:00:00+00:00",
         "string": "Jun 23, 2023 to Oct 3, 2023"
       },
-      "anime_season": {
-        "season": "SPRING",
-        "year": 2023
-      },
       "delay_information": {
         "delayed_timetable": false
       },
@@ -2133,7 +2117,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-25T18:10:02.000419Z",
         "success": true
-      }
+      },
+      "year": 2023,
+      "season": "SPRING"
     },
     {
       "episodes": 1,
@@ -2527,10 +2513,6 @@
       "aired_dates": {
         "from": "2009-12-26T00:00:00+00:00",
         "string": "Dec 26, 2009"
-      },
-      "anime_season": {
-        "season": "FALL",
-        "year": 2009
       },
       "duration": {
         "value": 900,
@@ -4246,7 +4228,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-25T20:26:45.100539+00:00",
         "success": true
-      }
+      },
+      "year": 2009,
+      "season": "FALL"
     },
     {
       "background": "Each episode of \"Bungaku Shoujo\" Memoire received a limited one-week run in movie theaters in May 2010.",
@@ -4932,10 +4916,6 @@
         "to": "2010-12-24T00:00:00+00:00",
         "string": "Jun 25, 2010 to Dec 24, 2010"
       },
-      "anime_season": {
-        "season": "SPRING",
-        "year": 2010
-      },
       "delay_information": {
         "delayed_timetable": false
       },
@@ -5458,7 +5438,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-28T22:47:32.891024Z",
         "success": true
-      }
+      },
+      "year": 2010,
+      "season": "SPRING"
     },
     {
       "background": "\"Bungaku Shoujo\" Movie was announced with the release of the first manga volume and the first light novel in April 2009. The first trailer was included with the release of the \"Bungaku Shoujo\" Kyou no Oyatsu: Hatsukoi DVD episode. The movie adapts the events of \"Bungaku Shoujo\" to Doukoku no Palmier, the fifth volume in the light novel series. It went on to earn 59 million yen in the Japanese box office.",
@@ -5779,10 +5761,6 @@
         "from": "2010-05-01T00:00:00+00:00",
         "string": "May 1, 2010"
       },
-      "anime_season": {
-        "season": "SPRING",
-        "year": 2010
-      },
       "delay_information": {
         "delayed_timetable": false
       },
@@ -6102,7 +6080,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-25T17:19:00.000Z",
         "success": true
-      }
+      },
+      "year": 2010,
+      "season": "SPRING"
     },
     {
       "episodes": 1,
@@ -6171,10 +6151,6 @@
       "aired_dates": {
         "from": "2018-04-20T00:00:00+00:00",
         "string": "Apr 20, 2018"
-      },
-      "anime_season": {
-        "season": "SPRING",
-        "year": 2018
       },
       "duration": {
         "value": 60,
@@ -6248,7 +6224,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-28T20:27:42.932946+00:00",
         "success": true
-      }
+      },
+      "year": 2018,
+      "season": "SPRING"
     },
     {
       "sources": [
@@ -6480,10 +6458,6 @@
         "from": "1990-08-25T00:00:00+00:00",
         "string": "Aug 25, 1990"
       },
-      "anime_season": {
-        "season": "SUMMER",
-        "year": 1990
-      },
       "delay_information": {
         "delayed_timetable": false
       },
@@ -6629,7 +6603,9 @@
         "enriched_at": "2025-07-28T16:53:16.183106Z",
         "success": true,
         "error_message": null
-      }
+      },
+      "year": 1990,
+      "season": "SUMMER"
     },
     {
       "episodes": 2,
@@ -6740,10 +6716,6 @@
           "description": "Documentary-style presentation"
         }
       ],
-      "anime_season": {
-        "season": "WINTER",
-        "year": 2017
-      },
       "duration": {
         "value": 2940,
         "unit": "SECONDS"
@@ -6878,7 +6850,9 @@
         "enriched_at": "2025-07-29T12:41:22.631259Z",
         "success": true,
         "error_message": null
-      }
+      },
+      "year": 2017,
+      "season": "WINTER"
     },
     {
       "episodes": 1,
@@ -7236,10 +7210,6 @@
         "from": "2016-11-23T00:00:00+00:00",
         "string": "Nov 23, 2016"
       },
-      "anime_season": {
-        "season": "FALL",
-        "year": 2016
-      },
       "duration": {
         "value": 1620,
         "unit": "SECONDS"
@@ -7484,7 +7454,9 @@
         "enriched_at": "2025-07-29T18:31:50.491902Z",
         "success": true,
         "error_message": null
-      }
+      },
+      "year": 2016,
+      "season": "FALL"
     },
     {
       "episodes": 1,
@@ -7552,10 +7524,6 @@
       "aired_dates": {
         "from": "2021-08-18T00:00:00+00:00",
         "string": "Aug 18, 2021"
-      },
-      "anime_season": {
-        "season": "SUMMER",
-        "year": 2021
       },
       "delay_information": {
         "delayed_timetable": false
@@ -7647,7 +7615,9 @@
         "enriched_at": "2025-07-29T18:28:15.020637Z",
         "success": true,
         "error_message": null
-      }
+      },
+      "year": 2021,
+      "season": "SUMMER"
     },
     {
       "episodes": 1,
@@ -7717,10 +7687,6 @@
         "to": "2011-10-21T00:00:00+00:00",
         "string": "Oct 21, 2011"
       },
-      "anime_season": {
-        "season": "FALL",
-        "year": 2011
-      },
       "delay_information": {
         "delayed_timetable": false
       },
@@ -7782,7 +7748,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-29T19:15:35.465131Z",
         "success": true
-      }
+      },
+      "year": 2011,
+      "season": "FALL"
     },
     {
       "episodes": 1,
@@ -7829,10 +7797,6 @@
           "name": "slice of life"
         }
       ],
-      "anime_season": {
-        "season": "FALL",
-        "year": 2019
-      },
       "duration": {
         "value": 180,
         "unit": "SECONDS"
@@ -7855,7 +7819,9 @@
         "enriched_at": "2025-07-29T14:58:45.123456Z",
         "success": true,
         "error_message": null
-      }
+      },
+      "year": 2019,
+      "season": "FALL"
     },
     {
       "episodes": 1,
@@ -7934,10 +7900,6 @@
         "from": "2019-10-02T00:00:00+00:00",
         "to": null
       },
-      "anime_season": {
-        "season": "FALL",
-        "year": 2019
-      },
       "delay_information": {
         "delayed_timetable": false
       },
@@ -7987,7 +7949,9 @@
         "enriched_at": "2025-07-30T16:07:13.183864Z",
         "success": true,
         "error_message": null
-      }
+      },
+      "year": 2019,
+      "season": "FALL"
     },
     {
       "episodes": 1,
@@ -8044,10 +8008,6 @@
         "from": "2010-07-06T00:00:00+00:00",
         "string": "Jul 6, 2010"
       },
-      "anime_season": {
-        "season": "SUMMER",
-        "year": 2010
-      },
       "duration": {
         "value": 15,
         "unit": "SECONDS"
@@ -8094,7 +8054,9 @@
         "enriched_at": "2025-07-30T19:42:09.282039Z",
         "success": true,
         "error_message": null
-      }
+      },
+      "year": 2010,
+      "season": "SUMMER"
     },
     {
       "episodes": 2,
@@ -8177,10 +8139,6 @@
         "promotional",
         "short episodes"
       ],
-      "anime_season": {
-        "season": "SPRING",
-        "year": 2018
-      },
       "duration": {
         "value": 30,
         "unit": "SECONDS"
@@ -8225,7 +8183,9 @@
         "enriched_at": "2025-07-30T16:23:24.769332+00:00",
         "success": true,
         "error_message": null
-      }
+      },
+      "year": 2018,
+      "season": "SPRING"
     },
     {
       "episodes": 1,
@@ -8286,10 +8246,6 @@
         "from": "2025-01-01T00:00:00+00:00",
         "string": "Jan 1, 2025"
       },
-      "anime_season": {
-        "season": "WINTER",
-        "year": 2025
-      },
       "duration": {
         "value": 37,
         "unit": "SECONDS"
@@ -8334,7 +8290,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-30T16:38:21.942639Z",
         "success": true
-      }
+      },
+      "year": 2025,
+      "season": "WINTER"
     },
     {
       "episodes": 1,
@@ -8373,10 +8331,6 @@
       "aired_dates": {
         "from": "2021-02-22T00:00:00+00:00"
       },
-      "anime_season": {
-        "season": "WINTER",
-        "year": 2021
-      },
       "duration": {
         "value": 15,
         "unit": "SECONDS"
@@ -8395,7 +8349,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-30T16:38:41.063116Z",
         "success": true
-      }
+      },
+      "year": 2021,
+      "season": "WINTER"
     },
     {
       "episodes": 12,
@@ -8892,10 +8848,6 @@
         "to": null,
         "string": "May 2016"
       },
-      "anime_season": {
-        "season": "SPRING",
-        "year": 2016
-      },
       "delay_information": {
         "delayed_timetable": false
       },
@@ -9051,7 +9003,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-30T20:42:09.282039Z",
         "success": true
-      }
+      },
+      "year": 2016,
+      "season": "SPRING"
     },
     {
       "episodes": 1,
@@ -9308,10 +9262,6 @@
         "from": "2013-10-05T00:00:00+00:00",
         "to": "2013-10-05T00:00:00+00:00"
       },
-      "anime_season": {
-        "season": "SUMMER",
-        "year": 2013
-      },
       "duration": {
         "value": 60,
         "unit": "SECONDS"
@@ -9356,7 +9306,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-31T10:45:00.000000Z",
         "success": true
-      }
+      },
+      "year": 2013,
+      "season": "SUMMER"
     },
     {
       "background": "Official music video for the song \" \"Star\"t\". It is the 46th song in the franchise. The song was included with the HaNaMiNa's CD of the same name, released on October 24, 2019.",
@@ -9648,10 +9600,6 @@
         "to": null,
         "string": "Oct 21, 2019"
       },
-      "anime_season": {
-        "season": "FALL",
-        "year": 2019
-      },
       "duration": {
         "value": 120,
         "unit": "SECONDS"
@@ -9707,7 +9655,9 @@
         "source": "multi-source",
         "enriched_at": "2025-07-31T12:16:41.197388Z",
         "success": true
-      }
+      },
+      "year": 2019,
+      "season": "FALL"
     },
     {
       "episodes": 1,
@@ -9747,10 +9697,6 @@
       "aired_dates": {
         "from": "2017-10-05T00:00:00+00:00",
         "string": "Oct 5, 2017"
-      },
-      "anime_season": {
-        "season": "FALL",
-        "year": 2017
       },
       "delay_information": {
         "delayed_timetable": false
@@ -9842,7 +9788,9 @@
         "enriched_at": "2025-07-31T17:51:57.181978+00:00",
         "success": true,
         "error_message": null
-      }
+      },
+      "year": 2017,
+      "season": "FALL"
     }
   ]
 }

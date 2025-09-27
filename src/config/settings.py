@@ -263,8 +263,8 @@ class Settings(BaseSettings):
             "demographics": "text",       # Descriptive text content
             "content_warnings": "text",   # Descriptive text content
             # Temporal fields (flattened)
-            "anime_season.year": "integer",
-            "anime_season.season": "keyword",
+            "year": "integer",
+            "season": "keyword",
             "duration": "integer",        # Episode duration in seconds
             # Platform fields
             "sources": "keyword",
