@@ -1,6 +1,6 @@
-"""14-Vector System Validation Suite
+"""13-Vector System Validation Suite
 
-This module provides comprehensive validation for the 14-vector anime search system,
+This module provides comprehensive validation for the 13-vector anime search system,
 testing each vector individually and multi-vector fusion effectiveness.
 
 Components:
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 class VectorSystemValidator:
-    """Validate the 14-vector anime search system for semantic correctness."""
+    """Validate the 13-vector anime search system for semantic correctness."""
 
     def __init__(self, qdrant_client: QdrantClient) -> None:
         """Initialize validator with Qdrant client.
@@ -76,13 +76,13 @@ class VectorSystemValidator:
             return {}
 
     async def validate_all_vectors(self) -> Dict[str, Any]:
-        """Validate all 14 vectors systematically.
+        """Validate all 13 vectors systematically.
 
         Returns:
             Comprehensive validation results for all vectors
         """
         try:
-            logger.info("Starting comprehensive 14-vector system validation")
+            logger.info("Starting comprehensive 13-vector system validation")
             start_time = time.time()
 
             validation_summary = {
@@ -144,13 +144,13 @@ class VectorSystemValidator:
 
             # Log completion
             total_time = time.time() - start_time
-            logger.info(f"14-vector validation completed in {total_time:.2f}s. "
+            logger.info(f"13-vector validation completed in {total_time:.2f}s. "
                        f"Success rate: {validation_summary['overall_success_rate']:.2f}")
 
             return validation_summary
 
         except Exception as e:
-            logger.error(f"Failed to validate 14-vector system: {e}")
+            logger.error(f"Failed to validate 13-vector system: {e}")
             return {"error": str(e), "timestamp": time.time()}
 
     async def _test_individual_vector(
@@ -411,7 +411,7 @@ class VectorSystemValidator:
                 },
                 {
                     "query": "shounen action with ninja characters",
-                    "expected_vectors": ["genre_vector", "character_vector", "technical_vector"],
+                    "expected_vectors": ["genre_vector", "character_vector"],
                     "min_results": 5,
                 },
             ]
@@ -421,7 +421,7 @@ class VectorSystemValidator:
                     query = str(query_config["query"])
                     start_time = time.time()
 
-                    # Test search_complete (uses all 14 vectors)
+                    # Test search_complete (uses all 13 vectors)
                     complete_results = await self.client.search_complete(
                         query=query,
                         limit=10
@@ -564,7 +564,7 @@ class VectorSystemValidator:
 
         if not recommendations:
             recommendations.append(
-                "All validation tests passed! 14-vector system is performing within targets."
+                "All validation tests passed! 13-vector system is performing within targets."
             )
 
         return recommendations

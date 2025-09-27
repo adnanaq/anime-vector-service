@@ -761,10 +761,6 @@ class TextProcessor:
             processed = processed.replace("Seinen", "Seinen (adult male)")
             processed = processed.replace("Josei", "Josei (adult female)")
 
-        elif vector_name == "technical_vector":
-            processed = processed.replace("Type:", "Anime Type:")
-            processed = processed.replace("Status:", "Airing Status:")
-            processed = processed.replace("Episodes:", "Episode Count:")
 
         elif vector_name == "sources_vector":
             processed = processed.replace("Source:", "Platform:")

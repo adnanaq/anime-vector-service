@@ -133,7 +133,7 @@ class QdrantClient:
             raise
 
     def _initialize_collection(self) -> None:
-        """Initialize and validate anime collection with 14-vector architecture and performance optimization."""
+        """Initialize and validate anime collection with 13-vector architecture and performance optimization."""
         try:
             # Check if collection exists and validate its configuration
             collections = self.client.get_collections().collections
@@ -254,10 +254,10 @@ class QdrantClient:
     }
 
     def _create_multi_vector_config(self) -> Dict[str, VectorParams]:
-        """Create 14-vector configuration with priority-based optimization."""
+        """Create 13-vector configuration with priority-based optimization."""
         distance = self._DISTANCE_MAPPING.get(self._distance_metric, Distance.COSINE)
 
-        # Use new 14-vector architecture from settings
+        # Use new 13-vector architecture from settings
         vector_params = {}
         for vector_name, dimension in self.settings.vector_names.items():
             priority = self._get_vector_priority(vector_name)
@@ -269,7 +269,7 @@ class QdrantClient:
             )
 
         logger.info(
-            f"Created 14-vector configuration with {len(vector_params)} vectors"
+            f"Created 13-vector configuration with {len(vector_params)} vectors"
         )
         return vector_params
 
@@ -900,12 +900,11 @@ class QdrantClient:
                 )
                 return []
 
-            # All 12 text vectors for comprehensive search
+            # All 11 text vectors for comprehensive search
             text_vector_names = [
                 "title_vector",
                 "character_vector",
                 "genre_vector",
-                "technical_vector",
                 "staff_vector",
                 "review_vector",
                 "temporal_vector",
@@ -1004,7 +1003,7 @@ class QdrantClient:
         fusion_method: str = "rrf",
         filters: Optional[Filter] = None,
     ) -> List[Dict[str, Any]]:
-        """Search across all 14 vectors (12 text + 2 image) using native Qdrant fusion.
+        """Search across all 13 vectors (12 text + 2 image) using native Qdrant fusion.
 
         Args:
             query: Text search query
@@ -1024,12 +1023,11 @@ class QdrantClient:
             if query_embedding is None:
                 logger.warning("Failed to create text embedding for complete search")
             else:
-                # All 12 text vectors
+                # All 11 text vectors
                 text_vector_names = [
                     "title_vector",
                     "character_vector",
                     "genre_vector",
-                    "technical_vector",
                     "staff_vector",
                     "review_vector",
                     "temporal_vector",

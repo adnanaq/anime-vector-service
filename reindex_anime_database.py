@@ -44,7 +44,7 @@ async def main():
 
     # Create fresh collection
     await client.create_collection()
-    print("✅ Created fresh collection with 14-vector configuration")
+    print("✅ Created fresh collection with 13-vector configuration")
 
     # Load anime data
     print("📁 Loading anime data...")
@@ -150,14 +150,14 @@ async def main():
                         points_with_character_images += 1
 
                 print(
-                    f"   Points with 14/14 vectors: {points_with_14_vectors}/{len(result)}"
+                    f"   Points with 14/13 vectors: {points_with_14_vectors}/{len(result)}"
                 )
                 print(
                     f"   Points with character images: {points_with_character_images}/{len(result)}"
                 )
 
                 if points_with_14_vectors > 0:
-                    print("✅ 14-vector architecture working successfully!")
+                    print("✅ 13-vector architecture working successfully!")
                     print("✅ Character image vectors being generated!")
                 else:
                     print("⚠️  Warning: Not all vectors being generated")

@@ -4,7 +4,7 @@
 
 **Phase**: 3.1 of 6 (Semantic Validation Framework) - Week 9/10
 **Overall Progress**: 95% complete (Phase 2.5 complete, Phase 3.0 Genre Enhancement postponed due to data scarcity)
-**Current Focus**: 14-vector system validation and semantic quality assurance
+**Current Focus**: 13-vector system validation and semantic quality assurance
 **Previous Achievement**: ✅ Phase 2.5 Million-Query Vector Optimization (Complete), ✅ Phase 3.0 Genre Enhancement Infrastructure (4,200+ LOC) - Awaiting data
 **Next Phase**: Phase 4 (Sparse Vector Optimization)
 **Architecture**: Single comprehensive collection with 14 named vectors (12×1024-dim text + 2×1024-dim visual)
@@ -138,7 +138,7 @@ Phase 2.5 (✅ COMPLETE) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 **⚡ HNSW Parameter Optimization (2.5.4) - FULLY IMPLEMENTED**
 - **Anime-specific tuning**: Optimized ef_construct (128-256), m (32-64) values for anime similarity patterns
 - **Priority-based HNSW**: Different parameters per vector importance (high/medium/low)
-- **14-vector support**: Individual optimization for all text and image vectors
+- **13-vector support**: Individual optimization for all text and image vectors
 - **Evidence**: `src/config/settings.py:213-230`, `src/vector/client/qdrant_client.py:293-305`
 
 **💡 Advanced Architecture Features**
@@ -179,7 +179,7 @@ Phase 2.5 (✅ COMPLETE) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 **Sub-Phase 2.5.1: Collection Configuration Foundation** (Rollback-Safe: settings only) - ✅ COMPLETED
 
 - [x] **2.5.1a: Basic Vector Configuration** (Est: 2 hours) - COMPLETED
-  - [x] Add 14-vector configuration to settings.py (12 text + 2 visual)
+  - [x] Add 13-vector configuration to settings.py (12 text + 2 visual)
   - [x] Define vector names and dimensions in constants (BGE-M3: 1024-dim, JinaCLIP: 1024-dim)
   - [x] Add vector priority classification (high/medium/low)
   - [x] Create rollback checkpoint: settings backup
@@ -199,7 +199,7 @@ Phase 2.5 (✅ COMPLETE) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 **Sub-Phase 2.5.2: Core QdrantClient Updates** (Rollback-Safe: new methods only)
 
 - [x] **2.5.2a: Vector Configuration Methods** (Est: 3 hours) - COMPLETED
-  - [x] Enhanced \_create_multi_vector_config() for 14-vector architecture
+  - [x] Enhanced \_create_multi_vector_config() for 13-vector architecture
   - [x] Implemented \_get_quantization_config() per vector priority
   - [x] Added \_get_hnsw_config() per vector priority
   - [x] Added \_get_vector_priority() detection method
@@ -229,15 +229,14 @@ Phase 2.5 (✅ COMPLETE) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 1. `title_vector` - title, title_english, title_japanese, synopsis, background, **synonyms**
 2. `character_vector` - **characters** (names, descriptions, relationships, multi-source data)
 3. `genre_vector` - **genres, tags, themes, demographics, content_warnings** (comprehensive classification)
-4. `technical_vector` - rating, source_material, status, type, **licensors, episode_overrides**
-5. `staff_vector` - **staff_data** (directors, composers, studios, voice actors, multi-source integration)
-6. `review_vector` - **awards** (recognition, achievements only - ratings moved to payload)
-7. `temporal_vector` - **aired_dates, broadcast, broadcast_schedule, delay_information, premiere_dates** (semantic temporal data)
-8. `streaming_vector` - **streaming_info, streaming_licenses** (platform availability)
-9. `related_vector` - **related_anime, relations** (franchise connections with URLs)
-10. `franchise_vector` - **trailers, opening_themes, ending_themes** (multimedia content)
-11. `episode_vector` - **episode_details** (detailed episode information, filler/recap status)
-12. `identifiers_vector` - IDs as semantic relationships (from List and Dict objects)
+4. `staff_vector` - **staff_data** (directors, composers, studios, licensors, voice actors, multi-source integration)
+5. `review_vector` - **awards** (recognition, achievements only - ratings moved to payload)
+6. `temporal_vector` - **aired_dates, broadcast, broadcast_schedule, delay_information, premiere_dates** (semantic temporal data)
+7. `streaming_vector` - **streaming_info, streaming_licenses** (platform availability)
+8. `related_vector` - **related_anime, relations** (franchise connections with URLs)
+9. `franchise_vector` - **trailers, opening_themes, ending_themes** (multimedia content)
+10. `episode_vector` - **episode_details** (detailed episode information, filler/recap status)
+11. `identifiers_vector` - IDs as semantic relationships (from List and Dict objects)
 
 **Visual Vectors (JinaCLIP v2, 1024-dim each):** 13. `image_vector` - **General anime visual content** from **images** dict (covers, posters, banners, trailer thumbnails)
 
@@ -286,7 +285,7 @@ Phase 2.5 (✅ COMPLETE) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [x] Tested character image vector generation independently
 
 - [x] **2.5.3c: Multi-Vector Coordination** (Est: 3 hours) - COMPLETED
-  - [x] Create MultiVectorEmbeddingManager class for 14-vector coordination
+  - [x] Create MultiVectorEmbeddingManager class for 13-vector coordination
   - [x] Implement coordinated embedding generation with proper payload separation
   - [x] Add embedding validation and error handling
   - [x] Remove non-semantic fields from vectors (nsfw, statistics, scores, sources)
@@ -316,7 +315,7 @@ Phase 2.5 (✅ COMPLETE) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 
 - [x] **2.5.5a: Document Addition Pipeline** (Est: 4 hours) - COMPLETED
   - [x] Created add_documents_14_vector() method
-  - [x] Implemented batch processing for 14-vector insertion (12 text + 2 visual)
+  - [x] Implemented batch processing for 13-vector insertion (12 text + 2 visual)
   - [x] Added progress tracking and error handling
   - [x] Maintained existing add_documents() for fallback
 
@@ -324,10 +323,10 @@ Phase 2.5 (✅ COMPLETE) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [x] Created vector-specific search methods for character vs general image search
   - [x] Implemented multi-vector query coordination for 14 vectors
   - [x] Added search result merging and ranking with character image weighting
-  - [x] Tested search accuracy with 14-vector system
+  - [x] Tested search accuracy with 13-vector system
 
 - [x] **2.5.5c: Migration and Validation** (Est: 3 hours) - COMPLETED
-  - [x] Created collection migration utility for 14-vector upgrade
+  - [x] Created collection migration utility for 13-vector upgrade
   - [x] Implemented data validation between old/new systems
   - [x] Added performance comparison tools
   - [x] Created rollback procedures
@@ -340,7 +339,7 @@ Phase 2.5 (✅ COMPLETE) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
   - [x] Tested ALL 14 individual vectors with vector-specific queries (100% success rate)
   - [x] Validated character image extraction from character.images Dict[str, str]
   - [x] Tested payload optimization functions and field extraction
-  - [x] Tested configuration loading and 14-vector architecture validation
+  - [x] Tested configuration loading and 13-vector architecture validation
 
 - [x] **2.5.6b: Comprehensive Test Suite Creation** (Est: 3 hours) - COMPLETED
   - [x] Created truly_comprehensive_test_suite.py with ALL 14 vector tests
@@ -467,7 +466,7 @@ Phase 2.5 (✅ COMPLETE) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 - [x] **3.0.3c: Integration Implementation** - COMPLETED
   - [x] ✅ Integrated fine-tuned model with `TextProcessor`
   - [x] ✅ Updated genre vector generation in embedding pipeline
-  - [x] ✅ Tested enhanced embeddings with existing 14-vector architecture
+  - [x] ✅ Tested enhanced embeddings with existing 13-vector architecture
   - [x] ✅ Validated no breaking changes to other vector types
 
 #### 🔍 **CRITICAL DISCOVERY: Data Scarcity Issue**
@@ -496,7 +495,7 @@ Phase 2.5 (✅ COMPLETE) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 
 #### 🔄 **Sub-Phase 3.2: Advanced Validation Framework** - PLANNED (Post-14-Vector Validation)
 
-**Rationale**: Expand validation framework after completing basic 14-vector system validation.
+**Rationale**: Expand validation framework after completing basic 13-vector system validation.
 
 **Sub-Phase 3.0.2: Generic ML Validation Framework** (Est: 4 hours) - FOUNDATION
 
@@ -771,7 +770,7 @@ Phase 2.5 (✅ COMPLETE) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 
 ### 📋 Phase 4: Sparse Vector Integration - PLANNED (Extend Existing Collection + Static→Learnable Evolution)
 
-**Architecture Decision**: Extend existing 14-vector collection with sparse vectors for unified search capabilities.
+**Architecture Decision**: Extend existing 13-vector collection with sparse vectors for unified search capabilities.
 **Weight Strategy**: Start with static information-theoretic weights, evolve to learnable weights from API usage patterns.
 **Episode Integration**: Apply sparse vectors to both anime collection and episode collection independently.
 
@@ -1789,7 +1788,7 @@ Phase 2.5 (✅ COMPLETE) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 
 ## 📋 Phase 2.6: LangGraph Smart Query Integration - TENTATIVE (NEW)
 
-**Purpose**: Add intelligent LLM-powered query routing to enhance search capabilities without modifying existing 14-vector architecture.
+**Purpose**: Add intelligent LLM-powered query routing to enhance search capabilities without modifying existing 13-vector architecture.
 
 ### **Sub-Phase 2.6.1: Core LangGraph Infrastructure** (Rollback-Safe: new modules only)
 
@@ -1966,5 +1965,5 @@ Phase 2.5 (✅ COMPLETE) → Phase 3 (Validation) → Phase 4 (Sparse Vectors) �
 
 - **Immediate**: Disable feature flag to revert to existing search methods
 - **Emergency**: Remove smart query endpoint, preserve all existing functionality
-- **Data Safety**: No changes to existing 14-vector architecture or data
+- **Data Safety**: No changes to existing 13-vector architecture or data
 

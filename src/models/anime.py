@@ -515,9 +515,6 @@ class AnimeEntry(BaseModel):
     genres: List[str] = Field(
         default_factory=list, description="Anime genres from AniList/other sources"
     )
-    licensors: List[str] = Field(
-        default_factory=list, description="Licensing companies"
-    )
     opening_themes: List["ThemeSong"] = Field(
         default_factory=list, description="Opening theme songs"
     )

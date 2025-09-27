@@ -1,6 +1,6 @@
 # src/vector/anime_field_mapper.py
 """
-AnimeFieldMapper - Extract and map anime data fields to 14-vector semantic architecture
+AnimeFieldMapper - Extract and map anime data fields to 13-vector semantic architecture
 
 Maps anime data from AnimeEntry models to appropriate text/visual embeddings
 for each vector type. Implements the comprehensive field mapping strategy
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class AnimeFieldMapper:
     """
-    Maps anime data fields to 14-vector semantic architecture.
+    Maps anime data fields to 13-vector semantic architecture.
 
     Extracts and processes anime data for embedding into:
     - 12 text vectors (BGE-M3, 1024-dim each) for semantic search
@@ -34,7 +34,7 @@ class AnimeFieldMapper:
         self, anime: AnimeEntry
     ) -> Dict[str, Union[str, List[str]]]:
         """
-        Map complete anime entry to all 14 vectors.
+        Map complete anime entry to all 13 vectors.
 
         Args:
             anime: AnimeEntry model with comprehensive anime data
@@ -44,11 +44,10 @@ class AnimeFieldMapper:
         """
         vector_data: Dict[str, Union[str, List[str]]] = {}
 
-        # Text vectors (12)
+        # Text vectors (11)
         vector_data["title_vector"] = self._extract_title_content(anime)
         vector_data["character_vector"] = self._extract_character_content(anime)
         vector_data["genre_vector"] = self._extract_genre_content(anime)
-        vector_data["technical_vector"] = self._extract_technical_content(anime)
         vector_data["staff_vector"] = self._extract_staff_content(anime)
         vector_data["review_vector"] = self._extract_review_content(anime)
         vector_data["temporal_vector"] = self._extract_temporal_content(anime)
@@ -155,41 +154,6 @@ class AnimeFieldMapper:
 
         return " | ".join(content_parts)
 
-    def _extract_technical_content(self, anime: AnimeEntry) -> str:
-        """Extract technical details like licensors, episode overrides."""
-        content_parts = []
-
-        # Technical metadata (excluding categorical fields like type/status/source_material/rating)
-
-        # Licensing information
-        if anime.licensors:
-            content_parts.append(f"Licensors: {', '.join(anime.licensors)}")
-
-        # Episode overrides
-        if anime.episode_overrides:
-            if (
-                anime.episode_overrides.main_override
-                and anime.episode_overrides.main_override.override_episode
-            ):
-                content_parts.append(
-                    f"Main Override: Episode {anime.episode_overrides.main_override.override_episode}"
-                )
-            if (
-                anime.episode_overrides.sub_override
-                and anime.episode_overrides.sub_override.override_episode
-            ):
-                content_parts.append(
-                    f"Sub Override: Episode {anime.episode_overrides.sub_override.override_episode}"
-                )
-            if (
-                anime.episode_overrides.dub_override
-                and anime.episode_overrides.dub_override.override_episode
-            ):
-                content_parts.append(
-                    f"Dub Override: Episode {anime.episode_overrides.dub_override.override_episode}"
-                )
-
-        return " | ".join(content_parts)
 
     def _extract_staff_content(self, anime: AnimeEntry) -> str:
         """Extract staff data including directors, composers, studios, voice actors."""
@@ -230,6 +194,16 @@ class AnimeFieldMapper:
                 ]
                 if producer_names:
                     content_parts.append(f"Producers: {', '.join(producer_names)}")
+
+            # Licensors
+            if anime.staff_data.licensors:
+                licensor_names = [
+                    licensor.name
+                    for licensor in anime.staff_data.licensors
+                    if licensor.name
+                ]
+                if licensor_names:
+                    content_parts.append(f"Licensors: {', '.join(licensor_names)}")
 
             # Voice actors
             if anime.staff_data.voice_actors and anime.staff_data.voice_actors.japanese:
@@ -629,7 +603,6 @@ class AnimeFieldMapper:
             "title_vector": "text",
             "character_vector": "text",
             "genre_vector": "text",
-            "technical_vector": "text",
             "staff_vector": "text",
             "review_vector": "text",
             "temporal_vector": "text",

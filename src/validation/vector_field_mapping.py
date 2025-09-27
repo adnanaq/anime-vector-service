@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Vector field mapping definitions based on 14-vector architecture."""
+"""Vector field mapping definitions based on 13-vector architecture."""
 
 from typing import Dict, List
 
-# 14-Vector Architecture Field Mappings (from tasks/tasks_plan.md)
+# 13-Vector Architecture Field Mappings (from tasks/tasks_plan.md)
 VECTOR_FIELD_MAPPINGS: Dict[str, Dict[str, List[str]]] = {
     # Text Vectors (BGE-M3, 1024-dim each)
     "title_vector": {
@@ -17,10 +17,6 @@ VECTOR_FIELD_MAPPINGS: Dict[str, Dict[str, List[str]]] = {
     "genre_vector": {
         "fields": ["genres", "tags", "themes", "demographics", "content_warnings"],
         "description": "Comprehensive classification and content categorization"
-    },
-    "technical_vector": {
-        "fields": ["licensors", "episode_overrides"],
-        "description": "Technical metadata and format information (excluding categorical fields)"
     },
     "staff_vector": {
         "fields": ["staff_data"],

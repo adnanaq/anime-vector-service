@@ -110,8 +110,6 @@ class DatasetAnalyzer:
                     dynamic_queries[vector_name] = self._generate_title_queries()
                 elif vector_name == "genre_vector":
                     dynamic_queries[vector_name] = self._generate_genre_queries()
-                elif vector_name == "technical_vector":
-                    dynamic_queries[vector_name] = self._generate_technical_queries()
                 elif vector_name == "temporal_vector":
                     dynamic_queries[vector_name] = self._generate_temporal_queries()
                 elif vector_name == "episode_vector":
@@ -211,7 +209,7 @@ class DatasetAnalyzer:
 
         vector_names = [
             "title_vector", "episode_vector", "character_vector", "franchise_vector",
-            "genre_vector", "staff_vector", "temporal_vector", "technical_vector",
+            "genre_vector", "staff_vector", "temporal_vector",
             "identifiers_vector", "related_vector", "streaming_vector", "review_vector",
             "image_vector", "character_image_vector"
         ]

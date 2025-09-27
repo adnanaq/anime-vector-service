@@ -2,7 +2,7 @@
 """
 Comprehensive Vector Database Test Suite
 
-A comprehensive testing framework for the 14-vector anime database that covers:
+A comprehensive testing framework for the 13-vector anime database that covers:
 - Individual vector queries (simple to complex)
 - Payload filtering and hybrid search
 - Multi-vector queries and combinations
@@ -62,7 +62,7 @@ class TestSuite:
 
 
 class ComprehensiveVectorTester:
-    """Comprehensive testing framework for the 14-vector anime database."""
+    """Comprehensive testing framework for the 13-vector anime database."""
 
     def __init__(
         self, qdrant_url: str, api_key: str, collection_name: str = "anime_database"
@@ -161,18 +161,6 @@ class ComprehensiveVectorTester:
                     "expected_keywords": ["psychological", "dark", "drama"],
                 },
                 # Technical Vector Tests
-                {
-                    "name": "Era Search",
-                    "query": "1990s movie animation",
-                    "vector": "technical_vector",
-                    "expected_keywords": ["1990", "movie", "retro"],
-                },
-                {
-                    "name": "Content Rating",
-                    "query": "mature content violence",
-                    "vector": "technical_vector",
-                    "expected_keywords": ["mature", "violence", "adult"],
-                },
                 # Temporal Vector Tests
                 {
                     "name": "Season Search",
@@ -377,30 +365,6 @@ class ComprehensiveVectorTester:
                         "range": {"gte": 1990, "lte": 1995},
                     },
                 },
-                {
-                    "name": "Episode Count Filter",
-                    "query": "short anime movie",
-                    "vector": "technical_vector",
-                    "payload_filter": {"key": "episodes", "match": {"value": 1}},
-                },
-                {
-                    "name": "Rating Filter",
-                    "query": "mature content",
-                    "vector": "technical_vector",
-                    "payload_filter": {
-                        "key": "rating",
-                        "match": {"value": "R - 17+ (violence & profanity)"},
-                    },
-                },
-                {
-                    "name": "Score Range Filter",
-                    "query": "high quality anime",
-                    "vector": "technical_vector",
-                    "payload_filter": {
-                        "key": "score.median",
-                        "range": {"gte": 7.0},
-                    },
-                },
             ],
         )
 
@@ -440,7 +404,7 @@ class ComprehensiveVectorTester:
                     "query": "high school romance comedy with beautiful animation",
                     "limit": 5,
                     "fusion_method": "rrf",
-                    "description": "Test search across all 14 vectors (12 text + 2 image)",
+                    "description": "Test search across all 13 vectors (12 text + 2 image)",
                 },
                 {
                     "name": "Visual Comprehensive Search",
@@ -1169,7 +1133,7 @@ class ComprehensiveVectorTester:
                     result = {"result": search_results}
 
                 elif test_config.get("test_type") == "search_complete":
-                    # Complete search across all 14 vectors
+                    # Complete search across all 13 vectors
                     query = test_config["query"]
                     limit = test_config.get("limit", 5)
                     fusion_method = test_config.get("fusion_method", "rrf")

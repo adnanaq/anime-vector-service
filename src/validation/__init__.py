@@ -5,7 +5,7 @@ search quality, and recommendation quality assessment.
 
 Components:
 - EmbeddingQualityMonitor: Model drift detection and embedding space analysis
-- VectorSystemValidator: 14-vector system validation suite
+- VectorSystemValidator: 13-vector system validation suite
 - SearchQualityValidator: Ground truth validation and automated metrics
 - GoldStandardDataset: Anime domain test dataset management
 - ABTestingFramework: Statistical testing and user simulation models

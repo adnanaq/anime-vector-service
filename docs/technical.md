@@ -15,9 +15,9 @@
 - **Qdrant 1.14+**: Selected for its superior performance with HNSW indexing, multi-vector support, and production-ready features
 - **HNSW Algorithm**: Hierarchical Navigable Small World for fast approximate nearest neighbor search
 - **Advanced Quantization**: Binary, scalar, and product quantization for 40x speedup potential
-- **14-Vector Primary Collection**: Main anime collection with named vectors (12×1024-dim text + 2×768-dim visual)
+- **13-Vector Primary Collection**: Main anime collection with named vectors (11×1024-dim text + 2×768-dim visual)
 - **Dual-Collection Architecture**:
-  - **Primary Collection**: 38K+ anime entries with comprehensive 14-vector semantic coverage
+  - **Primary Collection**: 38K+ anime entries with comprehensive 13-vector semantic coverage
   - **Episode Collection**: Granular episode-level search with BGE-M3 chunking (Phase 3.5)
   - **Slug-Based Linking**: Cross-collection relationships using title-based IDs
 - **Hybrid Dense+Sparse**: Support for both semantic embeddings and explicit feature matching (Phase 4)
@@ -276,7 +276,7 @@ The service uses Pydantic Settings for type-safe configuration:
 
 **Technical Decision:** Single comprehensive collection with 14 named vectors
 
-- **13 Text Vectors (384-dim BGE-M3 each):** title_vector, character_vector, genre_vector, technical_vector, staff_vector, review_vector, temporal_vector, streaming_vector, related_vector, franchise_vector, episode_vector, sources_vector, identifiers_vector
+- **11 Text Vectors (384-dim BGE-M3 each):** title_vector, character_vector, genre_vector, staff_vector, review_vector, temporal_vector, streaming_vector, related_vector, franchise_vector, episode_vector, identifiers_vector
 - **1 Visual Vector (512-dim JinaCLIP v2):** image_vector (unified picture/thumbnail/images)
 - **Rationale:** Data locality optimization, atomic consistency, reduced complexity
 
@@ -674,7 +674,6 @@ def _create_multi_vector_config(self) -> Dict:
         "title_vector": VectorParams(size=1024, distance=Distance.COSINE),
         "character_vector": VectorParams(size=1024, distance=Distance.COSINE),
         "genre_vector": VectorParams(size=1024, distance=Distance.COSINE),
-        "technical_vector": VectorParams(size=1024, distance=Distance.COSINE),
         "staff_vector": VectorParams(size=1024, distance=Distance.COSINE),
         "review_vector": VectorParams(size=1024, distance=Distance.COSINE),
         "temporal_vector": VectorParams(size=1024, distance=Distance.COSINE),
@@ -1208,7 +1207,6 @@ class SmartQueryAnalyzer:
             "title_vector": "Anime titles, synopsis, background - semantic content matching",
             "character_vector": "Character names, descriptions, relationships - character-focused search",
             "genre_vector": "Genres, themes, demographics - categorical classification",
-            "technical_vector": "Rating, status, type, source material - metadata filtering",
             "staff_vector": "Directors, studios, voice actors - production team matching",
             "review_vector": "Awards, recognition, critical reception - quality indicators",
             "temporal_vector": "Air dates, broadcast info - time-based search",

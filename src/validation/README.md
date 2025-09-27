@@ -34,7 +34,6 @@ Comprehensive mapping of all 14 vectors to their respective data fields:
 - `title_vector`: Title information and basic descriptions
 - `character_vector`: Character names, descriptions, relationships
 - `genre_vector`: Comprehensive classification and content categorization
-- `technical_vector`: Technical metadata and format information
 - `staff_vector`: Directors, composers, studios, voice actors
 - `review_vector`: Recognition and achievements
 - `temporal_vector`: Semantic temporal data and scheduling

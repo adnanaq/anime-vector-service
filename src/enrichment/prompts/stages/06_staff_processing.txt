@@ -76,7 +76,8 @@ Producers: {offline_producers}
 - Create producer records with combined data
 
 **Licensor Processing**:
-- Extract name, url from licensors array
+- Extract name, url from Jikan licensors array from other sources
+- Merge licensors, avoiding duplicates by normalizing names (case-insensitive, punctuation removal)
 - Create licensor records
 
 ### STEP 4: PROCESS VOICE ACTORS
@@ -188,7 +189,14 @@ Return staff_data object with this structure:
         "url": "https://myanimelist.net/anime/producer/23/Bandai_Visual"
       }
     ],
-    "licensors": [],
+    "licensors": [
+      {
+        // CompanyEntry fields ordered: scalar → scalar → scalar
+        "name": "Funimation",
+        "type": "",
+        "url": "https://myanimelist.net/anime/producer/102/Funimation"
+      }
+    ],
     "voice_actors": {
       "japanese": [
         {
