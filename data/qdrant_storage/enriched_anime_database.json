@@ -25,12 +25,14 @@
       "month": "October",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "FALL",
       "source_material": "MIXED MEDIA",
       "status": "FINISHED",
       "synopsis": "Animated music video for RAISE A SUILEN's song !NVADE SHOW!. It was first released on BanG Dream's official YouTube and was later included in the limited edition Blu-ray for RAISE A SUILEN's sixth single \"mind of Prominence\". (Source: AniList)",
       "title": "!NVADE SHOW!",
       "title_japanese": "!NVADE SHOW!",
       "type": "MUSIC",
+      "year": 2020,
       "characters": [
         {
           "name": "Masuki Satou",
@@ -52,6 +54,7 @@
           ],
           "description": "__Height:__ 168 cm (5'6\")\n__Instrument:__ Pearl Reference Twilight Fade Drums\n\nA second-year high school student. She goes by the moniker MASKING and is the drummer for the band RAISE A SUILEN. Despite her sharp gaze and rough, delinquent-like appearance, she likes cute things and is skilled at baking cakes.\n\nShe is the daughter of the owner of Galaxy Live House. Masuki's longing for her father made her start playing the drums, which she plays violently and is called a \"mad dog\" because of that.\n\n(Source: BanG Dream Wikia, edited)",
           "gender": "Female",
+          "character_pages": {},
           "voice_actors": [
             {
               "name": "Natsume",
@@ -82,6 +85,7 @@
           "description": "__Height:__ 140 cm (4'7\")\n__Instruments:__ Pioneer DJ XDJ-RX2 DJ System + PIONEER DJ TORAIZ SP-16\n\nA returnee who attends an international school. She goes by the moniker CHU² (read as CHUCHU) and is the leader and DJ for the band RAISE A SUILEN. She is also a music producer who uses DTM (Desktop Music) to compose music, and she's the one who scouted PAREO as a keyboardist.\n\nChiyu is 14 years old but due to her excellent grades, she is currently a 10th grader or a first year high school student. Chiyu is both very professional and confident of her band and ideas, and although she tends to be arrogant sometimes, she's not rude. She dreams of changing the world with the strongest music.\n\nAs a result of her studying in an international school, Chiyu often talks in English or adds English words to her sentences.",
           "age": "14",
           "gender": "Female",
+          "character_pages": {},
           "voice_actors": [
             {
               "name": "Risa Tsumugi",
@@ -109,6 +113,7 @@
           ],
           "description": "__Height:__ 172 cm (5'8\")\n__Instrument:__ Spector EURO 4 LX RAS LAYER -Twilight Amber-\n\nA second-year high school student. She goes by the moniker LAYER and is the vocalist and bassist for the band RAISE A SUILEN. She is Tae's childhood friend. Due to Rei's mature attitude, she has a tendency keep a certain feeling of distance with others.\n\nShe has liked singing since she was young, and now she is a professional singer who can sing any song. In addition to temporary part-time singing jobs, she used to play bass in a back up band for famous artists. Rei had also attended the same music school as Tae and Arisa.\n\n(Source: BanG Dream Wikia, edited)",
           "gender": "Female",
+          "character_pages": {},
           "voice_actors": [
             {
               "name": "Raychell",
@@ -136,6 +141,7 @@
           ],
           "description": "__Height:__ 155 cm (5'1\")\n__Instrument:__ .strandberg* Boden J6 RAS LOCK Caribbean Light Blue Guitar\n\nA first year high-school student at Haneoka Girls' High School. She goes by the moniker LOCK as the guitarist for the band RAISE A SUILEN. She is a Poppin'Party fan. Rokka usually wears large glasses, but takes them off when she performs.\n\nShe is from Gifu Prefecture. She attends Haneoka instead of Hanasakigawa, the closer school, due to Haneoka's scholarship program. She in the same class as Asuka and Ako. Rokka works at Galaxy Live House, as well as her relative's bath house where she lives.\n\nEver since she was at elementary school, Rokka failed at everything she tried, including her studies. Playing guitar was the only thing she had worked hard at. Because of that, she formed a band with her fellow schoolmates Toriko, Berry, and Pat (all monikers). However, after Rokka went to see SPACE live house's last show in Tokyo, she fell in love with Poppin'Party (who performed their song \"Mae e Susume!\" there) and began dreaming of moving to Tokyo. Rokka's middle school band disbanded when she was finally able to move to Tokyo and make her dream come true.\n\nHer father was at first against her decision to study in Tokyo, but Rokka persuaded him by finding a place to live and a school that offered a scholarship that made the tuition cheaper than that her local high school's. After intense studying and hard work, Rokka later passed Haneoka High School's entrance exam and moved to Tokyo.\n\n(Source: BanG Dream Wikia, edited)",
           "gender": "Female",
+          "character_pages": {},
           "voice_actors": [
             {
               "name": "Riko Kohara",
@@ -163,6 +169,7 @@
           ],
           "description": "__Height:__ 162 cm (5'4\")\n__Instruments:__ ROLAND FA-06 / ROLAND FA-08\n\nAn energetic second-year middle school student. She goes by the moniker PAREO and is the keyboardist for the band RAISE A SUILEN. She adores CHU² and has said she admires her deeply, calling her \"CHU²-sama\" and sometimes even \"Goshujinsama\" (lit. Master).\n\nReona was originally learning the Electone, but switched to the keyboard when she was scouted by CHU². Reona's favorite band is Pastel*Palettes. \n\n(Source: BanG Dream Wikia, edited)",
           "gender": "Female",
+          "character_pages": {},
           "voice_actors": [
             {
               "name": "Reo Kurachi",
@@ -173,18 +180,19 @@
       ],
       "episode_details": [
         {
+          "aired": "2020-10-06T15:00:00Z",
+          "duration": 120,
           "episode_number": 1,
+          "filler": false,
+          "recap": false,
           "season_number": 1,
+          "synopsis": "Animated music video for RAISE A SUILEN's song !NVADE SHOW!. It was first released on BanG Dream's official YouTube and was later included in the limited edition Blu-ray for RAISE A SUILEN's sixth single \"mind of Prominence\".",
           "title": "!NVADE SHOW!",
           "title_japanese": "!NVADE SHOW!",
           "title_romaji": "!NVADE SHOW!",
-          "synopsis": "Animated music video for RAISE A SUILEN's song !NVADE SHOW!. It was first released on BanG Dream's official YouTube and was later included in the limited edition Blu-ray for RAISE A SUILEN's sixth single \"mind of Prominence\".",
           "thumbnails": [],
-          "streaming": {},
-          "aired": "2020-10-07T00:00:00+09:00",
-          "duration": 120,
-          "filler": false,
-          "recap": false
+          "episode_pages": {},
+          "streaming": {}
         }
       ],
       "genres": [
@@ -258,7 +266,7 @@
         }
       ],
       "aired_dates": {
-        "from": "2020-10-07T00:00:00+00:00",
+        "from": "2020-10-07T00:00:00Z",
         "string": "Oct 7, 2020"
       },
       "delay_information": {
@@ -508,13 +516,13 @@
         "animeschedule": {
           "score": 6.677,
           "scored_by": 2,
-          "members": 3,
-          "rank": 10125
+          "rank": 10125,
+          "members": 3
         },
         "kitsu": {
+          "popularity_rank": 17350,
           "members": 50,
-          "favorites": 0,
-          "popularity_rank": 17350
+          "favorites": 0
         },
         "animeplanet": {
           "score": 6.308,
@@ -525,14 +533,14 @@
         "source": "multi-source",
         "enriched_at": "2025-07-24T19:42:09.282039Z",
         "success": true
-      },
-      "year": 2020,
-      "season": "FALL"
+      }
     },
     {
       "episodes": 1,
+      "month": "September",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "SUMMER",
       "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "This music video tells how a shy girl with a secret love and curiosity about what surrounds her works.",
@@ -540,6 +548,7 @@
       "title_english": "0",
       "title_japanese": "「0」",
       "type": "MUSIC",
+      "year": 2013,
       "characters": [
         {
           "name": "Kuriyama, Chiaki",
@@ -555,15 +564,15 @@
           "images": [
             "https://cdn.myanimelist.net/images/characters/4/223671.jpg"
           ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/93863/Chiaki_Kuriyama"
+          },
           "voice_actors": [
             {
               "name": "Kuriyama, Chiaki",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/93863/Chiaki_Kuriyama"
-          }
+          ]
         }
       ],
       "episode_details": [],
@@ -578,6 +587,7 @@
         "https://notify.moe/anime/Ff1bpKmmR",
         "https://simkl.com/anime/48858"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "\"Zero\"",
         "0 (Zero)",
@@ -619,14 +629,7 @@
         }
       ],
       "aired_dates": {
-        "from": "2013-09-11T00:00:00+00:00",
-        "prop": {
-          "from": {
-            "day": 11,
-            "month": 9,
-            "year": 2013
-          }
-        },
+        "from": "2013-09-11T00:00:00Z",
         "string": "Sep 11, 2013"
       },
       "duration": {
@@ -648,11 +651,6 @@
           "https://cdn.anidb.net/images/main/143437.jpg"
         ],
         "banners": []
-      },
-      "premiere_dates": {
-        "year": 2013,
-        "month": 10,
-        "day": 23
       },
       "score": {
         "arithmeticGeometricMean": 4.926305192716743,
@@ -703,12 +701,7 @@
               "character_assignments": [
                 "Music Video Performer"
               ],
-              "biography": "Japanese actress, singer, and model known for her roles in films like 'Battle Royale' and 'Kill Bill'. Also works as a voice actor and vocalist. In this music video, she performs the song '0'.",
-              "primary_occupations": [
-                "Vocalist",
-                "Voice Actor"
-              ],
-              "language": "JAPANESE"
+              "biography": "Japanese actress, singer, and model known for her roles in films like 'Battle Royale' and 'Kill Bill'. Also works as a voice actor and vocalist. In this music video, she performs the song '0'."
             }
           ]
         }
@@ -737,23 +730,24 @@
         },
         "kitsu": {
           "score": 5.024,
-          "members": 627,
-          "favorites": 1,
+          "rank": 12263,
           "popularity_rank": 7757,
-          "rank": 12263
+          "members": 627,
+          "favorites": 1
         }
       },
       "enrichment_metadata": {
         "source": "multi-source",
         "enriched_at": "2025-07-24T19:42:09.282039Z",
         "success": true
-      },
-      "year": 2013,
-      "season": "SUMMER"
+      }
     },
     {
       "episodes": 8,
+      "month": "January",
+      "nsfw": true,
       "rating": "Rx - Hentai",
+      "season": "WINTER",
       "source_material": "MANGA",
       "status": "FINISHED",
       "synopsis": "After moving into a new share house, Ryota Ochi meets two beautiful housemates who order him to do housework, with an unusual arrangement.",
@@ -761,6 +755,7 @@
       "title_english": "The Share House's Secret Rule",
       "title_japanese": "「1分間だけ触れてもいいよ...」シェアハウスの秘密ルール。",
       "type": "ONA",
+      "year": 2025,
       "characters": [
         {
           "name": "Kanade AYASE",
@@ -777,6 +772,7 @@
             "https://cdn.anisearch.com/images/character/cover/133/133080_400.webp"
           ],
           "gender": "Female",
+          "character_pages": {},
           "voice_actors": [
             {
               "name": "Hikaru Isshiki",
@@ -799,6 +795,7 @@
             "https://cdn.anisearch.com/images/character/cover/133/133115_400.webp"
           ],
           "gender": "Female",
+          "character_pages": {},
           "voice_actors": [
             {
               "name": "三浦さとみ",
@@ -821,6 +818,7 @@
             "https://cdn.anisearch.com/images/character/cover/133/133114_400.webp"
           ],
           "gender": "Female",
+          "character_pages": {},
           "voice_actors": [
             {
               "name": "豆坊主",
@@ -835,109 +833,109 @@
       ],
       "episode_details": [
         {
+          "aired": "2024-12-19T15:00:00Z",
           "episode_number": 1,
+          "filler": false,
+          "recap": false,
           "season_number": 1,
           "title": "My Roommates Are Way Too Cute",
           "title_japanese": "可愛すぎろシェアメイトたち",
           "thumbnails": [],
-          "streaming": {},
-          "aired": "2024-12-20T00:00:00+09:00",
-          "filler": false,
-          "recap": false,
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/1"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 2,
+          "filler": false,
+          "recap": false,
           "season_number": 1,
           "title": "My Roommates Are Way Too Cute",
           "title_japanese": "可愛すぎろシェアメイトたち",
           "thumbnails": [],
-          "streaming": {},
-          "filler": false,
-          "recap": false,
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/2"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 3,
+          "filler": false,
+          "recap": false,
           "season_number": 1,
           "title": "My Roommates Are Way Too Cute",
           "title_japanese": "可愛すぎろシェアメイトたち",
           "thumbnails": [],
-          "streaming": {},
-          "filler": false,
-          "recap": false,
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/3"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 4,
+          "filler": false,
+          "recap": false,
           "season_number": 1,
           "title": "My Roommates Are Way Too Cute",
           "title_japanese": "可愛すぎろシェアメイトたち",
           "thumbnails": [],
-          "streaming": {},
-          "filler": false,
-          "recap": false,
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/4"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 5,
+          "filler": false,
+          "recap": false,
           "season_number": 1,
           "title": "My Roommates Are Way Too Cute",
           "title_japanese": "可愛すぎろシェアメイトたち",
           "thumbnails": [],
-          "streaming": {},
-          "filler": false,
-          "recap": false,
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/5"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 6,
+          "filler": false,
+          "recap": false,
           "season_number": 1,
           "title": "My Roommates Are Way Too Cute",
           "title_japanese": "可愛すぎろシェアメイトたち",
           "thumbnails": [],
-          "streaming": {},
-          "filler": false,
-          "recap": false,
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/6"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 7,
+          "filler": false,
+          "recap": false,
           "season_number": 1,
           "title": "My Roommates Are Way Too Cute",
           "title_japanese": "可愛すぎろシェアメイトたち",
           "thumbnails": [],
-          "streaming": {},
-          "filler": false,
-          "recap": false,
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/7"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 8,
+          "filler": false,
+          "recap": false,
           "season_number": 1,
           "title": "My Roommates Are Way Too Cute",
           "title_japanese": "可愛すぎろシェアメイトたち",
           "thumbnails": [],
-          "streaming": {},
-          "filler": false,
-          "recap": false,
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/60629/1-punkan_dake_Furete_mo_Ii_yo_Share_House_no_Himitsu_Rule/episode/8"
-          }
+          },
+          "streaming": {}
         }
       ],
       "genres": [
@@ -954,6 +952,7 @@
         "https://anisearch.com/anime/20004",
         "https://myanimelist.net/anime/60629"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "La règle secrète de la coloc",
         "The Share House's Secret Rule",
@@ -976,8 +975,9 @@
         }
       ],
       "aired_dates": {
-        "from": "2025-01-05T00:00:00+00:00",
-        "to": "2025-03-10T00:00:00+00:00"
+        "from": "2025-01-05T00:00:00Z",
+        "to": "2025-03-10T00:00:00Z",
+        "string": "Jan 5, 2025 to Mar 10, 2025"
       },
       "duration": {
         "value": 360,
@@ -996,6 +996,7 @@
         "median": 5.554081632653061
       },
       "staff_data": {
+        "production_staff": {},
         "studios": [
           {
             "name": "Studio LEO",
@@ -1014,42 +1015,43 @@
       "statistics": {},
       "enrichment_metadata": {
         "source": "multi-source",
-        "enriched_at": "2025-01-25T12:00:00.000Z",
+        "enriched_at": "2025-01-25T12:00:00Z",
         "success": true
-      },
-      "year": 2025,
-      "season": "WINTER"
+      }
     },
     {
       "episodes": 1,
+      "month": "March",
       "nsfw": false,
       "rating": "PG - Children",
+      "season": "WINTER",
       "source_material": "UNKNOWN",
       "status": "FINISHED",
       "synopsis": "Based on Aesop's Fables.",
       "title": "\"Aesop\" no Ohanashi yori: Ushi to Kaeru, Yokubatta Inu",
       "title_japanese": "\"いそっぷ\"のおはなしより 牛とかえる, よくばった犬",
       "type": "MOVIE",
+      "year": 1970,
       "demographics": [
         "Kids"
       ],
       "episode_details": [
         {
+          "aired": "1970-03-20T15:00:00Z",
+          "duration": 720,
           "episode_number": 1,
+          "filler": false,
+          "recap": false,
+          "score": 5.57,
+          "synopsis": "Based on Aesop's Fables. This movie presents two classic tales: The Bull and the Frog, and The Greedy Dog, adapted for children from the timeless Aesop's collection of moral stories.",
           "title": "\"Aesop\" no Ohanashi yori: Ushi to Kaeru, Yokubatta Inu",
           "title_japanese": "\"いそっぷ\"のおはなしより 牛とかえる, よくばった犬",
           "title_romaji": "\"Aesop\" no Ohanashi yori: Ushi to Kaeru, Yokubatta Inu",
-          "synopsis": "Based on Aesop's Fables. This movie presents two classic tales: The Bull and the Frog, and The Greedy Dog, adapted for children from the timeless Aesop's collection of moral stories.",
           "thumbnails": [],
-          "streaming": {},
-          "aired": "1970-03-21T00:00:00+09:00",
-          "duration": 720,
-          "score": 5.57,
-          "filler": false,
-          "recap": false,
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/25627/Aesop_no_Ohanashi_yori__Ushi_to_Kaeru_Yokubatta_Inu"
-          }
+          },
+          "streaming": {}
         }
       ],
       "genres": [
@@ -1067,6 +1069,7 @@
         "https://notify.moe/anime/eM1-pKmiR",
         "https://simkl.com/anime/41243"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "\"いそっぷ\"のおはなしより 牛とかえる",
         "\"いそっぷ\"のおはなしより 牛とかえる, よくばった犬",
@@ -1101,8 +1104,8 @@
         }
       ],
       "aired_dates": {
-        "from": "1970-03-21T00:00:00+00:00",
-        "to": "1970-03-21T00:00:00+00:00",
+        "from": "1970-03-21T00:00:00Z",
+        "to": "1970-03-21T00:00:00Z",
         "string": "Mar 21, 1970"
       },
       "delay_information": {
@@ -1190,14 +1193,14 @@
         "source": "multi-source",
         "enriched_at": "2025-07-25T15:45:08.270624Z",
         "success": true
-      },
-      "year": 1970,
-      "season": "WINTER"
+      }
     },
     {
       "episodes": 1,
+      "month": "January",
       "nsfw": false,
       "rating": "PG - Children",
+      "season": "WINTER",
       "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "Graduate Work 2018 by Yuuta Watanabe, Tokyo Polytechnic University, Faculty of Arts, Department of Animation.",
@@ -1205,22 +1208,24 @@
       "title_english": "Eating \"Love & Sorrow\"",
       "title_japanese": "「あい」をたべる",
       "type": "MOVIE",
+      "year": 2018,
       "episode_details": [
         {
-          "episode_number": 1,
-          "season_number": 1,
-          "title": "Movie",
-          "title_japanese": "「あい」をたべる",
-          "synopsis": "Graduate Work 2018 by Yuuta Watanabe, Tokyo Polytechnic University, Faculty of Arts, Department of Animation.",
-          "thumbnails": [],
-          "aired": "2018-01-01T00:00:00+00:00",
+          "aired": "2018-01-01T00:00:00Z",
           "duration": 480,
+          "episode_number": 1,
           "filler": false,
           "recap": false,
+          "season_number": 1,
+          "synopsis": "Graduate Work 2018 by Yuuta Watanabe, Tokyo Polytechnic University, Faculty of Arts, Department of Animation.",
+          "title": "Movie",
+          "title_japanese": "「あい」をたべる",
           "title_romaji": "\"Ai\" wo Taberu",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/54496/Ai_wo_Taberu"
-          }
+          },
+          "streaming": {}
         }
       ],
       "genres": [
@@ -1231,6 +1236,7 @@
         "https://kitsu.app/anime/47627",
         "https://myanimelist.net/anime/54496"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "Eating \"Love & Sorrow\"",
         "「あい」をたべる"
@@ -1247,7 +1253,7 @@
         }
       ],
       "aired_dates": {
-        "from": "2018-01-01T00:00:00+00:00",
+        "from": "2018-01-01T00:00:00Z",
         "string": "2018"
       },
       "duration": {
@@ -1268,6 +1274,7 @@
         "banners": []
       },
       "staff_data": {
+        "production_staff": {},
         "producers": [
           {
             "name": "Tokyo Polytechnic University",
@@ -1284,30 +1291,30 @@
           "favorites": 0
         },
         "kitsu": {
+          "popularity_rank": 21457,
           "members": 14,
-          "favorites": 0,
-          "popularity_rank": 21457
+          "favorites": 0
         }
       },
       "enrichment_metadata": {
         "source": "multi-source",
         "enriched_at": "2025-07-25T15:57:47.063849Z",
         "success": true
-      },
-      "year": 2018,
-      "season": "WINTER"
+      }
     },
     {
       "episodes": 1,
       "month": "January",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "WINTER",
       "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "The anime depicts the \"smart city\" envisioned by Kyocera, where everyone can comfortably and safely live with the use of advanced technology, and it also depicts the worries of job seekers. The anime's title and theme reflect both the vexing issue of how to describe Kyocera's extensive business in just one word, and the mood of job seekers vexed by the interview question, \"If you had to describe yourself in one word, what would it be?\"\n\n(Source: ANN)",
       "title": "\"Anata wo Hitokoto de Arawashite Kudasai\" no Shitsumon ga Nigate da.",
       "title_japanese": "『あなたを一言で表してください』の質問が苦手だ。",
       "type": "OVA",
+      "year": 2022,
       "characters": [
         {
           "name": "Michiru",
@@ -1327,15 +1334,15 @@
             "https://cdn.anidb.net/images/main/268755.jpg"
           ],
           "gender": "Female",
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/205191/Michiru"
+          },
           "voice_actors": [
             {
               "name": "Kitou, Akari",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/205191/Michiru"
-          }
+          ]
         },
         {
           "name": "Yuuki",
@@ -1355,15 +1362,15 @@
             "https://cdn.anidb.net/images/main/268756.jpg"
           ],
           "gender": "Male",
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/205187/Yuuki"
+          },
           "voice_actors": [
             {
               "name": "Shimono, Hiro",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/205187/Yuuki"
-          }
+          ]
         },
         {
           "name": "Ryoushi",
@@ -1376,6 +1383,7 @@
           "character_ids": {
             "anilist": 346277
           },
+          "character_pages": {},
           "voice_actors": [
             {
               "name": "Katsuhisa Houki",
@@ -1386,18 +1394,18 @@
       ],
       "episode_details": [
         {
+          "aired": "2022-01-10T15:00:00Z",
+          "duration": 300,
           "episode_number": 1,
+          "filler": false,
+          "recap": false,
           "season_number": 1,
           "title": "Episode 1",
           "thumbnails": [],
-          "streaming": {},
-          "aired": "2022-01-11T00:00:00+09:00",
-          "duration": 300,
-          "filler": false,
-          "recap": false,
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/50762"
-          }
+          },
+          "streaming": {}
         }
       ],
       "genres": [
@@ -1438,6 +1446,7 @@
         "https://simkl.com/anime/1824792",
         "https://animeschedule.net/anime/anata-wo-hitokoto-de-arawashite-kudasai-no-shitsumon-ga-nigate-da"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "Anahito",
         "AnaHito",
@@ -1508,7 +1517,7 @@
         }
       ],
       "aired_dates": {
-        "from": "2022-01-11T00:00:00+00:00",
+        "from": "2022-01-11T00:00:00Z",
         "string": "Jan 11, 2022"
       },
       "delay_information": {
@@ -1517,20 +1526,6 @@
       "duration": {
         "value": 300,
         "unit": "SECONDS"
-      },
-      "episode_overrides": {
-        "main_override": {
-          "overrideEpisode": 0,
-          "episodesAired": 0
-        },
-        "sub_override": {
-          "overrideEpisode": 0,
-          "episodesAired": 0
-        },
-        "dub_override": {
-          "overrideEpisode": 0,
-          "episodesAired": 0
-        }
       },
       "external_links": {
         "officialsite": "https://www.kyocera.co.jp/animation/anahito/"
@@ -1753,13 +1748,13 @@
         "animeschedule": {
           "score": 6.416,
           "scored_by": 4,
-          "members": 4,
-          "rank": 10114
+          "rank": 10114,
+          "members": 4
         },
         "kitsu": {
+          "popularity_rank": 14868,
           "members": 86,
-          "favorites": 0,
-          "popularity_rank": 14868
+          "favorites": 0
         },
         "animeplanet": {
           "score": 6.348,
@@ -1780,212 +1775,213 @@
         "source": "multi-source",
         "enriched_at": "2025-01-26T14:42:09.282039Z",
         "success": true
-      },
-      "year": 2022,
-      "season": "WINTER"
+      }
     },
     {
       "episodes": 16,
+      "month": "June",
       "nsfw": false,
       "rating": "PG-13 - Teens 13 or older",
+      "season": "SPRING",
       "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "Chibi shorts for Ayaka that were published on the official Twitter and YouTube accounts for the series.",
       "title": "\"Ayakai Shima\" e Youkoso! Mitaman no Ayakashima Kankou Annai",
       "title_japanese": "\"あやかい島\"へようこそ！ミタマンの綾ヵ島観光案内",
       "type": "ONA",
+      "year": 2023,
       "episode_details": [
         {
           "episode_number": 1,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 1",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/1"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 2,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 2",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/2"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 3,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 3",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/3"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 4,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 4",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/4"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 5,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 5",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/5"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 6,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 6",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/6"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 7,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 7",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/7"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 8,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 8",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/8"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 9,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 9",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/9"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 10,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 10",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/10"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 11,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 11",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/11"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 12,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 12",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/12"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 13,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 13",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/13"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 14,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 14",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/14"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 15,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 15",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/15"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 16,
-          "season_number": 1,
-          "thumbnails": [],
-          "streaming": {},
           "filler": false,
           "recap": false,
+          "season_number": 1,
           "title": "Episode 16",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/55754/Ayakai_Shima_e_Youkoso_Mitaman_no_Ayakashima_Kankou_Annai/episode/16"
-          }
+          },
+          "streaming": {}
         }
       ],
       "genres": [
@@ -2031,6 +2027,7 @@
         "https://livechart.me/anime/12190",
         "https://myanimelist.net/anime/55754"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "\"あやかい島\"へようこそ！ミタマンの綾ヵ島観光案内",
         "AYAKA Mini Anime",
@@ -2054,8 +2051,8 @@
         }
       ],
       "aired_dates": {
-        "from": "2023-06-23T00:00:00+00:00",
-        "to": "2023-10-03T00:00:00+00:00",
+        "from": "2023-06-23T00:00:00Z",
+        "to": "2023-10-03T00:00:00Z",
         "string": "Jun 23, 2023 to Oct 3, 2023"
       },
       "delay_information": {
@@ -2084,6 +2081,7 @@
         "median": 5.85
       },
       "staff_data": {
+        "production_staff": {},
         "studios": [
           {
             "name": "AQUA ARIS",
@@ -2104,94 +2102,95 @@
         "animeschedule": {
           "score": 6.245715713500976,
           "scored_by": 55,
-          "members": 434,
-          "rank": 875
+          "rank": 875,
+          "members": 434
         },
         "kitsu": {
+          "popularity_rank": 20443,
           "members": 21,
-          "favorites": 0,
-          "popularity_rank": 20443
+          "favorites": 0
         }
       },
       "enrichment_metadata": {
         "source": "multi-source",
         "enriched_at": "2025-07-25T18:10:02.000419Z",
         "success": true
-      },
-      "year": 2023,
-      "season": "SPRING"
+      }
     },
     {
       "episodes": 1,
       "month": "December",
+      "nsfw": false,
       "rating": "PG-13 - Teens 13 or older",
+      "season": "FALL",
       "source_material": "LIGHT NOVEL",
       "status": "FINISHED",
       "synopsis": "* Based on the short story \"Bungaku Shoujo\" to Ushi Maou (Minotaurus), published in volume 02 of FBSP.\nhttp://anidb.net/ch11667 Amano Tooko and http://anidb.net/ch11668 Inoue Konoha are the only members of their high school literature club. After school, they meet so that Tooko can assign topics that will guide Konoha in writing a short story — the Literature Girl Tooko`s daily \"snack\" — within fifty minutes.\nSource: ANN\nNote: Bundled with the second volume of the novel titled Bungaku Shoujo Minarai no, Shoushin.",
       "title": "\"Bungaku Shoujo\" Kyou no Oyatsu: Hatsukoi",
       "title_japanese": "“文学少女”今日のおやつ 〜はつ恋〜",
       "type": "OVA",
+      "year": 2009,
       "characters": [
         {
           "name": "Amano, Tooko",
           "role": "Main",
           "character_ids": {
             "mal": 28451,
-            "anidb": "11667"
+            "anidb": 11667
           },
           "images": [
             "https://cdn.myanimelist.net/images/characters/12/98993.jpg?s=e678bc09b1f6610d9d59d1e58f9c9fe4",
             "https://cdn.anidb.net/images/main/40614.jpg"
           ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/28451/Tooko_Amano"
+          },
           "voice_actors": [
             {
               "name": "Hanazawa, Kana",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/28451/Tooko_Amano"
-          }
+          ]
         },
         {
           "name": "Inoue, Konoha",
           "role": "Main",
           "character_ids": {
             "mal": 24792,
-            "anidb": "11668"
+            "anidb": 11668
           },
           "images": [
             "https://cdn.myanimelist.net/images/characters/15/101327.jpg?s=63c7a553c67b49b1abaa94e7837bd96a",
             "https://cdn.anidb.net/images/main/40613.jpg"
           ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/24792/Konoha_Inoue"
+          },
           "voice_actors": [
             {
               "name": "Irino, Miyu",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/24792/Konoha_Inoue"
-          }
+          ]
         }
       ],
       "episode_details": [
         {
-          "episode_number": 1,
-          "season_number": 1,
-          "title": "\"Bungaku Shoujo\" Kyou no Oyatsu: Hatsukoi",
-          "title_japanese": "“文学少女”今日のおやつ 〜はつ恋〜",
-          "synopsis": "Short episode bundled with the limited edition release of \"Bungaku Shoujo\" Minarai no, Shoushin.",
-          "thumbnails": [],
-          "streaming": {},
-          "aired": "2009-12-26T00:00:00+00:00",
+          "aired": "2009-12-26T00:00:00Z",
           "duration": 900,
-          "score": 6.84,
+          "episode_number": 1,
           "filler": false,
           "recap": false,
+          "score": 6.84,
+          "season_number": 1,
+          "synopsis": "Short episode bundled with the limited edition release of \"Bungaku Shoujo\" Minarai no, Shoushin.",
+          "title": "\"Bungaku Shoujo\" Kyou no Oyatsu: Hatsukoi",
+          "title_japanese": "“文学少女”今日のおやつ 〜はつ恋〜",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/7669/episode/1"
-          }
+          },
+          "streaming": {}
         }
       ],
       "genres": [
@@ -2321,6 +2320,7 @@
         "https://animeschedule.net/anime/bungaku-shoujo-kyou-no-oyatsu-hatsukoi",
         "https://anisearch.com/anime/5970"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "\"文学少女\"今日のおやつ ~はつ恋~",
         "A Garota dos Livros: Lanche de Hoje - Primeiro Amor",
@@ -2511,26 +2511,12 @@
         }
       ],
       "aired_dates": {
-        "from": "2009-12-26T00:00:00+00:00",
+        "from": "2009-12-26T00:00:00Z",
         "string": "Dec 26, 2009"
       },
       "duration": {
         "value": 900,
         "unit": "SECONDS"
-      },
-      "episode_overrides": {
-        "main_override": {
-          "overrideEpisode": 0,
-          "episodesAired": 0
-        },
-        "sub_override": {
-          "overrideEpisode": 0,
-          "episodesAired": 0
-        },
-        "dub_override": {
-          "overrideEpisode": 0,
-          "episodesAired": 0
-        }
       },
       "external_links": {
         "officialsite": "http://www.bungakushoujo.jp/",
@@ -4187,15 +4173,15 @@
         "animeschedule": {
           "score": 6.65,
           "scored_by": 11,
-          "members": 15,
-          "rank": 6281
+          "rank": 6281,
+          "members": 15
         },
         "kitsu": {
           "score": 6.839,
-          "members": 2422,
-          "favorites": 3,
+          "rank": 6252,
           "popularity_rank": 4189,
-          "rank": 6252
+          "members": 2422,
+          "favorites": 3
         },
         "animeplanet": {
           "score": 6.75,
@@ -4226,11 +4212,9 @@
       },
       "enrichment_metadata": {
         "source": "multi-source",
-        "enriched_at": "2025-07-25T20:26:45.100539+00:00",
+        "enriched_at": "2025-07-25T20:26:45.100539Z",
         "success": true
-      },
-      "year": 2009,
-      "season": "FALL"
+      }
     },
     {
       "background": "Each episode of \"Bungaku Shoujo\" Memoire received a limited one-week run in movie theaters in May 2010.",
@@ -4238,12 +4222,14 @@
       "month": "June",
       "nsfw": false,
       "rating": "PG-13 - Teens 13 or older",
+      "season": "SPRING",
       "source_material": "LIGHT NOVEL",
       "status": "FINISHED",
       "synopsis": "Episodes which depict the background stories of \"Bungaku Shoujo\" Movie's main heroines.",
       "title": "\"Bungaku Shoujo\" Memoire",
       "title_japanese": "\"文学少女\"メモワール",
       "type": "OVA",
+      "year": 2010,
       "characters": [
         {
           "name": "Konoha Inoue",
@@ -4261,6 +4247,9 @@
             "https://cdn.myanimelist.net/images/characters/15/101327.jpg"
           ],
           "description": "He used to write a novel called \"Sora ni Niteiru\" (Looks Alike to the Sky) using penname Miu Inoue when he was in junior high school and sent to a magazine.  The novel was received an award and too famous that it became drama and movie.  The name was very feminine that people thought it was written by a mysterious girl.\n\nThere was an accident happened to a girl he likes (Miu Asakura) that caused him to have difficulty in breathing so he closed himself until he met Touko in high school, who was reading and eating what she read, so she forced him to join literature club.\n\n\n\nBungaku Shoujo Series is in his point of view, while Bungaku Shoujo: Minarai Series is in Nano Hinosaka's point of view.",
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/24792/Konoha_Inoue"
+          },
           "voice_actors": [
             {
               "name": "Saitou, Chiwa",
@@ -4270,10 +4259,7 @@
               "name": "Irino, Miyu",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/24792/Konoha_Inoue"
-          }
+          ]
         },
         {
           "name": "Miu Asakura",
@@ -4291,15 +4277,15 @@
             "https://cdn.myanimelist.net/images/characters/13/85718.jpg"
           ],
           "description": "She is a childhood friend of Konoha, who he loved very much until she attempted suicide by falling off the school building.",
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/30494/Miu_Asakura"
+          },
           "voice_actors": [
             {
               "name": "Hirano, Aya",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/30494/Miu_Asakura"
-          }
+          ]
         },
         {
           "name": "Nanase Kotobuki",
@@ -4317,15 +4303,15 @@
             "https://cdn.myanimelist.net/images/characters/13/101326.jpg"
           ],
           "description": "Kotobuki is a girl in Konoha's class.  She doesn't like Konoha's way of being nice to people.  She thinks that he's faking.",
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/28937/Nanase_Kotobuki"
+          },
           "voice_actors": [
             {
               "name": "Mizuki, Nana",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/28937/Nanase_Kotobuki"
-          }
+          ]
         },
         {
           "name": "Tooko Amano",
@@ -4339,15 +4325,15 @@
             "https://cdn.myanimelist.net/images/characters/12/98993.jpg"
           ],
           "description": "Birthdate: March 15\n\nTooko is Konoha's upperclassman that's one year older than him and the president of the literature club. She likes literature to the extent that she eats what she reads and cannot taste normal food. When Konoha saw her eating the pages of a novel, she forced him to join the literature club so that she could \"watch over him\" and keep him from telling others about it.",
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/28451/Tooko_Amano"
+          },
           "voice_actors": [
             {
               "name": "Hanazawa, Kana",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/28451/Tooko_Amano"
-          }
+          ]
         },
         {
           "name": " Haruguchi",
@@ -4357,15 +4343,15 @@
           "character_ids": {
             "mal": 0
           },
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/140297/Haruguchi"
+          },
           "voice_actors": [
             {
               "name": "Yahagi, Sayuri",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/140297/Haruguchi"
-          }
+          ]
         },
         {
           "name": " Sasaki",
@@ -4378,21 +4364,21 @@
           "character_ids": {
             "mal": 0,
             "anilist": 36481,
-            "anidb": "19882"
+            "anidb": 19882
           },
           "images": [
             "https://cdn.myanimelist.net/images/characters/4/99158.jpg",
             "https://cdn.anidb.net/images/main/238836.jpg"
           ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/36481/Sasaki"
+          },
           "voice_actors": [
             {
               "name": "Chiba, Susumu",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/36481/Sasaki"
-          }
+          ]
         },
         {
           "name": "Chia Takeda",
@@ -4413,15 +4399,15 @@
             "https://cdn.myanimelist.net/images/characters/14/101328.jpg"
           ],
           "description": "A girl who requested to literature club to write a love letter for her. She's a first year. She works as a librarian.\n\nHer nickname is Chee (ちぃ).",
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/28933/Chia_Takeda"
+          },
           "voice_actors": [
             {
               "name": "Toyosaki, Aki",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/28933/Chia_Takeda"
-          }
+          ]
         },
         {
           "name": "Eri",
@@ -4431,15 +4417,15 @@
           "character_ids": {
             "mal": 0
           },
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/140293/Eri"
+          },
           "voice_actors": [
             {
               "name": "Nishigaki, Yuka",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/140293/Eri"
-          }
+          ]
         },
         {
           "name": "Father Asakura",
@@ -4449,15 +4435,15 @@
           "character_ids": {
             "mal": 0
           },
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/140296/Father_Asakura"
+          },
           "voice_actors": [
             {
               "name": "Umezu, Hideyuki",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/140296/Father_Asakura"
-          }
+          ]
         },
         {
           "name": "Fumiharu Amano",
@@ -4475,15 +4461,15 @@
             "https://cdn.myanimelist.net/images/characters/5/99159.jpg"
           ],
           "description": "Touko's father.",
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/36482/Fumiharu_Amano"
+          },
           "voice_actors": [
             {
               "name": "Fujiwara, Keiji",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/36482/Fumiharu_Amano"
-          }
+          ]
         },
         {
           "name": "Kanako Sakurai",
@@ -4500,15 +4486,15 @@
           "images": [
             "https://cdn.myanimelist.net/images/characters/3/99157.jpg"
           ],
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/36480/Kanako_Sakurai"
+          },
           "voice_actors": [
             {
               "name": "Mitsuishi, Kotono",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/36480/Kanako_Sakurai"
-          }
+          ]
         },
         {
           "name": "Kurara Mori",
@@ -4526,15 +4512,15 @@
             "https://cdn.myanimelist.net/images/characters/13/109246.jpg"
           ],
           "description": "Kotobuki's friend and classmate.  She doesn't want people to call her by her first name, so she goes by her nickname \"Mori-chan\".",
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/28934/Kurara_Mori"
+          },
           "voice_actors": [
             {
               "name": "Shimoda, Asami",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/28934/Kurara_Mori"
-          }
+          ]
         },
         {
           "name": "Miki",
@@ -4544,15 +4530,15 @@
           "character_ids": {
             "mal": 0
           },
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/140294/Miki"
+          },
           "voice_actors": [
             {
               "name": "Tamura, Chika",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/140294/Miki"
-          }
+          ]
         },
         {
           "name": "Mother Asakura",
@@ -4562,15 +4548,15 @@
           "character_ids": {
             "mal": 0
           },
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/140290/Mother_Asakura"
+          },
           "voice_actors": [
             {
               "name": "Yamagata, Kaori",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/140290/Mother_Asakura"
-          }
+          ]
         },
         {
           "name": "Mother Inoue",
@@ -4580,15 +4566,15 @@
           "character_ids": {
             "mal": 0
           },
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/140291/Mother_Inoue"
+          },
           "voice_actors": [
             {
               "name": "Hisakawa, Aya",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/140291/Mother_Inoue"
-          }
+          ]
         },
         {
           "name": "Ryuuto Sakurai",
@@ -4606,15 +4592,15 @@
             "https://cdn.myanimelist.net/images/characters/5/99156.jpg"
           ],
           "description": "He is like a brother to Touko.  He's from a family who adopted Touko.  He is actually a 1st year in high school who likes to play with multiple girls at the same time.",
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/28936/Ryuuto_Sakurai"
+          },
           "voice_actors": [
             {
               "name": "Miyano, Mamoru",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/28936/Ryuuto_Sakurai"
-          }
+          ]
         },
         {
           "name": "Yui Amano",
@@ -4632,15 +4618,15 @@
             "https://cdn.myanimelist.net/images/characters/3/99160.jpg"
           ],
           "description": "Touko's mother.",
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/36483/Yui_Amano"
+          },
           "voice_actors": [
             {
               "name": "Inoue, Kikuko",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/36483/Yui_Amano"
-          }
+          ]
         }
       ],
       "demographics": [
@@ -4648,53 +4634,55 @@
       ],
       "episode_details": [
         {
+          "aired": "2010-06-24T15:00:00Z",
+          "duration": 1460,
           "episode_number": 1,
+          "filler": false,
+          "recap": false,
           "season_number": 1,
+          "synopsis": "Episode 1",
           "title": "Prelude to the Dreaming Girl",
           "title_japanese": "夢見る少女の前奏曲（プレリュード）",
-          "synopsis": "Episode 1",
-          "thumbnails": [],
-          "aired": "2010-06-25T00:00:00+09:00",
-          "duration": 1460,
-          "filler": false,
-          "recap": false,
           "title_romaji": "Yumemiru Shoujo no Prelude",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/8481/Bungaku_Shoujo_Memoire/episode/1"
-          }
+          },
+          "streaming": {}
         },
         {
+          "aired": "2010-10-28T15:00:00Z",
+          "duration": 1460,
           "episode_number": 2,
+          "filler": false,
+          "recap": false,
           "season_number": 1,
+          "synopsis": "Episode 2",
           "title": "Requiem of the Angel Dancing in the Sky",
           "title_japanese": "ソラ舞う天使の鎮魂曲（レクイエム）",
-          "synopsis": "Episode 2",
-          "thumbnails": [],
-          "streaming": {},
-          "aired": "2010-10-29T00:00:00+09:00",
-          "duration": 1460,
-          "filler": false,
-          "recap": false,
           "title_romaji": "Sora Mau Tenshi no Requiem",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/8481/Bungaku_Shoujo_Memoire/episode/2"
-          }
+          },
+          "streaming": {}
         },
         {
-          "episode_number": 3,
-          "season_number": 1,
-          "title": "Rhapsody of the Maiden in Love",
-          "title_japanese": "恋する乙女のラプソディー",
-          "synopsis": "Episode 3",
-          "thumbnails": [],
-          "aired": "2010-12-24T00:00:00+09:00",
+          "aired": "2010-12-23T15:00:00Z",
           "duration": 1460,
+          "episode_number": 3,
           "filler": false,
           "recap": false,
+          "season_number": 1,
+          "synopsis": "Episode 3",
+          "title": "Rhapsody of the Maiden in Love",
+          "title_japanese": "恋する乙女のラプソディー",
           "title_romaji": "Koisuru Otome no Rhapsody",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/8481/Bungaku_Shoujo_Memoire/episode/3"
-          }
+          },
+          "streaming": {}
         }
       ],
       "genres": [
@@ -4912,8 +4900,8 @@
         }
       ],
       "aired_dates": {
-        "from": "2010-06-25T00:00:00+00:00",
-        "to": "2010-12-24T00:00:00+00:00",
+        "from": "2010-06-25T00:00:00Z",
+        "to": "2010-12-24T00:00:00Z",
         "string": "Jun 25, 2010 to Dec 24, 2010"
       },
       "delay_information": {
@@ -4922,20 +4910,6 @@
       "duration": {
         "value": 1460,
         "unit": "SECONDS"
-      },
-      "episode_overrides": {
-        "main_override": {
-          "overrideEpisode": 0,
-          "episodesAired": 0
-        },
-        "sub_override": {
-          "overrideEpisode": 0,
-          "episodesAired": 0
-        },
-        "dub_override": {
-          "overrideEpisode": 0,
-          "episodesAired": 0
-        }
       },
       "images": {
         "posters": [
@@ -5426,7 +5400,6 @@
         },
         "anilist": {
           "score": 7.3,
-          "favourites": 74,
           "contextual_ranks": []
         },
         "anidb": {
@@ -5438,9 +5411,7 @@
         "source": "multi-source",
         "enriched_at": "2025-07-28T22:47:32.891024Z",
         "success": true
-      },
-      "year": 2010,
-      "season": "SPRING"
+      }
     },
     {
       "background": "\"Bungaku Shoujo\" Movie was announced with the release of the first manga volume and the first light novel in April 2009. The first trailer was included with the release of the \"Bungaku Shoujo\" Kyou no Oyatsu: Hatsukoi DVD episode. The movie adapts the events of \"Bungaku Shoujo\" to Doukoku no Palmier, the fifth volume in the light novel series. It went on to earn 59 million yen in the Japanese box office.",
@@ -5448,12 +5419,14 @@
       "month": "May",
       "nsfw": false,
       "rating": "PG-13 - Teens 13 or older",
+      "season": "SPRING",
       "source_material": "LIGHT NOVEL",
       "status": "FINISHED",
       "synopsis": "The protagonist of the story, Konoha Inoue, is a seemingly normal senior high 2nd year student. His high school life, other than a hinted incident 2 years ago, can be summed up as normal- if one can dismiss the secret fact that he used to be a female bestselling romance author. Due to that incident, however, he has now vowed never to write again.\n\nThis continued on until he was forced to join the literary club by the literary club president, the 3rd year female student Amano Tooko, a beautiful girl who has a taste for eating literary works. Now he has been tasked with writing her snack every day after school.\n\n(Source: To Say Nothing of the Dog)",
       "title": "\"Bungaku Shoujo\" Movie",
       "title_japanese": "劇場版\"文学少女\"",
       "type": "MOVIE",
+      "year": 2010,
       "characters": [
         {
           "name": "Amano, Tooko",
@@ -5471,6 +5444,7 @@
             "https://cdn.anidb.net/images/main/40614.jpg"
           ],
           "gender": "Female",
+          "character_pages": {},
           "voice_actors": [
             {
               "name": "Hanazawa, Kana",
@@ -5494,6 +5468,7 @@
             "https://cdn.anidb.net/images/main/40613.jpg"
           ],
           "gender": "Male",
+          "character_pages": {},
           "voice_actors": [
             {
               "name": "Irino, Miyu",
@@ -5517,6 +5492,7 @@
             "https://cdn.anidb.net/images/main/49496.jpg"
           ],
           "gender": "Female",
+          "character_pages": {},
           "voice_actors": [
             {
               "name": "Hirano, Aya",
@@ -5540,6 +5516,7 @@
             "https://cdn.anidb.net/images/main/40612.jpg"
           ],
           "gender": "Female",
+          "character_pages": {},
           "voice_actors": [
             {
               "name": "Mizuki, Nana",
@@ -5563,6 +5540,7 @@
             "https://cdn.anidb.net/images/main/40611.jpg"
           ],
           "gender": "Male",
+          "character_pages": {},
           "voice_actors": [
             {
               "name": "Ono, Daisuke",
@@ -5582,14 +5560,16 @@
       ],
       "episode_details": [
         {
-          "title": "\"Bungaku Shoujo\" Movie",
-          "title_japanese": "劇場版\"文学少女\"",
-          "aired": "2010-05-01",
-          "filler": false,
-          "recap": false,
+          "aired": "2010-05-01T00:00:00Z",
           "duration": 6000,
           "episode_number": 1,
-          "thumbnails": []
+          "filler": false,
+          "recap": false,
+          "title": "\"Bungaku Shoujo\" Movie",
+          "title_japanese": "劇場版\"文学少女\"",
+          "thumbnails": [],
+          "episode_pages": {},
+          "streaming": {}
         }
       ],
       "genres": [
@@ -5643,9 +5623,9 @@
       ],
       "streaming_info": [
         {
-          "name": "Crunchyroll",
+          "platform": "Crunchyroll",
           "url": "http://www.crunchyroll.com/series-257075",
-          "platform": "Crunchyroll"
+          "subtitle_languages": []
         }
       ],
       "streaming_licenses": [
@@ -5753,12 +5733,12 @@
         },
         {
           "url": "https://www.youtube.com/watch?v=72YA9IDwVQI",
-          "thumbnail_url": "https://i.ytimg.com/vi/72YA9IDwVQI/hqdefault.jpg",
-          "title": "Bungaku Shoujo (Book Girl～the Literature Girl～) "
+          "title": "Bungaku Shoujo (Book Girl～the Literature Girl～) ",
+          "thumbnail_url": "https://i.ytimg.com/vi/72YA9IDwVQI/hqdefault.jpg"
         }
       ],
       "aired_dates": {
-        "from": "2010-05-01T00:00:00+00:00",
+        "from": "2010-05-01T00:00:00Z",
         "string": "May 1, 2010"
       },
       "delay_information": {
@@ -6047,71 +6027,50 @@
           "score": 7.31,
           "scored_by": 28461,
           "rank": 2830,
-          "popularity": 2849,
           "members": 70024,
           "favorites": 220
         },
-        "animeschedule": {
-          "averageScore": 65.4971694946289,
-          "ratingCount": 20,
-          "trackedCount": 47,
-          "trackedRating": 3847
-        },
-        "kitsu": {
-          "averageRating": "72.8",
-          "userCount": 7236,
-          "favoritesCount": 35,
-          "popularityRank": 2116,
-          "ratingRank": 3476
-        },
-        "animeplanet": {
-          "ratingCount": 2919,
-          "ratingValue": 3.729,
-          "reviewCount": 6
-        },
-        "anilist": {
-          "averageScore": 69,
-          "meanScore": 69,
-          "popularity": 14320,
-          "favourites": 77
-        }
+        "animeschedule": {},
+        "kitsu": {},
+        "animeplanet": {},
+        "anilist": {}
       },
       "enrichment_metadata": {
         "source": "multi-source",
-        "enriched_at": "2025-07-25T17:19:00.000Z",
+        "enriched_at": "2025-07-25T17:19:00Z",
         "success": true
-      },
-      "year": 2010,
-      "season": "SPRING"
+      }
     },
     {
       "episodes": 1,
       "month": "April",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "SPRING",
       "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "A Calpis (Calpico in the US) commissioned short about the history of the company and how their product is made today. A few scenes use live-action footage. The short is animated by Takaharu Shimizu who used a Rube Goldberg style of story telling.",
       "title": "\"Calpis\" Hakkou Monogatari",
       "title_japanese": "「カルピス」発酵ものがたり",
       "type": "SPECIAL",
+      "year": 2018,
       "episode_details": [
         {
+          "aired": "2018-04-19T15:00:00Z",
+          "duration": 60,
           "episode_number": 1,
+          "filler": false,
+          "recap": false,
           "season_number": 1,
+          "synopsis": "A Calpis (Calpico in the US) commissioned short about the history of the company and how their product is made today. A few scenes use live-action footage. The short is animated by Takaharu Shimizu who used a Rube Goldberg style of story telling.",
           "title": "\"Calpis\" Hakkou Monogatari",
           "title_japanese": "「カルピス」発酵ものがたり",
           "title_romaji": "\"Calpis\" Hakkou Monogatari",
-          "synopsis": "A Calpis (Calpico in the US) commissioned short about the history of the company and how their product is made today. A few scenes use live-action footage. The short is animated by Takaharu Shimizu who used a Rube Goldberg style of story telling.",
-          "aired": "2018-04-20T00:00:00+09:00",
-          "duration": 60,
-          "filler": false,
-          "recap": false,
           "thumbnails": [],
-          "streaming": {},
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/38045/Calpis_Hakkou_Monogatari"
-          }
+          },
+          "streaming": {}
         }
       ],
       "genres": [
@@ -6127,6 +6086,7 @@
         "https://myanimelist.net/anime/38045",
         "https://notify.moe/anime/NeI-pv0iR"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "\"Calpis\" Fermentation Story",
         "Calpis Hakkou Monogatari",
@@ -6149,7 +6109,7 @@
         }
       ],
       "aired_dates": {
-        "from": "2018-04-20T00:00:00+00:00",
+        "from": "2018-04-20T00:00:00Z",
         "string": "Apr 20, 2018"
       },
       "duration": {
@@ -6222,13 +6182,178 @@
       },
       "enrichment_metadata": {
         "source": "multi-source",
-        "enriched_at": "2025-07-28T20:27:42.932946+00:00",
+        "enriched_at": "2025-07-28T20:27:42.932946Z",
         "success": true
-      },
-      "year": 2018,
-      "season": "SPRING"
+      }
     },
     {
+      "episodes": 1,
+      "month": "August",
+      "nsfw": false,
+      "rating": "R - 17+ (violence & profanity)",
+      "season": "SUMMER",
+      "source_material": "MANGA",
+      "status": "FINISHED",
+      "synopsis": "* Based on a shounen manga in Jump.\nEiji is the son of Japan's greatest boxer, but unfortunately, he happens to be a total high school loser. However, an old man is determined to make Eiji into a great boxer.",
+      "title": "\"Eiji\"",
+      "title_japanese": "「エイジ」",
+      "type": "MOVIE",
+      "year": 1990,
+      "characters": [
+        {
+          "name": "Akagi, Eiji",
+          "role": "Main",
+          "character_ids": {
+            "mal": 98515
+          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/7/378274.jpg?s=79d27db061477a29ff2e125a16928cba"
+          ],
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Horikawa, Ryo",
+              "language": "Japanese"
+            }
+          ]
+        },
+        {
+          "name": "Akagi, Koujiro",
+          "role": "Supporting",
+          "character_ids": {
+            "mal": 98517
+          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/7/559475.jpg?s=7c2ba58de19381e8b6c09d5b440524e3"
+          ],
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Hori, Hideyuki",
+              "language": "Japanese"
+            }
+          ]
+        },
+        {
+          "name": "Akagi, Kimie",
+          "role": "Supporting",
+          "character_ids": {
+            "mal": 98523
+          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/4/559474.jpg?s=51592172e5e65fbf8dd9653de4668fd2"
+          ],
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Yokoo, Mari",
+              "language": "Japanese"
+            }
+          ]
+        },
+        {
+          "name": "Kusanagi, Aya",
+          "role": "Supporting",
+          "character_ids": {
+            "mal": 98521
+          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/13/378275.jpg?s=490a0f651403c9131875523b3095947d"
+          ],
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Orikasa, Ai",
+              "language": "Japanese"
+            }
+          ]
+        },
+        {
+          "name": "Kusanagi, Naoya",
+          "role": "Supporting",
+          "character_ids": {
+            "mal": 169953
+          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/14/378276.jpg?s=585dd987da5a77c6b16137de67e6362f"
+          ],
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Kosugi, Juurouta",
+              "language": "Japanese"
+            }
+          ]
+        },
+        {
+          "name": "Nogi, Daigo",
+          "role": "Supporting",
+          "character_ids": {
+            "mal": 253394
+          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/16/559473.jpg?s=3d8d6ca583aa8f525fb134823bf06dd2"
+          ],
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Miyauchi, Kouhei",
+              "language": "Japanese"
+            }
+          ]
+        },
+        {
+          "name": "Takasugi, Marina",
+          "role": "Supporting",
+          "character_ids": {
+            "mal": 253395
+          },
+          "images": [
+            "https://cdn.myanimelist.net/images/characters/15/559472.jpg?s=7012b30c38d04f9bccaf1c989dd20ee4"
+          ],
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Mizutani, Yuuko",
+              "language": "Japanese"
+            }
+          ]
+        }
+      ],
+      "content_warnings": [
+        "Violence",
+        "Strong Language"
+      ],
+      "episode_details": [
+        {
+          "aired": "1990-08-24T15:00:00Z",
+          "duration": 2880,
+          "episode_number": 1,
+          "filler": false,
+          "recap": false,
+          "synopsis": "Legendary boxer Keijiro Akagi's second son, Eiji, is a high school dropout and the world's worst rock guitarist. Though his father and elder brother are both boxers, he hates the sport but suddenly takes an interest in it when he meets the local champion's little sister.",
+          "title": "\"Eiji\"",
+          "title_japanese": "「エイジ」",
+          "title_romaji": "\"Eiji\"",
+          "thumbnails": [],
+          "episode_pages": {
+            "mal": "https://myanimelist.net/anime/6076/Eiji"
+          },
+          "streaming": {}
+        }
+      ],
+      "genres": [
+        "Comedy",
+        "Drama",
+        "Sports"
+      ],
+      "relations": [
+        {
+          "title": "\"Eiji\"",
+          "relation_type": "ADAPTATION",
+          "url": "https://myanimelist.net/manga/71013/Eiji"
+        }
+      ],
       "sources": [
         "https://anidb.net/anime/4317",
         "https://anilist.co/anime/6076",
@@ -6241,25 +6366,12 @@
         "https://notify.moe/anime/lcAq5Fmig",
         "https://simkl.com/anime/37438"
       ],
-      "title": "\"Eiji\"",
-      "type": "MOVIE",
-      "episodes": 1,
-      "status": "FINISHED",
-      "duration": {
-        "value": 2880,
-        "unit": "SECONDS"
-      },
-      "score": {
-        "arithmeticGeometricMean": 5.875847412893119,
-        "arithmeticMean": 5.880999587713873,
-        "median": 5.709181818181818
-      },
+      "streaming_licenses": [],
       "synonyms": [
         "Eiji",
         "「エイジ」",
         "エイジ"
       ],
-      "relatedAnime": [],
       "tags": [
         "achromatic",
         "action",
@@ -6282,161 +6394,6 @@
         "slapstick",
         "sports"
       ],
-      "month": "August",
-      "nsfw": false,
-      "rating": "R - 17+ (violence & profanity)",
-      "source_material": "MANGA",
-      "synopsis": "* Based on a shounen manga in Jump.\nEiji is the son of Japan's greatest boxer, but unfortunately, he happens to be a total high school loser. However, an old man is determined to make Eiji into a great boxer.",
-      "title_japanese": "「エイジ」",
-      "characters": [
-        {
-          "name": "Akagi, Eiji",
-          "role": "Main",
-          "voice_actors": [
-            {
-              "name": "Horikawa, Ryo",
-              "language": "Japanese"
-            }
-          ],
-          "character_ids": {
-            "mal": 98515
-          },
-          "images": [
-            "https://cdn.myanimelist.net/images/characters/7/378274.jpg?s=79d27db061477a29ff2e125a16928cba"
-          ]
-        },
-        {
-          "name": "Akagi, Koujiro",
-          "role": "Supporting",
-          "voice_actors": [
-            {
-              "name": "Hori, Hideyuki",
-              "language": "Japanese"
-            }
-          ],
-          "character_ids": {
-            "mal": 98517
-          },
-          "images": [
-            "https://cdn.myanimelist.net/images/characters/7/559475.jpg?s=7c2ba58de19381e8b6c09d5b440524e3"
-          ]
-        },
-        {
-          "name": "Akagi, Kimie",
-          "role": "Supporting",
-          "voice_actors": [
-            {
-              "name": "Yokoo, Mari",
-              "language": "Japanese"
-            }
-          ],
-          "character_ids": {
-            "mal": 98523
-          },
-          "images": [
-            "https://cdn.myanimelist.net/images/characters/4/559474.jpg?s=51592172e5e65fbf8dd9653de4668fd2"
-          ]
-        },
-        {
-          "name": "Kusanagi, Aya",
-          "role": "Supporting",
-          "voice_actors": [
-            {
-              "name": "Orikasa, Ai",
-              "language": "Japanese"
-            }
-          ],
-          "character_ids": {
-            "mal": 98521
-          },
-          "images": [
-            "https://cdn.myanimelist.net/images/characters/13/378275.jpg?s=490a0f651403c9131875523b3095947d"
-          ]
-        },
-        {
-          "name": "Kusanagi, Naoya",
-          "role": "Supporting",
-          "voice_actors": [
-            {
-              "name": "Kosugi, Juurouta",
-              "language": "Japanese"
-            }
-          ],
-          "character_ids": {
-            "mal": 169953
-          },
-          "images": [
-            "https://cdn.myanimelist.net/images/characters/14/378276.jpg?s=585dd987da5a77c6b16137de67e6362f"
-          ]
-        },
-        {
-          "name": "Nogi, Daigo",
-          "role": "Supporting",
-          "voice_actors": [
-            {
-              "name": "Miyauchi, Kouhei",
-              "language": "Japanese"
-            }
-          ],
-          "character_ids": {
-            "mal": 253394
-          },
-          "images": [
-            "https://cdn.myanimelist.net/images/characters/16/559473.jpg?s=3d8d6ca583aa8f525fb134823bf06dd2"
-          ]
-        },
-        {
-          "name": "Takasugi, Marina",
-          "role": "Supporting",
-          "voice_actors": [
-            {
-              "name": "Mizutani, Yuuko",
-              "language": "Japanese"
-            }
-          ],
-          "character_ids": {
-            "mal": 253395
-          },
-          "images": [
-            "https://cdn.myanimelist.net/images/characters/15/559472.jpg?s=7012b30c38d04f9bccaf1c989dd20ee4"
-          ]
-        }
-      ],
-      "content_warnings": [
-        "Violence",
-        "Strong Language"
-      ],
-      "episode_details": [
-        {
-          "episode_number": 1,
-          "title": "\"Eiji\"",
-          "title_japanese": "「エイジ」",
-          "title_romaji": "\"Eiji\"",
-          "synopsis": "Legendary boxer Keijiro Akagi's second son, Eiji, is a high school dropout and the world's worst rock guitarist. Though his father and elder brother are both boxers, he hates the sport but suddenly takes an interest in it when he meets the local champion's little sister.",
-          "aired": "1990-08-25T00:00:00+09:00",
-          "duration": 2880,
-          "filler": false,
-          "recap": false,
-          "thumbnails": [],
-          "streaming": {},
-          "episode_pages": {
-            "mal": "https://myanimelist.net/anime/6076/Eiji"
-          }
-        }
-      ],
-      "genres": [
-        "Comedy",
-        "Drama",
-        "Sports"
-      ],
-      "relations": [
-        {
-          "title": "\"Eiji\"",
-          "relation_type": "ADAPTATION",
-          "url": "https://myanimelist.net/manga/71013/Eiji"
-        }
-      ],
-      "streaming_licenses": [],
       "themes": [
         {
           "name": "Combat Sports"
@@ -6455,26 +6412,15 @@
         }
       ],
       "aired_dates": {
-        "from": "1990-08-25T00:00:00+00:00",
+        "from": "1990-08-25T00:00:00Z",
         "string": "Aug 25, 1990"
       },
       "delay_information": {
         "delayed_timetable": false
       },
-      "enhanced_metadata": {},
-      "episode_overrides": {
-        "main_override": {
-          "overrideEpisode": 0,
-          "episodesAired": 0
-        },
-        "sub_override": {
-          "overrideEpisode": 0,
-          "episodesAired": 0
-        },
-        "dub_override": {
-          "overrideEpisode": 0,
-          "episodesAired": 0
-        }
+      "duration": {
+        "value": 2880,
+        "unit": "SECONDS"
       },
       "external_links": {
         "official": "http://www.production-ig.co.jp/contents/works_sp/0080_/index.html",
@@ -6497,6 +6443,11 @@
       },
       "premiere_dates": {
         "original": "1990-08-25"
+      },
+      "score": {
+        "arithmeticGeometricMean": 5.875847412893119,
+        "arithmeticMean": 5.880999587713873,
+        "median": 5.709181818181818
       },
       "staff_data": {
         "production_staff": {
@@ -6601,54 +6552,48 @@
       "enrichment_metadata": {
         "source": "multi-source",
         "enriched_at": "2025-07-28T16:53:16.183106Z",
-        "success": true,
-        "error_message": null
-      },
-      "year": 1990,
-      "season": "SUMMER"
+        "success": true
+      }
     },
     {
       "episodes": 2,
-      "status": "FINISHED",
-      "title": "\"Eikou Naki Tensai-tachi\" Kara no Monogatari",
-      "type": "SPECIAL",
+      "month": "March",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "WINTER",
       "source_material": "MANGA",
+      "status": "FINISHED",
       "synopsis": "An anime/documentary series about athletes presented by NHK. The first episode adapts material from Itou Tomoyoshi and Morita Shingo's Weekly Young Jump biographical manga Eikou Naki Tensai-tachi (Geniuses Without Glory) — specifically the story about Furuhashi Hironoshin, the swimmer also known as \"the flying fish of Fujiyama.\" The episode also includes interviews with Olympic swimmer Kitajima Kousuke and other Japanese swimmers about the how Furuhashi changed the Japanese competitive swimming world, as well as what sort of training is required to be an Olympic swimmer. Source: ANN",
+      "title": "\"Eikou Naki Tensai-tachi\" Kara no Monogatari",
       "title_japanese": "\"栄光なき天才たち\"からの物語",
+      "type": "SPECIAL",
+      "year": 2017,
       "episode_details": [
         {
-          "episode_number": 1,
-          "season_number": 1,
-          "title": "",
-          "title_japanese": null,
-          "title_romaji": null,
-          "synopsis": null,
           "duration": 2940,
+          "episode_number": 1,
           "filler": false,
           "recap": false,
+          "season_number": 1,
+          "title": "",
           "thumbnails": [],
-          "streaming": {},
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/35025/Eikou_Naki_Tensai-tachi_Kara_no_Monogatari/episode/1"
-          }
+          },
+          "streaming": {}
         },
         {
-          "episode_number": 2,
-          "season_number": 1,
-          "title": "",
-          "title_japanese": null,
-          "title_romaji": null,
-          "synopsis": null,
           "duration": 2940,
+          "episode_number": 2,
           "filler": false,
           "recap": false,
+          "season_number": 1,
+          "title": "",
           "thumbnails": [],
-          "streaming": {},
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/35025/Eikou_Naki_Tensai-tachi_Kara_no_Monogatari/episode/2"
-          }
+          },
+          "streaming": {}
         }
       ],
       "genres": [
@@ -6669,6 +6614,7 @@
         "https://notify.moe/anime/tZ-DhFmmR",
         "https://simkl.com/anime/666595"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "Stories From \"Geniuses Without Glory\"",
         "\"Eikou Naki Tensai-tachi\" kara no Monogatari",
@@ -6716,18 +6662,14 @@
           "description": "Documentary-style presentation"
         }
       ],
+      "aired_dates": {
+        "from": "2017-03-25T00:00:00Z",
+        "to": "2017-05-28T00:00:00Z",
+        "string": "Mar 25, 2017 to May 28, 2017"
+      },
       "duration": {
         "value": 2940,
         "unit": "SECONDS"
-      },
-      "score": {
-        "arithmeticGeometricMean": 6.3,
-        "arithmeticMean": 6.3,
-        "median": 6.3
-      },
-      "aired_dates": {
-        "from": "2017-03-25",
-        "to": "2017-05-28"
       },
       "images": {
         "posters": [],
@@ -6736,22 +6678,10 @@
         ],
         "banners": []
       },
-      "statistics": {
-        "anidb": {
-          "score": 1.94,
-          "scored_by": 6
-        },
-        "kitsu": {
-          "popularity_rank": 16665,
-          "members": 59,
-          "favorites": 0
-        },
-        "mal": {
-          "rank": 19457,
-          "popularity_rank": 15241,
-          "members": 846,
-          "favorites": 1
-        }
+      "score": {
+        "arithmeticGeometricMean": 6.3,
+        "arithmeticMean": 6.3,
+        "median": 6.3
       },
       "staff_data": {
         "production_staff": {
@@ -6845,20 +6775,35 @@
           }
         ]
       },
+      "statistics": {
+        "anidb": {
+          "score": 1.94,
+          "scored_by": 6
+        },
+        "kitsu": {
+          "popularity_rank": 16665,
+          "members": 59,
+          "favorites": 0
+        },
+        "mal": {
+          "rank": 19457,
+          "popularity_rank": 15241,
+          "members": 846,
+          "favorites": 1
+        }
+      },
       "enrichment_metadata": {
         "source": "multi-source",
         "enriched_at": "2025-07-29T12:41:22.631259Z",
-        "success": true,
-        "error_message": null
-      },
-      "year": 2017,
-      "season": "WINTER"
+        "success": true
+      }
     },
     {
       "episodes": 1,
       "month": "November",
       "nsfw": false,
       "rating": "PG-13 - Teens 13 or older",
+      "season": "FALL",
       "source_material": "LIGHT NOVEL",
       "status": "FINISHED",
       "synopsis": "The story centers on a boy named Yamada Uro, and a 17-year old girl named Karon. Both work as part of the \"Hero Retirement and Return to Everyday Life Assistance Agency,\" which takes heroes from another world back to Earth and helps them reintegrate into everyday life. Karon, a former hero herself, works under Uro as they tackle cases, and also lives with him, with Uro constantly failing to rein in Karon`s hero-like behavior even as he tries to ingrain the behavior of common people into her.\nSource: ANN",
@@ -6866,6 +6811,7 @@
       "title_english": "Eiyu Kaitai",
       "title_japanese": "「英雄」解体",
       "type": "OVA",
+      "year": 2016,
       "characters": [
         {
           "name": "Uro Yamada",
@@ -6878,12 +6824,6 @@
           ],
           "name_kanji": "山田 烏鷺",
           "name_native": "山田烏鷺",
-          "voice_actors": [
-            {
-              "name": "Umehara, Yuuichirou",
-              "language": "Japanese"
-            }
-          ],
           "character_ids": {
             "mal": 142363,
             "anilist": 135754,
@@ -6893,7 +6833,14 @@
             "https://cdn.myanimelist.net/images/characters/4/319921.jpg",
             "https://cdn.anidb.net/images/main/307364.jpg"
           ],
-          "gender": "male"
+          "gender": "male",
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Umehara, Yuuichirou",
+              "language": "Japanese"
+            }
+          ]
         },
         {
           "name": "Karon Yamada",
@@ -6905,12 +6852,6 @@
           ],
           "name_kanji": "山田 カロン",
           "name_native": "山田カロン",
-          "voice_actors": [
-            {
-              "name": "Seto, Asami",
-              "language": "Japanese"
-            }
-          ],
           "character_ids": {
             "mal": 147446,
             "anilist": 135760,
@@ -6920,7 +6861,14 @@
             "https://cdn.myanimelist.net/images/characters/12/319918.jpg",
             "https://cdn.anidb.net/images/main/307366.jpg"
           ],
-          "gender": "female"
+          "gender": "female",
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Seto, Asami",
+              "language": "Japanese"
+            }
+          ]
         },
         {
           "name": "Airo Kurashiki",
@@ -6932,12 +6880,6 @@
           ],
           "name_kanji": "倉敷 隘路 / アイロ",
           "name_native": "倉敷隘路",
-          "voice_actors": [
-            {
-              "name": "Uesaka, Sumire",
-              "language": "Japanese"
-            }
-          ],
           "character_ids": {
             "mal": 147447,
             "anilist": 135759,
@@ -6947,7 +6889,14 @@
             "https://cdn.myanimelist.net/images/characters/14/319919.jpg",
             "https://cdn.anidb.net/images/main/307367.jpg"
           ],
-          "gender": "female"
+          "gender": "female",
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Uesaka, Sumire",
+              "language": "Japanese"
+            }
+          ]
         },
         {
           "name": "Reca Kanae",
@@ -6959,12 +6908,6 @@
           ],
           "name_kanji": "叶 レカ",
           "name_native": "叶レカ",
-          "voice_actors": [
-            {
-              "name": "Satou, Satomi",
-              "language": "Japanese"
-            }
-          ],
           "character_ids": {
             "mal": 147448,
             "anilist": 135761,
@@ -6974,7 +6917,14 @@
             "https://cdn.myanimelist.net/images/characters/3/319923.jpg",
             "https://cdn.anidb.net/images/main/307365.jpg"
           ],
-          "gender": "female"
+          "gender": "female",
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Satou, Satomi",
+              "language": "Japanese"
+            }
+          ]
         },
         {
           "name": "Hakua Tsuranari",
@@ -6986,12 +6936,6 @@
           ],
           "name_kanji": "面鳴 白亜",
           "name_native": "面鳴白亜",
-          "voice_actors": [
-            {
-              "name": "Uchiyama, Yumi",
-              "language": "Japanese"
-            }
-          ],
           "character_ids": {
             "mal": 147449,
             "anilist": 135756,
@@ -7001,7 +6945,14 @@
             "https://cdn.myanimelist.net/images/characters/9/319984.jpg",
             "https://cdn.anidb.net/images/main/307362.jpg"
           ],
-          "gender": "female"
+          "gender": "female",
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Uchiyama, Yumi",
+              "language": "Japanese"
+            }
+          ]
         },
         {
           "name": "Kougyoku Tsuranari",
@@ -7013,12 +6964,6 @@
           ],
           "name_kanji": "面鳴 紅玉",
           "name_native": "面鳴紅玉",
-          "voice_actors": [
-            {
-              "name": "Komatsu, Mikako",
-              "language": "Japanese"
-            }
-          ],
           "character_ids": {
             "mal": 147450,
             "anilist": 135757,
@@ -7028,7 +6973,14 @@
             "https://cdn.myanimelist.net/images/characters/15/319926.jpg",
             "https://cdn.anidb.net/images/main/307363.jpg"
           ],
-          "gender": "female"
+          "gender": "female",
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Komatsu, Mikako",
+              "language": "Japanese"
+            }
+          ]
         },
         {
           "name": "Megane",
@@ -7039,12 +6991,6 @@
           ],
           "name_kanji": "眼鏡",
           "name_native": "眼鏡",
-          "voice_actors": [
-            {
-              "name": "Namikawa, Daisuke",
-              "language": "Japanese"
-            }
-          ],
           "character_ids": {
             "mal": 147451,
             "anilist": 135755,
@@ -7054,7 +7000,14 @@
             "https://cdn.myanimelist.net/images/characters/4/319924.jpg",
             "https://cdn.anidb.net/images/main/307368.jpg"
           ],
-          "gender": "male"
+          "gender": "male",
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Namikawa, Daisuke",
+              "language": "Japanese"
+            }
+          ]
         },
         {
           "name": "Alice",
@@ -7065,12 +7018,6 @@
           ],
           "name_kanji": "アリス",
           "name_native": "アリス",
-          "voice_actors": [
-            {
-              "name": "Kitamura, Eri",
-              "language": "Japanese"
-            }
-          ],
           "character_ids": {
             "mal": 147452,
             "anilist": 135758,
@@ -7080,24 +7027,32 @@
             "https://cdn.myanimelist.net/images/characters/6/331178.jpg",
             "https://cdn.anidb.net/images/main/307219.jpg"
           ],
-          "gender": "female"
+          "gender": "female",
+          "character_pages": {},
+          "voice_actors": [
+            {
+              "name": "Kitamura, Eri",
+              "language": "Japanese"
+            }
+          ]
         }
       ],
       "episode_details": [
         {
+          "aired": "2016-11-22T15:00:00Z",
+          "duration": 1620,
           "episode_number": 1,
+          "filler": false,
+          "recap": false,
+          "synopsis": "Uro Yamada works as part of the \"Hero Retirement and Return to Everyday Life Assistance Agency,\" which takes heroes from another world back to Earth and helps them reintegrate into everyday life. The story centers on a boy named Yamada Uro, and a 17-year old girl named Karon. Both work as part of the \"Hero Retirement and Return to Everyday Life Assistance Agency,\" which takes heroes from another world back to Earth and helps them reintegrate into everyday life. Karon, a former hero herself, works under Uro as they tackle cases, and also lives with him, with Uro constantly failing to rein in Karon's hero-like behavior even as he tries to ingrain the behavior of common people into her.",
           "title": "\"Eiyuu\" Kaitai",
           "title_japanese": "「英雄」解体",
           "title_romaji": "\"Eiyuu\" Kaitai",
-          "synopsis": "Uro Yamada works as part of the \"Hero Retirement and Return to Everyday Life Assistance Agency,\" which takes heroes from another world back to Earth and helps them reintegrate into everyday life. The story centers on a boy named Yamada Uro, and a 17-year old girl named Karon. Both work as part of the \"Hero Retirement and Return to Everyday Life Assistance Agency,\" which takes heroes from another world back to Earth and helps them reintegrate into everyday life. Karon, a former hero herself, works under Uro as they tackle cases, and also lives with him, with Uro constantly failing to rein in Karon's hero-like behavior even as he tries to ingrain the behavior of common people into her.",
-          "aired": "2016-11-23T00:00:00+09:00",
-          "duration": 1620,
-          "filler": false,
-          "recap": false,
           "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/33363/Eiyuu_Kaitai"
-          }
+          },
+          "streaming": {}
         }
       ],
       "genres": [
@@ -7207,7 +7162,7 @@
         }
       ],
       "aired_dates": {
-        "from": "2016-11-23T00:00:00+00:00",
+        "from": "2016-11-23T00:00:00Z",
         "string": "Nov 23, 2016"
       },
       "duration": {
@@ -7327,92 +7282,92 @@
         "voice_actors": {
           "japanese": [
             {
+              "staff_ids": {
+                "anidb": 39792,
+                "anilist": 118908
+              },
               "name": "Yuuichirou Umehara",
               "native_name": "梅原裕一郎",
               "character_assignments": [
                 "Uro Yamada"
-              ],
-              "staff_ids": {
-                "anidb": 39792,
-                "anilist": 118908
-              }
+              ]
             },
             {
+              "staff_ids": {
+                "anidb": 21733,
+                "anilist": 106787
+              },
               "name": "Asami Seto",
               "native_name": "瀬戸麻沙美",
               "character_assignments": [
                 "Karon Yamada"
-              ],
-              "staff_ids": {
-                "anidb": 21733,
-                "anilist": 106787
-              }
+              ]
             },
             {
+              "staff_ids": {
+                "anidb": 28602,
+                "anilist": 109441
+              },
               "name": "Sumire Uesaka",
               "native_name": "上坂すみれ",
               "character_assignments": [
                 "Airo Kurashiki"
-              ],
-              "staff_ids": {
-                "anidb": 28602,
-                "anilist": 109441
-              }
+              ]
             },
             {
+              "staff_ids": {
+                "anidb": 162,
+                "anilist": 101560
+              },
               "name": "Satomi Satou",
               "native_name": "佐藤聡美",
               "character_assignments": [
                 "Reca Kanae"
-              ],
-              "staff_ids": {
-                "anidb": 162,
-                "anilist": 101560
-              }
+              ]
             },
             {
+              "staff_ids": {
+                "anidb": 23686,
+                "anilist": 106784
+              },
               "name": "Yumi Uchiyama",
               "native_name": "内山夕実",
               "character_assignments": [
                 "Hakua Tsuranari"
-              ],
-              "staff_ids": {
-                "anidb": 23686,
-                "anilist": 106784
-              }
+              ]
             },
             {
+              "staff_ids": {
+                "anidb": 16085,
+                "anilist": 105071
+              },
               "name": "Mikako Komatsu",
               "native_name": "小松未可子",
               "character_assignments": [
                 "Kougyoku Tsuranari"
-              ],
-              "staff_ids": {
-                "anidb": 16085,
-                "anilist": 105071
-              }
+              ]
             },
             {
+              "staff_ids": {
+                "anidb": 265,
+                "anilist": 95087
+              },
               "name": "Daisuke Namikawa",
               "native_name": "浪川大輔",
               "character_assignments": [
                 "Megane"
-              ],
-              "staff_ids": {
-                "anidb": 265,
-                "anilist": 95087
-              }
+              ]
             },
             {
+              "staff_ids": {
+                "anidb": 401,
+                "anilist": 95413
+              },
               "name": "Eri Kitamura",
               "native_name": "喜多村英梨",
               "character_assignments": [
                 "Alice"
-              ],
-              "staff_ids": {
-                "anidb": 401,
-                "anilist": 95413
-              }
+              ]
             }
           ]
         }
@@ -7452,17 +7407,15 @@
       "enrichment_metadata": {
         "source": "multi-source",
         "enriched_at": "2025-07-29T18:31:50.491902Z",
-        "success": true,
-        "error_message": null
-      },
-      "year": 2016,
-      "season": "FALL"
+        "success": true
+      }
     },
     {
       "episodes": 1,
       "month": "August",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "SUMMER",
       "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "It's been almost 100 years since the \"salaryman\" type of office worker first appeared in Japan back in the 1920s.\n\nAs our society faces a major turning point, SmartHR decided to create a brand film to reflect upon how work styles have changed with time over the past century.\n\nWe hope that by looking back on history, we inspire people to think about how they want to work going forward.\n\n(Source: Official YouTube channel)",
@@ -7470,6 +7423,7 @@
       "title_english": "100 Years of Work in Japan",
       "title_japanese": "\"働く\"の100年史",
       "type": "SPECIAL",
+      "year": 2021,
       "episode_details": [],
       "genres": [
         "Slice of Life"
@@ -7482,6 +7436,7 @@
         "https://myanimelist.net/anime/49668",
         "https://animeschedule.net/anime/hataraku-no-100-nenshi"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "\"働く\"の100年史",
         "100 Years of Work in Japan",
@@ -7517,12 +7472,12 @@
       "trailers": [
         {
           "url": "https://www.youtube.com/watch?v=kNQMX--3E5Q",
-          "thumbnail_url": "https://i.ytimg.com/vi/kNQMX--3E5Q/hqdefault.jpg",
-          "title": "100 YEARS of WORK in JAPAN"
+          "title": "100 YEARS of WORK in JAPAN",
+          "thumbnail_url": "https://i.ytimg.com/vi/kNQMX--3E5Q/hqdefault.jpg"
         }
       ],
       "aired_dates": {
-        "from": "2021-08-18T00:00:00+00:00",
+        "from": "2021-08-18T00:00:00Z",
         "string": "Aug 18, 2021"
       },
       "delay_information": {
@@ -7613,32 +7568,33 @@
       "enrichment_metadata": {
         "source": "multi-source",
         "enriched_at": "2025-07-29T18:28:15.020637Z",
-        "success": true,
-        "error_message": null
-      },
-      "year": 2021,
-      "season": "SUMMER"
+        "success": true
+      }
     },
     {
       "episodes": 1,
+      "month": "October",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "FALL",
       "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "Music video for the song \"I=Fantasy\" by \"hitman\" bang. featuring SeeU.",
       "title": "\"hitman\" bang: I=Fantasy",
       "title_english": "I=Fantasy",
       "type": "SPECIAL",
+      "year": 2011,
       "episode_details": [
         {
-          "episode_number": 1,
-          "season_number": 1,
-          "title": "\"hitman\" bang: I=Fantasy",
-          "aired": "2011-10-21T00:00:00+09:00",
+          "aired": "2011-10-20T15:00:00Z",
           "duration": 240,
+          "episode_number": 1,
           "filler": false,
           "recap": false,
+          "season_number": 1,
+          "title": "\"hitman\" bang: I=Fantasy",
           "thumbnails": [],
+          "episode_pages": {},
           "streaming": {}
         }
       ],
@@ -7683,8 +7639,8 @@
         }
       ],
       "aired_dates": {
-        "from": "2011-10-21T00:00:00+00:00",
-        "to": "2011-10-21T00:00:00+00:00",
+        "from": "2011-10-21T00:00:00Z",
+        "to": "2011-10-21T00:00:00Z",
         "string": "Oct 21, 2011"
       },
       "delay_information": {
@@ -7748,26 +7704,27 @@
         "source": "multi-source",
         "enriched_at": "2025-07-29T19:15:35.465131Z",
         "success": true
-      },
-      "year": 2011,
-      "season": "FALL"
+      }
     },
     {
       "episodes": 1,
+      "month": "October",
+      "nsfw": false,
+      "season": "FALL",
       "status": "FINISHED",
       "title": "\"Hitori de Ikirare Sou\" tte Sore tte Nee, Homete Iru no?",
       "type": "SPECIAL",
+      "year": 2019,
       "episode_details": [
         {
-          "episode_number": 1,
-          "title": "\"Hitori de Ikirare Sou\" tte Sore tte Nee, Homete Iru no?",
-          "title_japanese": "「ひとりで生きられそう」って それってねえ、褒めているの？",
-          "title_romaji": null,
-          "synopsis": null,
           "duration": 180,
+          "episode_number": 1,
           "filler": false,
           "recap": false,
+          "title": "\"Hitori de Ikirare Sou\" tte Sore tte Nee, Homete Iru no?",
+          "title_japanese": "「ひとりで生きられそう」って それってねえ、褒めているの？",
           "thumbnails": [],
+          "episode_pages": {},
           "streaming": {}
         }
       ],
@@ -7817,35 +7774,35 @@
       "enrichment_metadata": {
         "source": "multi-source",
         "enriched_at": "2025-07-29T14:58:45.123456Z",
-        "success": true,
-        "error_message": null
-      },
-      "year": 2019,
-      "season": "FALL"
+        "success": true
+      }
     },
     {
       "episodes": 1,
       "month": "October",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "FALL",
       "source_material": "OTHER",
       "status": "FINISHED",
       "synopsis": "A collaboration between Inochi Sketch and Mameshiba.",
       "title": "\"Inochi Sketch\" Movie Jabow x Mameshiba Collab CM",
       "title_japanese": "映画『いのちスケッチ』ジャー坊×豆しばコラボCM",
       "type": "SPECIAL",
+      "year": 2019,
       "episode_details": [
         {
-          "episode_number": 1,
-          "title": "\"Inochi Sketch\" Movie Jabow x Mameshiba Collab CM",
-          "title_japanese": "映画『いのちスケッチ』ジャー坊×豆しばコラボCM",
-          "aired": "2019-10-02T00:00:00+00:00",
+          "aired": "2019-10-02T00:00:00Z",
           "duration": 30,
-          "synopsis": "A collaboration between Inochi Sketch and Mameshiba.",
+          "episode_number": 1,
           "filler": false,
           "recap": false,
-          "title_romaji": null,
-          "thumbnails": []
+          "synopsis": "A collaboration between Inochi Sketch and Mameshiba.",
+          "title": "\"Inochi Sketch\" Movie Jabow x Mameshiba Collab CM",
+          "title_japanese": "映画『いのちスケッチ』ジャー坊×豆しばコラボCM",
+          "thumbnails": [],
+          "episode_pages": {},
+          "streaming": {}
         }
       ],
       "genres": [
@@ -7879,6 +7836,7 @@
         "https://kitsu.app/anime/47870",
         "https://myanimelist.net/anime/41060"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "Inochi Sketch x Mameshiba",
         "ねえ知ってる？豆しばが映画「いのちスケッチ」とコラボしたんだって",
@@ -7888,8 +7846,7 @@
       ],
       "themes": [
         {
-          "name": "Commercials",
-          "description": null
+          "name": "Commercials"
         },
         {
           "name": "Comedy",
@@ -7897,8 +7854,8 @@
         }
       ],
       "aired_dates": {
-        "from": "2019-10-02T00:00:00+00:00",
-        "to": null
+        "from": "2019-10-02T00:00:00Z",
+        "string": "Oct 2, 2019"
       },
       "delay_information": {
         "delayed_timetable": false
@@ -7934,9 +7891,9 @@
           "favorites": 0
         },
         "kitsu": {
+          "popularity_rank": 20970,
           "members": 17,
-          "favorites": 0,
-          "popularity_rank": 20970
+          "favorites": 0
         },
         "animeplanet": {
           "score": 2.706,
@@ -7947,23 +7904,22 @@
       "enrichment_metadata": {
         "source": "multi-source",
         "enriched_at": "2025-07-30T16:07:13.183864Z",
-        "success": true,
-        "error_message": null
-      },
-      "year": 2019,
-      "season": "FALL"
+        "success": true
+      }
     },
     {
       "episodes": 1,
       "month": "July",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "SUMMER",
       "source_material": "OTHER",
       "status": "FINISHED",
       "synopsis": "A collaboration between Mameshiba and Kinako, a 2010 Japanese film based on a true story of a dog trainer, meant to promote the latter's release the following month.",
       "title": "\"Kinako\" Movie x Mameshiba",
       "title_japanese": "映画『きな子』×豆しば",
       "type": "SPECIAL",
+      "year": 2010,
       "episode_details": [],
       "genres": [
         "Comedy"
@@ -7985,6 +7941,7 @@
         "https://kitsu.app/anime/41577",
         "https://myanimelist.net/anime/35632"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "\"Kinako\" x Mameshiba Movie",
         "Eiga \"Kinako\" x Mameshiba",
@@ -8000,12 +7957,11 @@
       ],
       "themes": [
         {
-          "name": "Parody",
-          "description": null
+          "name": "Parody"
         }
       ],
       "aired_dates": {
-        "from": "2010-07-06T00:00:00+00:00",
+        "from": "2010-07-06T00:00:00Z",
         "string": "Jul 6, 2010"
       },
       "duration": {
@@ -8041,8 +7997,8 @@
           "favorites": 1
         },
         "kitsu": {
-          "members": 56,
-          "popularity_rank": 16853
+          "popularity_rank": 16853,
+          "members": 56
         },
         "animeplanet": {
           "score": 2.868,
@@ -8052,46 +8008,46 @@
       "enrichment_metadata": {
         "source": "multi-source",
         "enriched_at": "2025-07-30T19:42:09.282039Z",
-        "success": true,
-        "error_message": null
-      },
-      "year": 2010,
-      "season": "SUMMER"
+        "success": true
+      }
     },
     {
       "episodes": 2,
+      "month": "April",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "SPRING",
       "source_material": "OTHER",
       "status": "FINISHED",
       "synopsis": "Two televised specials collaborating the Mameshiba franchise and the feature film Kiss Dekiru Gyoza being released June 2018. \n\nThe film is about Yoko Fujita as a single mother who goes through a divorce. Afterwards, she returns to her parents' home and struggles to raise her child, also attempts to revive her parents' gyoza restaurant. She falls in love with pro golfer Ryo Iwahara.\n\nThe specials focus on shiba-ified Yoko and Ryo as they talked to Edamame. Special collaborative goods will be sold as well, including a bentou meal sold at specific train stations.\n\n(Source: IMDB)",
       "title": "\"Kiss Dekiru Gyouza\" Movie x Mameshiba",
       "title_japanese": "映画『キスできる餃子』×豆しば",
       "type": "SPECIAL",
+      "year": 2018,
       "episode_details": [
         {
           "episode_number": 1,
-          "season_number": 1,
-          "title": "Episode 1",
           "filler": false,
           "recap": false,
+          "season_number": 1,
+          "title": "Episode 1",
           "thumbnails": [],
-          "streaming": {},
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/37843/Kiss_Dekiru_Gyouza_Movie_x_Mameshiba/episode/1"
-          }
+          },
+          "streaming": {}
         },
         {
           "episode_number": 2,
-          "season_number": 1,
-          "title": "Episode 2",
           "filler": false,
           "recap": false,
+          "season_number": 1,
+          "title": "Episode 2",
           "thumbnails": [],
-          "streaming": {},
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/37843/Kiss_Dekiru_Gyouza_Movie_x_Mameshiba/episode/2"
-          }
+          },
+          "streaming": {}
         }
       ],
       "genres": [
@@ -8143,7 +8099,6 @@
         "value": 30,
         "unit": "SECONDS"
       },
-      "enhanced_metadata": {},
       "images": {
         "posters": [
           "https://media.kitsu.app/anime/poster_images/41274/large.jpg"
@@ -8180,38 +8135,39 @@
       },
       "enrichment_metadata": {
         "source": "multi-source",
-        "enriched_at": "2025-07-30T16:23:24.769332+00:00",
-        "success": true,
-        "error_message": null
-      },
-      "year": 2018,
-      "season": "SPRING"
+        "enriched_at": "2025-07-30T16:23:24.769332Z",
+        "success": true
+      }
     },
     {
       "episodes": 1,
       "month": "October",
       "nsfw": false,
       "rating": "PG-13 - Teens 13 or older",
+      "season": "WINTER",
       "source_material": "LIGHT NOVEL",
       "status": "FINISHED",
       "synopsis": "A New Year's greetings to promote the release of Mahouka Koukou no Rettousei Movie: Yotsuba Keishou-hen.",
       "title": "\"Mahouka Koukou no Rettousei\" Yori Shinnen no Goaisatsu 2025",
       "title_japanese": "「魔法科高校の劣等生」より新年のご挨拶 ２０２５",
       "type": "PV",
+      "year": 2025,
       "characters": [
         {
           "name": "Shiba, Tatsuya",
           "role": "Main",
           "images": [
             "https://cdn.myanimelist.net/images/characters/16/236781.jpg?s=9f7943dd885f0d2a4ad7fa63c3f110eb"
-          ]
+          ],
+          "character_pages": {}
         },
         {
           "name": "Shiba, Miyuki",
           "role": "Main",
           "images": [
             "https://cdn.myanimelist.net/images/characters/4/240187.jpg?s=8b2f548a4b9bd2dfbd7d06720c06c02a"
-          ]
+          ],
+          "character_pages": {}
         }
       ],
       "episode_details": [],
@@ -8243,7 +8199,7 @@
         "comedy"
       ],
       "aired_dates": {
-        "from": "2025-01-01T00:00:00+00:00",
+        "from": "2025-01-01T00:00:00Z",
         "string": "Jan 1, 2025"
       },
       "duration": {
@@ -8290,21 +8246,21 @@
         "source": "multi-source",
         "enriched_at": "2025-07-30T16:38:21.942639Z",
         "success": true
-      },
-      "year": 2025,
-      "season": "WINTER"
+      }
     },
     {
       "episodes": 1,
       "month": "February",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "WINTER",
       "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "Moving 3D stamps of Kensaku and Enjin are now on sale.\nLiven up the talk with greetings and easy-to-use reactions!\n\n(Source: Kensaku to Enji Official YouTube Channel; translated)",
       "title": "\"Moving in 3D! Usable ♪ Kensaku and Engine",
       "title_japanese": "LINEスタンプ登場！「3Dでうごく！使える♪けんさくとえんじん」",
       "type": "ONA",
+      "year": 2021,
       "demographics": [
         "Kids"
       ],
@@ -8329,7 +8285,8 @@
         "kids"
       ],
       "aired_dates": {
-        "from": "2021-02-22T00:00:00+00:00"
+        "from": "2021-02-22T00:00:00Z",
+        "string": "Feb 22, 2021"
       },
       "duration": {
         "value": 15,
@@ -8349,21 +8306,20 @@
         "source": "multi-source",
         "enriched_at": "2025-07-30T16:38:41.063116Z",
         "success": true
-      },
-      "year": 2021,
-      "season": "WINTER"
+      }
     },
     {
       "episodes": 12,
-      "status": "UPCOMING",
-      "title": "\"Omae Gotoki ga Maou ni Kateru to Omouna\" to Yuusha Party wo Tsuihou sareta node, Outo de Kimama ni Kurashitai",
       "source_material": "LIGHT NOVEL",
+      "status": "UPCOMING",
       "synopsis": "Flum Apricot was never meant to be a hero. Despite zero stats across the board and a power she can't even use, she somehow finds herself included in a party of heroes. But Flum's life hits rock bottom when the party's renowned sage, Jean Inteige, decides that the useless girl is dead weight, and arranges to have her sold into slavery. Tossed to monsters to be feasted upon for her master's entertainment, Flum makes the desperate choice to reach for a cursed weapon... and something new awakens within her. A grimdark tale about one woman's blood-soaked quest to reclaim her life!\n\n(Source: Seven Seas Entertainment)",
+      "title": "\"Omae Gotoki ga Maou ni Kateru to Omouna\" to Yuusha Party wo Tsuihou sareta node, Outo de Kimama ni Kurashitai",
       "title_japanese": "「お前ごときが魔王に勝てると思うな」と勇者パーティを追放されたので、王都で気ままに暮らしたい",
       "type": "TV",
       "characters": [
         {
           "name": "Apricot, Flum",
+          "role": "Main",
           "character_ids": {
             "mal": 187661,
             "anilist": 219037,
@@ -8372,145 +8328,157 @@
           "images": [
             "https://cdn.myanimelist.net/images/characters/15/597780.jpg?s=ba30d6423a9f97223da7354d4b2bfc06"
           ],
-          "role": "Main",
+          "character_pages": {
+            "mal": "https://myanimelist.net/character/187661/Flum_Apricot"
+          },
           "voice_actors": [
             {
               "name": "Nanase, Ayaka",
               "language": "Japanese"
             }
-          ],
-          "character_pages": {
-            "mal": "https://myanimelist.net/character/187661/Flum_Apricot"
-          }
+          ]
         },
         {
           "name": "Milkit",
           "role": "MAIN",
           "character_ids": {
             "anilist": 219038
-          }
+          },
+          "character_pages": {}
         }
       ],
       "episode_details": [
         {
           "episode_number": 1,
-          "title": "Episode 1",
           "filler": false,
           "recap": false,
+          "title": "Episode 1",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/1"
           },
-          "thumbnails": []
+          "streaming": {}
         },
         {
           "episode_number": 2,
-          "title": "Episode 2",
           "filler": false,
           "recap": false,
+          "title": "Episode 2",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/2"
           },
-          "thumbnails": []
+          "streaming": {}
         },
         {
           "episode_number": 3,
-          "title": "Episode 3",
           "filler": false,
           "recap": false,
+          "title": "Episode 3",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/3"
           },
-          "thumbnails": []
+          "streaming": {}
         },
         {
           "episode_number": 4,
-          "title": "Episode 4",
           "filler": false,
           "recap": false,
+          "title": "Episode 4",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/4"
           },
-          "thumbnails": []
+          "streaming": {}
         },
         {
           "episode_number": 5,
-          "title": "Episode 5",
           "filler": false,
           "recap": false,
+          "title": "Episode 5",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/5"
           },
-          "thumbnails": []
+          "streaming": {}
         },
         {
           "episode_number": 6,
-          "title": "Episode 6",
           "filler": false,
           "recap": false,
+          "title": "Episode 6",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/6"
           },
-          "thumbnails": []
+          "streaming": {}
         },
         {
           "episode_number": 7,
-          "title": "Episode 7",
           "filler": false,
           "recap": false,
+          "title": "Episode 7",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/7"
           },
-          "thumbnails": []
+          "streaming": {}
         },
         {
           "episode_number": 8,
-          "title": "Episode 8",
           "filler": false,
           "recap": false,
+          "title": "Episode 8",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/8"
           },
-          "thumbnails": []
+          "streaming": {}
         },
         {
           "episode_number": 9,
-          "title": "Episode 9",
           "filler": false,
           "recap": false,
+          "title": "Episode 9",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/9"
           },
-          "thumbnails": []
+          "streaming": {}
         },
         {
           "episode_number": 10,
-          "title": "Episode 10",
           "filler": false,
           "recap": false,
+          "title": "Episode 10",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/10"
           },
-          "thumbnails": []
+          "streaming": {}
         },
         {
           "episode_number": 11,
-          "title": "Episode 11",
           "filler": false,
           "recap": false,
+          "title": "Episode 11",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/11"
           },
-          "thumbnails": []
+          "streaming": {}
         },
         {
           "episode_number": 12,
-          "title": "Episode 12",
           "filler": false,
           "recap": false,
+          "title": "Episode 12",
+          "thumbnails": [],
           "episode_pages": {
             "mal": "https://myanimelist.net/anime/61587/Omae_Gotoki_ga_Maou_ni_Kateru_to_Omouna_to_Yuusha_Party_wo_Tsuihou_sareta_node_Outo_de_Kimama_ni_Kurashitai/episode/12"
           },
-          "thumbnails": []
+          "streaming": {}
         }
       ],
       "genres": [
@@ -8653,17 +8621,13 @@
       "trailers": [
         {
           "url": "https://www.youtube.com/watch?v=JQj0-jRAAAk",
-          "thumbnail_url": "https://img.youtube.com/vi/JQj0-jRAAAk/maxresdefault.jpg",
-          "title": "Official Trailer"
+          "title": "Official Trailer",
+          "thumbnail_url": "https://img.youtube.com/vi/JQj0-jRAAAk/maxresdefault.jpg"
         }
       ],
       "aired_dates": {
-        "from": "2026-01-01T00:00:00+00:00",
+        "from": "2026-01-01T00:00:00Z",
         "string": "2026 to ?"
-      },
-      "animeSeason": {
-        "season": "WINTER",
-        "year": 2026
       },
       "external_links": {
         "officialsite": "https://omagoto.com/",
@@ -8681,6 +8645,17 @@
         ],
         "banners": []
       },
+      "staff_data": {
+        "production_staff": {
+          "original_character_design": [
+            {
+              "name": "Kinta",
+              "role": "Original Character Design",
+              "url": "https://anilist.co/staff/132540"
+            }
+          ]
+        }
+      },
       "statistics": {
         "mal": {
           "popularity_rank": 11525,
@@ -8696,19 +8671,7 @@
               "type": "POPULAR",
               "format": "TV",
               "year": 2026,
-              "all_time": false,
-              "context": "most popular"
-            }
-          ]
-        }
-      },
-      "staff_data": {
-        "production_staff": {
-          "original_character_design": [
-            {
-              "name": "Kinta",
-              "role": "Original Character Design",
-              "url": "https://anilist.co/staff/132540"
+              "all_time": false
             }
           ]
         }
@@ -8725,6 +8688,7 @@
       "month": "May",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "SPRING",
       "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "A Parade for three managers and four performers. French composer Erik Satie (1866-1925) created the ballet music piece \"Parade\" in 1916, at the age of 50, and it was first performed in 1917, with Jean Cocteau and Pablo Picasso taking part to its creation on the scene. The ballet was introduced by the poet Guillaume Apollinaire, who described it by using the term \"surrealism\" for the very first time. Mixing quotes from Satie's essays with the music performed by a Dutch jazz band, the Willem Breuker Kollektief, this film is an animated re-creation of \"realist ballet\" images going beyond reality.",
@@ -8732,15 +8696,17 @@
       "title_english": "\"Parade\" de Satie",
       "title_japanese": "サティの「パラード」",
       "type": "MOVIE",
+      "year": 2016,
       "episode_details": [
         {
-          "episode_number": 1,
-          "title": "\"Parade\" de Satie",
-          "aired": "2016-08-05",
+          "aired": "2016-08-05T00:00:00Z",
           "duration": 840,
+          "episode_number": 1,
           "filler": false,
           "recap": false,
+          "title": "\"Parade\" de Satie",
           "thumbnails": [],
+          "episode_pages": {},
           "streaming": {}
         }
       ],
@@ -8796,8 +8762,7 @@
       ],
       "themes": [
         {
-          "name": "Music",
-          "description": null
+          "name": "Music"
         },
         {
           "name": "Magic",
@@ -8839,13 +8804,11 @@
       "trailers": [
         {
           "url": "https://www.youtube.com/watch?v=xkAoXy7C6dk",
-          "thumbnail_url": null,
           "title": "Official Trailer"
         }
       ],
       "aired_dates": {
-        "from": "2016-05-01T00:00:00+00:00",
-        "to": null,
+        "from": "2016-05-01T00:00:00Z",
         "string": "May 2016"
       },
       "delay_information": {
@@ -8855,7 +8818,6 @@
         "value": 840,
         "unit": "SECONDS"
       },
-      "enhanced_metadata": {},
       "external_links": {
         "official": "http://www.yamamura-animation.jp/parade.html",
         "officialsite": "http://www.yamamura-animation.jp/parade.html",
@@ -8984,9 +8946,9 @@
         "kitsu": {
           "score": 6.364,
           "scored_by": 136,
-          "favorites": 0,
+          "rank": 9454,
           "popularity_rank": 13062,
-          "rank": 9454
+          "favorites": 0
         },
         "anilist": {
           "score": 4.8,
@@ -9003,14 +8965,14 @@
         "source": "multi-source",
         "enriched_at": "2025-07-30T20:42:09.282039Z",
         "success": true
-      },
-      "year": 2016,
-      "season": "SPRING"
+      }
     },
     {
       "episodes": 1,
+      "month": "November",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "FALL",
       "source_material": "GAME",
       "status": "FINISHED",
       "synopsis": "From \"Pokemon shirts\" made by freely combining Pokemon patterns, \"Pokemon shirt sizing\", a body measurement service using a smartphone, is now available! A concept movie is now available to help you understand more about the service!\n\nA certain trainer tries to measure Pikachu in order to give him a shirt, but it seems like he's having a hard time.\nAt the end of the video, the secret of the \"Pokemon shirt\" logo is revealed?\n\nPlease pay attention to Pikachu's cute behavior.\n\n(Source: Pokemon official YouTube channel; translated)",
@@ -9026,7 +8988,8 @@
           },
           "images": [
             "https://cdn.myanimelist.net/images/characters/10/289627.jpg?s=b97db39e3126c4cc184a764059abe0f6"
-          ]
+          ],
+          "character_pages": {}
         }
       ],
       "demographics": [
@@ -9035,11 +8998,12 @@
       "episode_details": [
         {
           "episode_number": 1,
-          "title": "Episode 1",
           "filler": false,
           "recap": false,
-          "streaming": {},
-          "thumbnails": []
+          "title": "Episode 1",
+          "thumbnails": [],
+          "episode_pages": {},
+          "streaming": {}
         }
       ],
       "genres": [
@@ -9067,6 +9031,7 @@
         "https://kitsu.app/anime/48739",
         "https://myanimelist.net/anime/58288"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "「ポケモンシャツ サイジング」コンセプトムービー"
       ],
@@ -9086,12 +9051,8 @@
         }
       ],
       "aired_dates": {
-        "from": "2022-11-04T00:00:00+00:00",
+        "from": "2022-11-04T00:00:00Z",
         "string": "Nov 4, 2022"
-      },
-      "animeSeason": {
-        "season": "FALL",
-        "year": 2022
       },
       "delay_information": {
         "delayed_timetable": false
@@ -9166,8 +9127,8 @@
           "favorites": 1
         },
         "kitsu": {
-          "members": 20,
-          "popularity_rank": 20683
+          "popularity_rank": 20683,
+          "members": 20
         },
         "animeplanet": {
           "score": 7.064,
@@ -9185,24 +9146,24 @@
       "month": "October",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "SUMMER",
       "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "A crossover collaboration commercial between the 2013 Japanese film R100 and the Mameshiba short anime series. The R100 film is about a man who enjoys being humiliated by dominatrixes.",
       "title": "\"R100\" x Mameshiba Original Manners",
       "title_japanese": "映画『R100』×「豆しば」オリジナルマナ",
       "type": "ONA",
+      "year": 2013,
       "episode_details": [
         {
-          "episode_number": 1,
-          "season_number": 1,
-          "title": "\"R100\" x Mameshiba Original Manners",
-          "title_japanese": null,
-          "title_romaji": null,
           "duration": 60,
-          "score": null,
+          "episode_number": 1,
           "filler": false,
           "recap": false,
+          "season_number": 1,
+          "title": "\"R100\" x Mameshiba Original Manners",
           "thumbnails": [],
+          "episode_pages": {},
           "streaming": {}
         }
       ],
@@ -9235,6 +9196,7 @@
         "https://kitsu.app/anime/41829",
         "https://myanimelist.net/anime/37626"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "R100 x Mameshiba Original Manners",
         "R100 × Mameshiba Original Manners",
@@ -9246,21 +9208,19 @@
           "description": "Anime whose central struggle causes hilarious results. These stories are built upon funny characters, situations and events. A comedy anime is laced with humour and sets out to provoke laughter from the audience.\n\nJapanese humour can be a bit strange to westerners, so if you're new to this type of humour, just bear with it; it'll most likely grow on you if you're a fan of other kinds of comedy."
         },
         {
-          "name": "based on a movie",
-          "description": null
+          "name": "based on a movie"
         },
         {
-          "name": "crossover",
-          "description": null
+          "name": "crossover"
         },
         {
-          "name": "shorts",
-          "description": null
+          "name": "shorts"
         }
       ],
       "aired_dates": {
-        "from": "2013-10-05T00:00:00+00:00",
-        "to": "2013-10-05T00:00:00+00:00"
+        "from": "2013-10-05T00:00:00Z",
+        "to": "2013-10-05T00:00:00Z",
+        "string": "Oct 5, 2013"
       },
       "duration": {
         "value": 60,
@@ -9304,11 +9264,9 @@
       },
       "enrichment_metadata": {
         "source": "multi-source",
-        "enriched_at": "2025-07-31T10:45:00.000000Z",
+        "enriched_at": "2025-07-31T10:45:00Z",
         "success": true
-      },
-      "year": 2013,
-      "season": "SUMMER"
+      }
     },
     {
       "background": "Official music video for the song \" \"Star\"t\". It is the 46th song in the franchise. The song was included with the HaNaMiNa's CD of the same name, released on October 24, 2019.",
@@ -9316,6 +9274,7 @@
       "month": "October",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "FALL",
       "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "Official music video for the song \"Star\"t. It is the 46th song in the franchise. With a feature on Nanase Hagiwara, Nadeshiko Igarashi, and Minae Ono we assumed that it was once again about \"Maigahara Koukou Keion-bu,\" an after school club band with them. But they now have a new club member called Hana Katsuragi. Together the four of them have now renamed the band to HaNaMiNa which uses the first syllables of their names (in order: Hana, Nanase, Minae, and Nadeshiko).",
@@ -9323,35 +9282,40 @@
       "title_english": "\"Star\"t",
       "title_japanese": "\"STAR\"T",
       "type": "SPECIAL",
+      "year": 2019,
       "characters": [
         {
           "name": "Hana KATSURAGI",
-          "role": "Main"
+          "role": "Main",
+          "character_pages": {}
         },
         {
           "name": "Minae ONO",
-          "role": "Main"
+          "role": "Main",
+          "character_pages": {}
         },
         {
           "name": "Nadeshiko IGARASHI",
-          "role": "Main"
+          "role": "Main",
+          "character_pages": {}
         },
         {
           "name": "Nanase HAGIWARA",
-          "role": "Main"
+          "role": "Main",
+          "character_pages": {}
         }
       ],
       "episode_details": [
         {
-          "title": "\"Star\"t",
-          "title_japanese": null,
-          "title_romaji": null,
-          "aired": "2019-10-01",
-          "filler": false,
-          "recap": false,
+          "aired": "2019-10-01T00:00:00Z",
           "duration": 120,
           "episode_number": 1,
-          "thumbnails": []
+          "filler": false,
+          "recap": false,
+          "title": "\"Star\"t",
+          "thumbnails": [],
+          "episode_pages": {},
+          "streaming": {}
         }
       ],
       "genres": [
@@ -9571,6 +9535,7 @@
         "https://kitsu.app/anime/44893",
         "https://myanimelist.net/anime/41090"
       ],
+      "streaming_licenses": [],
       "synonyms": [
         "\"STAR\"T",
         "HaNaMiNa",
@@ -9596,8 +9561,7 @@
         }
       ],
       "aired_dates": {
-        "from": "2019-10-21T00:00:00+00:00",
-        "to": null,
+        "from": "2019-10-21T00:00:00Z",
         "string": "Oct 21, 2019"
       },
       "duration": {
@@ -9637,32 +9601,29 @@
         "mal": {
           "score": 5.41,
           "scored_by": 736,
-          "popularity": 13804,
           "members": 1244,
           "favorites": 0
         },
         "kitsu": {
-          "user_count": 78,
-          "favorites_count": 0,
           "popularity_rank": 15290
         },
         "animeplanet": {
-          "scored_by": 75,
-          "score": 3.048
+          "score": 3.048,
+          "scored_by": 75
         }
       },
       "enrichment_metadata": {
         "source": "multi-source",
         "enriched_at": "2025-07-31T12:16:41.197388Z",
         "success": true
-      },
-      "year": 2019,
-      "season": "FALL"
+      }
     },
     {
       "episodes": 1,
+      "month": "October",
       "nsfw": false,
       "rating": "G - All Ages",
+      "season": "FALL",
       "source_material": "ORIGINAL",
       "status": "FINISHED",
       "synopsis": "A short film spelling Tokyo in hiragana.",
@@ -9670,6 +9631,7 @@
       "title_english": "Tokyo",
       "title_japanese": "「とうきょう」- Tokyo",
       "type": "MOVIE",
+      "year": 2017,
       "episode_details": [],
       "genres": [
         "Avant Garde",
@@ -9681,6 +9643,7 @@
         "https://kitsu.app/anime/43145",
         "https://myanimelist.net/anime/38748"
       ],
+      "streaming_licenses": [],
       "tags": [
         "agender",
         "avant garde",
@@ -9695,7 +9658,7 @@
         }
       ],
       "aired_dates": {
-        "from": "2017-10-05T00:00:00+00:00",
+        "from": "2017-10-05T00:00:00Z",
         "string": "Oct 5, 2017"
       },
       "delay_information": {
@@ -9785,12 +9748,9 @@
       },
       "enrichment_metadata": {
         "source": "multi-source",
-        "enriched_at": "2025-07-31T17:51:57.181978+00:00",
-        "success": true,
-        "error_message": null
-      },
-      "year": 2017,
-      "season": "FALL"
+        "enriched_at": "2025-07-31T17:51:57.181978Z",
+        "success": true
+      }
     }
   ]
 }

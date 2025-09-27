@@ -187,7 +187,7 @@ class MultiVectorEmbeddingManager:
         """
         try:
             # Convert the entire AnimeEntry to dict to preserve all fields
-            payload = anime.model_dump(exclude_none=False)
+            payload = anime.model_dump(exclude_none=True)
 
             # Ensure ID is always present
             if "id" not in payload or not payload["id"]:

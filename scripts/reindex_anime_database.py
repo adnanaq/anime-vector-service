@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import List
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.config import get_settings
 from src.models.anime import AnimeEntry

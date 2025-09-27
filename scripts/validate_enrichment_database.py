@@ -21,7 +21,10 @@ from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
+
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 try:
     from pydantic import ValidationError
@@ -31,8 +34,10 @@ except ImportError:
     print(
         "Warning: Could not import Pydantic models. Schema validation will be limited."
     )
-    AnimeEntry = CharacterEntry = SimpleVoiceActor = None
-    ValidationError = Exception
+    AnimeEntry = None  # type: ignore
+    CharacterEntry = None  # type: ignore
+    SimpleVoiceActor = None  # type: ignore
+    ValidationError = Exception  # type: ignore
 
 # Configure logging
 logging.basicConfig(
@@ -112,13 +117,13 @@ class EnrichmentValidator:
         "aired_dates",
         "broadcast",
         "broadcast_schedule",
-        "anime_season",
         "duration",
         "premiere_dates",
         "score",
         "delay_information",
         "episode_overrides",
         "popularity_trends",
+        "character_pages",
     }
 
     # Scalar fields that should be OMITTED when null/empty
@@ -133,9 +138,11 @@ class EnrichmentValidator:
         "background",
         "month",
         "nsfw",
+        "year",
+        "season",
     }
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.validation_results: List[ValidationResult] = []
 
     def validate_database(self, file_path: str) -> Dict[str, Any]:
@@ -180,7 +187,7 @@ class EnrichmentValidator:
         issues.extend(self.validate_voice_actors(entry))
 
         # 4. Schema validation (if Pydantic available)
-        if AnimeEntry:
+        if AnimeEntry is not None:
             issues.extend(self.validate_schema_compliance(entry))
 
         is_valid = len([i for i in issues if i.severity == "error"]) == 0
@@ -536,7 +543,7 @@ class EnrichmentValidator:
         valid_entries = len([r for r in self.validation_results if r.is_valid])
 
         # Count issues by type
-        issue_counts = {}
+        issue_counts: Dict[str, int] = {}
         severity_counts = {"error": 0, "warning": 0, "info": 0}
 
         for result in self.validation_results:
@@ -810,7 +817,7 @@ class EnrichmentValidator:
         return fixed_entry, fixes_applied
 
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser(description="Validate enriched anime database")
     parser.add_argument(
         "--file",

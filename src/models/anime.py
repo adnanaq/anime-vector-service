@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 
 class AnimeStatus(str, Enum):
     """Anime airing status classification."""
+
     FINISHED = "FINISHED"
     UPCOMING = "UPCOMING"
     ONGOING = "ONGOING"
@@ -16,6 +17,7 @@ class AnimeStatus(str, Enum):
 
 class AnimeType(str, Enum):
     """Anime type classification."""
+
     MOVIE = "MOVIE"
     ONA = "ONA"
     OVA = "OVA"
@@ -28,6 +30,7 @@ class AnimeType(str, Enum):
 
 class AnimeSourceMaterial(str, Enum):
     """Anime source material classification."""
+
     ORIGINAL = "ORIGINAL"
     LIGHT_NOVEL = "LIGHT NOVEL"
     MANGA = "MANGA"
@@ -39,6 +42,7 @@ class AnimeSourceMaterial(str, Enum):
 
 class AnimeRating(str, Enum):
     """Anime content rating classification."""
+
     G = "G - All Ages"
     PG = "PG - Children"
     PG13 = "PG-13 - Teens 13 or older"
@@ -49,6 +53,7 @@ class AnimeRating(str, Enum):
 
 class AnimeSeason(str, Enum):
     """Anime season classification."""
+
     SPRING = "SPRING"
     SUMMER = "SUMMER"
     FALL = "FALL"
@@ -81,9 +86,7 @@ class CharacterEntry(BaseModel):
     )
 
     # Character image URLs (simplified from dict to list)
-    images: List[str] = Field(
-        default_factory=list, description="Character image URLs"
-    )
+    images: List[str] = Field(default_factory=list, description="Character image URLs")
 
     # Character details (prefer most detailed source)
     description: Optional[str] = Field(
@@ -104,14 +107,15 @@ class CharacterEntry(BaseModel):
     )
 
 
-
 class EpisodeDetailEntry(BaseModel):
     """Comprehensive episode details with multi-source integration"""
 
     # =====================================================================
     # SCALAR FIELDS (alphabetical)
     # =====================================================================
-    aired: Optional[str] = Field(None, description="Episode air date with timezone")
+    aired: Optional[datetime] = Field(
+        None, description="Episode air date with timezone"
+    )
     duration: Optional[int] = Field(None, description="Episode duration in seconds")
     episode_number: int = Field(..., description="Episode number")
     filler: bool = Field(default=False, description="Whether episode is filler")
@@ -135,7 +139,7 @@ class EpisodeDetailEntry(BaseModel):
     # =====================================================================
     episode_pages: Dict[str, str] = Field(
         default_factory=dict,
-        description="Episode page URLs from different platforms (mal, anilist, etc.)"
+        description="Episode page URLs from different platforms (mal, anilist, etc.)",
     )
     streaming: Dict[str, str] = Field(
         default_factory=dict, description="Streaming platforms and URLs {platform: url}"
@@ -207,10 +211,10 @@ class PremiereDates(BaseModel):
 class AiredDates(BaseModel):
     """Detailed airing dates"""
 
-    from_date: Optional[str] = Field(
+    from_date: Optional[datetime] = Field(
         None, alias="from", description="Start date with timezone"
     )
-    to: Optional[str] = Field(None, description="End date with timezone")
+    to: Optional[datetime] = Field(None, description="End date with timezone")
     string: Optional[str] = Field(None, description="Human readable date range")
 
 
@@ -462,7 +466,6 @@ class ScoreCalculations(BaseModel):
     median: Optional[float] = Field(None, description="Median of scores")
 
 
-
 class AnimeEntry(BaseModel):
     """Anime entry from anime-offline-database with comprehensive enhancement support"""
 
@@ -473,11 +476,15 @@ class AnimeEntry(BaseModel):
         None, description="Background information from MAL"
     )
     episodes: int = Field(default=0, description="Number of episodes")
-    # id: str = Field(..., description="Unique identifier for the anime entry")
+    id: str = Field(..., description="Unique identifier for the anime entry")
     month: Optional[str] = Field(None, description="Premiere month from AnimSchedule")
     nsfw: Optional[bool] = Field(None, description="Not Safe For Work flag from Kitsu")
-    rating: Optional[AnimeRating] = Field(None, description="Content rating (PG-13, R, etc.)")
-    season: Optional[AnimeSeason] = Field(None, description="Anime season (SPRING, SUMMER, FALL, WINTER)")
+    rating: Optional[AnimeRating] = Field(
+        None, description="Content rating (PG-13, R, etc.)"
+    )
+    season: Optional[AnimeSeason] = Field(
+        None, description="Anime season (SPRING, SUMMER, FALL, WINTER)"
+    )
     source_material: Optional[AnimeSourceMaterial] = Field(
         None, description="Source material (manga, light novel, etc.)"
     )
