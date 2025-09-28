@@ -133,7 +133,7 @@ class QdrantClient:
             raise
 
     def _initialize_collection(self) -> None:
-        """Initialize and validate anime collection with 13-vector architecture and performance optimization."""
+        """Initialize and validate anime collection with 11-vector architecture and performance optimization."""
         try:
             # Check if collection exists and validate its configuration
             collections = self.client.get_collections().collections
@@ -254,10 +254,10 @@ class QdrantClient:
     }
 
     def _create_multi_vector_config(self) -> Dict[str, VectorParams]:
-        """Create 13-vector configuration with priority-based optimization."""
+        """Create 11-vector configuration with priority-based optimization."""
         distance = self._DISTANCE_MAPPING.get(self._distance_metric, Distance.COSINE)
 
-        # Use new 13-vector architecture from settings
+        # Use new 11-vector architecture from settings
         vector_params = {}
         for vector_name, dimension in self.settings.vector_names.items():
             priority = self._get_vector_priority(vector_name)
@@ -269,7 +269,7 @@ class QdrantClient:
             )
 
         logger.info(
-            f"Created 13-vector configuration with {len(vector_params)} vectors"
+            f"Created 11-vector configuration with {len(vector_params)} vectors"
         )
         return vector_params
 
@@ -516,7 +516,7 @@ class QdrantClient:
     async def add_documents(
         self, documents: List[AnimeEntry], batch_size: int = 100
     ) -> bool:
-        """Add anime documents to the collection using the 13-vector architecture.
+        """Add anime documents to the collection using the 11-vector architecture.
 
         Args:
             documents: List of AnimeEntry objects
@@ -906,7 +906,6 @@ class QdrantClient:
                 "character_vector",
                 "genre_vector",
                 "staff_vector",
-                "review_vector",
                 "temporal_vector",
                 "streaming_vector",
                 "related_vector",
@@ -1002,7 +1001,7 @@ class QdrantClient:
         fusion_method: str = "rrf",
         filters: Optional[Filter] = None,
     ) -> List[Dict[str, Any]]:
-        """Search across all 13 vectors (12 text + 2 image) using native Qdrant fusion.
+        """Search across all 11 vectors (9 text + 2 image) using native Qdrant fusion.
 
         Args:
             query: Text search query
@@ -1028,8 +1027,7 @@ class QdrantClient:
                     "character_vector",
                     "genre_vector",
                     "staff_vector",
-                    "review_vector",
-                    "temporal_vector",
+                        "temporal_vector",
                     "streaming_vector",
                     "related_vector",
                     "franchise_vector",

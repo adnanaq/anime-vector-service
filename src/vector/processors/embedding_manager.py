@@ -1,6 +1,6 @@
 """Multi-Vector Embedding Manager for coordinated embedding generation.
 
-This module coordinates the generation of all 13 vectors (12 text + 1 visual)
+This module coordinates the generation of all 11 vectors (9 text + 2 visual)
 for the comprehensive anime search system with error handling and validation.
 """
 
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class MultiVectorEmbeddingManager:
-    """Manager for coordinated generation of all 13 embedding vectors."""
+    """Manager for coordinated generation of all 11 embedding vectors."""
 
     def __init__(self, settings: Optional[Settings] = None):
         """Initialize the multi-vector embedding manager.
@@ -229,8 +229,6 @@ class MultiVectorEmbeddingManager:
                     ep.model_dump() for ep in anime.episode_details
                 ]
 
-            if anime.awards:
-                payload["awards"] = [award.model_dump() for award in anime.awards]
 
             if anime.themes:
                 payload["themes"] = [theme.model_dump() for theme in anime.themes]

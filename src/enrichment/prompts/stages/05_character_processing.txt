@@ -85,7 +85,7 @@ Merge character data from 4 sources (Jikan, AniList, AniDB, Kitsu) into comprehe
 - **Name Variations**: Deduplicated array from all sources
 - **Nicknames**: Direct from Jikan API (preserve when available)
 - **Images**: Array of image URLs from all platforms (simplified structure)
-- **Character Pages**: Platform-attributed URLs from all sources (mal, anilist, anidb, kitsu)
+- **character_pages**: Platform-attributed URLs from all sources (mal, anilist, anidb, kitsu) for the character.
 - **Voice Actors**: Language-grouped, name and language only
 - **Character IDs**: Platform mapping for cross-referencing
 

@@ -272,10 +272,7 @@
       "delay_information": {
         "delayed_timetable": false
       },
-      "duration": {
-        "value": 120,
-        "unit": "SECONDS"
-      },
+      "duration": 120,
       "episode_overrides": {
         "main_override": {
           "override_episode": 0,
@@ -632,10 +629,7 @@
         "from": "2013-09-11T00:00:00Z",
         "string": "Sep 11, 2013"
       },
-      "duration": {
-        "value": 240,
-        "unit": "SECONDS"
-      },
+      "duration": 240,
       "external_links": {
         "official site": "http://www.sonymusic.co.jp/Music/Arch/DF/chiaki_kuriyama/DFCL-2040/index.html",
         "anidb": "https://anidb.net/perl-bin/animedb.pl?show=anime&aid=10143",
@@ -979,10 +973,7 @@
         "to": "2025-03-10T00:00:00Z",
         "string": "Jan 5, 2025 to Mar 10, 2025"
       },
-      "duration": {
-        "value": 360,
-        "unit": "SECONDS"
-      },
+      "duration": 360,
       "images": {
         "posters": [],
         "covers": [
@@ -1111,10 +1102,7 @@
       "delay_information": {
         "delayed_timetable": false
       },
-      "duration": {
-        "value": 720,
-        "unit": "SECONDS"
-      },
+      "duration": 720,
       "external_links": {
         "anidb": "https://anidb.net/perl-bin/animedb.pl?show=anime&aid=3689"
       },
@@ -1256,10 +1244,7 @@
         "from": "2018-01-01T00:00:00Z",
         "string": "2018"
       },
-      "duration": {
-        "value": 480,
-        "unit": "SECONDS"
-      },
+      "duration": 480,
       "external_links": {
         "youtube": "https://www.youtube.com/watch?v=ulctA34qbCo"
       },
@@ -1523,10 +1508,7 @@
       "delay_information": {
         "delayed_timetable": false
       },
-      "duration": {
-        "value": 300,
-        "unit": "SECONDS"
-      },
+      "duration": 300,
       "external_links": {
         "officialsite": "https://www.kyocera.co.jp/animation/anahito/"
       },
@@ -2058,10 +2040,7 @@
       "delay_information": {
         "delayed_timetable": false
       },
-      "duration": {
-        "value": 120,
-        "unit": "SECONDS"
-      },
+      "duration": 120,
       "external_links": {
         "@ayaka_animepr": "https://twitter.com/AYAKA_animePR"
       },
@@ -2514,10 +2493,7 @@
         "from": "2009-12-26T00:00:00Z",
         "string": "Dec 26, 2009"
       },
-      "duration": {
-        "value": 900,
-        "unit": "SECONDS"
-      },
+      "duration": 900,
       "external_links": {
         "officialsite": "http://www.bungakushoujo.jp/",
         "wikipedia": "http://en.wikipedia.org/wiki/Book_Girl"
@@ -4907,10 +4883,7 @@
       "delay_information": {
         "delayed_timetable": false
       },
-      "duration": {
-        "value": 1460,
-        "unit": "SECONDS"
-      },
+      "duration": 1460,
       "images": {
         "posters": [
           "https://media.kitsu.app/anime/poster_images/5352/original.jpg"
@@ -5744,10 +5717,7 @@
       "delay_information": {
         "delayed_timetable": false
       },
-      "duration": {
-        "value": 6000,
-        "unit": "SECONDS"
-      },
+      "duration": 6000,
       "external_links": {
         "official": "http://www.bungakushoujo.jp/",
         "mal": "https://myanimelist.net/anime/6408",
@@ -6112,10 +6082,7 @@
         "from": "2018-04-20T00:00:00Z",
         "string": "Apr 20, 2018"
       },
-      "duration": {
-        "value": 60,
-        "unit": "SECONDS"
-      },
+      "duration": 60,
       "external_links": {
         "officialsite": "https://www.calpis.jp/quality/",
         "wikipedia": "https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%AB%E3%83%94%E3%82%B9"
@@ -6418,10 +6385,7 @@
       "delay_information": {
         "delayed_timetable": false
       },
-      "duration": {
-        "value": 2880,
-        "unit": "SECONDS"
-      },
+      "duration": 2880,
       "external_links": {
         "official": "http://www.production-ig.co.jp/contents/works_sp/0080_/index.html",
         "wikipedia": "http://ja.wikipedia.org/wiki/「エイジ」"
@@ -6667,10 +6631,7 @@
         "to": "2017-05-28T00:00:00Z",
         "string": "Mar 25, 2017 to May 28, 2017"
       },
-      "duration": {
-        "value": 2940,
-        "unit": "SECONDS"
-      },
+      "duration": 2940,
       "images": {
         "posters": [],
         "covers": [
@@ -7165,10 +7126,7 @@
         "from": "2016-11-23T00:00:00Z",
         "string": "Nov 23, 2016"
       },
-      "duration": {
-        "value": 1620,
-        "unit": "SECONDS"
-      },
+      "duration": 1620,
       "external_links": {
         "officialsite": "http://king-cr.jp/special/eiyukaitai/"
       },
@@ -7483,10 +7441,7 @@
       "delay_information": {
         "delayed_timetable": false
       },
-      "duration": {
-        "value": 120,
-        "unit": "SECONDS"
-      },
+      "duration": 120,
       "external_links": {
         "official": "https://100years-movie.smarthr.jp/"
       },
@@ -7646,10 +7601,7 @@
       "delay_information": {
         "delayed_timetable": false
       },
-      "duration": {
-        "value": 240,
-        "unit": "SECONDS"
-      },
+      "duration": 240,
       "external_links": {
         "official": "https://kmzktmm.tumblr.com/"
       },
@@ -7754,10 +7706,7 @@
           "name": "slice of life"
         }
       ],
-      "duration": {
-        "value": 180,
-        "unit": "SECONDS"
-      },
+      "duration": 180,
       "images": {
         "posters": [],
         "covers": [
@@ -7860,10 +7809,7 @@
       "delay_information": {
         "delayed_timetable": false
       },
-      "duration": {
-        "value": 30,
-        "unit": "SECONDS"
-      },
+      "duration": 30,
       "external_links": {
         "official": "https://dogatch.jp/feature/mameshiba/movie.html"
       },
@@ -7964,10 +7910,7 @@
         "from": "2010-07-06T00:00:00Z",
         "string": "Jul 6, 2010"
       },
-      "duration": {
-        "value": 15,
-        "unit": "SECONDS"
-      },
+      "duration": 15,
       "external_links": {
         "official": "http://dogatch.jp/feature/mameshiba/",
         "wikipedia": "https://ja.wikipedia.org/wiki/%E8%B1%86%E3%81%97%E3%81%B0#.E3.82.B3.E3.83.A9.E3.83.9C.E3.83.AC.E3.83.BC.E3.82.B7.E3.83.A7.E3.83.B3"
@@ -8095,10 +8038,7 @@
         "promotional",
         "short episodes"
       ],
-      "duration": {
-        "value": 30,
-        "unit": "SECONDS"
-      },
+      "duration": 30,
       "images": {
         "posters": [
           "https://media.kitsu.app/anime/poster_images/41274/large.jpg"
@@ -8202,10 +8142,7 @@
         "from": "2025-01-01T00:00:00Z",
         "string": "Jan 1, 2025"
       },
-      "duration": {
-        "value": 37,
-        "unit": "SECONDS"
-      },
+      "duration": 37,
       "external_links": {
         "officialsite": "https://mahouka.jp/",
         "wikipedia": "https://en.wikipedia.org/wiki/The_Irregular_at_Magic_High_School#Anime",
@@ -8288,10 +8225,7 @@
         "from": "2021-02-22T00:00:00Z",
         "string": "Feb 22, 2021"
       },
-      "duration": {
-        "value": 15,
-        "unit": "SECONDS"
-      },
+      "duration": 15,
       "images": {
         "posters": [],
         "covers": [
@@ -8814,10 +8748,7 @@
       "delay_information": {
         "delayed_timetable": false
       },
-      "duration": {
-        "value": 840,
-        "unit": "SECONDS"
-      },
+      "duration": 840,
       "external_links": {
         "official": "http://www.yamamura-animation.jp/parade.html",
         "officialsite": "http://www.yamamura-animation.jp/parade.html",
@@ -9057,10 +8988,7 @@
       "delay_information": {
         "delayed_timetable": false
       },
-      "duration": {
-        "value": 60,
-        "unit": "SECONDS"
-      },
+      "duration": 60,
       "external_links": {
         "youtube": "https://www.youtube.com/watch?v=JGUJB37z14M"
       },
@@ -9222,10 +9150,7 @@
         "to": "2013-10-05T00:00:00Z",
         "string": "Oct 5, 2013"
       },
-      "duration": {
-        "value": 60,
-        "unit": "SECONDS"
-      },
+      "duration": 60,
       "images": {
         "posters": [
           "https://media.kitsu.app/anime/poster_images/41829/original.jpg"
@@ -9564,10 +9489,7 @@
         "from": "2019-10-21T00:00:00Z",
         "string": "Oct 21, 2019"
       },
-      "duration": {
-        "value": 120,
-        "unit": "SECONDS"
-      },
+      "duration": 120,
       "external_links": {
         "official": "https://chunithm.sega.jp/irodorimidori/release/song046/",
         "youtube": "https://www.youtube.com/watch?v=C4Q9Ibuw4So"
@@ -9664,10 +9586,7 @@
       "delay_information": {
         "delayed_timetable": false
       },
-      "duration": {
-        "value": 60,
-        "unit": "SECONDS"
-      },
+      "duration": 60,
       "external_links": {
         "officialsite": "https://vimeo.com/236906001",
         "vimeo": "https://vimeo.com/236906001"

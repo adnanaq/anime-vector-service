@@ -1,7 +1,7 @@
 # src/models/anime.py - Pydantic Models for Anime Data
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -116,6 +116,7 @@ class EpisodeDetailEntry(BaseModel):
     aired: Optional[datetime] = Field(
         None, description="Episode air date with timezone"
     )
+    description: Optional[str] = Field(None, description="Episode description from Kitsu")
     duration: Optional[int] = Field(None, description="Episode duration in seconds")
     episode_number: int = Field(..., description="Episode number")
     filler: bool = Field(default=False, description="Whether episode is filler")
@@ -179,25 +180,6 @@ class DelayInformation(BaseModel):
     delay_reason: Optional[str] = Field(None, description="Reason for delay")
 
 
-class EpisodeOverrideEntry(BaseModel):
-    """Individual episode override entry"""
-
-    override_episode: Optional[int] = Field(None, description="Override episode number")
-    episodes_aired: Optional[int] = Field(None, description="Number of episodes aired")
-
-
-class EpisodeOverrides(BaseModel):
-    """Episode override information for different versions"""
-
-    main_override: Optional[EpisodeOverrideEntry] = Field(
-        None, description="Main version override information"
-    )
-    sub_override: Optional[EpisodeOverrideEntry] = Field(
-        None, description="Subtitle version override information"
-    )
-    dub_override: Optional[EpisodeOverrideEntry] = Field(
-        None, description="Dub version override information"
-    )
 
 
 class PremiereDates(BaseModel):
@@ -273,12 +255,6 @@ class StreamingEntry(BaseModel):
     )
 
 
-class DurationEntry(BaseModel):
-    """Duration with value and unit"""
-
-    value: int = Field(..., description="Duration value")
-    unit: str = Field(..., description="Duration unit (SECONDS, MINUTES, HOURS)")
-
 
 class ThemeEntry(BaseModel):
     """Theme entry with description"""
@@ -293,15 +269,6 @@ class ThemeSong(BaseModel):
     title: str = Field(..., description="Theme song title")
     artist: Optional[str] = Field(None, description="Artist name")
     episodes: Optional[str] = Field(None, description="Episode range (e.g., '1-26')")
-
-
-class Award(BaseModel):
-    """Award or recognition entry"""
-
-    name: str = Field(..., description="Award name")
-    category: Optional[str] = Field(None, description="Award category")
-    year: Optional[int] = Field(None, description="Award year")
-    source: Optional[str] = Field(None, description="Award source/organization")
 
 
 class SimpleVoiceActor(BaseModel):
@@ -501,9 +468,6 @@ class AnimeEntry(BaseModel):
     # =====================================================================
     # ARRAY FIELDS (alphabetical)
     # =====================================================================
-    awards: List["Award"] = Field(
-        default_factory=list, description="Awards and recognition"
-    )
     characters: List[CharacterEntry] = Field(
         default_factory=list,
         description="Character information with multi-source support",
@@ -567,16 +531,12 @@ class AnimeEntry(BaseModel):
     delay_information: Optional["DelayInformation"] = Field(
         None, description="Current delay status and reasons"
     )
-    duration: Optional[Union[int, DurationEntry]] = Field(
+    duration: Optional[int] = Field(
         None,
-        description="Episode duration in seconds or structured duration with value/unit",
+        description="Episode duration in seconds",
     )
     enrichment_metadata: Optional[EnrichmentMetadata] = Field(
         None, description="Metadata about enrichment process"
-    )
-    episode_overrides: Optional["EpisodeOverrides"] = Field(
-        None,
-        description="Episode override information for different versions (main_override, sub_override, dub_override)",
     )
     external_links: Dict[str, str] = Field(
         default_factory=dict, description="External links (official site, social media)"
@@ -604,85 +564,3 @@ class AnimeEntry(BaseModel):
     )
 
 
-class SearchRequest(BaseModel):
-    """Search request model"""
-
-    query: str = Field(..., description="Search query")
-    limit: int = Field(default=20, ge=1, le=100, description="Number of results")
-    filters: Optional[Dict[str, Any]] = Field(None, description="Search filters")
-
-
-class UnifiedSearchRequest(BaseModel):
-    """Unified search request model for all search types"""
-
-    # Text search fields
-    query: Optional[str] = Field(None, description="Search query for text search")
-
-    # ID-based search fields
-    anime_id: Optional[str] = Field(None, description="Anime ID for similarity search")
-
-    # Image search fields
-    image_data: Optional[str] = Field(None, description="Base64 encoded image data")
-
-    # Visual similarity flag
-    visual_similarity: Optional[bool] = Field(
-        False, description="Enable visual similarity search"
-    )
-
-    # Multimodal search weight
-    text_weight: Optional[float] = Field(
-        0.7, ge=0.0, le=1.0, description="Text vs image weight for multimodal"
-    )
-
-    # Common fields
-    limit: int = Field(default=20, ge=1, le=100, description="Number of results")
-    filters: Optional[Dict[str, Any]] = Field(None, description="Search filters")
-
-
-class SearchResult(BaseModel):
-    """Search result model"""
-
-    anime_id: str
-    title: str
-    synopsis: Optional[str] = None
-    type: str
-    episodes: int
-    tags: List[str]
-    studios: List[str]
-    picture: Optional[str] = None
-    relevance_score: float = Field(..., description="Search relevance score (0-1)")
-    anime_score: Optional[float] = Field(None, description="Anime rating score (1-10)")
-    year: Optional[int] = None
-    season: Optional[str] = None
-
-    # Platform IDs for cross-referencing
-    myanimelist_id: Optional[int] = None
-    anilist_id: Optional[int] = None
-    kitsu_id: Optional[int] = None
-    anidb_id: Optional[int] = None
-    anisearch_id: Optional[int] = None
-    simkl_id: Optional[int] = None
-    livechart_id: Optional[int] = None
-    animenewsnetwork_id: Optional[int] = None
-    animeplanet_id: Optional[str] = None
-    notify_id: Optional[str] = None
-    animecountdown_id: Optional[int] = None
-
-
-class SearchResponse(BaseModel):
-    """Search response model"""
-
-    query: str
-    results: List[SearchResult]
-    total_results: int
-    processing_time_ms: float
-
-
-class DatabaseStats(BaseModel):
-    """Database statistics"""
-
-    total_anime: int
-    indexed_anime: int
-    last_updated: datetime
-    index_health: str
-    average_quality_score: float

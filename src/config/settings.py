@@ -47,14 +47,13 @@ class Settings(BaseSettings):
         description="Image embedding dimensions (OpenCLIP ViT-L/14: 768, ViT-B/32: 512)",
     )
 
-    # 12-Vector Semantic Architecture Configuration
+    # 11-Vector Semantic Architecture Configuration
     vector_names: Dict[str, int] = Field(
         default={
             "title_vector": 1024,
             "character_vector": 1024,
             "genre_vector": 1024,
             "staff_vector": 1024,
-            "review_vector": 1024,
             "temporal_vector": 1024,
             "streaming_vector": 1024,
             "related_vector": 1024,
@@ -63,7 +62,7 @@ class Settings(BaseSettings):
             "image_vector": 768,
             "character_image_vector": 768,
         },
-        description="12-vector semantic architecture with named vectors and dimensions (BGE-M3: 1024-dim, OpenCLIP ViT-L/14: 768-dim)",
+        description="11-vector semantic architecture with named vectors and dimensions (BGE-M3: 1024-dim, OpenCLIP ViT-L/14: 768-dim)",
     )
 
     # Vector Priority Classification for Optimization
@@ -73,7 +72,6 @@ class Settings(BaseSettings):
                 "title_vector",
                 "character_vector",
                 "genre_vector",
-                "review_vector",
                 "image_vector",
                 "character_image_vector",
             ],

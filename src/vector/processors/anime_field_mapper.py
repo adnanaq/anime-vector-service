@@ -17,10 +17,10 @@ logger = logging.getLogger(__name__)
 
 class AnimeFieldMapper:
     """
-    Maps anime data fields to 13-vector semantic architecture.
+    Maps anime data fields to 11-vector semantic architecture.
 
     Extracts and processes anime data for embedding into:
-    - 12 text vectors (BGE-M3, 1024-dim each) for semantic search
+    - 9 text vectors (BGE-M3, 1024-dim each) for semantic search
     - 2 visual vectors (OpenCLIP ViT-L/14, 768-dim each) for image search
       * image_vector: covers, posters, banners, trailer thumbnails
       * character_image_vector: character images for character identification
@@ -44,12 +44,11 @@ class AnimeFieldMapper:
         """
         vector_data: Dict[str, Union[str, List[str]]] = {}
 
-        # Text vectors (11)
+        # Text vectors (9)
         vector_data["title_vector"] = self._extract_title_content(anime)
         vector_data["character_vector"] = self._extract_character_content(anime)
         vector_data["genre_vector"] = self._extract_genre_content(anime)
         vector_data["staff_vector"] = self._extract_staff_content(anime)
-        vector_data["review_vector"] = self._extract_review_content(anime)
         vector_data["temporal_vector"] = self._extract_temporal_content(anime)
         vector_data["streaming_vector"] = self._extract_streaming_content(anime)
         vector_data["related_vector"] = self._extract_related_content(anime)
@@ -214,28 +213,7 @@ class AnimeFieldMapper:
 
         return " | ".join(content_parts)
 
-    def _extract_review_content(self, anime: AnimeEntry) -> str:
-        """Extract awards, achievements, and recognition for semantic context."""
-        content_parts = []
-
-        # Statistics removed - now in payload indexing for precise filtering
-
-        # Awards
-        award_info = []
-        for award in anime.awards:
-            if hasattr(award, "name") and award.name:
-                award_part = f"Award: {award.name}"
-                if hasattr(award, "year") and award.year:
-                    award_part += f" ({award.year})"
-                if hasattr(award, "category") and award.category:
-                    award_part += f" - {award.category}"
-                award_info.append(award_part)
-        if award_info:
-            content_parts.extend(award_info)
-
-        return " | ".join(content_parts)
-
-    def _extract_temporal_content(self, anime: AnimeEntry) -> str:
+def _extract_temporal_content(self, anime: AnimeEntry) -> str:
         """Extract aired dates, anime season, broadcast, premiere dates."""
         content_parts = []
 
@@ -584,7 +562,6 @@ class AnimeFieldMapper:
             "character_vector": "text",
             "genre_vector": "text",
             "staff_vector": "text",
-            "review_vector": "text",
             "temporal_vector": "text",
             "streaming_vector": "text",
             "related_vector": "text",

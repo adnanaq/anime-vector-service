@@ -93,7 +93,6 @@ class EnrichmentValidator:
     # Collections that should be OMITTED when empty
     OMIT_EMPTY_COLLECTIONS = {
         "characters",
-        "awards",
         "themes",
         "genres",
         "demographics",

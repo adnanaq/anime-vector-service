@@ -21,7 +21,7 @@ The primary goal is to take a raw anime data object (from an offline database) a
 **MULTI-AGENT PROCESSING MODEL**: This system supports concurrent processing by multiple agents using numbered processing files to prevent conflicts and enable scalability.
 
 1.  **Agent Slot Detection:**
-    - Scan for existing processing files: `current_anime.json`, `current_anime_2.json`, `current_anime_3.json`, etc.
+    - Scan for existing processing files in `temp/` directory at the root of this rpeo: `current_anime.json`, `current_anime_2.json`, `current_anime_3.json`, etc.
     - Determine next available agent slot (e.g., if `current_anime.json` and `current_anime_2.json` exist, create `current_anime_3.json`)
     - This enables multiple agents to work simultaneously without conflicts
 
@@ -32,7 +32,8 @@ The primary goal is to take a raw anime data object (from an offline database) a
     - Skip entries that match any currently processing anime (check against all existing `current_anime*.json` files)
 
 3.  **Prepare Current Anime (Agent-Specific):**
-    - Save the extracted anime entry to your agent's numbered file (e.g., `data/current_anime_2.json`)
+    - Create temp directory using agent-specific naming: `temp/current_anime_<N>.json`
+    - Extract the first entry from the `data` array and save it to your agent's processing file you created above
     - Add `processing: true` to the entry to indicate this agent is currently processing it
     - This numbered file becomes the `offline_anime_data` for all subsequent processing steps
     - Each agent has its own processing file, enabling parallel processing without conflicts
@@ -42,7 +43,7 @@ The primary goal is to take a raw anime data object (from an offline database) a
     - Confirm your agent's processing file contains a valid anime object
     - Verify the anime has required fields (title, sources, etc.)
     - Log which anime is being processed and which agent slot is being used
-    - Create temp directory using agent-specific naming: `temp/<first word from anime title>_agent<N>/`
+    - Create temp directory using agent-specific naming and N you selected above: `temp/<first word from anime title>_agent<N>/`
 
 ### Step 1: Extract Platform IDs
 
@@ -191,11 +192,7 @@ This is the core of the process, where AI is used to process the collected data.
 3.  Start with the original `offline_anime_data`, and append animeschedule url for the relevent anime in the sources proeprty.
 4.  Update the fields with the data from each stage's output following AnimeEtry schema from `src/models/anime.py`
 5.  **CRITICAL: Schema-Compliant Field Ordering**
-    - Order all fields according to AnimeEntry schema from `src/models/anime.py`
-    - **Field Order**: SCALAR → ARRAY → OBJECT/DICT (alphabetical within each category)
-    - **SCALAR FIELDS**: background, episodes, month, nsfw, picture, rating, source_material, status, synopsis, thumbnail, title, title_english, title_japanese, type
-    - **ARRAY FIELDS**: awards, characters, content_warnings, demographics, ending_themes, episode_details, genres, licensors, opening_themes, related_anime, relation_type, sources, streaming_info, streaming_licenses, synonyms, tags, themes, trailers
-    - **OBJECT/DICT FIELDS**: aired_dates, anime_season, broadcast, broadcast_schedule, delay_information, duration, enhanced_metadata, episode_overrides, external_links, images, popularity_trends, premiere_dates, score, staff_data, statistics
+    - Order all fields according to AnimeEntry schema defined in `src/models/anime.py`
     - **FINAL FIELD**: enrichment_metadata (MUST ALWAYS BE LAST)
     - **Nested Objects**: Ensure characters, staff_data, episode_details, etc. also follow their respective schema ordering
 6.  **CRITICAL: Data Quality Cleanup**

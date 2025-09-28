@@ -109,6 +109,8 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
   - Ensure no duplicate YouTube URLs across all trailers
   - Only include trailers with valid YouTube URLs
   - Combine all unique trailers into single array
+- **opening_themes**: Extract from Jikan theme.openings array - parse each string to extract title (remove quotes), artist name, and episode range, output as ThemeSong objects with title, artist, episodes fields
+- **ending_themes**: Extract from Jikan theme.endings array - parse each string to extract title (remove quotes), artist name, and episode range, output as ThemeSong objects with title, artist, episodes fields
 - **aired_dates**: Extract aired information from Jikan (from, to, string)
 - **broadcast**: Extract broadcast information from Jikan (day, time, timezone)
 
@@ -126,10 +128,6 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
   - delayed_from: AnimSchedule delayedFrom field
   - delayed_until: AnimSchedule delayedUntil field
   - delay_reason: AnimSchedule delayedDesc field (reason for delay)
-- **episode_overrides**: Extract episode override information from AnimeSchedule:
-  - main_override: AnimSchedule episodeOverride object (overrideDate, overrideEpisode, episodesAired)
-  - sub_override: AnimSchedule subEpisodeOverride object (overrideDate, overrideEpisode, episodesAired)
-  - dub_override: AnimSchedule dubEpisodeOverride object (overrideDate, overrideEpisode, episodesAired)
 - **month**: Extract premiere month from AnimSchedule
 
 ### KITSU ENHANCEMENTS:
@@ -140,7 +138,7 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
 - **status**: Cross-validate across sources with offline database status (use offline DB if consistent, otherwise hierarchy: Offline DB → Jikan → AniList → Kitsu)
 - **year**: Cross-validate existing offline database animeSeason.year with external sources (use offline DB if consistent, otherwise hierarchy: Offline DB → Jikan → AniList → AnimSchedule)
 - **season**: Cross-validate existing offline database animeSeason.season with external sources (use offline DB if consistent, otherwise hierarchy: Offline DB → Jikan → AniList → AnimSchedule)
-- **duration**: Cross-validate existing offline database duration (int seconds or dict with value/unit) with external sources (use offline DB if consistent, otherwise hierarchy: Offline DB → Jikan → AniList → Kitsu)
+- **duration**: Cross-validate existing offline database duration.value (int seconds or dict with value/unit) with external sources (use offline DB if consistent, otherwise hierarchy: Offline DB → Jikan → AniList → Kitsu)
 
 ### ANIME-PLANET ENHANCEMENTS:
 - **dates**: Cross-validate json_ld.startDate/endDate with existing aired dates
@@ -239,8 +237,23 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
   // =====================================================================
   "content_warnings": ["Violence", "Strong Language"], // EXAMPLE - Extract actual content warnings
   "demographics": ["Shounen"], // EXAMPLE - Extract actual demographic names from Jikan
+  "ending_themes": [
+    {
+      "title": "Uso",
+      "artist": "SID",
+      "episodes": "1-14"
+    }
+  ], // EXAMPLE - Extract actual ending themes from Jikan theme.endings
   "genres": ["Action", "Adventure", "Fantasy", "Drama"], // EXAMPLE - Extract actual genre names from Jikan + AnimSchedule
+  "opening_themes": [
+    {
+      "title": "Again",
+      "artist": "YUI",
+      "episodes": "1-14"
+    }
+  ], // EXAMPLE - Extract actual opening themes from Jikan theme.openings
   "synonyms": ["FMA", "Hagane no Renkinjutsushi", "강철의 연금술사"], // EXAMPLE - Extract actual synonyms from all sources, no duplicates
+  "tags": ["action", "adventure", "military", "shounen"], // EXAMPLE - Extract actual tags from offline database
   "themes": [
     {"name": "Military", "description": null}, // EXAMPLE - From Jikan themes
     {"name": "Magic", "description": "Magic is the art of purportedly manipulating aspects of reality either by supernatural means or through knowledge of unknown occult laws."}, // EXAMPLE - From Kitsu categories
@@ -279,20 +292,6 @@ Extract metadata from Jikan, AnimSchedule, Kitsu, Anime-Planet, and AniList APIs
     "delay_reason": null
   }, // EXAMPLE - Extract actual delay info
   "duration": 1440, // EXAMPLE - Cross-validate with offline database duration (seconds or dict structure)
-  "episode_overrides": {
-    "main_override": {
-      overrideEpisode: 0,
-      episodesAired
-    },
-    "sub_override": {
-      overrideEpisode: 0,
-      episodesAired
-    },
-    "dub_override": {
-      overrideEpisode: 0,
-      episodesAired
-    }
-  }, // EXAMPLE - Extract actual episode overrides
   "external_links": {
     "mal": "https://myanimelist.net/anime/121",
     "official": "https://cowboy-bebop.com/",

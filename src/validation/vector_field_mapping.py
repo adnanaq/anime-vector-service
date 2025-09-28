@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Vector field mapping definitions based on 12-vector architecture."""
+"""Vector field mapping definitions based on 11-vector architecture."""
 
 from typing import Dict, List
 
-# 12-Vector Architecture Field Mappings (from tasks/tasks_plan.md)
+# 11-Vector Architecture Field Mappings (from tasks/tasks_plan.md)
 VECTOR_FIELD_MAPPINGS: Dict[str, Dict[str, List[str]]] = {
     # Text Vectors (BGE-M3, 1024-dim each)
     "title_vector": {
@@ -21,10 +21,6 @@ VECTOR_FIELD_MAPPINGS: Dict[str, Dict[str, List[str]]] = {
     "staff_vector": {
         "fields": ["staff_data"],
         "description": "Directors, composers, studios, voice actors, multi-source integration"
-    },
-    "review_vector": {
-        "fields": ["awards"],
-        "description": "Recognition and achievements (ratings moved to payload)"
     },
     "temporal_vector": {
         "fields": ["aired_dates", "broadcast", "broadcast_schedule", "delay_information", "premiere_dates"],

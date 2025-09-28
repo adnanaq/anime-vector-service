@@ -30,7 +30,7 @@ async def main():
             "https://simkl.com/anime/38636",
         ],
         "title": "One Piece",
-        "episodes": 1139,
+        "episodes": 1144,
         "type": "TV",
         "status": "Currently Airing",
     }
@@ -51,4 +51,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
