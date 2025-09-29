@@ -7,6 +7,8 @@ Processes Jikan, AnimePlanet, AnimSchedule, AniList, AniDB, and offline URLs dat
 import json
 import re
 import sys
+import os
+import argparse
 from typing import Dict, List, Any, Set, Optional
 
 def clean_animeplanet_title(title: str) -> str:
@@ -572,13 +574,108 @@ def process_all_relationships(current_anime_file: str, temp_dir: str):
     print(f"  - Sources processed: Jikan, AnimePlanet, AnimSchedule, AniList, AniDB, Offline URLs")
     print(f"  - File saved: {output_file}")
 
-if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python process_stage3_relationships.py <current_anime_file> <temp_dir>")
-        print("Example: python process_stage3_relationships.py temp/current_anime_1.json temp/One")
+def auto_detect_temp_dir():
+    """Auto-detect the temp directory based on available directories."""
+    temp_base = 'temp'
+    if not os.path.exists(temp_base):
+        print(f"Error: {temp_base} directory not found")
         sys.exit(1)
 
-    current_anime_file = sys.argv[1]
-    temp_dir = sys.argv[2]
+    # Look for directories in temp/
+    temp_dirs = [d for d in os.listdir(temp_base) if os.path.isdir(os.path.join(temp_base, d))]
+
+    if not temp_dirs:
+        print(f"Error: No anime directories found in {temp_base}/")
+        sys.exit(1)
+
+    if len(temp_dirs) == 1:
+        detected_dir = os.path.join(temp_base, temp_dirs[0])
+        print(f"Auto-detected temp directory: {detected_dir}")
+        return detected_dir
+    else:
+        print(f"Multiple temp directories found: {temp_dirs}")
+        print("Please specify which one to use with --temp-dir argument")
+        sys.exit(1)
+
+
+def auto_detect_current_anime_file(temp_dir: str):
+    """Auto-detect current anime file following consistent directory structure."""
+    # First, check if current_anime.json exists in the provided temp_dir
+    current_anime_in_dir = os.path.join(temp_dir, 'current_anime.json')
+    if os.path.exists(current_anime_in_dir):
+        print(f"Found current anime file: {current_anime_in_dir}")
+        return current_anime_in_dir
+
+    # Fallback: Look for current_anime.json files in agent directories under temp/
+    temp_base = 'temp'
+    if os.path.exists(temp_base):
+        agent_dirs = []
+        for item in os.listdir(temp_base):
+            item_path = os.path.join(temp_base, item)
+            if os.path.isdir(item_path):
+                current_anime_file = os.path.join(item_path, 'current_anime.json')
+                if os.path.exists(current_anime_file):
+                    agent_dirs.append((item, current_anime_file))
+
+        if agent_dirs:
+            if len(agent_dirs) == 1:
+                dir_name, detected_file = agent_dirs[0]
+                print(f"Auto-detected current anime file: {detected_file}")
+                return detected_file
+            else:
+                print(f"Multiple agent directories with current_anime.json found: {[d[0] for d in agent_dirs]}")
+                print("Please specify which one to use with --current-anime argument")
+                sys.exit(1)
+
+    print(f"Error: No current anime file found. Looked in {temp_dir}/ and agent directories in temp/")
+    sys.exit(1)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Process Stage 3: Multi-source relationship analysis",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python process_stage3_relationships.py                                    # Auto-detect both files
+  python process_stage3_relationships.py --temp-dir temp/One                # Specify temp directory
+  python process_stage3_relationships.py --current-anime temp/current_anime_1.json  # Specify anime file
+  python process_stage3_relationships.py --current-anime temp/current_anime_1.json --temp-dir temp/One  # Specify both
+        """
+    )
+    parser.add_argument(
+        "--current-anime",
+        type=str,
+        help="Current anime JSON file (auto-detected if not specified)"
+    )
+    parser.add_argument(
+        "--temp-dir",
+        type=str,
+        help="Temp directory containing source data files (auto-detected if not specified)"
+    )
+
+    args = parser.parse_args()
+
+    # Determine temp_dir
+    if args.temp_dir:
+        temp_dir = args.temp_dir
+        if not os.path.exists(temp_dir):
+            print(f"Error: Specified temp directory '{temp_dir}' does not exist")
+            sys.exit(1)
+    else:
+        temp_dir = auto_detect_temp_dir()
+
+    # Determine current_anime_file
+    if args.current_anime:
+        current_anime_file = args.current_anime
+        if not os.path.exists(current_anime_file):
+            print(f"Error: Specified current anime file '{current_anime_file}' does not exist")
+            sys.exit(1)
+    else:
+        current_anime_file = auto_detect_current_anime_file(temp_dir)
+
+    print(f"Processing with:")
+    print(f"  Current anime file: {current_anime_file}")
+    print(f"  Temp directory: {temp_dir}")
 
     process_all_relationships(current_anime_file, temp_dir)

@@ -6,6 +6,9 @@ Includes proper timezone conversion from JST (+09:00) to UTC (Z format).
 """
 
 import json
+import os
+import sys
+import argparse
 from datetime import datetime, timezone, timedelta
 
 def convert_jst_to_utc(jst_datetime_str):
@@ -30,10 +33,10 @@ def convert_jst_to_utc(jst_datetime_str):
         print(f"Error converting datetime {jst_datetime_str}: {e}")
         return jst_datetime_str
 
-def load_kitsu_episode_data():
+def load_kitsu_episode_data(temp_dir: str):
     """Load Kitsu episode data and create episode number mappings."""
     try:
-        with open('/home/dani/code/anime-vector-service/temp/One/kitsu.json', 'r') as f:
+        with open(f'{temp_dir}/kitsu.json', 'r') as f:
             kitsu_data = json.load(f)
 
         kitsu_episodes = kitsu_data.get('episodes', [])
@@ -103,13 +106,13 @@ def load_kitsu_episode_data():
         print(f"Error loading Kitsu data: {e}")
         return {}, {}, {}, {}, {}, {}, {}
 
-def process_all_episodes():
+def process_all_episodes(temp_dir: str):
     # Read the detailed episodes data
-    with open('/home/dani/code/anime-vector-service/temp/One/episodes_detailed.json', 'r') as f:
+    with open(f'{temp_dir}/episodes_detailed.json', 'r') as f:
         episodes_data = json.load(f)
 
     # Load Kitsu episode data for enhancement
-    kitsu_thumbnails, kitsu_descriptions, kitsu_synopses, kitsu_titles, kitsu_titles_japanese, kitsu_titles_romaji, kitsu_season_numbers = load_kitsu_episode_data()
+    kitsu_thumbnails, kitsu_descriptions, kitsu_synopses, kitsu_titles, kitsu_titles_japanese, kitsu_titles_romaji, kitsu_season_numbers = load_kitsu_episode_data(temp_dir)
 
     print(f"Processing {len(episodes_data)} episodes...")
 
@@ -167,10 +170,11 @@ def process_all_episodes():
     }
 
     # Write to stage2_episodes.json
-    with open('/home/dani/code/anime-vector-service/temp/One/stage2_episodes.json', 'w') as f:
+    output_path = f'{temp_dir}/stage2_episodes.json'
+    with open(output_path, 'w') as f:
         json.dump(output, f, indent=2, ensure_ascii=False)
 
-    print(f"Successfully processed {len(episode_details)} episodes to stage2_episodes.json")
+    print(f"Successfully processed {len(episode_details)} episodes to {output_path}")
     print(f"File size: {len(json.dumps(output, indent=2, ensure_ascii=False))} characters")
 
     # Show some examples of timezone conversion
@@ -180,5 +184,55 @@ def process_all_episodes():
         converted = episode_details[i]["aired"]
         print(f"  Episode {i+1}: {original} -> {converted}")
 
+def auto_detect_temp_dir():
+    """Auto-detect the temp directory based on available directories."""
+    temp_base = 'temp'
+    if not os.path.exists(temp_base):
+        print(f"Error: {temp_base} directory not found")
+        sys.exit(1)
+
+    # Look for directories in temp/
+    temp_dirs = [d for d in os.listdir(temp_base) if os.path.isdir(os.path.join(temp_base, d))]
+
+    if not temp_dirs:
+        print(f"Error: No anime directories found in {temp_base}/")
+        sys.exit(1)
+
+    if len(temp_dirs) == 1:
+        detected_dir = os.path.join(temp_base, temp_dirs[0])
+        print(f"Auto-detected temp directory: {detected_dir}")
+        return detected_dir
+    else:
+        print(f"Multiple temp directories found: {temp_dirs}")
+        print("Please specify which one to use with --temp-dir argument")
+        sys.exit(1)
+
+
 if __name__ == "__main__":
-    process_all_episodes()
+    parser = argparse.ArgumentParser(
+        description="Process Stage 2: Episode processing with multi-source integration",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python process_stage2_episodes.py                    # Auto-detect temp directory
+  python process_stage2_episodes.py --temp-dir temp/One  # Specify directory
+  python process_stage2_episodes.py --temp-dir temp/Dandadan_agent1  # Multi-agent processing
+        """
+    )
+    parser.add_argument(
+        "--temp-dir",
+        type=str,
+        help="Temp directory containing source data files (auto-detected if not specified)"
+    )
+
+    args = parser.parse_args()
+
+    if args.temp_dir:
+        temp_dir = args.temp_dir
+        if not os.path.exists(temp_dir):
+            print(f"Error: Specified temp directory '{temp_dir}' does not exist")
+            sys.exit(1)
+    else:
+        temp_dir = auto_detect_temp_dir()
+
+    process_all_episodes(temp_dir)
