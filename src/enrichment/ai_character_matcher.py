@@ -53,9 +53,8 @@ logger = logging.getLogger(__name__)
 class MatchConfidence(Enum):
     """Confidence levels for character matching"""
 
-    HIGH = "high"  # >0.9 - Auto-merge
-    MEDIUM = "medium"  # 0.7-0.9 - LLM validation required
-    LOW = "low"  # <0.7 - Manual review queue
+    HIGH = "high"  # >=0.7 - Accept match (includes partial name matches like "Sanji" → "Vinsmoke Sanji")
+    LOW = "low"  # <0.7 - Reject match (insufficient similarity)
 
 
 @dataclass
@@ -332,13 +331,14 @@ class EnsembleFuzzyMatcher:
                 }
             elif source.lower() == "anidb":
                 # AniDB-SPECIFIC OPTIMIZATION: Enhanced weights for standardized AniDB format
+                # Heavily prioritize semantic, with minimal backup signals for safety
                 weights = {
-                    "semantic": 0.8,      # INCREASED: AniDB names are clean and standardized
-                    "edit_distance": 0.03, # Minimal: AniDB format is consistent
-                    "token_based": 0.12,   # Reduced: Less critical with higher semantic weight
-                    "token_set": 0.03,    # Minimal: Secondary validation only
-                    "phonetic": 0.02,     # Minimal: Japanese phonetics less relevant for AniDB
-                    "name_order": 0.0,    # DISABLED: Handled by enhanced semantic similarity
+                    "semantic": 0.95,      # PRIMARY: Handle partial name matches (e.g., "Sanji" → "Vinsmoke Sanji")
+                    "edit_distance": 0.02, # SAFETY NET: Catch typos/misspellings
+                    "token_based": 0.03,   # VALIDATION: Ensure some token overlap
+                    "token_set": 0.0,      # DISABLED: Not useful for partial name matching
+                    "phonetic": 0.0,       # DISABLED: Not useful for partial name matching
+                    "name_order": 0.0,     # DISABLED: Handled by enhanced semantic similarity
                 }
             else:
                 # Default weights for other sources
@@ -354,16 +354,52 @@ class EnsembleFuzzyMatcher:
             ensemble_score = sum(scores.get(k, 0.0) * w for k, w in weights.items())
             best_score = max(best_score, ensemble_score)
 
+            # Safety monitoring: Alert when semantic and ensemble differ significantly
+            semantic_score = scores.get("semantic", 0.0)
+            if semantic_score >= 0.7 and ensemble_score < 0.7:
+                # Semantic says match, but ensemble rejects - worth investigating
+                logger.warning(
+                    f"⚠️  SCORE DISCREPANCY: Semantic={semantic_score:.3f} but Ensemble={ensemble_score:.3f} "
+                    f"for '{name1_repr.get('original', '')}' vs '{name2_repr.get('original', '')}' "
+                    f"(edit={scores.get('edit_distance', 0):.2f}, token={scores.get('token_based', 0):.2f})"
+                )
+
         # Log only high-confidence matches to reduce noise
         if best_score >= 0.9:
             logger.info(f"✅ HIGH-CONFIDENCE MATCH: {best_score:.6f} - '{name1_repr.get('original', '')}' vs '{name2_repr.get('original', '')}'")
         return best_score
 
+    def _standardize_for_embedding(self, text: str) -> str:
+        """Aggressive normalization for embedding consistency across sources.
+
+        Removes format variations that create different embeddings for same character:
+        - Punctuation differences (D. vs D)
+        - Case sensitivity (Luffy vs luffy)
+        - Extra whitespace
+        """
+        if not text:
+            return ""
+
+        # Remove punctuation except hyphens (preserve compound names like "Roronoa-Zoro")
+        text = re.sub(r'[.,;:!?"\']', '', text)
+
+        # Normalize whitespace
+        text = ' '.join(text.split())
+
+        # Lowercase for case-insensitive matching (BGE-M3 is case-sensitive!)
+        text = text.lower()
+
+        return text.strip()
+
     def _semantic_similarity(self, text1: str, text2: str) -> float:
         if not self.embedding_model or not text1 or not text2:
             return 0.0
         try:
-            embeddings = self.embedding_model.encode([text1, text2])
+            # Pre-normalize both texts for consistent embeddings
+            norm1 = self._standardize_for_embedding(text1)
+            norm2 = self._standardize_for_embedding(text2)
+
+            embeddings = self.embedding_model.encode([norm1, norm2])
             similarity = cosine_similarity([embeddings[0]], [embeddings[1]])[0][0]
             return float(max(0.0, similarity))
         except Exception as e:
@@ -432,18 +468,28 @@ class EnsembleFuzzyMatcher:
         # Test ALL combinations and return the BEST semantic score
         max_similarity = 0.0
         best_pair = None
+        all_comparisons = []  # Track all comparisons for debugging
 
         for n1 in name1_variants:
             for n2 in name2_variants:
                 if n1 and n2:  # Ensure both names are non-empty
                     similarity = self._semantic_similarity(n1, n2)
+                    all_comparisons.append((n1, n2, similarity))
                     if similarity > max_similarity:
                         max_similarity = similarity
                         best_pair = (n1, n2)
 
-        # Log only high-confidence semantic matches
-        if best_pair and max_similarity >= 0.9:
-            logger.debug(f"🔍 HIGH SEMANTIC MATCH: '{best_pair[0]}' <-> '{best_pair[1]}' = {max_similarity:.6f}")
+        # DETAILED LOGGING: Show what text strings were actually compared
+        if best_pair and max_similarity >= 0.85:  # Log near-threshold matches too
+            logger.info(f"🔍 SEMANTIC SIMILARITY ANALYSIS:")
+            logger.info(f"   Best Match: '{best_pair[0]}' <-> '{best_pair[1]}' = {max_similarity:.6f}")
+            logger.info(f"   Total comparisons tested: {len(all_comparisons)}")
+
+            # Show top 5 comparisons
+            sorted_comparisons = sorted(all_comparisons, key=lambda x: x[2], reverse=True)[:5]
+            logger.info(f"   Top 5 comparisons:")
+            for i, (t1, t2, score) in enumerate(sorted_comparisons, 1):
+                logger.info(f"      {i}. '{t1}' <-> '{t2}' = {score:.6f}")
 
         return max_similarity
 
@@ -623,10 +669,24 @@ class AICharacterMatcher:
             anilist_score = anilist_match.similarity_score if anilist_match else 0.0
             anidb_score = anidb_match.similarity_score if anidb_match else 0.0
 
+            # HIGH confidence (≥0.9): Perfect matches
             if anilist_score >= 0.9:
                 logger.info(f"🎯 HIGH-CONFIDENCE ANILIST MATCH: {anilist_score:.6f}")
+            elif anilist_score >= 0.7:
+                # MEDIUM confidence (0.7-0.89): Partial matches, worth monitoring
+                logger.info(f"⚠️  MEDIUM-CONFIDENCE ANILIST MATCH: {anilist_score:.6f} for '{char_name}'")
+
             if anidb_score >= 0.9:
                 logger.info(f"🎯 HIGH-CONFIDENCE ANIDB MATCH: {anidb_score:.6f}")
+            elif anidb_score >= 0.7:
+                # MEDIUM confidence (0.7-0.89): Partial matches, worth monitoring
+                logger.info(f"⚠️  MEDIUM-CONFIDENCE ANIDB MATCH: {anidb_score:.6f} for '{char_name}'")
+
+            # Safety monitoring: Log when no match found (could indicate missing data)
+            if anilist_score == 0.0:
+                logger.debug(f"ℹ️  No AniList match found for '{char_name}'")
+            if anidb_score == 0.0:
+                logger.debug(f"ℹ️  No AniDB match found for '{char_name}'")
 
             # Integrate data from all matched sources (no Kitsu)
             integrated_char = await self._integrate_character_data(
@@ -651,7 +711,7 @@ class AICharacterMatcher:
         if not candidate_chars:
             return None
 
-        primary_name = self._extract_primary_name(primary_char, "jikan")
+        primary_name = self._extract_primary_name(primary_char, "jikan", target_source=source)
         if not primary_name:
             return None
 
@@ -729,7 +789,9 @@ class AICharacterMatcher:
                 best_score = similarity_score
                 best_match = candidate_char
 
-        if best_match and best_score > 0.3:  # Lower threshold for better matching
+        # Only accept matches with score >= 0.7 (MEDIUM confidence minimum)
+        # Anything below indicates system needs improvement (e.g., name variations like "Sanji" vs "Vinsmoke Sanji")
+        if best_match and best_score >= 0.7:
             # Validate the match
             is_valid, notes = await self.validator.validate_match(
                 primary_char, best_match, best_score
@@ -746,31 +808,44 @@ class AICharacterMatcher:
                     matching_evidence={"ensemble_score": best_score},
                     validation_notes=notes,
                 )
+        else:
+            # Safety monitoring: Log rejected matches near threshold (0.6-0.69)
+            if best_match and 0.6 <= best_score < 0.7:
+                candidate_name = self._extract_primary_name(best_match, source) or "Unknown"
+                logger.warning(
+                    f"🚫 REJECTED (near threshold): '{primary_name}' → '{candidate_name}' "
+                    f"({source.upper()}) score={best_score:.6f} (need ≥0.7)"
+                )
 
         return None
 
     def _extract_primary_name(
-        self, character: Dict[str, Any], source: str
+        self, character: Dict[str, Any], source: str, target_source: Optional[str] = None
     ) -> Optional[str]:
-        """Extract the primary name from a character based on source format"""
+        """Extract the primary name from a character based on source format
+
+        Args:
+            character: Character data dictionary
+            source: Source of this character data (jikan, anilist, anidb, kitsu)
+            target_source: Target source we're matching against (used for Jikan to decide if Japanese should be included)
+        """
 
         if source == "jikan":
             # Jikan format: character.name or name (depending on processing stage)
             if "character" in character and "name" in character["character"]:
                 primary_name = str(character["character"]["name"])
-                # Include Japanese name if available for better AniList matching
                 name_kanji = character["character"].get("name_kanji")
-                if name_kanji:
-                    primary_name += f" | {name_kanji}"
-                return primary_name
             else:
                 # Direct character object (from detailed characters)
                 primary_name = str(character.get("name", ""))
-                # Include Japanese name if available for better AniList matching
                 name_kanji = character.get("name_kanji")
-                if name_kanji:
-                    primary_name += f" | {name_kanji}"
-                return primary_name
+
+            # IMPORTANT: Only include Japanese name when matching against AniList
+            # AniDB uses English-only names, so including Japanese hurts similarity scores
+            if name_kanji and target_source == "anilist":
+                primary_name += f" | {name_kanji}"
+
+            return primary_name
         elif source == "anilist":
             name_obj = character.get("name", {})
             primary_name = str(name_obj.get("full") or name_obj.get("first", ""))
@@ -788,10 +863,8 @@ class AICharacterMatcher:
 
     def _determine_confidence(self, score: float) -> MatchConfidence:
         """Determine confidence level based on similarity score"""
-        if score >= 0.9:
+        if score >= 0.7:
             return MatchConfidence.HIGH
-        elif score >= 0.7:
-            return MatchConfidence.MEDIUM
         else:
             return MatchConfidence.LOW
 
@@ -817,9 +890,10 @@ class AICharacterMatcher:
             jikan_mal_id = char_data.get("mal_id")
             jikan_url = char_data.get("url", "")
         else:
-            # Processed format
+            # Processed format (from characters_detailed.json)
             jikan_name = jikan_char.get("name", "")
-            jikan_mal_id = jikan_char.get("mal_id")
+            # Jikan uses 'character_id' field, not 'mal_id'
+            jikan_mal_id = jikan_char.get("character_id") or jikan_char.get("mal_id")
             jikan_url = jikan_char.get("url", "")
 
         logger.debug(
