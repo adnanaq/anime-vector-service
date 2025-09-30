@@ -88,6 +88,7 @@ class ProcessedCharacter:
     gender: Optional[str]
     match_confidence: MatchConfidence
     source_count: int
+    match_scores: Dict[str, float] = None  # type: ignore[assignment]  # Match scores for stage5 to use
 
 
 class LanguageDetector:
@@ -322,33 +323,33 @@ class EnsembleFuzzyMatcher:
             # Adaptive weights - OPTIMIZED: Source-specific tuning for maximum accuracy
             if source.lower() == "anilist":
                 weights = {
-                    "semantic": 0.6,      # Increased: BGE-M3 is very reliable for character names
+                    "semantic": 0.6,  # Increased: BGE-M3 is very reliable for character names
                     "edit_distance": 0.05,
                     "token_based": 0.25,
                     "token_set": 0.05,
                     "phonetic": 0.05,
-                    "name_order": 0.0,    # Often fails due to different name ordering conventions
+                    "name_order": 0.0,  # Often fails due to different name ordering conventions
                 }
             elif source.lower() == "anidb":
                 # AniDB-SPECIFIC OPTIMIZATION: Enhanced weights for standardized AniDB format
                 # Heavily prioritize semantic, with minimal backup signals for safety
                 weights = {
-                    "semantic": 0.95,      # PRIMARY: Handle partial name matches (e.g., "Sanji" → "Vinsmoke Sanji")
-                    "edit_distance": 0.02, # SAFETY NET: Catch typos/misspellings
-                    "token_based": 0.03,   # VALIDATION: Ensure some token overlap
-                    "token_set": 0.0,      # DISABLED: Not useful for partial name matching
-                    "phonetic": 0.0,       # DISABLED: Not useful for partial name matching
-                    "name_order": 0.0,     # DISABLED: Handled by enhanced semantic similarity
+                    "semantic": 0.95,  # PRIMARY: Handle partial name matches (e.g., "Sanji" → "Vinsmoke Sanji")
+                    "edit_distance": 0.02,  # SAFETY NET: Catch typos/misspellings
+                    "token_based": 0.03,  # VALIDATION: Ensure some token overlap
+                    "token_set": 0.0,  # DISABLED: Not useful for partial name matching
+                    "phonetic": 0.0,  # DISABLED: Not useful for partial name matching
+                    "name_order": 0.0,  # DISABLED: Handled by enhanced semantic similarity
                 }
             else:
                 # Default weights for other sources
                 weights = {
-                    "semantic": 0.7,      # FIXED: Heavily prioritize semantic similarity
-                    "edit_distance": 0.05, # Reduced: Different name orders cause issues
+                    "semantic": 0.7,  # FIXED: Heavily prioritize semantic similarity
+                    "edit_distance": 0.05,  # Reduced: Different name orders cause issues
                     "token_based": 0.15,
-                    "token_set": 0.05,    # Use as secondary validation
+                    "token_set": 0.05,  # Use as secondary validation
                     "phonetic": 0.05,
-                    "name_order": 0.0,    # DISABLED: Unreliable for anime character names
+                    "name_order": 0.0,  # DISABLED: Unreliable for anime character names
                 }
 
             ensemble_score = sum(scores.get(k, 0.0) * w for k, w in weights.items())
@@ -366,7 +367,9 @@ class EnsembleFuzzyMatcher:
 
         # Log only high-confidence matches to reduce noise
         if best_score >= 0.9:
-            logger.info(f"✅ HIGH-CONFIDENCE MATCH: {best_score:.6f} - '{name1_repr.get('original', '')}' vs '{name2_repr.get('original', '')}'")
+            logger.info(
+                f"✅ HIGH-CONFIDENCE MATCH: {best_score:.6f} - '{name1_repr.get('original', '')}' vs '{name2_repr.get('original', '')}'"
+            )
         return best_score
 
     def _standardize_for_embedding(self, text: str) -> str:
@@ -381,10 +384,10 @@ class EnsembleFuzzyMatcher:
             return ""
 
         # Remove punctuation except hyphens (preserve compound names like "Roronoa-Zoro")
-        text = re.sub(r'[.,;:!?"\']', '', text)
+        text = re.sub(r'[.,;:!?"\']', "", text)
 
         # Normalize whitespace
-        text = ' '.join(text.split())
+        text = " ".join(text.split())
 
         # Lowercase for case-insensitive matching (BGE-M3 is case-sensitive!)
         text = text.lower()
@@ -406,7 +409,9 @@ class EnsembleFuzzyMatcher:
             logger.warning(f"Semantic similarity failed: {e}")
             return 0.0
 
-    def _enhanced_semantic_similarity(self, name1_repr: Dict[str, str], name2_repr: Dict[str, str]) -> float:
+    def _enhanced_semantic_similarity(
+        self, name1_repr: Dict[str, str], name2_repr: Dict[str, str]
+    ) -> float:
         """Enhanced semantic similarity testing all name variations and Japanese text.
 
         This function addresses the critical issue where character names are reversed
@@ -421,7 +426,10 @@ class EnsembleFuzzyMatcher:
         name2_variants = []
 
         # Add standard name variations with AniDB optimization
-        for name_repr, variants in [(name1_repr, name1_variants), (name2_repr, name2_variants)]:
+        for name_repr, variants in [
+            (name1_repr, name1_variants),
+            (name2_repr, name2_variants),
+        ]:
             # Original name (may include Japanese with "|" separator)
             original = name_repr.get("original", "").strip()
             if original:
@@ -452,7 +460,9 @@ class EnsembleFuzzyMatcher:
                 variants.append(normalized)
 
             # AniDB ENHANCEMENT: Add middle name variations for characters like "Monkey D. Luffy"
-            if original and any(token in original.lower() for token in ["d.", "d ", " d "]):
+            if original and any(
+                token in original.lower() for token in ["d.", "d ", " d "]
+            ):
                 # Handle middle initial patterns common in One Piece characters
                 middle_variants = []
                 if "d." in original.lower():
@@ -482,11 +492,15 @@ class EnsembleFuzzyMatcher:
         # DETAILED LOGGING: Show what text strings were actually compared
         if best_pair and max_similarity >= 0.85:  # Log near-threshold matches too
             logger.info(f"🔍 SEMANTIC SIMILARITY ANALYSIS:")
-            logger.info(f"   Best Match: '{best_pair[0]}' <-> '{best_pair[1]}' = {max_similarity:.6f}")
+            logger.info(
+                f"   Best Match: '{best_pair[0]}' <-> '{best_pair[1]}' = {max_similarity:.6f}"
+            )
             logger.info(f"   Total comparisons tested: {len(all_comparisons)}")
 
             # Show top 5 comparisons
-            sorted_comparisons = sorted(all_comparisons, key=lambda x: x[2], reverse=True)[:5]
+            sorted_comparisons = sorted(
+                all_comparisons, key=lambda x: x[2], reverse=True
+            )[:5]
             logger.info(f"   Top 5 comparisons:")
             for i, (t1, t2, score) in enumerate(sorted_comparisons, 1):
                 logger.info(f"      {i}. '{t1}' <-> '{t2}' = {score:.6f}")
@@ -636,12 +650,11 @@ class AICharacterMatcher:
         jikan_chars: List[Dict[str, Any]],
         anilist_chars: List[Dict[str, Any]],
         anidb_chars: List[Dict[str, Any]],
-        kitsu_chars: List[Dict[str, Any]],
     ) -> List[ProcessedCharacter]:
         """Main entry point for character matching across all sources"""
 
         logger.info(
-            f"Starting character matching: Jikan={len(jikan_chars)}, AniList={len(anilist_chars)}, AniDB={len(anidb_chars)}, Kitsu={len(kitsu_chars)}"
+            f"Starting character matching: Jikan={len(jikan_chars)}, AniList={len(anilist_chars)}, AniDB={len(anidb_chars)}"
         )
 
         # Use Jikan as primary source (most comprehensive)
@@ -650,10 +663,9 @@ class AICharacterMatcher:
         for jikan_char in jikan_chars:
             char_name = self._extract_primary_name(jikan_char, "jikan") or "Unknown"
 
-            # Find matches in other sources with cross-source early termination
+            # Find matches in other sources
             anilist_match = None
             anidb_match = None
-            kitsu_match = None
 
             # Test AniList first
             anilist_match = await self._find_best_match(
@@ -661,9 +673,7 @@ class AICharacterMatcher:
             )
 
             # Always search AniDB (no cross-source termination)
-            anidb_match = await self._find_best_match(
-                jikan_char, anidb_chars, "anidb"
-            )
+            anidb_match = await self._find_best_match(jikan_char, anidb_chars, "anidb")
 
             # Log if high-confidence matches were found
             anilist_score = anilist_match.similarity_score if anilist_match else 0.0
@@ -674,13 +684,17 @@ class AICharacterMatcher:
                 logger.info(f"🎯 HIGH-CONFIDENCE ANILIST MATCH: {anilist_score:.6f}")
             elif anilist_score >= 0.7:
                 # MEDIUM confidence (0.7-0.89): Partial matches, worth monitoring
-                logger.info(f"⚠️  MEDIUM-CONFIDENCE ANILIST MATCH: {anilist_score:.6f} for '{char_name}'")
+                logger.info(
+                    f"⚠️  MEDIUM-CONFIDENCE ANILIST MATCH: {anilist_score:.6f} for '{char_name}'"
+                )
 
             if anidb_score >= 0.9:
                 logger.info(f"🎯 HIGH-CONFIDENCE ANIDB MATCH: {anidb_score:.6f}")
             elif anidb_score >= 0.7:
                 # MEDIUM confidence (0.7-0.89): Partial matches, worth monitoring
-                logger.info(f"⚠️  MEDIUM-CONFIDENCE ANIDB MATCH: {anidb_score:.6f} for '{char_name}'")
+                logger.info(
+                    f"⚠️  MEDIUM-CONFIDENCE ANIDB MATCH: {anidb_score:.6f} for '{char_name}'"
+                )
 
             # Safety monitoring: Log when no match found (could indicate missing data)
             if anilist_score == 0.0:
@@ -688,10 +702,16 @@ class AICharacterMatcher:
             if anidb_score == 0.0:
                 logger.debug(f"ℹ️  No AniDB match found for '{char_name}'")
 
-            # Integrate data from all matched sources (no Kitsu)
+            # Integrate data from all matched sources
             integrated_char = await self._integrate_character_data(
-                jikan_char, anilist_match, anidb_match, None
+                jikan_char, anilist_match, anidb_match
             )
+
+            # Store match scores for stage5 to use (will be removed before final output)
+            integrated_char.match_scores = {
+                "anilist": anilist_score,
+                "anidb": anidb_score,
+            }
 
             processed_characters.append(integrated_char)
 
@@ -711,7 +731,9 @@ class AICharacterMatcher:
         if not candidate_chars:
             return None
 
-        primary_name = self._extract_primary_name(primary_char, "jikan", target_source=source)
+        primary_name = self._extract_primary_name(
+            primary_char, "jikan", target_source=source
+        )
         if not primary_name:
             return None
 
@@ -735,7 +757,6 @@ class AICharacterMatcher:
                 or candidate_char.get("anidb_id")
                 or "N/A"
             )
-
 
             # Preprocess candidate name
             candidate_language = self.language_detector.detect_language(candidate_name)
@@ -769,7 +790,9 @@ class AICharacterMatcher:
                 # Use the source parameter passed to this function
                 source_name = source.upper()
 
-                logger.info(f"🎯 EARLY TERMINATION: {similarity_score:.6f} - '{primary_name}' → '{candidate_name}' ({source_name})")
+                logger.info(
+                    f"🎯 EARLY TERMINATION: {similarity_score:.6f} - '{primary_name}' → '{candidate_name}' ({source_name})"
+                )
 
                 # Validate the high-confidence match immediately
                 is_valid, notes = await self.validator.validate_match(
@@ -811,7 +834,9 @@ class AICharacterMatcher:
         else:
             # Safety monitoring: Log rejected matches near threshold (0.6-0.69)
             if best_match and 0.6 <= best_score < 0.7:
-                candidate_name = self._extract_primary_name(best_match, source) or "Unknown"
+                candidate_name = (
+                    self._extract_primary_name(best_match, source) or "Unknown"
+                )
                 logger.warning(
                     f"🚫 REJECTED (near threshold): '{primary_name}' → '{candidate_name}' "
                     f"({source.upper()}) score={best_score:.6f} (need ≥0.7)"
@@ -820,13 +845,16 @@ class AICharacterMatcher:
         return None
 
     def _extract_primary_name(
-        self, character: Dict[str, Any], source: str, target_source: Optional[str] = None
+        self,
+        character: Dict[str, Any],
+        source: str,
+        target_source: Optional[str] = None,
     ) -> Optional[str]:
         """Extract the primary name from a character based on source format
 
         Args:
             character: Character data dictionary
-            source: Source of this character data (jikan, anilist, anidb, kitsu)
+            source: Source of this character data (jikan, anilist, anidb)
             target_source: Target source we're matching against (used for Jikan to decide if Japanese should be included)
         """
 
@@ -856,8 +884,6 @@ class AICharacterMatcher:
             return primary_name
         elif source == "anidb":
             return str(character.get("name", ""))
-        elif source == "kitsu":
-            return str(character.get("name", ""))
 
         return None
 
@@ -873,7 +899,6 @@ class AICharacterMatcher:
         jikan_char: Dict[str, Any],
         anilist_match: Optional[CharacterMatch],
         anidb_match: Optional[CharacterMatch],
-        kitsu_match: Optional[CharacterMatch],
     ) -> ProcessedCharacter:
         """Integrate character data from multiple sources with hierarchical priority"""
 
@@ -985,37 +1010,20 @@ class AICharacterMatcher:
                     f"https://anidb.net/character/{anidb_char['id']}"
                 )
 
-            # Construct AniDB image URL
-            if anidb_char.get("image"):
+            # Construct AniDB image URL from 'picture' field
+            if anidb_char.get("picture"):
                 anidb_image_url = (
-                    f"https://cdn.anidb.net/images/main/{anidb_char['image']}"
+                    f"https://cdn.anidb.net/images/main/{anidb_char['picture']}"
                 )
                 images.append(anidb_image_url)
-
-        # Integrate Kitsu data - ADD name variations
-        if kitsu_match:
-            kitsu_char = kitsu_match.target_char
-            integrated.source_count += 1
-
-            # Add Kitsu name variation
-            if kitsu_char.get("name"):
-                name_variations.add(kitsu_char["name"])
-
-            integrated.character_ids["kitsu"] = kitsu_char.get("id")
-            if kitsu_char.get("id"):
-                integrated.character_pages["kitsu"] = (
-                    f"https://kitsu.io/characters/{kitsu_char['id']}"
-                )
 
         # Finalize integrated data
         integrated.name_variations = list(name_variations)
         integrated.images = images
 
         # Determine overall confidence based on source count and match quality
-        if integrated.source_count >= 3:
+        if integrated.source_count >= 2:
             integrated.match_confidence = MatchConfidence.HIGH
-        elif integrated.source_count >= 2:
-            integrated.match_confidence = MatchConfidence.MEDIUM
         else:
             integrated.match_confidence = MatchConfidence.LOW
 
@@ -1040,7 +1048,6 @@ async def process_characters_with_ai_matching(
     jikan_chars: List[Dict[str, Any]],
     anilist_chars: List[Dict[str, Any]],
     anidb_chars: List[Dict[str, Any]],
-    kitsu_chars: List[Dict[str, Any]],
 ) -> Dict[str, List[Dict[str, Any]]]:
     """
     Main function to process characters using AI matching
@@ -1052,7 +1059,7 @@ async def process_characters_with_ai_matching(
 
     # Process all characters with AI matching
     processed_chars = await matcher.match_characters(
-        jikan_chars, anilist_chars, anidb_chars, kitsu_chars
+        jikan_chars, anilist_chars, anidb_chars
     )
 
     # Convert to output format
@@ -1077,6 +1084,8 @@ async def process_characters_with_ai_matching(
             "age": char.age,
             "description": char.description,
             "gender": char.gender,
+            # Internal field for stage5 to use (not part of final output)
+            "_match_scores": char.match_scores if char.match_scores else {},
         }
 
         output_characters.append(output_char)
@@ -1104,10 +1113,9 @@ if __name__ == "__main__":
         jikan_chars = [{"name": "Spike Spiegel", "role": "Main", "mal_id": 1}]
         anilist_chars = [{"name": {"full": "Spike Spiegel"}, "id": 1}]
         anidb_chars = [{"name": "Spike Spiegel", "id": 118}]
-        kitsu_chars: List[Dict[str, Any]] = []
 
         result = await process_characters_with_ai_matching(
-            jikan_chars, anilist_chars, anidb_chars, kitsu_chars
+            jikan_chars, anilist_chars, anidb_chars
         )
 
         print(json.dumps(result, indent=2, ensure_ascii=False))
