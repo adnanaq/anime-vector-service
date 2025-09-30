@@ -4,6 +4,11 @@ Stage 5: AI-Powered Character Processing
 
 Replaces the primitive string matching with enterprise-grade AI character matching.
 Uses the new ai_character_matcher.py for 99% precision vs 0.3% with string matching.
+
+Enhanced with AniDB-specific optimizations:
+- 80% semantic similarity weight for AniDB's standardized format
+- Improved name preprocessing for anime character patterns
+- Language-aware matching cleaned and optimized
 """
 
 import asyncio
@@ -63,7 +68,7 @@ async def process_stage5_ai_characters(anime_id: str, temp_dir: Path) -> None:
 
     # Load data from all sources (use actual file names)
     stage_files = {
-        'jikan': temp_dir / f"{anime_id}" / "characters.json",  # Jikan character data
+        'jikan': temp_dir / f"{anime_id}" / "characters_detailed.json",  # Jikan detailed character data
         'anilist': temp_dir / f"{anime_id}" / "anilist.json",  # AniList data
         'anidb': temp_dir / f"{anime_id}" / "anidb.json",      # AniDB data
         'kitsu': temp_dir / f"{anime_id}" / "kitsu.json"       # Kitsu data
