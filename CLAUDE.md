@@ -458,6 +458,107 @@ The service follows a layered microservice architecture with clear separation of
 - **API Helpers**: Integration with 6+ external anime APIs (AniList, Kitsu, AniDB, etc.)
 - **Scrapers**: Web scraping with Cloudflare bypass capabilities
 - **Multi-stage AI Pipeline**: Modular prompt system for data enhancement
+- **Auto-Agent Assignment**: Automatic agent ID assignment for concurrent processing with gap-filling logic
+
+### Enrichment Pipeline Usage
+
+**Script**: `run_enrichment.py` - Main entry point for programmatic enrichment
+
+**Database**: Reads from `data/qdrant_storage/anime-offline-database.json` (39,244+ anime entries)
+
+**Arguments**:
+- `--index N`: Process anime at index N (0-based)
+- `--title "Title"`: Search for anime by title (case-insensitive, partial match)
+- `--file PATH`: Use custom database file (optional)
+
+**Example Usage**:
+```bash
+# Process first anime in database
+python run_enrichment.py --index 0
+
+# Process One Piece
+python run_enrichment.py --title "One Piece"
+
+# Use custom database
+python run_enrichment.py --file custom.json --index 5
+```
+
+**Auto-Agent Assignment**: Pipeline automatically assigns agent IDs using gap-filling logic (e.g., fills `agent_1` if `agent_2`, `agent_3` exist).
+
+### Stage Script Directory Detection
+
+All stage scripts follow a consistent pattern for multi-agent concurrent processing. Each stage accepts an `agent_id` positional argument that specifies the directory name within the temp directory.
+
+**Common Pattern**: `python process_stage<N>.py <agent_id> [--temp-dir <base>]`
+- `agent_id`: Directory name (e.g., `One_agent1`, `Dandadan_agent1`)
+- `--temp-dir`: Base directory path (default: `temp`) - optional
+
+**Multi-agent Directory Structure**: `temp/<agent_id>/` (e.g., `temp/One_agent1/`, `temp/Dandadan_agent1>/`)
+
+**Note**: When using `run_enrichment.py`, agent IDs are assigned automatically. Manual specification only needed for independent stage script execution.
+
+#### Stage 1: Metadata Extraction (`process_stage1_metadata.py`)
+
+**Arguments**: `agent_id` (positional), `--temp-dir` (default: `temp`), `--current-anime` (legacy support)
+
+**Example Usage**:
+```bash
+# Recommended: Use agent_id
+python process_stage1_metadata.py One_agent1
+
+# Custom temp directory
+python process_stage1_metadata.py One_agent1 --temp-dir custom_temp
+
+# Legacy: Use file path
+python process_stage1_metadata.py --current-anime temp/One_agent1/current_anime.json
+```
+
+#### Stage 2: Episode Processing (`process_stage2_episodes.py`)
+
+**Arguments**: `agent_id` (positional), `--temp-dir` (default: `temp`)
+
+**Required File**: `episodes_detailed.json` (must exist in agent directory)
+
+**Example Usage**:
+```bash
+# Recommended: Use agent_id
+python process_stage2_episodes.py One_agent1
+
+# Custom temp directory
+python process_stage2_episodes.py One_agent1 --temp-dir custom_temp
+```
+
+#### Stage 3: Relationship Processing (`process_stage3_relationships.py`)
+
+**Arguments**: `agent_id` (positional), `--temp-dir` (default: `temp`), `--current-anime` (legacy support)
+
+**Example Usage**:
+```bash
+# Recommended: Use agent_id
+python process_stage3_relationships.py One_agent1
+
+# Custom temp directory
+python process_stage3_relationships.py One_agent1 --temp-dir custom_temp
+
+# Legacy: Use file path
+python process_stage3_relationships.py --current-anime temp/One_agent1/current_anime.json
+```
+
+#### Stage 5: AI Character Matching (`process_stage5_characters.py`)
+
+**Arguments**: `agent_id` (positional), `--temp-dir` (default: `temp`), `--restart` (optional flag)
+
+**Example Usage**:
+```bash
+# Process with resume support (recommended)
+python process_stage5_characters.py One_agent1
+
+# Force restart from scratch
+python process_stage5_characters.py One_agent1 --restart
+
+# Custom temp directory
+python process_stage5_characters.py One_agent1 --temp-dir custom_temp
+```
 
 ### Multi-Vector Collection Design
 

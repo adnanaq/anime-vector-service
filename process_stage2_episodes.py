@@ -214,25 +214,40 @@ if __name__ == "__main__":
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python process_stage2_episodes.py                    # Auto-detect temp directory
-  python process_stage2_episodes.py --temp-dir temp/One  # Specify directory
-  python process_stage2_episodes.py --temp-dir temp/Dandadan_agent1  # Multi-agent processing
+  python process_stage2_episodes.py One_agent1                         # Process One_agent1 directory
+  python process_stage2_episodes.py Dandadan_agent1                    # Process Dandadan_agent1 directory
+  python process_stage2_episodes.py One_agent1 --temp-dir custom_temp # Use custom temp directory
         """
     )
     parser.add_argument(
+        "agent_id",
+        nargs="?",
+        help="Agent directory name to process (e.g., One_agent1, Dandadan_agent1)"
+    )
+    parser.add_argument(
         "--temp-dir",
-        type=str,
-        help="Temp directory containing source data files (auto-detected if not specified)"
+        default="temp",
+        help="Temporary directory path (default: temp)"
     )
 
     args = parser.parse_args()
 
-    if args.temp_dir:
-        temp_dir = args.temp_dir
+    # Determine temp_dir and construct full path
+    if args.agent_id:
+        # New pattern: agent_id + temp_dir
+        temp_dir = os.path.join(args.temp_dir, args.agent_id)
         if not os.path.exists(temp_dir):
-            print(f"Error: Specified temp directory '{temp_dir}' does not exist")
+            print(f"Error: Directory '{temp_dir}' does not exist")
             sys.exit(1)
     else:
+        # Fallback: auto-detect
         temp_dir = auto_detect_temp_dir()
+
+    # Check if episodes_detailed.json exists before processing
+    episodes_file = f'{temp_dir}/episodes_detailed.json'
+    if not os.path.exists(episodes_file):
+        print(f"Error: Required file not found: {episodes_file}")
+        print("Please ensure the API fetcher has created episodes_detailed.json")
+        sys.exit(1)
 
     process_all_episodes(temp_dir)

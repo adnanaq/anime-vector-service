@@ -986,32 +986,42 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python process_stage1_metadata.py                                    # Auto-detect both files
-  python process_stage1_metadata.py --temp-dir temp/One                # Specify temp directory
-  python process_stage1_metadata.py --current-anime temp/current_anime_1.json  # Specify anime file
-  python process_stage1_metadata.py --current-anime temp/current_anime_1.json --temp-dir temp/One  # Specify both
+  python process_stage1_metadata.py One_agent1                         # Process One_agent1 directory
+  python process_stage1_metadata.py Dandadan_agent1                    # Process Dandadan_agent1 directory
+  python process_stage1_metadata.py One_agent1 --temp-dir custom_temp # Use custom temp directory
         """
+    )
+    parser.add_argument(
+        "agent_id",
+        nargs="?",
+        help="Agent directory name to process (e.g., One_agent1, Dandadan_agent1)"
+    )
+    parser.add_argument(
+        "--temp-dir",
+        default="temp",
+        help="Temporary directory path (default: temp)"
     )
     parser.add_argument(
         "--current-anime",
         type=str,
-        help="Current anime JSON file (auto-detected if not specified)"
-    )
-    parser.add_argument(
-        "--temp-dir",
-        type=str,
-        help="Temp directory containing source data files (auto-detected if not specified)"
+        help="Override current anime JSON file path (optional, for backward compatibility)"
     )
 
     args = parser.parse_args()
 
-    # Determine temp_dir
-    if args.temp_dir:
-        temp_dir = args.temp_dir
+    # Determine temp_dir and construct full path
+    if args.agent_id:
+        # New pattern: agent_id + temp_dir
+        temp_dir = os.path.join(args.temp_dir, args.agent_id)
         if not os.path.exists(temp_dir):
-            print(f"Error: Specified temp directory '{temp_dir}' does not exist")
+            print(f"Error: Directory '{temp_dir}' does not exist")
             sys.exit(1)
+    elif args.current_anime:
+        # Legacy pattern: derive from file path
+        temp_dir = os.path.dirname(args.current_anime)
+        print(f"Derived temp directory from file path: {temp_dir}")
     else:
+        # Fallback: auto-detect
         temp_dir = auto_detect_temp_dir()
 
     # Determine current_anime_file

@@ -88,11 +88,11 @@ class ParallelAPIFetcher:
         # Create parallel tasks for each API
         if ids.get("mal_id"):
             tasks.append(
-                ("jikan", self._fetch_jikan_complete(ids["mal_id"], offline_data))
+                ("jikan", self._fetch_jikan_complete(ids["mal_id"], offline_data, temp_dir))
             )
 
         if ids.get("anilist_id"):
-            tasks.append(("anilist", self._fetch_anilist(ids["anilist_id"])))
+            tasks.append(("anilist", self._fetch_anilist(ids["anilist_id"], temp_dir)))
 
         if ids.get("kitsu_id"):
             tasks.append(("kitsu", self._fetch_kitsu(ids["kitsu_id"])))
@@ -124,24 +124,19 @@ class ParallelAPIFetcher:
         return results
 
     async def _fetch_jikan_complete(
-        self, mal_id: str, offline_data: Dict
+        self, mal_id: str, offline_data: Dict, temp_dir: Optional[str] = None
     ) -> Optional[Dict[str, Any]]:
         """
         Fetch ALL Jikan data using the JikanDetailedFetcher helper.
         This properly handles rate limiting and batch processing for large series.
         """
         try:
+            logger.info(f"🔍 [JIKAN DEBUG] Starting _fetch_jikan_complete for MAL ID {mal_id}, temp_dir={temp_dir}")
             start = time.time()
             loop = asyncio.get_event_loop()
 
-            # Create temp directory for this anime
-            anime_title = offline_data.get("title", "unknown")
-            first_word = anime_title.split()[0] if anime_title else "unknown"
-            clean_word = "".join(c for c in first_word if c.isalnum() or c in "-_")
-            temp_dir = os.path.join(self.config.temp_dir, clean_word)
-            os.makedirs(temp_dir, exist_ok=True)
-
             # First, fetch anime full data
+            logger.info(f"🔍 [JIKAN DEBUG] Fetching anime full data...")
             anime_url = f"https://api.jikan.moe/v4/anime/{mal_id}/full"
             anime_data = await loop.run_in_executor(
                 None, self._fetch_jikan_sync, anime_url
@@ -151,80 +146,88 @@ class ParallelAPIFetcher:
                 logger.warning(f"Failed to fetch Jikan anime data for MAL ID {mal_id}")
                 return None
 
+            logger.info(f"🔍 [JIKAN DEBUG] Anime full data fetched successfully")
             anime_info = anime_data["data"]
+
+            # Save jikan.json immediately with the anime full data
+            # This ensures we have the main anime info even if episode/character fetching times out
+            if temp_dir:
+                jikan_file = os.path.join(temp_dir, "jikan.json")
+                with open(jikan_file, "w", encoding="utf-8") as f:
+                    json.dump(anime_data, f, ensure_ascii=False, indent=2)
+                logger.info(f"🔍 [JIKAN DEBUG] ✓ Saved jikan.json with anime full data to {jikan_file}")
+
             # For ongoing series, episodes might be None - use offline data as fallback
             episode_count = anime_info.get("episodes")
             if episode_count is None:
                 episode_count = offline_data.get("episodes", 0)
+            logger.info(f"🔍 [JIKAN DEBUG] Episode count: {episode_count}")
 
-            # For episodes: Use JikanDetailedFetcher for large series
-            if episode_count and episode_count > 100:
-                logger.info(
-                    f"Using JikanDetailedFetcher for {episode_count} episodes..."
-                )
-                # Save episode count to input file
-                episodes_input = os.path.join(temp_dir, "episodes.json")
-                with open(episodes_input, "w") as f:
-                    json.dump({"episodes": episode_count}, f)
-
-                # Use the helper's fetch_detailed_data method
-                episodes_output = os.path.join(temp_dir, "episodes_detailed.json")
-                fetcher = JikanDetailedFetcher(mal_id, "episodes")
-                await loop.run_in_executor(
-                    None, fetcher.fetch_detailed_data, episodes_input, episodes_output
-                )
-
-                # Load the detailed episodes
-                if os.path.exists(episodes_output):
-                    with open(episodes_output, "r") as f:
-                        episodes_data = json.load(f)
-                else:
-                    episodes_data = []
-            else:
-                # For smaller series, fetch with pagination
-                episodes_data = await self._fetch_all_jikan_episodes(
-                    mal_id, episode_count, loop
-                )
-
-            # For characters: Use JikanDetailedFetcher for detailed character data
+            # Fetch character list first (before starting detailed fetches)
+            logger.info(f"🔍 [JIKAN DEBUG] Fetching character list...")
             characters_url = f"https://api.jikan.moe/v4/anime/{mal_id}/characters"
             characters_basic = await loop.run_in_executor(
                 None, self._fetch_jikan_sync, characters_url
             )
+            char_count = len(characters_basic.get("data", [])) if characters_basic else 0
+            logger.info(f"🔍 [JIKAN DEBUG] Character list fetched: {char_count} characters")
 
-            if (
-                characters_basic
-                and characters_basic.get("data")
-                and len(characters_basic["data"]) > 50
-            ):
-                logger.info(
-                    f"Using JikanDetailedFetcher for {len(characters_basic['data'])} characters..."
+            # Prepare file paths
+            episodes_input = os.path.join(temp_dir, "episodes.json")
+            episodes_output = os.path.join(temp_dir, "episodes_detailed.json")
+            characters_input = os.path.join(temp_dir, "characters.json")
+            characters_output = os.path.join(temp_dir, "characters_detailed.json")
+
+            # Create tasks for parallel execution
+            tasks = []
+
+            # Task 1: Fetch detailed episodes (if any)
+            if episode_count and episode_count > 0:
+                logger.info(f"🔍 [JIKAN DEBUG] Preparing episode task for {episode_count} episodes...")
+                with open(episodes_input, "w") as f:
+                    json.dump({"episodes": episode_count}, f)
+
+                episode_fetcher = JikanDetailedFetcher(mal_id, "episodes")
+                tasks.append(
+                    ("episodes", loop.run_in_executor(
+                        None, episode_fetcher.fetch_detailed_data, episodes_input, episodes_output
+                    ))
                 )
-                # Save characters to input file
-                characters_input = os.path.join(temp_dir, "characters.json")
+
+            # Task 2: Fetch detailed characters (if any)
+            if characters_basic and characters_basic.get("data"):
+                logger.info(f"🔍 [JIKAN DEBUG] Preparing character task for {char_count} characters...")
                 with open(characters_input, "w") as f:
                     json.dump(characters_basic, f)
 
-                # Use the helper's fetch_detailed_data method
-                characters_output = os.path.join(temp_dir, "characters_detailed.json")
-                fetcher = JikanDetailedFetcher(mal_id, "characters")
-                await loop.run_in_executor(
-                    None,
-                    fetcher.fetch_detailed_data,
-                    characters_input,
-                    characters_output,
+                character_fetcher = JikanDetailedFetcher(mal_id, "characters")
+                tasks.append(
+                    ("characters", loop.run_in_executor(
+                        None, character_fetcher.fetch_detailed_data, characters_input, characters_output
+                    ))
                 )
 
-                # Load the detailed characters
-                if os.path.exists(characters_output):
-                    with open(characters_output, "r") as f:
-                        characters_data = json.load(f)
-                else:
-                    characters_data = characters_basic.get("data", [])
-            else:
-                characters_data = (
-                    characters_basic.get("data", []) if characters_basic else []
-                )
+            # Run both tasks in parallel
+            if tasks:
+                logger.info(f"🔍 [JIKAN DEBUG] Running {len(tasks)} detailed fetch tasks in parallel...")
+                await asyncio.gather(*[task for _, task in tasks])
+                logger.info(f"🔍 [JIKAN DEBUG] All detailed fetch tasks completed")
+
+            # Load results
+            episodes_data = []
+            if os.path.exists(episodes_output):
+                with open(episodes_output, "r") as f:
+                    episodes_data = json.load(f)
+                logger.info(f"🔍 [JIKAN DEBUG] Loaded {len(episodes_data)} episodes")
+
+            characters_data = []
+            if os.path.exists(characters_output):
+                with open(characters_output, "r") as f:
+                    characters_data = json.load(f)
+                logger.info(f"🔍 [JIKAN DEBUG] Loaded {len(characters_data)} characters")
+            elif characters_basic and characters_basic.get("data"):
+                characters_data = characters_basic.get("data", [])
+                logger.info(f"🔍 [JIKAN DEBUG] Using basic character data: {len(characters_data)} characters")
 
             result = {
                 "anime": anime_info,
@@ -234,7 +237,7 @@ class ParallelAPIFetcher:
 
             self.api_timings["jikan"] = time.time() - start
             logger.info(
-                f"Jikan fetched: {len(result['episodes'])} episodes, {len(result['characters'])} characters in {self.api_timings['jikan']:.2f}s"
+                f"🔍 [JIKAN DEBUG] ✓ Jikan fetch complete: {len(result['episodes'])} episodes, {len(result['characters'])} characters in {self.api_timings['jikan']:.2f}s"
             )
             return result
 
@@ -317,8 +320,8 @@ class ParallelAPIFetcher:
             logger.error(f"Jikan API request failed: {e}")
             return None
 
-    async def _fetch_anilist(self, anilist_id: str) -> Optional[Dict]:
-        """Fetch ALL AniList data using the helper as designed - with proper pagination."""
+    def _fetch_anilist_sync(self, anilist_id: str, temp_dir: Optional[str] = None) -> Optional[Dict]:
+        """Synchronous wrapper for AniList fetch - runs in executor to avoid cancellation."""
         try:
             start = time.time()
 
@@ -326,18 +329,35 @@ class ParallelAPIFetcher:
                 f"Fetching AniList data for ID {anilist_id} (will fetch ALL characters, staff, episodes)..."
             )
 
-            # The helper handles everything - pagination, rate limiting, etc.
-            # Just call it and let it work
-            if self.anilist_helper is None:
-                raise RuntimeError("AniList helper not initialized")
-            result = await self.anilist_helper.fetch_all_data_by_anilist_id(
-                int(anilist_id)
-            )
+            # Create new event loop for this thread
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+            try:
+                # Create fresh AniList helper instance for this thread
+                from src.enrichment.api_helpers.anilist_helper import AniListEnrichmentHelper
+                anilist_helper = AniListEnrichmentHelper()
+
+                result = loop.run_until_complete(
+                    anilist_helper.fetch_all_data_by_anilist_id(int(anilist_id))
+                )
+
+                # Close the helper's session
+                loop.run_until_complete(anilist_helper.close())
+            finally:
+                loop.close()
 
             elapsed = time.time() - start
             self.api_timings["anilist"] = elapsed
 
             if result:
+                # Save anilist.json directly to ensure it persists even if timeout occurs
+                if temp_dir:
+                    anilist_file = os.path.join(temp_dir, "anilist.json")
+                    with open(anilist_file, "w", encoding="utf-8") as f:
+                        json.dump(result, f, ensure_ascii=False, indent=2)
+                    logger.info(f"Saved anilist data to {anilist_file}")
+
                 # Log what we got
                 chars = len(result.get("characters", {}).get("edges", []))
                 staff = len(result.get("staff", {}).get("edges", []))
@@ -353,6 +373,11 @@ class ParallelAPIFetcher:
             logger.error(f"AniList fetch failed for ID {anilist_id}: {e}")
             self.api_errors["anilist"] = str(e)
             return None
+
+    async def _fetch_anilist(self, anilist_id: str, temp_dir: Optional[str] = None) -> Optional[Dict]:
+        """Fetch ALL AniList data in executor to prevent timeout cancellation."""
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(None, self._fetch_anilist_sync, anilist_id, temp_dir)
 
     async def _fetch_kitsu(self, kitsu_id: str) -> Optional[Dict]:
         """Fetch Kitsu data using async helper."""

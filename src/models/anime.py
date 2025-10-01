@@ -79,12 +79,6 @@ class CharacterEntry(BaseModel):
         default_factory=list, description="Character nicknames from Jikan API"
     )
 
-    # Platform IDs (replaces sources/is_merged metadata)
-    character_ids: Dict[str, int] = Field(
-        default_factory=dict,
-        description="Character IDs across platforms (mal, anilist, etc.)",
-    )
-
     # Character image URLs (simplified from dict to list)
     images: List[str] = Field(default_factory=list, description="Character image URLs")
 

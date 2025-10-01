@@ -80,7 +80,6 @@ class ProcessedCharacter:
     name_native: Optional[str]
     nicknames: List[str]
     voice_actors: List[Dict[str, str]]
-    character_ids: Dict[str, Optional[int]]
     character_pages: Dict[str, str]
     images: List[str]
     age: Optional[str]
@@ -340,6 +339,17 @@ class EnsembleFuzzyMatcher:
                     "token_set": 0.0,  # DISABLED: Not useful for partial name matching
                     "phonetic": 0.0,  # DISABLED: Not useful for partial name matching
                     "name_order": 0.0,  # DISABLED: Handled by enhanced semantic similarity
+                }
+            elif source.lower() == "animeplanet":
+                # AnimePlanet-SPECIFIC OPTIMIZATION: Similar to AniList but with stronger semantic
+                # AnimePlanet uses uppercase surnames (e.g., "Ken TAKAKURA") which needs normalization
+                weights = {
+                    "semantic": 0.75,  # PRIMARY: Strong semantic matching for name variations
+                    "edit_distance": 0.05,  # SAFETY NET: Handle case differences
+                    "token_based": 0.15,  # VALIDATION: Token-level matching
+                    "token_set": 0.05,  # BACKUP: Set-based validation
+                    "phonetic": 0.0,  # DISABLED: Not useful for English names
+                    "name_order": 0.0,  # DISABLED: Handled by semantic similarity
                 }
             else:
                 # Default weights for other sources
@@ -650,11 +660,17 @@ class AICharacterMatcher:
         jikan_chars: List[Dict[str, Any]],
         anilist_chars: List[Dict[str, Any]],
         anidb_chars: List[Dict[str, Any]],
+        anime_planet_chars: Optional[List[Dict[str, Any]]] = None,
     ) -> List[ProcessedCharacter]:
         """Main entry point for character matching across all sources"""
 
+        # Handle optional anime_planet_chars
+        if anime_planet_chars is None:
+            anime_planet_chars = []
+
         logger.info(
-            f"Starting character matching: Jikan={len(jikan_chars)}, AniList={len(anilist_chars)}, AniDB={len(anidb_chars)}"
+            f"Starting character matching: Jikan={len(jikan_chars)}, AniList={len(anilist_chars)}, "
+            f"AniDB={len(anidb_chars)}, AnimePlanet={len(anime_planet_chars)}"
         )
 
         # Use Jikan as primary source (most comprehensive)
@@ -666,6 +682,7 @@ class AICharacterMatcher:
             # Find matches in other sources
             anilist_match = None
             anidb_match = None
+            anime_planet_match = None
 
             # Test AniList first
             anilist_match = await self._find_best_match(
@@ -675,9 +692,16 @@ class AICharacterMatcher:
             # Always search AniDB (no cross-source termination)
             anidb_match = await self._find_best_match(jikan_char, anidb_chars, "anidb")
 
+            # Search AnimePlanet if available
+            if anime_planet_chars:
+                anime_planet_match = await self._find_best_match(
+                    jikan_char, anime_planet_chars, "animeplanet"
+                )
+
             # Log if high-confidence matches were found
             anilist_score = anilist_match.similarity_score if anilist_match else 0.0
             anidb_score = anidb_match.similarity_score if anidb_match else 0.0
+            anime_planet_score = anime_planet_match.similarity_score if anime_planet_match else 0.0
 
             # HIGH confidence (≥0.9): Perfect matches
             if anilist_score >= 0.9:
@@ -696,21 +720,31 @@ class AICharacterMatcher:
                     f"⚠️  MEDIUM-CONFIDENCE ANIDB MATCH: {anidb_score:.6f} for '{char_name}'"
                 )
 
+            if anime_planet_score >= 0.9:
+                logger.info(f"🎯 HIGH-CONFIDENCE ANIMEPLANET MATCH: {anime_planet_score:.6f}")
+            elif anime_planet_score >= 0.7:
+                logger.info(
+                    f"⚠️  MEDIUM-CONFIDENCE ANIMEPLANET MATCH: {anime_planet_score:.6f} for '{char_name}'"
+                )
+
             # Safety monitoring: Log when no match found (could indicate missing data)
             if anilist_score == 0.0:
                 logger.debug(f"ℹ️  No AniList match found for '{char_name}'")
             if anidb_score == 0.0:
                 logger.debug(f"ℹ️  No AniDB match found for '{char_name}'")
+            if anime_planet_score == 0.0:
+                logger.debug(f"ℹ️  No AnimePlanet match found for '{char_name}'")
 
             # Integrate data from all matched sources
             integrated_char = await self._integrate_character_data(
-                jikan_char, anilist_match, anidb_match
+                jikan_char, anilist_match, anidb_match, anime_planet_match
             )
 
             # Store match scores for stage5 to use (will be removed before final output)
             integrated_char.match_scores = {
                 "anilist": anilist_score,
                 "anidb": anidb_score,
+                "animeplanet": anime_planet_score,
             }
 
             processed_characters.append(integrated_char)
@@ -884,6 +918,9 @@ class AICharacterMatcher:
             return primary_name
         elif source == "anidb":
             return str(character.get("name", ""))
+        elif source == "animeplanet":
+            # AnimePlanet format: direct 'name' field with uppercase surnames (e.g., "Ken TAKAKURA")
+            return str(character.get("name", ""))
 
         return None
 
@@ -899,6 +936,7 @@ class AICharacterMatcher:
         jikan_char: Dict[str, Any],
         anilist_match: Optional[CharacterMatch],
         anidb_match: Optional[CharacterMatch],
+        anime_planet_match: Optional[CharacterMatch] = None,
     ) -> ProcessedCharacter:
         """Integrate character data from multiple sources with hierarchical priority"""
 
@@ -933,7 +971,6 @@ class AICharacterMatcher:
             name_native=jikan_char.get("name_kanji"),  # Use kanji as native
             nicknames=jikan_char.get("nicknames", []),
             voice_actors=self._extract_voice_actors(jikan_char),
-            character_ids={"mal": jikan_mal_id},
             character_pages={"mal": jikan_url},
             images=[],
             age=None,
@@ -982,8 +1019,7 @@ class AICharacterMatcher:
             if not integrated.gender and anilist_char.get("gender"):
                 integrated.gender = anilist_char.get("gender")
 
-            # Add AniList IDs, pages, and images
-            integrated.character_ids["anilist"] = anilist_char.get("id")
+            # Add AniList pages and images
             if anilist_char.get("id"):
                 integrated.character_pages["anilist"] = (
                     f"https://anilist.co/character/{anilist_char['id']}"
@@ -1004,7 +1040,7 @@ class AICharacterMatcher:
             if not integrated.gender and anidb_char.get("gender"):
                 integrated.gender = anidb_char.get("gender")
 
-            integrated.character_ids["anidb"] = anidb_char.get("id")
+            # Add AniDB pages
             if anidb_char.get("id"):
                 integrated.character_pages["anidb"] = (
                     f"https://anidb.net/character/{anidb_char['id']}"
@@ -1016,6 +1052,32 @@ class AICharacterMatcher:
                     f"https://cdn.anidb.net/images/main/{anidb_char['picture']}"
                 )
                 images.append(anidb_image_url)
+
+        # Integrate AnimePlanet data - ADD rich character metadata
+        if anime_planet_match:
+            ap_char = anime_planet_match.target_char
+            integrated.source_count += 1
+
+            # Add AnimePlanet name variation
+            if ap_char.get("name"):
+                name_variations.add(ap_char["name"])
+
+            # Fill missing data from AnimePlanet (has rich metadata)
+            if not integrated.gender and ap_char.get("gender"):
+                integrated.gender = ap_char.get("gender")
+            if not integrated.age and ap_char.get("age"):
+                integrated.age = str(ap_char.get("age"))
+
+            # AnimePlanet URL (character slug)
+            ap_url = ap_char.get("url", "")
+            if ap_url:
+                integrated.character_pages["animeplanet"] = (
+                    f"https://www.anime-planet.com{ap_url}"
+                )
+
+            # Add AnimePlanet image
+            if ap_char.get("image"):
+                images.append(ap_char["image"])
 
         # Finalize integrated data
         integrated.name_variations = list(name_variations)
@@ -1048,6 +1110,7 @@ async def process_characters_with_ai_matching(
     jikan_chars: List[Dict[str, Any]],
     anilist_chars: List[Dict[str, Any]],
     anidb_chars: List[Dict[str, Any]],
+    anime_planet_chars: Optional[List[Dict[str, Any]]] = None,
 ) -> Dict[str, List[Dict[str, Any]]]:
     """
     Main function to process characters using AI matching
@@ -1059,7 +1122,7 @@ async def process_characters_with_ai_matching(
 
     # Process all characters with AI matching
     processed_chars = await matcher.match_characters(
-        jikan_chars, anilist_chars, anidb_chars
+        jikan_chars, anilist_chars, anidb_chars, anime_planet_chars
     )
 
     # Convert to output format
@@ -1077,7 +1140,6 @@ async def process_characters_with_ai_matching(
             "nicknames": char.nicknames,
             "voice_actors": char.voice_actors,
             # Object/dict fields (alphabetical)
-            "character_ids": char.character_ids,
             "character_pages": char.character_pages,
             "images": char.images,
             # Remaining scalar fields (alphabetical)

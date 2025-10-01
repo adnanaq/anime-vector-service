@@ -69,9 +69,29 @@ class AnimePlanetEnrichmentHelper:
             return None
 
     async def fetch_anime_data(self, slug: str) -> Optional[Dict[str, Any]]:
-        """Fetch anime data by slug."""
+        """Fetch anime data by slug, including characters."""
         try:
-            return await self.scraper.get_anime_by_slug(slug)
+            # Fetch main anime data
+            anime_data = await self.scraper.get_anime_by_slug(slug)
+            if not anime_data:
+                return None
+
+            # Fetch character data
+            try:
+                characters_data = await self.scraper.get_anime_characters(slug)
+                if characters_data:
+                    anime_data["characters"] = characters_data.get("characters", [])
+                    anime_data["character_count"] = characters_data.get(
+                        "total_count", 0
+                    )
+                    logger.info(
+                        f"Fetched {anime_data['character_count']} characters for '{slug}'"
+                    )
+            except Exception as e:
+                logger.warning(f"Failed to fetch characters for '{slug}': {e}")
+                # Continue without characters data
+
+            return anime_data
         except Exception as e:
             logger.error(f"Error fetching anime data for slug '{slug}': {e}")
             return None

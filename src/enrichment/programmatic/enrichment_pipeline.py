@@ -79,6 +79,12 @@ class ProgrammaticEnrichmentPipeline:
             # Create temp directory for this anime
             temp_dir = self._create_temp_dir(anime_title)
 
+            # Save current anime entry for stage scripts
+            current_anime_path = os.path.join(temp_dir, "current_anime.json")
+            with open(current_anime_path, "w", encoding="utf-8") as f:
+                json.dump(offline_data, f, ensure_ascii=False, indent=2)
+            logger.info(f"Saved current anime entry to {current_anime_path}")
+
             # Step 2: Parallel API fetching (5-10 seconds)
             step2_start = time.time()
             api_data = await self.api_fetcher.fetch_all_data(
@@ -178,15 +184,77 @@ class ProgrammaticEnrichmentPipeline:
 
         return successful
 
+    def _find_next_agent_id(self, anime_name: str) -> int:
+        """
+        Find next available agent ID for the given anime.
+        Fills gaps first (e.g., if agent_2 and agent_3 exist, returns 1).
+        Otherwise returns max + 1.
+
+        Args:
+            anime_name: Clean anime name (e.g., "One", "Dandadan")
+
+        Returns:
+            Next available agent ID number
+        """
+        # Check if temp directory exists
+        temp_base = self.config.temp_dir
+        if not os.path.exists(temp_base):
+            return 1  # First agent
+
+        # Scan for existing agent directories matching this anime
+        pattern_prefix = f"{anime_name}_agent"
+        existing_ids = []
+
+        try:
+            for item in os.listdir(temp_base):
+                if item.startswith(pattern_prefix):
+                    # Extract agent number from directory name
+                    # Format: <AnimeName>_agent<N> or <AnimeName>_agent<N>_test<M>
+                    parts = item.replace(pattern_prefix, "").split("_")
+                    if parts and parts[0].isdigit():
+                        existing_ids.append(int(parts[0]))
+        except Exception as e:
+            logger.warning(f"Error scanning temp directory: {e}")
+            return 1
+
+        if not existing_ids:
+            return 1  # No existing agents
+
+        # Sort existing IDs
+        existing_ids.sort()
+
+        # Find first missing ID (gap filling)
+        for i in range(1, existing_ids[-1] + 1):
+            if i not in existing_ids:
+                return i
+
+        # No gaps found, return next sequential
+        return existing_ids[-1] + 1
+
     def _create_temp_dir(self, anime_title: str) -> str:
-        """Create temp directory for anime processing."""
+        """
+        Create temp directory for anime processing with auto-assigned agent ID.
+        Format: temp/<FirstWord>_agent<N>/
+
+        Args:
+            anime_title: Anime title from offline data
+
+        Returns:
+            Full path to created directory
+        """
         # Get first word from title for directory name
         first_word = anime_title.split()[0] if anime_title else "unknown"
         # Remove special characters
         clean_word = "".join(c for c in first_word if c.isalnum() or c in "-_")
 
-        temp_dir = os.path.join(self.config.temp_dir, clean_word)
+        # Find next available agent ID
+        agent_id = self._find_next_agent_id(clean_word)
+        dir_name = f"{clean_word}_agent{agent_id}"
+
+        temp_dir = os.path.join(self.config.temp_dir, dir_name)
         os.makedirs(temp_dir, exist_ok=True)
+
+        logger.info(f"Created temp directory: {temp_dir}")
 
         return temp_dir
 

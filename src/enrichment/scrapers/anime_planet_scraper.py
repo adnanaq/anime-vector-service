@@ -81,6 +81,360 @@ class AnimePlanetScraper(BaseScraper):
         except Exception:
             return []
 
+    async def get_anime_characters(
+        self, slug: str, enrich_characters: bool = True
+    ) -> Optional[Dict[str, Any]]:
+        """Get anime character information by Anime-Planet slug.
+
+        Args:
+            slug: Anime slug on Anime-Planet
+            enrich_characters: If True (default), fetch detailed character data from individual pages
+                              (adds gender, eye_color, birthday, description, anime_roles, etc.)
+                              Warning: This makes N additional requests (one per character)
+                              Set to False for faster extraction with basic data only
+
+        Returns:
+            Dict with 'characters' list and 'total_count', or None if no characters found
+        """
+        try:
+            url = f"{self.base_url}/anime/{slug}/characters"
+            response = await self._make_request(url, timeout=15)
+
+            # Check if Cloudflare blocked us
+            if (
+                response.get("is_cloudflare_protected")
+                and "checking your browser" in response["content"].lower()
+            ):
+                return None
+
+            # Parse HTML
+            soup = self._parse_html(response["content"])
+
+            # Flat list of all characters
+            all_characters = []
+
+            # Find all role section headers
+            sections = soup.find_all('h3', class_='sub')
+
+            for section in sections:
+                section_name = section.get_text(strip=True)
+
+                # Map section name to role
+                if "Main" in section_name:
+                    role = "Main"
+                elif "Secondary" in section_name:
+                    role = "Secondary"
+                elif "Minor" in section_name:
+                    role = "Minor"
+                else:
+                    continue
+
+                # Find the table following this header
+                table = section.find_next('table')
+                if not table:
+                    continue
+
+                # Parse each character row
+                rows = table.find_all('tr')
+                for row in rows:
+                    char_data = self._parse_character_row(row, role)
+                    if char_data:
+                        all_characters.append(char_data)
+
+            # Enrich characters with detailed data if requested
+            if enrich_characters and all_characters:
+                import asyncio
+                for char in all_characters:
+                    # Extract character slug from URL
+                    char_slug = char.get("url", "").replace("/characters/", "")
+                    if char_slug:
+                        detailed_data = await self.get_character_details(char_slug)
+                        if detailed_data:
+                            # Merge detailed data, preserving role from anime page
+                            char.update(detailed_data)
+                        # Rate limiting between character requests
+                        await asyncio.sleep(0.5)
+
+            # Return flat structure with characters array
+            if all_characters:
+                return {
+                    "characters": all_characters,
+                    "total_count": len(all_characters)
+                }
+            return None
+
+        except Exception as e:
+            # Re-raise circuit breaker exceptions
+            if "circuit breaker" in str(e).lower():
+                raise
+            return None
+
+    async def get_character_details(self, character_slug: str) -> Optional[Dict[str, Any]]:
+        """Get detailed character information from individual character page.
+
+        Args:
+            character_slug: Character slug (e.g., 'monkey-d-luffy')
+
+        Returns:
+            Dict with detailed character data including gender, eye_color, birthday,
+            description, anime_roles, manga_roles, etc.
+        """
+        try:
+            url = f"{self.base_url}/characters/{character_slug}"
+            response = await self._make_request(url, timeout=15)
+
+            if (
+                response.get("is_cloudflare_protected")
+                and "checking your browser" in response["content"].lower()
+            ):
+                return None
+
+            if response["status_code"] != 200:
+                return None
+
+            soup = self._parse_html(response["content"])
+            char_data: Dict[str, Any] = {}
+
+            # Basic info
+            name_h1 = soup.find("h1", itemprop="name")
+            if name_h1:
+                char_data["name"] = name_h1.get_text(strip=True)
+
+            img = soup.find("img", itemprop="image")
+            if img:
+                char_data["image"] = img.get("src")
+
+            # Section 1: entryBar - Gender, Hair Color, Rankings
+            entry_bar = soup.find("section", class_="pure-g entryBar")
+            if entry_bar:
+                # Find all divs with class containing "pure-1" (handles both "pure-1" and "pure-1 md-1-5")
+                bar_divs = entry_bar.find_all("div", class_=lambda x: x and "pure-1" in x)
+
+                for div in bar_divs:
+                    text = div.get_text(strip=True)
+
+                    if "Gender:" in text:
+                        char_data["gender"] = text.replace("Gender:", "").strip()
+
+                    if "Hair Color:" in text:
+                        char_data["hair_color"] = text.replace("Hair Color:", "").strip()
+
+                    if "Rank" in text and "fa-heart" in str(div):
+                        rank_link = div.find("a")
+                        if rank_link:
+                            rank_text = rank_link.get_text(strip=True).replace("#", "").replace(",", "")
+                            try:
+                                char_data["loved_rank"] = int(rank_text)
+                            except ValueError:
+                                pass
+
+                    if "Rank" in text and "heartOff" in str(div):
+                        rank_link = div.find("a")
+                        if rank_link:
+                            rank_text = rank_link.get_text(strip=True).replace("#", "").replace(",", "")
+                            try:
+                                char_data["hated_rank"] = int(rank_text)
+                            except ValueError:
+                                pass
+
+            # Section 2: EntryMetadata - Eye color, Age, Birthday, Height, Weight, etc.
+            entry_metadata = soup.find("div", class_="EntryMetadata")
+            if entry_metadata:
+                metadata_items = entry_metadata.find_all("div", class_="EntryMetadata__item")
+
+                for item in metadata_items:
+                    title_elem = item.find("h3", class_="EntryMetadata__title")
+                    value_elem = item.find("div", class_="EntryMetadata__value")
+
+                    if title_elem and value_elem:
+                        title = title_elem.get_text(strip=True)
+                        value = value_elem.get_text(strip=True)
+
+                        field_name = title.lower().replace(" ", "_")
+                        char_data[field_name] = value
+
+            # Section 3: Description
+            synopsis_section = soup.find("div", class_="entrySynopsis")
+            if synopsis_section:
+                for elem in synopsis_section.find_all("p"):
+                    text = elem.get_text(strip=True)
+                    if text and len(text) > 50 and "Tags" not in text:
+                        char_data["description"] = text
+                        break
+
+            # Section 4: Tags
+            tags_section = soup.find("div", class_="tags")
+            if tags_section:
+                tags = [tag.get_text(strip=True) for tag in tags_section.find_all("a")]
+                if tags:
+                    char_data["tags"] = tags
+
+            # Section 5: Alternative Names
+            alt_names_section = soup.find("div", class_="entryAltNames")
+            if alt_names_section:
+                alt_names = []
+                for name_elem in alt_names_section.find_all("li"):
+                    alt_name = name_elem.get_text(strip=True)
+                    if alt_name:
+                        alt_names.append(alt_name)
+                if alt_names:
+                    char_data["alternative_names"] = alt_names
+
+            # Section 6: Anime Roles
+            anime_roles_h3 = soup.find("h3", string="Anime Roles")
+            if anime_roles_h3:
+                table = anime_roles_h3.find_next("table")
+                if table:
+                    rows = table.find_all("tr")
+                    anime_roles = []
+
+                    for row in rows:
+                        anime_link = row.find("a", href=lambda x: x and "/anime/" in x)
+                        if anime_link:
+                            role_data = {
+                                "anime_title": anime_link.get_text(strip=True),
+                                "anime_url": anime_link.get("href")
+                            }
+
+                            role_text = row.get_text()
+                            if "Main" in role_text:
+                                role_data["role"] = "Main"
+                            elif "Supporting" in role_text:
+                                role_data["role"] = "Supporting"
+
+                            anime_roles.append(role_data)
+
+                    if anime_roles:
+                        char_data["anime_roles"] = anime_roles
+
+            # Section 7: Manga Roles
+            manga_roles_h3 = soup.find("h3", string="Manga Roles")
+            if manga_roles_h3:
+                table = manga_roles_h3.find_next("table")
+                if table:
+                    rows = table.find_all("tr")
+                    manga_roles = []
+
+                    for row in rows:
+                        manga_link = row.find("a", href=lambda x: x and "/manga/" in x)
+                        if manga_link:
+                            role_data = {
+                                "manga_title": manga_link.get_text(strip=True),
+                                "manga_url": manga_link.get("href")
+                            }
+
+                            role_text = row.get_text()
+                            if "Main" in role_text:
+                                role_data["role"] = "Main"
+                            elif "Supporting" in role_text:
+                                role_data["role"] = "Supporting"
+
+                            manga_roles.append(role_data)
+
+                    if manga_roles:
+                        char_data["manga_roles"] = manga_roles
+
+            # Section 8: Voice Actors (from individual page)
+            va_h3 = soup.find("h3", string=lambda x: x and "Voice Actor" in str(x))
+            if va_h3:
+                table = va_h3.find_next("table")
+                if table:
+                    rows = table.find_all("tr")
+                    voice_actors = {}
+
+                    for row in rows:
+                        va_link = row.find("a", href=lambda x: x and "/people/" in x)
+                        if va_link:
+                            va_name = va_link.get_text(strip=True)
+                            va_url = va_link.get("href")
+
+                            flag = row.find("div", class_=lambda x: x and "flag" in str(x))
+                            lang = "unknown"
+                            if flag:
+                                classes = flag.get("class", [])
+                                for cls in classes:
+                                    if cls.startswith("flag") and len(cls) > 4:
+                                        lang = cls[4:].lower()
+                                        break
+
+                            if lang not in voice_actors:
+                                voice_actors[lang] = []
+                            voice_actors[lang].append({
+                                "name": va_name,
+                                "url": va_url
+                            })
+
+                    if voice_actors:
+                        char_data["voice_actors"] = voice_actors
+
+            return char_data if char_data else None
+
+        except Exception as e:
+            if "circuit breaker" in str(e).lower():
+                raise
+            return None
+
+    def _parse_character_row(self, row, role: str) -> Optional[Dict[str, Any]]:
+        """Parse a single character table row."""
+        try:
+            # Find character name link
+            name_link = row.find('a', class_='name', href=lambda x: x and '/characters/' in x)
+            if not name_link:
+                return None
+
+            char_data = {
+                "name": name_link.get_text(strip=True),
+                "url": name_link.get('href'),
+                "role": role,
+            }
+
+            # Find character image (in same row, before the name)
+            img = row.find('img', alt=char_data["name"])
+            if img:
+                char_data["image"] = img.get('src') or img.get('data-src')
+
+            # Find character tags
+            tags_div = row.find('div', class_='tags')
+            if tags_div:
+                tag_links = tags_div.find_all('a', href=lambda x: x and '/characters/tags/' in x)
+                char_data["tags"] = [tag.get_text(strip=True) for tag in tag_links]
+
+            # Find voice actors by language
+            actors_td = row.find('td', class_='tableActors')
+            if actors_td:
+                voice_actors = {}
+                flag_divs = actors_td.find_all('div', class_=lambda x: x and 'flag' in x)
+
+                for flag_div in flag_divs:
+                    # Extract language from flag class (e.g., "flagJP" -> "jp")
+                    flag_classes = flag_div.get('class', [])
+                    lang = None
+                    for cls in flag_classes:
+                        if cls.startswith('flag') and len(cls) > 4:
+                            lang = cls[4:].lower()  # Remove "flag" prefix
+                            break
+
+                    if lang:
+                        # Get all voice actor links in this language section
+                        va_links = flag_div.find_all('a', href=lambda x: x and '/people/' in x)
+                        actors = [
+                            {
+                                "name": va.get_text(strip=True),
+                                "url": va.get('href')
+                            }
+                            for va in va_links
+                        ]
+                        if actors:
+                            voice_actors[lang] = actors
+
+                if voice_actors:
+                    char_data["voice_actors"] = voice_actors
+
+            return char_data
+
+        except Exception:
+            return None
+
     def _extract_json_ld(self, soup) -> Optional[Dict[str, Any]]:
         """Override base method to fix Anime-Planet's malformed image URLs."""
         json_ld = super()._extract_json_ld(soup)
