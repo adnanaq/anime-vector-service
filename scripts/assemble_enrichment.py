@@ -83,9 +83,10 @@ def load_json_file(file_path: Path) -> Dict[str, Any]:
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             return json.load(f)
-    except Exception as e:
-        print(f"Error loading {file_path}: {e}")
-        return {}
+    except FileNotFoundError as e:
+        raise FileNotFoundError(f"Missing required file: {file_path}") from e
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in {file_path}: {e}") from e
 
 
 def remove_null_and_empty_strings(data: Any, preserve_required: bool = False,
