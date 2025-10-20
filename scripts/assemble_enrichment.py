@@ -46,6 +46,7 @@ def check_stage_files(temp_dir: str) -> bool:
         True if all files exist, False otherwise
     """
     required_files = [
+        "current_anime.json",
         "stage1_metadata.json",
         "stage2_episodes.json",
         "stage3_relationships.json",
