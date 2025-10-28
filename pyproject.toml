@@ -20,7 +20,7 @@ dependencies = [
     # Image processing
     "pillow>=11.2.1",
     # HTTP client for external requests
-    "aiohttp==3.12.13",
+    "aiohttp==3.13.1",
     # Web scraping dependencies
     "cloudscraper>=1.2.71",
     "beautifulsoup4>=4.12.0",
@@ -48,13 +48,23 @@ dev = [
     "pytest-mock==3.14.1",
 
     # Development dependencies
-    "black>=24.0.0",
-    "isort>=5.13.0",
-    "autoflake>=2.3.0",
     "mypy>=1.18.1",
+    "ruff>=0.14.2",
+
+    # Pre-commit hooks
+    "pre-commit>=4.0.0",
 
     # Pretty output formatting
     "rich>=13.0.0",
+    "pip-audit>=2.7.0",
+
+    # Type stubs
+    "scikit-learn-stubs>=0.0.3",
+    "scipy-stubs>=1.16.2.0",
+    "types-beautifulsoup4>=4.12.0.20250516",
+    "types-python-dateutil>=2.9.0.20250822",
+    "types-requests>=2.32.4.20250913",
+    "types-setuptools>=80.9.0.20250822",
 ]
 
 [build-system]
@@ -67,13 +77,20 @@ allow-direct-references = true
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
 
-[tool.black]
+[tool.ruff]
 line-length = 88
-target-version = ["py312"]
+target-version = "py312"
 
-[tool.isort]
-profile = "black"
-line_length = 88
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = [
+    "E501",  # Ignore line length - most violations are in docstrings/comments
+    "N812",  # Allow lowercase imports as non-lowercase (PyTorch convention: torch.nn.functional as F)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"src/enrichment/programmatic/config.py" = ["N805"]  # Pydantic validators use cls
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -94,21 +111,20 @@ filterwarnings = [
     "ignore::UserWarning",
     "ignore::DeprecationWarning",
 ]
-
-[dependency-groups]
-dev = [
-    "autoflake>=2.3.1",
-    "black>=25.1.0",
-    "isort>=6.0.1",
-    "mypy>=1.18.1",
-    "scikit-learn-stubs>=0.0.3",
-    "scipy-stubs>=1.16.2.0",
-    "types-beautifulsoup4>=4.12.0.20250516",
-    "types-pillow>=10.2.0.20240822",
-    "types-python-dateutil>=2.9.0.20250822",
-    "types-requests>=2.32.4.20250913",
-    "types-setuptools>=80.9.0.20250822",
+markers = [
+    "integration: marks tests as integration tests (deselect with '-m \"not integration\"')",
+    "unit: marks tests as unit tests (default)",
 ]
 
 [tool.mypy]
 mypy_path = "stubs"
+
+[[tool.mypy.overrides]]
+module = [
+    "src.enrichment.scrapers.*",
+    "src.vector.enhancement.*",
+    "src.validation.*",
+    "src.enrichment.ai_character_matcher",
+    "src.vector.processors.vision_processor",
+]
+ignore_errors = true

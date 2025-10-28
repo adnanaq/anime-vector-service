@@ -11,7 +11,7 @@ import os
 import sys
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, cast
 
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
@@ -35,7 +35,7 @@ class ParallelAPIFetcher:
     Implements graceful degradation - continues with partial data if APIs fail.
     """
 
-    def __init__(self, config: Optional[EnrichmentConfig] = None):
+    def __init__(self, config: EnrichmentConfig | None = None):
         """
         Initialize with configuration and API helpers.
 
@@ -45,15 +45,17 @@ class ParallelAPIFetcher:
         self.config = config or EnrichmentConfig()
 
         # Initialize async helpers
-        self.anilist_helper = None  # Lazy init in async context
-        self.kitsu_helper = None
-        self.anidb_helper = None
-        self.anime_planet_helper = None
-        self.anisearch_helper = None
+        self.anilist_helper: AniListEnrichmentHelper | None = (
+            None  # Lazy init in async context
+        )
+        self.kitsu_helper: KitsuEnrichmentHelper | None = None
+        self.anidb_helper: AniDBEnrichmentHelper | None = None
+        self.anime_planet_helper: AnimePlanetEnrichmentHelper | None = None
+        self.anisearch_helper: AniSearchEnrichmentHelper | None = None
 
         # Track API performance
-        self.api_timings: Dict[str, float] = {}
-        self.api_errors: Dict[str, str] = {}
+        self.api_timings: dict[str, float] = {}
+        self.api_errors: dict[str, str] = {}
 
     async def initialize_helpers(self) -> None:
         """Initialize async API helpers."""
@@ -70,12 +72,12 @@ class ParallelAPIFetcher:
 
     async def fetch_all_data(
         self,
-        ids: Dict[str, str],
-        offline_data: Dict,
-        temp_dir: Optional[str] = None,
-        skip_services: Optional[List[str]] = None,
-        only_services: Optional[List[str]] = None,
-    ) -> Dict[str, Any]:
+        ids: dict[str, str],
+        offline_data: dict[str, Any],
+        temp_dir: str | None = None,
+        skip_services: list[str] | None = None,
+        only_services: list[str] | None = None,
+    ) -> dict[str, Any]:
         """
         Fetch data from all APIs in parallel with optional service filtering.
 
@@ -99,7 +101,7 @@ class ParallelAPIFetcher:
         await self.initialize_helpers()
 
         start_time = time.time()
-        tasks: List[Tuple[str, Any]] = []
+        tasks: list[tuple[str, Any]] = []
 
         # Helper to check if service should be included
         def should_include(service_name: str) -> bool:
@@ -161,8 +163,8 @@ class ParallelAPIFetcher:
         return results
 
     async def _fetch_jikan_complete(
-        self, mal_id: str, offline_data: Dict, temp_dir: Optional[str] = None
-    ) -> Optional[Dict[str, Any]]:
+        self, mal_id: str, offline_data: dict[str, Any], temp_dir: str | None = None
+    ) -> dict[str, Any] | None:
         """
         Fetch ALL Jikan data using the JikanDetailedFetcher helper.
         This properly handles rate limiting and batch processing for large series.
@@ -175,7 +177,7 @@ class ParallelAPIFetcher:
             loop = asyncio.get_event_loop()
 
             # First, fetch anime full data
-            logger.info(f"🔍 [JIKAN DEBUG] Fetching anime full data...")
+            logger.info("🔍 [JIKAN DEBUG] Fetching anime full data...")
             anime_url = f"https://api.jikan.moe/v4/anime/{mal_id}/full"
             anime_data = await loop.run_in_executor(
                 None, self._fetch_jikan_sync, anime_url
@@ -185,7 +187,7 @@ class ParallelAPIFetcher:
                 logger.warning(f"Failed to fetch Jikan anime data for MAL ID {mal_id}")
                 return None
 
-            logger.info(f"🔍 [JIKAN DEBUG] Anime full data fetched successfully")
+            logger.info("🔍 [JIKAN DEBUG] Anime full data fetched successfully")
             anime_info = anime_data["data"]
 
             # Save jikan.json immediately with the anime full data
@@ -205,7 +207,7 @@ class ParallelAPIFetcher:
             logger.info(f"🔍 [JIKAN DEBUG] Episode count: {episode_count}")
 
             # Fetch character list first (before starting detailed fetches)
-            logger.info(f"🔍 [JIKAN DEBUG] Fetching character list...")
+            logger.info("🔍 [JIKAN DEBUG] Fetching character list...")
             characters_url = f"https://api.jikan.moe/v4/anime/{mal_id}/characters"
             characters_basic = await loop.run_in_executor(
                 None, self._fetch_jikan_sync, characters_url
@@ -218,10 +220,11 @@ class ParallelAPIFetcher:
             )
 
             # Prepare file paths
-            episodes_input = os.path.join(temp_dir, "episodes.json")
-            episodes_output = os.path.join(temp_dir, "episodes_detailed.json")
-            characters_input = os.path.join(temp_dir, "characters.json")
-            characters_output = os.path.join(temp_dir, "characters_detailed.json")
+            if temp_dir is not None:
+                episodes_input = os.path.join(temp_dir, "episodes.json")
+                episodes_output = os.path.join(temp_dir, "episodes_detailed.json")
+                characters_input = os.path.join(temp_dir, "characters.json")
+                characters_output = os.path.join(temp_dir, "characters_detailed.json")
 
             # Create tasks for parallel execution
             tasks = []
@@ -274,18 +277,18 @@ class ParallelAPIFetcher:
                     f"🔍 [JIKAN DEBUG] Running {len(tasks)} detailed fetch tasks in parallel..."
                 )
                 await asyncio.gather(*[task for _, task in tasks])
-                logger.info(f"🔍 [JIKAN DEBUG] All detailed fetch tasks completed")
+                logger.info("🔍 [JIKAN DEBUG] All detailed fetch tasks completed")
 
             # Load results
             episodes_data = []
             if os.path.exists(episodes_output):
-                with open(episodes_output, "r") as f:
+                with open(episodes_output) as f:
                     episodes_data = json.load(f)
                 logger.info(f"🔍 [JIKAN DEBUG] Loaded {len(episodes_data)} episodes")
 
             characters_data = []
             if os.path.exists(characters_output):
-                with open(characters_output, "r") as f:
+                with open(characters_output) as f:
                     characters_data = json.load(f)
                 logger.info(
                     f"🔍 [JIKAN DEBUG] Loaded {len(characters_data)} characters"
@@ -313,57 +316,7 @@ class ParallelAPIFetcher:
             self.api_errors["jikan"] = str(e)
             return None
 
-    async def _fetch_all_jikan_episodes(
-        self, mal_id: str, episode_count: int, loop
-    ) -> List[Dict]:
-        """Fetch ALL episodes with pagination."""
-        if episode_count == 0:
-            return []
-
-        all_episodes = []
-        page = 1
-
-        while True:
-            url = f"https://api.jikan.moe/v4/anime/{mal_id}/episodes?page={page}"
-            data = await loop.run_in_executor(None, self._fetch_jikan_sync, url)
-
-            if not data or not data.get("data"):
-                break
-
-            all_episodes.extend(data["data"])
-
-            # Check if there are more pages
-            pagination = data.get("pagination", {})
-            if not pagination.get("has_next_page", False):
-                break
-
-            page += 1
-
-            # Log progress for long-running series
-            if len(all_episodes) % 100 == 0:
-                logger.debug(f"Fetched {len(all_episodes)}/{episode_count} episodes...")
-
-        return all_episodes
-
-    async def _fetch_all_jikan_characters(self, mal_id: str, loop) -> List[Dict]:
-        """Fetch ALL characters with pagination."""
-        all_characters = []
-
-        # First, get initial page to see how many there are
-        url = f"https://api.jikan.moe/v4/anime/{mal_id}/characters"
-        data = await loop.run_in_executor(None, self._fetch_jikan_sync, url)
-
-        if data and data.get("data"):
-            all_characters.extend(data["data"])
-
-            # Jikan v4 doesn't paginate characters endpoint directly
-            # It returns all characters in one response
-            # But we should verify we got them all
-            logger.debug(f"Fetched {len(all_characters)} characters from Jikan")
-
-        return all_characters
-
-    def _fetch_jikan_sync(self, url: str) -> Optional[Dict]:
+    def _fetch_jikan_sync(self, url: str) -> dict[str, Any] | None:
         """Synchronous Jikan API fetch with rate limiting."""
         import time
 
@@ -375,7 +328,7 @@ class ParallelAPIFetcher:
         try:
             response = requests.get(url, timeout=10)
             if response.status_code == 200:
-                return response.json()
+                return cast(dict[Any, Any], response.json())
             else:
                 logger.warning(
                     f"Jikan API returned status {response.status_code} for {url}"
@@ -386,8 +339,8 @@ class ParallelAPIFetcher:
             return None
 
     def _fetch_anilist_sync(
-        self, anilist_id: str, temp_dir: Optional[str] = None
-    ) -> Optional[Dict]:
+        self, anilist_id: str, temp_dir: str | None = None
+    ) -> dict[str, Any] | None:
         """Synchronous wrapper for AniList fetch - runs in executor to avoid cancellation."""
         try:
             start = time.time()
@@ -445,15 +398,15 @@ class ParallelAPIFetcher:
             return None
 
     async def _fetch_anilist(
-        self, anilist_id: str, temp_dir: Optional[str] = None
-    ) -> Optional[Dict]:
+        self, anilist_id: str, temp_dir: str | None = None
+    ) -> dict[str, Any] | None:
         """Fetch ALL AniList data in executor to prevent timeout cancellation."""
         loop = asyncio.get_event_loop()
         return await loop.run_in_executor(
             None, self._fetch_anilist_sync, anilist_id, temp_dir
         )
 
-    async def _fetch_kitsu(self, kitsu_id: str) -> Optional[Dict]:
+    async def _fetch_kitsu(self, kitsu_id: str) -> dict[str, Any] | None:
         """Fetch Kitsu data using async helper."""
         try:
             start = time.time()
@@ -507,7 +460,7 @@ class ParallelAPIFetcher:
             self.api_errors["kitsu"] = str(e)
             return None
 
-    async def _fetch_anidb(self, anidb_id: str) -> Optional[Dict]:
+    async def _fetch_anidb(self, anidb_id: str) -> dict[str, Any] | None:
         """Fetch AniDB data using async helper."""
         try:
             start = time.time()
@@ -521,7 +474,9 @@ class ParallelAPIFetcher:
             self.api_errors["anidb"] = str(e)
             return None
 
-    async def _fetch_anime_planet(self, offline_data: Dict) -> Optional[Dict]:
+    async def _fetch_anime_planet(
+        self, offline_data: dict[str, Any]
+    ) -> dict[str, Any] | None:
         """Fetch Anime-Planet data using scraper."""
         try:
             start = time.time()
@@ -535,7 +490,7 @@ class ParallelAPIFetcher:
             self.api_errors["anime_planet"] = str(e)
             return None
 
-    async def _fetch_anisearch(self, anisearch_id: str) -> Optional[Dict]:
+    async def _fetch_anisearch(self, anisearch_id: str) -> dict[str, Any] | None:
         """Fetch AniSearch data using scraper."""
         try:
             start = time.time()
@@ -549,7 +504,9 @@ class ParallelAPIFetcher:
             self.api_errors["anisearch"] = str(e)
             return None
 
-    async def _fetch_animeschedule(self, offline_data: Dict) -> Optional[Dict]:
+    async def _fetch_animeschedule(
+        self, offline_data: dict[str, Any]
+    ) -> dict[str, Any] | None:
         """
         Fetch AnimSchedule data using sync helper.
         Note: AnimSchedule helper is sync, so we run in executor.
@@ -577,8 +534,8 @@ class ParallelAPIFetcher:
             return None
 
     async def _gather_with_timeout(
-        self, tasks: List[Tuple[str, Any]], timeout: int
-    ) -> Dict[str, Any]:
+        self, tasks: list[tuple[str, Any]], timeout: int
+    ) -> dict[str, Any]:
         """
         Execute tasks in parallel. In no-timeout mode, wait for ALL data.
         Implements graceful degradation - doesn't fail if one API is down.
@@ -631,7 +588,7 @@ class ParallelAPIFetcher:
                     else:
                         logger.warning(f"API {name} returned empty result")
 
-                except asyncio.TimeoutError:
+                except TimeoutError:
                     logger.warning(f"API {name} timed out after {timeout}s")
                     results[name] = None
                     task.cancel()
@@ -643,7 +600,7 @@ class ParallelAPIFetcher:
 
         return results
 
-    async def _save_temp_files(self, results: Dict[str, Any], temp_dir: str) -> None:
+    async def _save_temp_files(self, results: dict[str, Any], temp_dir: str) -> None:
         """Save API responses to temp files for debugging/caching."""
         os.makedirs(temp_dir, exist_ok=True)
 
