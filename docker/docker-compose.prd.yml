@@ -23,7 +23,7 @@ services:
   vector-service:
     build:
       context: ..
-      dockerfile: docker/Dockerfile.prod # use prod Dockerfile
+      dockerfile: docker/Dockerfile.prd # use prod Dockerfile
     container_name: anime-vector-service
     ports:
       - "8002:8002"
@@ -56,6 +56,8 @@ services:
       - LOG_LEVEL=INFO
     networks:
       - vector-network
+    volumes:
+      - model_cache:/app/cache
     depends_on:
       qdrant:
         condition: service_healthy
@@ -70,3 +72,6 @@ services:
 networks:
   vector-network:
     driver: bridge
+volumes:
+  model_cache:
+    driver: local
