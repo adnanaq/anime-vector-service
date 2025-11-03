@@ -62,7 +62,17 @@ def _normalize_anime_url(anime_identifier: str) -> str:
 
 
 def _extract_slug_from_url(url: str) -> str:
-    """Extract slug from anime-planet URL."""
+    """
+    Extract the anime slug from an anime-planet URL.
+    
+    Searches the path for a segment of the form `/anime/{slug}` and returns the `{slug}` portion.
+    
+    Returns:
+        str: The slug extracted from the URL (e.g., "dandadan").
+    
+    Raises:
+        ValueError: If a slug cannot be found in the provided URL.
+    """
     # Extract slug from: https://www.anime-planet.com/anime/dandadan
     match = re.search(r"/anime/([^/?#]+)", url)
     if not match:
@@ -75,19 +85,17 @@ async def fetch_animeplanet_anime(
     slug: str, return_data: bool = True, output_path: Optional[str] = None
 ) -> Optional[Dict[str, Any]]:
     """
-    Crawls and processes anime data from anime-planet.com.
-    All data is available on the main anime page - no navigation needed.
-
-    Results are cached in Redis for 24 hours to avoid repeated crawling.
-
-    Args:
-        slug: Anime slug (e.g., "dandadan"), path (e.g., "/anime/dandadan"),
-              or full URL (e.g., "https://www.anime-planet.com/anime/dandadan")
-        return_data: Whether to return the data dict (default: True)
-        output_path: Optional file path to save JSON (default: None)
-
+    Crawl and normalize comprehensive anime data from an anime-planet anime page.
+    
+    Performs a single-page extraction (no site navigation) and normalizes fields including JSON-LD enrichment, related anime/manga, studios, rank, dates, season, and status. Results are cached for 24 hours to avoid repeated crawling.
+    
+    Parameters:
+        slug (str): Anime identifier — slug (e.g., "dandadan"), path (e.g., "/anime/dandadan"), or full URL.
+        return_data (bool): If True, return the normalized data dictionary; if False, return None.
+        output_path (Optional[str]): If provided, write the resulting JSON to this path.
+    
     Returns:
-        Complete anime data dictionary (if return_data=True), otherwise None
+        Optional[Dict[str, Any]]: Normalized anime data dictionary when `return_data` is True and extraction succeeds; otherwise `None`.
     """
     # Normalize URL and extract slug using helper functions
     url = _normalize_anime_url(slug)
@@ -474,7 +482,22 @@ def _determine_season_from_date(date_str: str) -> Optional[str]:
 def _process_related_anime(
     related_anime_raw: List[Dict[str, Any]],
 ) -> List[Dict[str, Any]]:
-    """Process related anime data from raw extracted list."""
+    """
+    Convert raw related-anime extraction entries into a normalized list of related-anime records.
+    
+    Each returned record contains title, slug, full URL, relation_type (always "same_franchise"), and optional fields populated when available: relation_subtype (uppercased), start_date, end_date, year, type (uppercased), and episodes.
+    
+    Parameters:
+        related_anime_raw (List[Dict[str, Any]]): Raw extracted items; expected keys include:
+            - "title": display title
+            - "url": path or URL containing "/anime/<slug>"
+            - optional "relation_subtype": textual relation (e.g., "Sequel")
+            - optional "start_date_attr" / "end_date_attr": date strings to derive start_date/end_date and year
+            - optional "metadata_text": freeform metadata containing type and episode count (e.g., "TV: 12 ep")
+    
+    Returns:
+        List[Dict[str, Any]]: A list of normalized related-anime dictionaries with extracted and typed fields.
+    """
     related_anime = []
 
     for item in related_anime_raw:
@@ -544,7 +567,25 @@ def _process_related_anime(
 def _process_related_manga(
     related_manga_raw: List[Dict[str, Any]],
 ) -> List[Dict[str, Any]]:
-    """Process related manga data from raw extracted list."""
+    """
+    Convert a list of raw extracted manga entries into normalized related-manga items.
+    
+    Parameters:
+        related_manga_raw (List[Dict[str, Any]]): Raw extraction entries; expected keys include
+            "title", "url", optional "relation_subtype", "start_date_attr", "end_date_attr",
+            and "metadata_text".
+    
+    Returns:
+        List[Dict[str, Any]]: Processed related-manga objects. Each item contains:
+            - "title" (str): Cleaned title.
+            - "slug" (str): Manga slug extracted from the URL.
+            - "url" (str): Full anime-planet URL.
+            - "relation_type" (str): Relation category (always "same_franchise").
+            - Optional "relation_subtype" (str): Uppercased subtype (e.g., "SEQUEL").
+            - Optional "start_date" (str) and/or "end_date" (str).
+            - Optional "year" (int): Year derived from start_date or end_date.
+            - Optional "volumes" (str) and "chapters" (str): Parsed from metadata_text.
+    """
     related_manga = []
 
     for item in related_manga_raw:

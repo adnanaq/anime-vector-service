@@ -23,10 +23,10 @@ class HTTPCacheManager:
 
     def __init__(self, config: CacheConfig):
         """
-        Initialize cache manager.
-
-        Args:
-            config: Cache configuration
+        Initialize HTTPCacheManager with the given cache configuration.
+        
+        Parameters:
+            config (CacheConfig): Configuration controlling cache enablement and backend settings. If `config.enabled` is True, the appropriate storage backend is initialized.
         """
         self.config = config
         self._storage: Optional[Any] = None
@@ -36,7 +36,16 @@ class HTTPCacheManager:
             self._init_storage()
 
     def _init_storage(self) -> None:
-        """Initialize cache storage backend."""
+        """
+        Initialize the cache storage backend based on the manager configuration.
+        
+        Chooses the storage initializer according to `self.config.storage_type`:
+        - "redis": initialize Redis-backed async storage
+        - "sqlite": initialize local SQLite storage
+        
+        Raises:
+            ValueError: If `self.config.storage_type` is not "redis" or "sqlite".
+        """
         if self.config.storage_type == "redis":
             self._init_redis_storage()
         elif self.config.storage_type == "sqlite":
@@ -45,7 +54,13 @@ class HTTPCacheManager:
             raise ValueError(f"Unknown storage type: {self.config.storage_type}")
 
     def _init_redis_storage(self) -> None:
-        """Initialize async Redis client for aiohttp sessions."""
+        """
+        Initialize and store an asynchronous Redis client for aiohttp session caching.
+        
+        If `self.config.redis_url` is provided and the client is created successfully, sets
+        `self._async_redis_client` to the new AsyncRedis client; if `redis_url` is missing
+        or initialization fails, leaves `self._async_redis_client` as `None`.
+        """
         try:
             if not self.config.redis_url:
                 raise ValueError("redis_url required for Redis storage")
@@ -65,7 +80,14 @@ class HTTPCacheManager:
             )
 
     def _init_sqlite_storage(self) -> None:
-        """Initialize SQLite file-based storage."""
+        """
+        Create and initialize a file-based SQLite cache storage for HTTP sessions.
+        
+        Creates the configured cache directory (including parents), builds an absolute
+        path to an http_cache.db file inside that directory, and sets self._storage to
+        a hishel.SyncSqliteStorage instance using that database path. Logs the
+        initialized database path.
+        """
         cache_dir = Path(self.config.cache_dir)
         cache_dir.mkdir(parents=True, exist_ok=True)
 
@@ -78,19 +100,14 @@ class HTTPCacheManager:
         self, service: str, **session_kwargs: Any
     ) -> Any:  # Returns aiohttp.ClientSession or CachedAiohttpSession
         """
-        Get cached aiohttp session for a service with body-based caching.
-
-        Body-based caching automatically includes request body (GraphQL queries,
-        POST data, etc.) in the cache key. This ensures different queries/variables
-        get different cache entries, enabling automatic cache invalidation when
-        you modify API requests.
-
-        Args:
-            service: Service name (e.g., "jikan", "anilist", "anidb")
-            **session_kwargs: Additional aiohttp.ClientSession arguments
-
+        Provide an aiohttp session for the named service, using an async Redis-backed cached session when caching is enabled and available.
+        
+        Parameters:
+            service (str): Service identifier (e.g., "jikan", "anilist", "anidb") used to determine per-service TTL.
+            **session_kwargs: Additional keyword arguments passed to aiohttp.ClientSession.
+        
         Returns:
-            Cached aiohttp.ClientSession (wrapped with Redis caching)
+            An aiohttp.ClientSession or a CachedAiohttpSession that applies Redis-backed HTTP response caching (including body-based caching).
         """
         if (
             not self.config.enabled
@@ -136,22 +153,32 @@ class HTTPCacheManager:
 
     def _get_service_ttl(self, service: str) -> int:
         """
-        Get TTL for a specific service.
-
-        Args:
-            service: Service name
-
+        Return the cache time-to-live (TTL) in seconds for the given service.
+        
+        Looks up the `ttl_<service>` attribute on the manager's config and returns its value; if not present, returns 86400 (24 hours).
+        
+        Parameters:
+            service (str): Service identifier used to form the config attribute name.
+        
         Returns:
-            TTL in seconds
+            int: TTL for the service in seconds.
         """
         ttl_attr = f"ttl_{service}"
         return getattr(self.config, ttl_attr, 86400)  # Default 24 hours
 
     def close(self) -> None:
-        """Close sync cache connections."""
+        """
+        No-op synchronous cleanup hook for cache resources.
+        
+        This method performs no action; asynchronous resources (for example the Redis client) are closed by `close_async`.
+        """
 
     async def close_async(self) -> None:
-        """Close async cache connections."""
+        """
+        Close any open asynchronous cache connections.
+        
+        If an async Redis client was initialized on this manager, attempt to close it. Exceptions raised while closing are caught and suppressed (a warning is logged).
+        """
         if self._async_redis_client:
             try:
                 await self._async_redis_client.close()
@@ -160,10 +187,13 @@ class HTTPCacheManager:
 
     def get_stats(self) -> Dict[str, Any]:
         """
-        Get cache statistics.
-
+        Report whether HTTP caching is enabled and the active storage configuration.
+        
         Returns:
-            Cache statistics dictionary
+            dict: A mapping with key "enabled" (bool). If enabled is True the mapping also includes
+            "storage_type" (str), "cache_dir" (str or None) when storage_type is "sqlite", and
+            "redis_url" (str or None) when storage_type is "redis". If caching is disabled the
+            mapping is {"enabled": False}.
         """
         if not self.config.enabled:
             return {"enabled": False}

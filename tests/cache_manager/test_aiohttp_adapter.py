@@ -134,6 +134,12 @@ class TestCachedRequestContextManager:
 
         # Create a proper coroutine that returns the response
         async def mock_coro():
+            """
+            Return a prepared mock response object used to simulate an asynchronous HTTP response in tests.
+            
+            Returns:
+                mock_response: the mock response object.
+            """
             return mock_response
 
         mock_session = MagicMock()
@@ -153,6 +159,12 @@ class TestCachedRequestContextManager:
 
         # Create a proper coroutine that returns the response
         async def mock_coro():
+            """
+            Return a prepared mock response object used to simulate an asynchronous HTTP response in tests.
+            
+            Returns:
+                mock_response: the mock response object.
+            """
             return mock_response
 
         mock_session = MagicMock()
@@ -172,7 +184,16 @@ class TestCachedAiohttpSession:
 
     @pytest.fixture
     def mock_storage(self):
-        """Create mock async storage."""
+        """
+        Create a pre-configured mock asynchronous storage for tests.
+        
+        The returned AsyncMock exposes:
+        - get_entries(): async method that resolves to an empty list by default.
+        - create_entry(): async method mocked for asserting calls.
+        
+        Returns:
+            AsyncMock: A mock storage object with `get_entries` and `create_entry` async methods.
+        """
         storage = AsyncMock()
         storage.get_entries = AsyncMock(return_value=[])
         storage.create_entry = AsyncMock()
@@ -334,6 +355,12 @@ class TestCachedAiohttpSession:
         from hishel import Response, Headers
 
         async def mock_stream():
+            """
+            Async generator that yields a single bytes chunk containing a cached JSON payload.
+            
+            Returns:
+                bytes: A single bytes chunk b'{"cached": "data"}' representing cached JSON data.
+            """
             yield b'{"cached": "data"}'
 
         mock_hishel_response = MagicMock()
@@ -396,6 +423,12 @@ class TestCachedAiohttpSession:
         """Test _store_response_with_body stores response in cache."""
         # Mock storage.create_entry to return an Entry with consumable stream
         async def mock_stream():
+            """
+            Yield a single bytes chunk containing a JSON object for use as an async response body stream.
+            
+            Yields:
+                bytes: A single chunk b'{"data": "test"}'.
+            """
             yield b'{"data": "test"}'
 
         mock_hishel_response = MagicMock()
@@ -437,6 +470,12 @@ class TestCachedAiohttpSession:
 
         # Mock sync iterator (not async)
         def mock_sync_stream():
+            """
+            Synchronous generator that yields a single bytes chunk containing a small JSON payload.
+            
+            Returns:
+                generator: Yields one `bytes` value: b'{"sync": "data"}'.
+            """
             yield b'{"sync": "data"}'
 
         mock_hishel_response = MagicMock()
@@ -466,6 +505,12 @@ class TestCachedAiohttpSession:
         """Test _request cache hit with dict headers (fallback path)."""
         # Mock cache entry with dict headers (not Headers object)
         async def mock_stream():
+            """
+            Yield a single bytes chunk containing JSON-encoded header data.
+            
+            Returns:
+                bytes: A single chunk b'{"dict": "headers"}' containing JSON-encoded headers.
+            """
             yield b'{"dict": "headers"}'
 
         mock_hishel_response = MagicMock()
@@ -494,6 +539,12 @@ class TestCachedAiohttpSession:
         """Test _store_response_with_body with sync iterator (fallback path)."""
         # Mock sync iterator in Entry response
         def mock_sync_stream():
+            """
+            Synchronous generator that yields a single bytes chunk b'test', used as a fallback stream in tests.
+            
+            Returns:
+                bytes: Yields one bytes object equal to b'test'.
+            """
             yield b'test'
 
         mock_hishel_response = MagicMock()
@@ -532,6 +583,12 @@ class TestCachedAiohttpSession:
         from hishel import Headers
 
         async def mock_stream():
+            """
+            Async generator that yields a single JSON-encoded bytes payload representing an error object.
+            
+            Returns:
+                Async iterator that yields one `bytes` value: b'{"exception": "test"}'.
+            """
             yield b'{"exception": "test"}'
 
         # Create Headers with _headers that will cause exception during iteration
@@ -571,6 +628,17 @@ class TestCachedAiohttpSession:
         captured_response = None
 
         async def capture_create_entry(request, response, cache_key):
+            """
+            Capture the provided request and response into nonlocal variables and return a mock cache entry.
+            
+            Parameters:
+                request: The HTTP request object to capture.
+                response: The HTTP response object to capture.
+                cache_key: The cache key associated with the request/response (unused by the return value).
+            
+            Returns:
+                mock_entry: A MagicMock representing a cache entry with its `response` attribute set to `None`.
+            """
             nonlocal captured_request, captured_response
             captured_request = request
             captured_response = response
@@ -622,6 +690,12 @@ class TestCachedAiohttpSession:
         from hishel import Headers
 
         async def mock_stream():
+            """
+            Yield a single bytes chunk containing a small JSON payload.
+            
+            Returns:
+                Async iterator yielding one bytes object: b'{"headers": "list"}'
+            """
             yield b'{"headers": "list"}'
 
         # Create Headers and manually set _headers to a list structure

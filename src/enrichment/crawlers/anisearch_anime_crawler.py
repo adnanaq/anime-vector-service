@@ -33,7 +33,10 @@ from src.enrichment.crawlers.utils import sanitize_output_path
 
 def _process_relation_tooltips(relations_list: List[Dict[str, Any]]) -> None:
     """
-    Processes a list of relations to extract image URLs from tooltip_html and renames the field.
+    Normalize relation entries' image fields by extracting the first <img> src URL from any HTML tooltip and replacing the original value.
+    
+    Parameters:
+        relations_list (List[Dict[str, Any]]): List of relation dictionaries to process. Each dictionary that contains a truthy "image" value will be modified in place: the "image" string (expected to contain HTML) is unescaped and, if an <img> tag with a src is found, the "image" field is set to that src URL. Entries without an "image" key or with an empty value are left unchanged.
     """
     for relation in relations_list:
         if "image" in relation and relation["image"]:
@@ -102,23 +105,21 @@ async def fetch_anisearch_anime(
     url: str, return_data: bool = True, output_path: Optional[str] = None
 ) -> Optional[Dict[str, Any]]:
     """
-    Crawls, processes, and saves anime data from a given anisearch.com URL.
-    Uses JS-based navigation for screenshots and relations pages.
-
-    Results are cached in Redis for 24 hours to avoid repeated crawling.
-
-    Args:
-        url: Can be either:
-            - Full URL: "https://www.anisearch.com/anime/18878,dan-da-dan"
-            - Relative path: "/18878,dan-da-dan" or "18878,dan-da-dan"
-        return_data: Whether to return the data dict (default: True)
-        output_path: Optional file path to save JSON (default: None)
-
+    Crawl and normalize anime data from an anisearch.com anime page.
+    
+    Performs a main-page extraction and uses JS navigation to collect screenshots and relations. Results are cached for 24 hours to avoid repeated crawling.
+    
+    Parameters:
+        url (str): Full or relative anisearch anime URL (e.g. "https://www.anisearch.com/anime/18878,dan-da-dan",
+            "/18878,dan-da-dan", or "18878,dan-da-dan"). Must be an anisearch.com anime path.
+        return_data (bool): If True, return the extracted data dictionary; if False, do not return data.
+        output_path (Optional[str]): If provided, write the resulting JSON to this file path.
+    
     Returns:
-        Complete anime data dictionary (if return_data=True), otherwise None
-
+        dict: Normalized anime data when `return_data` is True, otherwise `None`.
+    
     Raises:
-        ValueError: If URL is not from anisearch.com/anime
+        ValueError: If the provided URL is not an anisearch.com anime URL.
     """
     # Normalize the URL
     if not url.startswith("http"):

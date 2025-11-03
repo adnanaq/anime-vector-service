@@ -203,15 +203,15 @@ class ProgrammaticEnrichmentPipeline:
 
     def _find_next_agent_id(self, anime_name: str) -> int:
         """
-        Find next available agent ID globally across ALL anime.
-        Fills gaps first (e.g., if agent2 and agent4 exist, returns 3).
-        Otherwise returns max + 1.
-
-        Args:
-            anime_name: Clean anime name (unused, kept for backward compatibility)
-
+        Determine the next available global agent ID, preferring to fill numeric gaps.
+        
+        Scans the configured temp directory for entries matching the pattern "*_agent<N>" and returns the smallest positive integer not present; if no gap exists returns one greater than the maximum found.
+        
+        Parameters:
+            anime_name (str): Unused; kept for backward compatibility.
+        
         Returns:
-            Next available agent ID number (global across all anime)
+            int: Next available agent ID. Returns 1 if the temp directory is missing, no agent directories are found, or a scan error occurs.
         """
         # Check if temp directory exists
         temp_base = self.config.temp_dir

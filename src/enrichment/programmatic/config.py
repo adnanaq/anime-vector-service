@@ -84,6 +84,19 @@ class EnrichmentConfig(BaseSettings):
 
     @field_validator("api_timeout")
     def validate_timeout(cls, v):
+        """
+        Validate that the API timeout value is within the allowed range.
+        
+        Parameters:
+            cls: The class where the validator is defined.
+            v (int): Timeout in seconds for an API call.
+        
+        Returns:
+            int: The validated timeout value.
+        
+        Raises:
+            ValueError: If `v` is less than 1 or greater than 300.
+        """
         if v < 1 or v > 300:
             raise ValueError("API timeout must be between 1 and 300 seconds")
         return v

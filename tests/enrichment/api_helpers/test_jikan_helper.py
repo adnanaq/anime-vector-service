@@ -647,6 +647,15 @@ class TestFetchDetailedData:
 
             # Mock fetch to return data
             async def mock_fetch(ep_id):
+                """
+                Return a dictionary mapping "episode_number" to the provided episode identifier.
+                
+                Parameters:
+                    ep_id: The episode identifier to assign to the "episode_number" field.
+                
+                Returns:
+                    dict: A dictionary with key "episode_number" whose value is `ep_id`.
+                """
                 return {"episode_number": ep_id}
 
             fetcher.fetch_episode_detail = AsyncMock(side_effect=mock_fetch)
@@ -1107,6 +1116,15 @@ class TestEdgeCasesAndBoundaries:
             fetcher.batch_size = 50
 
             async def mock_fetch(ep_id):
+                """
+                Return a dictionary mapping "episode_number" to the provided episode identifier.
+                
+                Parameters:
+                    ep_id: The episode identifier to assign to the "episode_number" field.
+                
+                Returns:
+                    dict: A dictionary with key "episode_number" whose value is `ep_id`.
+                """
                 return {"episode_number": ep_id}
 
             fetcher.fetch_episode_detail = AsyncMock(side_effect=mock_fetch)

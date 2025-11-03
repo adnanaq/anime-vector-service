@@ -60,16 +60,16 @@ class CacheConfig(BaseModel):
 
 def get_cache_config() -> CacheConfig:
     """
-    Get cache configuration from environment variables.
-
-    Environment Variables:
-        ENABLE_HTTP_CACHE: Enable caching (default: false)
-        HTTP_CACHE_STORAGE: Storage type - redis or sqlite (default: redis)
-        REDIS_CACHE_URL: Redis connection URL (default: redis://localhost:6379/0)
-        HTTP_CACHE_DIR: SQLite cache directory (default: data/http_cache)
-
+    Load HTTP cache configuration from environment variables.
+    
+    Environment variables read and their defaults:
+        ENABLE_HTTP_CACHE (default: "true") — enable HTTP caching.
+        HTTP_CACHE_STORAGE (default: "redis") — cache storage backend, one of "redis" or "sqlite".
+        REDIS_CACHE_URL (default: "redis://localhost:6379/0") — Redis connection URL when using Redis backend.
+        HTTP_CACHE_DIR (default: "data/http_cache") — filesystem directory for SQLite cache.
+    
     Returns:
-        CacheConfig instance
+        CacheConfig: Configuration populated from the environment.
     """
     import os
 

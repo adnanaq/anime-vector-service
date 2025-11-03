@@ -383,11 +383,17 @@ class EnsembleFuzzyMatcher:
     """Multi-algorithm fuzzy matching with ensemble scoring (enhanced)"""
 
     def __init__(self, model_name: str = "BAAI/bge-m3", enable_visual: bool = True):
-        """Initialize with multilingual embedding model and optional vision model
-
-        Args:
-            model_name: Text embedding model name
-            enable_visual: Enable visual similarity matching (requires VisionProcessor)
+        """
+        Initialize the matcher with a multilingual embedding model and an optional vision processor.
+        
+        Parameters:
+            model_name (str): Identifier of the text embedding model to load; if loading fails the instance will keep `embedding_model = None` and fall back to non-embedding matching.
+            enable_visual (bool): Whether to attempt to enable image-based similarity. Actual visual support depends on runtime availability and initialization; visual matching will be disabled on failure.
+        
+        Attributes set:
+            embedding_model: Loaded SentenceTransformer instance or `None` if model loading failed.
+            enable_visual: `True` only if visual support is available and initialized successfully, `False` otherwise.
+            vision_processor: Initialized VisionProcessor instance or `None` when visual support is unavailable or initialization fails.
         """
         try:
             self.embedding_model = SentenceTransformer(

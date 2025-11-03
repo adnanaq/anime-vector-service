@@ -106,6 +106,15 @@ class TestCachedResultDecoratorRefactored:
 
         @cached_result(ttl=60, key_prefix="test")
         async def fetch_data(item_id: str) -> Dict[str, Any]:
+            """
+            Fetches test data for the given item id and increments the outer `call_count` counter.
+            
+            Parameters:
+                item_id (str): Identifier of the item to fetch.
+            
+            Returns:
+                Dict[str, Any]: Dictionary with keys `"id"` (the provided item_id) and `"data"` (the string "test_data").
+            """
             nonlocal call_count
             call_count += 1
             return {"id": item_id, "data": "test_data"}
@@ -138,6 +147,15 @@ class TestCachedResultDecoratorRefactored:
 
         @cached_result(ttl=60, key_prefix="test")
         async def fetch_data(item_id: str) -> Dict[str, str]:
+            """
+            Return test data for the given item identifier.
+            
+            Parameters:
+                item_id (str): Identifier of the item to fetch.
+            
+            Returns:
+                Dict[str, str]: A mapping with keys `id` (the provided identifier) and `data` (a test string).
+            """
             nonlocal call_count
             call_count += 1
             return {"id": item_id, "data": "test"}
@@ -154,11 +172,24 @@ class TestCachedResultDecoratorRefactored:
 
     @pytest.mark.asyncio
     async def test_decorator_redis_set_error(self) -> None:
-        """Test decorator behavior when Redis setex() fails."""
+        """
+        Verify that when Redis `setex` raises an exception the decorator still returns the function result and retries execution.
+        
+        Mocks the Redis client so `get` returns `None` (cache miss) and `setex` raises; asserts the wrapped function's return value is returned and the wrapped function is invoked twice (once during the initial attempt and once after `setex` fails).
+        """
         call_count = 0
 
         @cached_result(ttl=60, key_prefix="test")
         async def fetch_data(item_id: str) -> Dict[str, str]:
+            """
+            Return test data for the given item identifier.
+            
+            Parameters:
+                item_id (str): Identifier of the item to fetch.
+            
+            Returns:
+                Dict[str, str]: A mapping with keys `id` (the provided identifier) and `data` (a test string).
+            """
             nonlocal call_count
             call_count += 1
             return {"id": item_id, "data": "test"}
@@ -184,6 +215,12 @@ class TestComputeSchemaHash:
         """Test schema hash computation for regular function."""
 
         def test_func() -> str:
+            """
+            Provide a constant test string.
+            
+            Returns:
+                str: The literal string "test".
+            """
             return "test"
 
         hash1 = _compute_schema_hash(test_func)
@@ -196,6 +233,12 @@ class TestComputeSchemaHash:
         """Test that same function produces same hash."""
 
         def test_func() -> str:
+            """
+            Provide a constant test string.
+            
+            Returns:
+                str: The literal string "test".
+            """
             return "test"
 
         hash1 = _compute_schema_hash(test_func)
@@ -207,9 +250,21 @@ class TestComputeSchemaHash:
         """Test that different functions produce different hashes."""
 
         def func1() -> str:
+            """
+            Return the constant identifier string 'func1'.
+            
+            Returns:
+                str: The literal string 'func1'.
+            """
             return "func1"
 
         def func2() -> str:
+            """
+            Provide a constant string identifier for this function.
+            
+            Returns:
+                result (str): The literal string "func2".
+            """
             return "func2"
 
         hash1 = _compute_schema_hash(func1)
@@ -350,6 +405,15 @@ class TestCachedResultDecoratorExtended:
 
         @cached_result(ttl=60, key_prefix="test")
         async def fetch_data(item_id: str) -> Dict[str, Any]:
+            """
+            Retrieve test data for a given item identifier.
+            
+            Parameters:
+                item_id (str): Identifier of the item to fetch.
+            
+            Returns:
+                Dict[str, Any]: Dictionary with keys "id" (the provided item_id) and "data" (a test payload).
+            """
             nonlocal call_count
             call_count += 1
             return {"id": item_id, "data": "test"}
@@ -370,6 +434,15 @@ class TestCachedResultDecoratorExtended:
 
         @cached_result(ttl=60)
         async def my_custom_function(item_id: str) -> Dict[str, str]:
+            """
+            Return a dictionary containing the given item identifier.
+            
+            Parameters:
+                item_id (str): The identifier of the item.
+            
+            Returns:
+                Dict[str, str]: A mapping with key "id" set to the provided `item_id`.
+            """
             return {"id": item_id}
 
         with patch(
@@ -392,6 +465,15 @@ class TestCachedResultDecoratorExtended:
 
         @cached_result(ttl=60, key_prefix="test")
         async def fetch_data(item_id: str) -> Optional[Dict[str, str]]:
+            """
+            Increment a nonlocal call counter and return no data for the given item identifier.
+            
+            Parameters:
+                item_id (str): Identifier of the item to fetch.
+            
+            Returns:
+                None: Always returns `None`.
+            """
             nonlocal call_count
             call_count += 1
             return None
@@ -417,6 +499,15 @@ class TestCachedResultDecoratorExtended:
 
         @cached_result(key_prefix="test")
         async def fetch_data(item_id: str) -> Dict[str, str]:
+            """
+            Retrieve a data mapping for the given item identifier.
+            
+            Parameters:
+            	item_id (str): Identifier of the item to fetch.
+            
+            Returns:
+            	Dict[str, str]: Mapping with key "id" set to the provided item identifier.
+            """
             return {"id": item_id}
 
         with patch(
@@ -439,6 +530,15 @@ class TestCachedResultDecoratorExtended:
 
         @cached_result(ttl=3600, key_prefix="test")
         async def fetch_data(item_id: str) -> Dict[str, str]:
+            """
+            Retrieve a data mapping for the given item identifier.
+            
+            Parameters:
+            	item_id (str): Identifier of the item to fetch.
+            
+            Returns:
+            	Dict[str, str]: Mapping with key "id" set to the provided item identifier.
+            """
             return {"id": item_id}
 
         with patch(
@@ -461,7 +561,15 @@ class TestCachedResultDecoratorExtended:
 
         @cached_result(ttl=60, key_prefix="test")
         async def my_function(item_id: str) -> Dict[str, str]:
-            """My function docstring."""
+            """
+            Return a mapping containing the provided item identifier under the 'id' key.
+            
+            Parameters:
+            	item_id (str): Identifier of the item.
+            
+            Returns:
+            	dict: A dictionary with key 'id' mapped to the given item_id.
+            """
             return {"id": item_id}
 
         # functools.wraps should preserve metadata
@@ -474,6 +582,22 @@ class TestCachedResultDecoratorExtended:
 
         @cached_result(ttl=60, key_prefix="test")
         async def fetch_complex_data(item_id: str) -> Dict[str, Any]:
+            """
+            Return a representative complex nested data structure for the given item identifier.
+            
+            Parameters:
+                item_id (str): Identifier to assign to the top-level `"id"` field.
+            
+            Returns:
+                dict: A dictionary with the following keys:
+                    - "id": the provided `item_id`
+                    - "nested": a dict with keys `"key"` (str) and `"list"` (list of ints)
+                    - "array": list of strings
+                    - "number": integer value
+                    - "float": floating-point value
+                    - "bool": boolean value
+                    - "null": None
+            """
             return {
                 "id": item_id,
                 "nested": {"key": "value", "list": [1, 2, 3]},
@@ -514,6 +638,17 @@ class TestCachedResultDecoratorExtended:
 
         @cached_result(ttl=60, key_prefix="test")
         async def fetch_data(item_id: str) -> Dict[str, str]:
+            """
+            Fetches a data record for the given item identifier.
+            
+            Increments an internal call counter as a side effect and returns a mapping containing the item id and a generated data string.
+            
+            Parameters:
+                item_id (str): Identifier of the item to fetch.
+            
+            Returns:
+                Dict[str, str]: A dictionary with keys "id" (the provided item_id) and "data" (a string formatted as "data_{item_id}").
+            """
             nonlocal call_count
             call_count += 1
             return {"id": item_id, "data": f"data_{item_id}"}
@@ -534,10 +669,28 @@ class TestCachedResultDecoratorExtended:
 
     @pytest.mark.asyncio
     async def test_decorator_schema_hash_included_in_key(self) -> None:
-        """Test that schema hash is included in cache key."""
+        """
+        Verifies that the generated cache key includes an 8-character schema hash.
+        
+        Creates a cached function with prefix "test", mocks the Redis client, invokes the function,
+        then inspects the Redis `get` call's key to assert the key format:
+        - first segment is "result_cache"
+        - second segment equals the provided prefix ("test")
+        - third segment is an 8-character schema hash
+        - fourth segment contains the stringified argument ("item1")
+        """
 
         @cached_result(ttl=60, key_prefix="test")
         async def fetch_data(item_id: str) -> Dict[str, str]:
+            """
+            Retrieve a data mapping for the given item identifier.
+            
+            Parameters:
+            	item_id (str): Identifier of the item to fetch.
+            
+            Returns:
+            	Dict[str, str]: Mapping with key "id" set to the provided item identifier.
+            """
             return {"id": item_id}
 
         with patch(

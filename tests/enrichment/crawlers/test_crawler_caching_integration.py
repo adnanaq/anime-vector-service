@@ -21,7 +21,11 @@ CHARACTERS_URL = f"https://www.anisearch.com/anime/{ANIME_ID}/characters"
 
 @pytest.fixture(scope="module", autouse=True)
 def setup_and_teardown_redis_client():
-    """Ensures Redis is available and cleans up the singleton client after tests."""
+    """
+    Ensure a Redis server is reachable for the test module and close the module-level Redis singleton after tests.
+    
+    If a connection to redis://localhost:6379/0 cannot be established, skip the entire module. After the module's tests complete, invoke the teardown coroutine that closes the shared result-cache Redis client.
+    """
     try:
         r = redis.Redis.from_url("redis://localhost:6379/0", decode_responses=True)
         r.ping()

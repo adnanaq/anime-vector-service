@@ -30,7 +30,23 @@ from src.cache_manager.async_redis_storage import AsyncRedisStorage
 
 @pytest.fixture
 def mock_redis_client() -> AsyncMock:
-    """Create a mock async Redis client."""
+    """
+    Create a fully-configured mock asynchronous Redis client for tests.
+    
+    The returned AsyncMock simulates a Redis client with commonly used async methods pre-configured:
+    - from_url: returns the mock client
+    - close: async close stub
+    - pipeline: returns an AsyncMock (pipeline)
+    - hset, hgetall: hgetall returns {}
+    - sadd, smembers: smembers returns an empty set
+    - srem, expire
+    - rpush, lrange: lrange returns an empty list
+    - scan: returns (0, []) to simulate no keys
+    - delete
+    
+    Returns:
+        AsyncMock: A mock async Redis client with the methods above configured for use in tests.
+    """
     mock_client = AsyncMock()
     mock_client.from_url = AsyncMock(return_value=mock_client)
     mock_client.close = AsyncMock()
@@ -50,7 +66,15 @@ def mock_redis_client() -> AsyncMock:
 
 @pytest.fixture
 def storage_with_mock_client(mock_redis_client: AsyncMock) -> AsyncRedisStorage:
-    """Create AsyncRedisStorage with mocked Redis client."""
+    """
+    Create an AsyncRedisStorage configured to use the provided mocked Redis client for tests.
+    
+    Parameters:
+        mock_redis_client: Mocked asynchronous Redis client to be used by the storage.
+    
+    Returns:
+        An AsyncRedisStorage instance configured with a 3600.0 second default TTL, TTL refresh on access enabled, and the key prefix "test_cache".
+    """
     return AsyncRedisStorage(
         client=mock_redis_client,
         default_ttl=3600.0,
@@ -61,7 +85,12 @@ def storage_with_mock_client(mock_redis_client: AsyncMock) -> AsyncRedisStorage:
 
 @pytest.fixture
 def mock_request() -> Request:
-    """Create a mock HTTP request."""
+    """
+    Create a mock HTTP GET request used in tests.
+    
+    Returns:
+        Request: A Request with method "GET", URL "https://api.example.com/anime/1", and empty headers and metadata.
+    """
     return Request(
         method="GET",
         url="https://api.example.com/anime/1",
@@ -72,9 +101,20 @@ def mock_request() -> Request:
 
 @pytest.fixture
 def mock_response() -> Response:
-    """Create a mock HTTP response with async stream."""
+    """
+    Create a mock HTTP response with a three-chunk asynchronous byte stream.
+    
+    Returns:
+        Response: A Response instance with status 200, a "Content-Type: application/json" header, empty metadata, and a stream that yields the byte chunks b"chunk1", b"chunk2", and b"chunk3" in order.
+    """
 
     async def mock_stream() -> AsyncIterator[bytes]:
+        """
+        Yield three predefined byte chunks in sequence.
+        
+        Returns:
+            Iterator[bytes]: An iterator that yields b'chunk1', b'chunk2', and b'chunk3' in order.
+        """
         yield b"chunk1"
         yield b"chunk2"
         yield b"chunk3"
@@ -722,6 +762,12 @@ class TestUpdateEntry:
 
         # Callable that transforms entry
         def transform_entry(entry: Entry) -> Entry:
+            """
+            Create a copy of an Entry with its response replaced by a 304 response containing an `ETag: transformed` header.
+            
+            Returns:
+                An Entry identical to the input except its `response` is a Response with status code 304, headers `{"ETag": "transformed"}`, no stream, and empty metadata.
+            """
             return Entry(
                 id=entry.id,
                 request=entry.request,
@@ -1009,6 +1055,12 @@ class TestStreamOperations:
         """Test _save_stream saves chunks to Redis."""
 
         async def mock_stream() -> AsyncIterator[bytes]:
+            """
+            Provide a mock asynchronous stream that yields three sequential chunks.
+            
+            Returns:
+                An iterator yielding three byte chunks: b'chunk1', b'chunk2', and b'chunk3'.
+            """
             yield b"chunk1"
             yield b"chunk2"
             yield b"chunk3"

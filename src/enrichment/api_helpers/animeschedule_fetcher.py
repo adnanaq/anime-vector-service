@@ -18,7 +18,16 @@ from src.cache_manager.instance import http_cache_manager as _cache_manager
 async def fetch_animeschedule_data(
     search_term: str, save_file: bool = False
 ) -> Optional[Dict[str, Any]]:
-    """Fetch AnimSchedule data for an anime (async version)"""
+    """
+    Fetch AnimSchedule anime data for a search term.
+    
+    Parameters:
+        search_term (str): Query string to search for an anime on AnimSchedule.
+        save_file (bool): If True, write the selected anime data to "temp/as.json" in UTF-8 JSON format.
+    
+    Returns:
+        Optional[Dict[str, Any]]: The first anime result's data as a dictionary, or `None` if no results were found or an error occurred.
+    """
 
     print(f"🔄 Fetching AnimSchedule data for: {search_term}")
 
@@ -61,7 +70,11 @@ async def fetch_animeschedule_data(
 
 
 async def main() -> None:
-    """Main function for command-line usage"""
+    """
+    Command-line entry point that fetches AnimSchedule data for a provided search term.
+    
+    Expects exactly one command-line argument: the search term. If the argument count is incorrect, prints usage information and exits the process with status 1. Otherwise, invokes `fetch_animeschedule_data(search_term, save_file=True)` and awaits its completion.
+    """
     if len(sys.argv) != 2:
         print("Usage: python animeschedule_fetcher.py <search_term>")
         sys.exit(1)

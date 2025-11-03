@@ -32,7 +32,14 @@ def redis_client():
 
 @pytest_asyncio.fixture
 async def clean_cache_manager():
-    """Ensure cache manager's async Redis client is properly recreated for each test."""
+    """
+    Recreate the cache manager's asynchronous Redis client for the current test and yield the manager.
+    
+    Closes any existing async Redis client if present, reinitializes Redis storage attached to the cache manager for the current event loop, then yields the cache manager for use in the test. On teardown, the fixture does not close the client so that session cleanup is left to the tests or the next setup.
+    
+    Returns:
+        http_cache_manager: The cache manager instance whose async Redis client has been reinitialized for the test.
+    """
     import asyncio
     import logging
     from src.cache_manager.instance import http_cache_manager
@@ -67,7 +74,9 @@ async def clean_cache_manager():
 @pytest.mark.asyncio
 async def test_jikan_episode_caching(redis_client, clean_cache_manager):
     """
-    Integration test to verify that Jikan API calls for episodes are cached.
+    Verify episode detail fetches are cached so repeated requests return identical data and are faster.
+    
+    Checks that the first fetch for episode 1 returns a valid result with episode_number == 1, the second fetch returns the same data (cache hit), and—when the initial fetch took more than 0.1s—the cached fetch is significantly faster. Ensures the fetcher's session is closed.
     """
     fetcher = JikanDetailedFetcher(anime_id="21", data_type="episodes")
 
@@ -119,7 +128,11 @@ async def test_jikan_single_redis_instance(redis_client, clean_cache_manager):
 
 @pytest.mark.asyncio
 async def test_empty_input_handling(redis_client, clean_cache_manager):
-    """Test that empty input list is handled correctly without errors."""
+    """
+    Verify that fetch_detailed_data produces an empty output file when given an empty input list.
+    
+    Writes an empty list to a temporary input file, invokes fetch_detailed_data, and asserts the output file exists and contains an empty list without raising exceptions.
+    """
     with tempfile.TemporaryDirectory() as tmpdir:
         input_file = Path(tmpdir) / "empty_input.json"
         output_file = Path(tmpdir) / "empty_output.json"
