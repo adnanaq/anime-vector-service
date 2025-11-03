@@ -19,7 +19,12 @@ from src.enrichment.api_helpers.anilist_helper import AniListEnrichmentHelper
 
 @pytest.fixture(scope="module")
 def redis_client():
-    """Provides a Redis client for the test module, skipping tests if Redis is unavailable."""
+    """
+    Provide a Redis client for tests, yielding a connected client and flushing the database at setup and teardown.
+    
+    Yields:
+        redis.Redis: A connected Redis client configured with decode_responses=True. If Redis is unreachable, tests are skipped.
+    """
     try:
         r = redis.Redis.from_url("redis://localhost:6379/0", decode_responses=True)
         r.ping()
@@ -53,8 +58,9 @@ async def clean_helper():
 @pytest.mark.asyncio
 async def test_anilist_fetch_anime_caching(redis_client, clean_helper):
     """
-    Integration test to verify that AniList API calls are cached.
-    Tests fetching anime data with cache hit detection.
+    Verify that fetching an anime by AniList ID is cached so a repeated request returns the same data faster.
+    
+    Performs two sequential fetches for AniList ID 21: validates the first fetch returns the expected anime object, validates the second fetch returns an identical object (cache hit), and asserts the cached fetch is significantly faster when the initial fetch duration exceeds 0.1s.
     """
     import time
 
@@ -221,7 +227,9 @@ async def test_anilist_unicode_handling(redis_client, clean_helper):
 @pytest.mark.asyncio
 async def test_anilist_empty_results(redis_client, clean_helper):
     """
-    Test handling of anime with no characters/staff/episodes data.
+    Verify the helper handles anime IDs that return minimal or missing data without raising.
+    
+    If the helper returns a result, it must contain an "id"; any unhandled exception causes the test to fail.
     """
     helper = clean_helper
 

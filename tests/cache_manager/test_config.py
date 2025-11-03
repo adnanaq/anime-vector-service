@@ -209,7 +209,9 @@ class TestGetCacheConfig:
     def test_get_cache_config_enabled_false(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """Test get_cache_config() with ENABLE_HTTP_CACHE=false."""
+        """
+        Verify get_cache_config() respects the ENABLE_HTTP_CACHE environment variable when set to "false".
+        """
         monkeypatch.setenv("ENABLE_HTTP_CACHE", "false")
 
         config = get_cache_config()

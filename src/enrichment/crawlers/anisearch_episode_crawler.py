@@ -36,23 +36,17 @@ async def fetch_anisearch_episodes(
     url: str, return_data: bool = True, output_path: Optional[str] = None
 ) -> Optional[list]:
     """
-    Crawls, processes, and saves episode data from a given anisearch.com URL.
-
-    Results are cached in Redis for 24 hours to avoid repeated crawling.
-
-    This function defines a schema for extracting episode information,
-    including episode number, runtime, release date, and title. It then
-    initializes a crawler, runs it on the provided anime episode page URL,
-    processes the returned data to clean it, and optionally writes the output
-    to a JSON file.
-
-    Args:
-        url (str): The URL of the anisearch.com episode page to crawl.
-        return_data: Whether to return the data (default: True)
-        output_path: Optional file path to save JSON (default: None)
-
+    Crawl and extract episode metadata from an anisearch.com anime episodes page.
+    
+    Extracted fields include episodeNumber (normalized to an integer when present), runtime, releaseDate, and title. Results are cached for 24 hours (Redis) under the function's cache key. Optionally writes the cleaned results to a JSON file.
+    
+    Parameters:
+        url (str): The anisearch.com URL of the anime episodes page to crawl.
+        return_data (bool): If True, return the parsed list of episode dictionaries; if False, do not return the data.
+        output_path (Optional[str]): Optional file path to write the JSON output; if provided, the data is saved there.
+    
     Returns:
-        List of episode dictionaries (if return_data=True), otherwise None
+        list[dict] | None: A list of episode dictionaries when `return_data` is True and extraction succeeds, otherwise `None`.
     """
     css_schema = {
         "baseSelector": "tr[data-episode='true']",

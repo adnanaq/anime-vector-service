@@ -44,7 +44,11 @@ async def get_result_cache_redis_client() -> "RedisType[str]":
 
 
 async def close_result_cache_redis_client() -> None:
-    """Closes the singleton Redis client for result caching."""
+    """
+    Close the module's singleton Redis client used for result caching.
+    
+    If a client instance exists, close its connection and reset the module-level client reference to None; otherwise do nothing.
+    """
     global _redis_client
     if _redis_client:
         logging.info("Closing singleton Redis client for result cache.")
@@ -61,16 +65,15 @@ T = TypeVar("T")
 
 def _compute_schema_hash(func: Callable[..., Any]) -> str:
     """
-    Compute a hash of the function's source code.
-
-    This hash changes whenever the function's implementation changes,
-    automatically invalidating cached results when code is modified.
-
-    Args:
-        func: Function to hash
-
+    Compute an 8-character MD5 hash representing a function's source code.
+    
+    If the function's source cannot be retrieved (built-in, dynamically created, etc.), the hash is derived from the function's name. This enables cache invalidation when a function's implementation changes.
+    
+    Parameters:
+        func (Callable[..., Any]): The function whose source will be hashed.
+    
     Returns:
-        8-character hexadecimal hash of the function's source code
+        str: 8-character hexadecimal MD5 hash of the function's source or name.
     """
     try:
         # Get the source code of the function
@@ -86,16 +89,16 @@ def _generate_cache_key(
     prefix: str, schema_hash: str, *args: Any, **kwargs: Any
 ) -> str:
     """
-    Generate a stable cache key from function arguments and schema hash.
-
-    Args:
-        prefix: Cache key prefix (usually function name)
-        schema_hash: Hash of function's source code
-        *args: Positional arguments
-        **kwargs: Keyword arguments
-
+    Generate a stable, namespaced cache key from a prefix, function schema hash, and call arguments.
+    
+    Parameters:
+        prefix (str): Key prefix, typically the function name.
+        schema_hash (str): Short hash representing the function's source to enable schema-based invalidation.
+        *args: Positional arguments that influence the cache key; non-primitive values are JSON-serialized with sorted keys.
+        **kwargs: Keyword arguments included in sorted order; non-primitive values are JSON-serialized with sorted keys.
+    
     Returns:
-        Cache key string with format: result_cache:{prefix}:{schema_hash}:{args}
+        str: A namespaced cache key beginning with `result_cache:`. If the assembled key exceeds 200 characters, a SHA-256 digest of the key is used to keep the returned key length bounded.
     """
     # Serialize arguments to create stable key
     key_parts = [prefix, schema_hash]  # Include schema hash
@@ -130,33 +133,48 @@ def cached_result(
     key_prefix: Optional[str] = None,
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """
-    Decorator to cache async function results in Redis with automatic schema invalidation.
-
-    The cache key includes a hash of the function's source code. When you modify
-    the function (change CSS selectors, extraction logic, etc.), the hash changes
-    and old cache entries are automatically invalidated.
-
-    Usage:
-        @cached_result(ttl=86400, key_prefix="animeplanet_anime")
-        async def fetch_anime(slug: str) -> Optional[Dict[str, Any]]:
-            # Expensive crawler operation
-            return data
-
-    Args:
-        ttl: Time-to-live in seconds (None = use default from config)
-        key_prefix: Optional custom key prefix (default: function name)
-
+    Decorator that caches a function's return value in Redis and invalidates cached entries when the function's source code changes.
+    
+    The cache key embeds an 8-character hash of the decorated function's source to ensure that changes to the function (for example, selector or extraction logic changes) cause prior cache entries to be ignored. The decorator respects the global cache configuration and will bypass caching if caching is disabled or the configured storage type is not Redis.
+    
+    Parameters:
+        ttl (Optional[int]): Time-to-live for the cached entry in seconds. If `None`, a default TTL is used.
+        key_prefix (Optional[str]): Custom prefix for the cache key; if omitted the decorated function's name is used.
+    
     Returns:
-        Decorated function with caching
+        Callable: A decorator that wraps the target function with Redis-backed result caching.
     """
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         # Compute schema hash once when decorator is applied
+        """
+        Cache results of the decorated async function in Redis using a schema-based key to invalidate when the function's source changes.
+        
+        The returned wrapper will consult the global cache configuration and, when enabled with Redis storage, generate a stable cache key composed of the provided key prefix (or the function name), a schema hash computed from the function's source at decoration time, and the call arguments. On cache hit the wrapper returns the cached value (deserialized from JSON). On cache miss it executes the original function and, if the result is not None, serializes and stores it in Redis with the configured TTL (or 86400 seconds by default). Any caching errors or disabled configuration cause the wrapper to execute the original function without caching.
+        
+        Parameters:
+            func (Callable[..., Any]): Async function to be decorated.
+        
+        Returns:
+            Callable[..., Any]: An async wrapper that returns the decorated function's result, using Redis-backed caching when enabled.
+        """
         schema_hash = _compute_schema_hash(func)
 
         @functools.wraps(func)
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
             # Get cache config
+            """
+            Cache the wrapped coroutine's result in Redis using a schema-based key and an optional TTL.
+            
+            This wrapper checks the global cache configuration and only uses Redis when caching is enabled and storage_type is "redis". It builds a stable cache key from the provided key_prefix (or the wrapped function's name), the precomputed schema hash, and the call arguments. On a cache hit it returns the cached value (deserialized from JSON). On a cache miss it awaits the wrapped function, stores a JSON-serialized result in Redis if the result is not None using the specified TTL (or 86400 seconds by default), and returns the result. Any exceptions during caching are logged and the wrapped function is executed directly without caching.
+            
+            Parameters:
+                *args: Positional arguments forwarded to the wrapped function and incorporated into the cache key.
+                **kwargs: Keyword arguments forwarded to the wrapped function and incorporated into the cache key.
+            
+            Returns:
+                The wrapped function's return value; when a cached entry is found, the deserialized cached value is returned.
+            """
             config = get_cache_config()
 
             # Skip caching if disabled

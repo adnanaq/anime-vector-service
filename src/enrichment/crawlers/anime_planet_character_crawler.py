@@ -67,7 +67,15 @@ def _normalize_characters_url(anime_identifier: str) -> str:
 
 
 def _extract_slug_from_characters_url(url: str) -> str:
-    """Extract slug from anime-planet characters URL."""
+    """
+    Extract the anime slug from an anime-planet characters URL.
+    
+    Returns:
+        slug (str): The path segment following "/anime/" extracted from the URL.
+    
+    Raises:
+        ValueError: If a slug cannot be found in the provided URL.
+    """
     # Extract slug from: https://www.anime-planet.com/anime/dandadan/characters
     import re
 
@@ -82,17 +90,19 @@ async def fetch_animeplanet_characters(
     slug: str, return_data: bool = True, output_path: Optional[str] = None
 ) -> Optional[Dict[str, Any]]:
     """
-    Crawls and processes character data from anime-planet.com.
-    Uses concurrent batch processing for character detail enrichment.
-
-    Args:
-        slug: Anime slug (e.g., "dandadan"), path (e.g., "/anime/dandadan/characters"),
-              or full URL (e.g., "https://www.anime-planet.com/anime/dandadan/characters")
-        return_data: Whether to return the data dict (default: True)
-        output_path: Optional file path to save JSON (default: None)
-
+    Crawl and enrich character data for a given anime from anime-planet.com.
+    
+    Parameters:
+        slug (str): Anime identifier as a slug (e.g., "dandadan"), a path (e.g., "/anime/dandadan/characters"),
+            or a full characters page URL (e.g., "https://www.anime-planet.com/anime/dandadan/characters").
+        return_data (bool): If True, return the resulting data dictionary; if False, return None.
+        output_path (Optional[str]): Optional filesystem path to write the JSON output.
+    
     Returns:
-        Complete character data dictionary with enriched details (if return_data=True), otherwise None
+        dict: When returned, a dictionary with keys:
+            - "characters": list of character objects (basic fields merged with enriched detail fields),
+            - "total_count": integer count of characters.
+        None: If the crawl or extraction fails or if return_data is False.
     """
     # Normalize URL and extract slug using helper functions
     characters_url = _normalize_characters_url(slug)

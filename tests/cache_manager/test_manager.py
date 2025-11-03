@@ -65,7 +65,11 @@ class TestHTTPCacheManagerInit:
                 mock_storage.assert_called_once()
 
     def test_init_redis_url_missing_raises_error(self) -> None:
-        """Test that missing redis_url raises ValueError."""
+        """
+        Verify that when Redis storage is enabled but `redis_url` is None, HTTPCacheManager does not initialize an async Redis client and does not raise.
+        
+        Asserts that the manager's `_async_redis_client` remains `None` after initialization.
+        """
         config = CacheConfig(enabled=True, storage_type="redis", redis_url=None)
 
         manager = HTTPCacheManager(config)

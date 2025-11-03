@@ -50,14 +50,14 @@ class AsyncRedisStorage(AsyncBaseStorage):
         key_prefix: str = "hishel_cache",
     ) -> None:
         """
-        Initialize async Redis storage.
-
-        Args:
-            client: Existing async Redis client (optional)
-            redis_url: Redis connection URL (used if client not provided)
-            default_ttl: Default TTL in seconds for cache entries
-            refresh_ttl_on_access: Whether to refresh TTL on cache hits
-            key_prefix: Prefix for all Redis keys (default: "hishel_cache")
+        Configure AsyncRedisStorage and initialize or accept a Redis client, storing TTL and key-prefix settings.
+        
+        Parameters:
+        	client (Optional[Redis[bytes]]): Existing async Redis client to use; if omitted, an internal client is created from `redis_url`.
+        	redis_url (str): Connection URL used to create a client when `client` is not provided.
+        	default_ttl (Optional[float]): Default time-to-live in seconds applied to entries when no per-request TTL is present.
+        	refresh_ttl_on_access (bool): If True, refresh entry TTLs on access.
+        	key_prefix (str): Prefix applied to all Redis keys for namespacing.
         """
         self._owns_client = client is None
         self.client = client or Redis.from_url(redis_url, decode_responses=False)
@@ -68,19 +68,46 @@ class AsyncRedisStorage(AsyncBaseStorage):
         # Note: Connection test done lazily on first use
 
     def _make_key(self, key_type: str, identifier: str) -> str:
-        """Generate Redis key with prefix."""
+        """
+        Builds a Redis key by joining the configured prefix, a key type, and an identifier.
+        
+        Parameters:
+            key_type (str): Logical type component of the key (e.g., "entry", "stream", "key_index").
+            identifier (str): Unique identifier component for the key (e.g., UUID or encoded cache key).
+        
+        Returns:
+            str: Combined Redis key in the form "{prefix}:{key_type}:{identifier}".
+        """
         return f"{self.key_prefix}:{key_type}:{identifier}"
 
     def _entry_key(self, entry_id: uuid.UUID) -> str:
-        """Key for entry metadata and data."""
+        """
+        Builds the Redis key used to store an entry's metadata and data.
+        
+        Returns:
+            str: Redis key for the given entry ID.
+        """
         return self._make_key("entry", str(entry_id))
 
     def _stream_key(self, entry_id: uuid.UUID) -> str:
-        """Key for response stream chunks."""
+        """
+        Return the Redis key used to store response stream chunks for the given cache entry.
+        
+        Returns:
+            stream_key (str): Redis key for the entry's stream list.
+        """
         return self._make_key("stream", str(entry_id))
 
     def _index_key(self, cache_key: str) -> str:
-        """Key for cache_key → entry_ids index."""
+        """
+        Builds the Redis key for the set that tracks entry IDs associated with a cache key.
+        
+        Parameters:
+            cache_key (str): Cache key to index; encoded as UTF-8 and hex-encoded before composing the Redis key.
+        
+        Returns:
+            str: Redis key for the cache-key index set.
+        """
         # Use hex encoding for cache key (bytes)
         cache_key_hex = (
             cache_key.encode("utf-8").hex()
@@ -97,16 +124,18 @@ class AsyncRedisStorage(AsyncBaseStorage):
         id_: uuid.UUID | None = None,
     ) -> Entry:
         """
-        Create and store a new cache entry.
-
-        Args:
-            request: HTTP request
-            response: HTTP response
-            key: Cache key (string)
-            id_: Optional entry UUID (generated if not provided)
-
+        Create and store a new cache entry for the given request/response and cache key.
+        
+        The response stream is wrapped so response chunks are persisted to Redis while being yielded. The entry metadata and serialized entry are stored in Redis, the entry ID is added to the per-key index, and configured TTLs (per-request or default) are applied to the entry, its stream list, and the index.
+        
+        Parameters:
+            request: The original HTTP request associated with the entry.
+            response: The HTTP response whose stream will be persisted and returned as part of the stored entry.
+            key: Cache key used to index this entry.
+            id_: Optional UUID to use for the entry; a new UUID is generated if not provided.
+        
         Returns:
-            Created Entry object
+            The created Entry object with its response stream wrapped to persist chunks to Redis.
         """
         entry_id = id_ if id_ is not None else uuid.uuid4()
         entry_meta = EntryMeta(created_at=time.time())
@@ -165,13 +194,15 @@ class AsyncRedisStorage(AsyncBaseStorage):
 
     async def get_entries(self, key: str) -> List[Entry]:
         """
-        Retrieve all entries for a given cache key.
-
-        Args:
-            key: Cache key (string)
-
+        Return reconstructed cache entries associated with the given cache key.
+        
+        Retrieves entry IDs from the key's index, loads and deserializes each stored entry, skips missing/invalid/soft-deleted entries, and reattaches a Redis-backed async stream iterator to each entry's response so the response body can be streamed from Redis. If configured, refreshes the entry and stream TTL on access.
+        
+        Parameters:
+            key (str): Cache key whose associated entries to retrieve.
+        
         Returns:
-            List of Entry objects
+            List[Entry]: Entries matching the cache key with their response.stream restored; entries that are missing, invalid, or soft-deleted are omitted.
         """
         index_key = self._index_key(key)
         entry_ids_bytes = await self.client.smembers(index_key)
@@ -231,13 +262,16 @@ class AsyncRedisStorage(AsyncBaseStorage):
     ) -> Optional[Entry]:
         """
         Update an existing cache entry.
-
-        Args:
-            id: Entry UUID
-            new_entry: New Entry object or callable that transforms existing entry
-
+        
+        Parameters:
+        	id (uuid.UUID): UUID of the entry to update.
+        	new_entry (Union[Entry, Callable[[Entry], Entry]]): Either a replacement Entry or a callable that takes the current Entry and returns an updated Entry.
+        
         Returns:
-            Updated Entry or None if not found
+        	Optional[Entry]: The updated Entry, or `None` if the entry was not found or invalid.
+        
+        Raises:
+        	ValueError: If the updated Entry's id does not match the existing entry's id.
         """
         entry_key = self._entry_key(id)
         entry_hash = await self.client.hgetall(entry_key)
@@ -280,10 +314,11 @@ class AsyncRedisStorage(AsyncBaseStorage):
 
     async def remove_entry(self, id: uuid.UUID) -> None:
         """
-        Soft delete an entry (sets deleted_at timestamp).
-
-        Args:
-            id: Entry UUID
+        Soft-delete the stored cache entry by setting its deleted timestamp in Redis.
+        
+        If the entry is missing or its stored data is not a valid Entry, the function does nothing.
+        Parameters:
+            id (uuid.UUID): UUID of the entry to mark as deleted.
         """
         entry_key = self._entry_key(id)
         entry_hash = await self.client.hgetall(entry_key)
@@ -310,7 +345,11 @@ class AsyncRedisStorage(AsyncBaseStorage):
         )
 
     async def close(self) -> None:
-        """Close Redis connection if it was created by this instance."""
+        """
+        Close the owned Redis client connection.
+        
+        If this storage instance does not own the Redis client, no action is taken. Any exceptions raised while closing are suppressed.
+        """
         if not self._owns_client:
             return
         try:
@@ -322,14 +361,14 @@ class AsyncRedisStorage(AsyncBaseStorage):
         self, stream: AsyncIterator[bytes], entry_id: uuid.UUID
     ) -> AsyncIterator[bytes]:
         """
-        Wrapper around async iterator that saves response stream to Redis in chunks.
-
-        Args:
-            stream: Original response stream
-            entry_id: Entry UUID
-
-        Yields:
-            Stream chunks
+        Persist a response byte stream to Redis by appending each chunk and yield the chunks unchanged.
+        
+        Parameters:
+            stream (AsyncIterator[bytes]): Source response byte chunks.
+            entry_id (uuid.UUID): Identifier used to derive the Redis stream key.
+        
+        Returns:
+            AsyncIterator[bytes]: Yields the same byte chunks from the source as they are stored in Redis. A completion marker is appended to the Redis list when the source stream ends.
         """
         stream_key = self._stream_key(entry_id)
 
@@ -345,13 +384,13 @@ class AsyncRedisStorage(AsyncBaseStorage):
         self, entry_id: uuid.UUID
     ) -> AsyncIterator[bytes]:
         """
-        Get async iterator that yields response stream from Redis.
-
-        Args:
-            entry_id: Entry UUID
-
-        Yields:
-            Stream chunks
+        Yield stored response stream chunks for the given entry from Redis.
+        
+        Parameters:
+            entry_id (uuid.UUID): Entry UUID used to locate the stream chunks in Redis.
+        
+        Returns:
+            AsyncIterator[bytes]: Yields `bytes` chunks from the stored response stream until a completion marker is encountered.
         """
         stream_key = self._stream_key(entry_id)
 
@@ -366,13 +405,13 @@ class AsyncRedisStorage(AsyncBaseStorage):
 
     def _get_entry_ttl(self, request: Request) -> Optional[float]:
         """
-        Get TTL for an entry from request metadata or default.
-
-        Args:
-            request: HTTP request
-
+        Return the time-to-live (TTL) to apply for a cache entry based on the request.
+        
+        Parameters:
+            request (Request): The HTTP request whose metadata may contain a per-request TTL under the key "hishel_ttl".
+        
         Returns:
-            TTL in seconds or None
+            Optional[float]: The TTL in seconds from request.metadata["hishel_ttl"] if it exists and is numeric, otherwise the storage instance's configured default_ttl.
         """
         # Check for per-request TTL
         if "hishel_ttl" in request.metadata:
@@ -385,13 +424,12 @@ class AsyncRedisStorage(AsyncBaseStorage):
 
     async def cleanup_expired(self) -> int:
         """
-        Cleanup expired and soft-deleted entries.
-
-        Redis handles TTL-based expiration automatically via EXPIRE,
-        but we still need to cleanup soft-deleted entries.
-
+        Remove soft-deleted cache entries that are eligible for permanent deletion.
+        
+        Scans stored entries and permanently deletes those that are marked as soft-deleted and determined safe to hard-delete by the storage's policy.
+        
         Returns:
-            Number of entries cleaned up
+            int: Number of entries permanently removed.
         """
         cleaned = 0
 
@@ -423,10 +461,10 @@ class AsyncRedisStorage(AsyncBaseStorage):
 
     async def _hard_delete_entry(self, entry_id: uuid.UUID) -> None:
         """
-        Permanently delete an entry from Redis.
-
-        Args:
-            entry_id: Entry UUID
+        Permanently remove a cached entry, its stored response stream, and any index membership from Redis.
+        
+        Parameters:
+            entry_id (uuid.UUID): UUID of the entry to hard-delete; if the entry is indexed by a cache key, its ID is removed from that index and the entry's Redis hash and stream list are deleted.
         """
         entry_key = self._entry_key(entry_id)
         stream_key = self._stream_key(entry_id)

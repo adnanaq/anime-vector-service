@@ -36,23 +36,18 @@ async def fetch_anisearch_characters(
     url: str, return_data: bool = True, output_path: Optional[str] = None
 ) -> Optional[Dict[str, Any]]:
     """
-    Crawls, processes, and saves character data from a given anisearch.com URL.
-
-    Results are cached in Redis for 24 hours to avoid repeated crawling.
-
-    This function defines a schema for extracting character information,
-    including their name, role, URL, favorites count, and image. It then
-    initializes a crawler, runs it on the provided anime character page URL,
-    processes the returned data to clean and structure it, and optionally
-    writes the output to a JSON file.
-
-    Args:
-        url (str): The URL of the anisearch.com character page to crawl.
-        return_data: Whether to return the data dict (default: True)
-        output_path: Optional file path to save JSON (default: None)
-
+    Crawl and extract character data from an anisearch.com anime page.
+    
+    Results are cached in Redis for 24 hours.
+    
+    Parameters:
+        url (str): The anisearch.com page URL to crawl.
+        return_data (bool): If True, return the parsed data; if False, do not return data.
+        output_path (Optional[str]): If provided, path to write the resulting JSON file.
+    
     Returns:
-        Character data dictionary (if return_data=True), otherwise None
+        dict: A dictionary with a "characters" key mapping to a list of character objects (each includes fields like `name`, `url`, `image`, `favorites`, and `role`) when `return_data` is True and extraction succeeds.
+        None: If extraction fails, no results are found, or `return_data` is False.
     """
     # Define a correct schema for character extraction
     css_schema = {

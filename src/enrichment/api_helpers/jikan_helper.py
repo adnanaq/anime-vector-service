@@ -30,6 +30,14 @@ class JikanDetailedFetcher:
     """
 
     def __init__(self, anime_id: str, data_type: str, session=None):
+        """
+        Initialize the fetcher with an anime identifier, target data type, rate-limit defaults, and an aiohttp session.
+        
+        Parameters:
+            anime_id (str): The MyAnimeList anime identifier to query.
+            data_type (str): Either 'episodes' or 'characters' to select which detailed endpoint to fetch.
+            session: Optional aiohttp-compatible session; if omitted a cached session named "jikan" is obtained.
+        """
         self.anime_id = anime_id
         self.data_type = data_type  # 'episodes' or 'characters'
         self.request_count = 0
@@ -46,10 +54,12 @@ class JikanDetailedFetcher:
         )
 
     async def respect_rate_limits(self) -> None:
-        """Ensure we don't exceed Jikan API rate limits (async version).
-
-        Jikan limits: 3 requests/second, 60 requests/minute
-        Strategy: Wait 0.5s between each request (ensures 2 req/sec << 3/sec limit)
+        """
+        Enforce the class's Jikan API rate limits before making the next request.
+        
+        Resets the per-minute counter when the minute window elapses or if system clock moved backwards.
+        If the per-minute limit (60) has been reached, waits until the current minute window resets.
+        After the first request in a window, waits 0.5 seconds before subsequent requests to stay below the per-second limit.
         """
         current_time = time.time()
         elapsed = current_time - self.start_time
@@ -82,14 +92,26 @@ class JikanDetailedFetcher:
     async def fetch_episode_detail(
         self, episode_id: int, retry_count: int = 0
     ) -> Optional[Dict[str, Any]]:
-        """Fetch detailed episode data from Jikan API (async).
-
-        Args:
-            episode_id: Episode number to fetch
-            retry_count: Internal retry counter (max 3 retries)
-
+        """
+        Fetch detailed information for a single episode of the anime from the Jikan API.
+        
+        Parameters:
+            episode_id (int): Episode number within the anime to fetch.
+        
         Returns:
-            Episode detail dict or None if failed
+            dict: Episode details with keys:
+                - episode_number (int)
+                - url (str | None)
+                - title (str | None)
+                - title_japanese (str | None)
+                - title_romaji (str | None)
+                - aired (str | None)
+                - score (float | None)
+                - filler (bool)
+                - recap (bool)
+                - duration (str | None)
+                - synopsis (str | None)
+            None: If the episode could not be fetched.
         """
         try:
             url = (
@@ -149,14 +171,28 @@ class JikanDetailedFetcher:
     async def fetch_character_detail(
         self, character_data: Dict[str, Any], retry_count: int = 0
     ) -> Optional[Dict[str, Any]]:
-        """Fetch detailed character data from Jikan API (async).
-
-        Args:
-            character_data: Character data containing MAL ID
-            retry_count: Internal retry counter (max 3 retries)
-
+        """
+        Retrieve detailed character information from the Jikan API for a given character entry.
+        
+        Parameters:
+            character_data (Dict[str, Any]): An input character entry (as found in character lists) that must contain
+                a nested `character` object with `mal_id`. Any `role` and `voice_actors` fields from this input will be
+                preserved in the returned detail.
+            retry_count (int): Internal retry counter used when HTTP 429 (rate limit) is encountered; capped at 3.
+        
         Returns:
-            Character detail dict or None if failed
+            Optional[Dict[str, Any]]: A dictionary with the following keys on success:
+                - `character_id`: MAL character id
+                - `url`: character page URL
+                - `name`: character name
+                - `name_kanji`: character name in kanji (if present)
+                - `nicknames`: list of nicknames (may be empty)
+                - `about`: character description (may be None)
+                - `images`: image info dict
+                - `favorites`: favorites count (may be None)
+                - `role`: role value copied from `character_data`
+                - `voice_actors`: list of voice actor entries copied from `character_data`
+            Returns `None` if the request fails, encounters an unrecoverable HTTP status, or exceeds retry limits.
         """
         character_id = character_data["character"]["mal_id"]
 
@@ -217,7 +253,16 @@ class JikanDetailedFetcher:
     def append_batch_to_file(
         self, batch_data: List[Dict[str, Any]], progress_file: str
     ) -> int:
-        """Append batch data to progress file."""
+        """
+        Append a batch of items to a JSON progress file, creating the file if it does not exist.
+        
+        Parameters:
+        	batch_data (List[Dict[str, Any]]): Items to append to the progress file.
+        	progress_file (str): Path to the JSON progress file to update.
+        
+        Returns:
+        	total_items (int): Total number of items in the progress file after the append.
+        """
         # Load existing data
         if os.path.exists(progress_file):
             with open(progress_file, "r", encoding="utf-8") as f:
@@ -235,23 +280,19 @@ class JikanDetailedFetcher:
         return len(all_data)
 
     async def fetch_detailed_data(self, input_file: str, output_file: str) -> None:
-        """Main async method to fetch detailed data with batch processing. When processing each object should
-        have these properties, example for characters:
-        {
-            "name": "Character Full Name",
-            "role": "Main/Supporting/Minor",
-            "name_variations": ["Alternative names"],
-            "name_kanji": "漢字名",
-            "name_native": "Native Name",
-            "character_ids": {{"mal": 12345, "anilist": null}},
-            "images": {{"mal": "image_url", "anilist": null}},
-            "description": "Character description",
-            "age": "Character age or null",
-            "gender": "Male/Female/Other or null",
-            "voice_actors": [
-                {{"name": "Voice Actor Name", "language": "Japanese"}}
-            ]
-        }
+        """
+        Fetches detailed episode or character records from input JSON, batching requests, tracking progress, and writing results to an output file.
+        
+        Reads input_file (JSON) to determine items to fetch based on self.data_type ("episodes" or "characters"), performs batched detail requests (resuming from a .progress file if present), appends batches to a progress file, and finally writes the sorted aggregated results to output_file. The method creates or updates a progress file at "{output_file}.progress" while running and removes it on successful completion.
+        
+        Parameters:
+            input_file (str): Path to the JSON file containing episode or character input data.
+            output_file (str): Path where the final aggregated detailed JSON will be written.
+        
+        Side effects:
+            - Reads input_file.
+            - Creates/updates "{output_file}.progress" to persist intermediate batches.
+            - Writes final results to output_file and removes the progress file on completion.
         """
         # Load input data
         with open(input_file, "r", encoding="utf-8") as f:
@@ -368,6 +409,11 @@ class JikanDetailedFetcher:
 
 
 async def main() -> None:
+    """
+    Parse command-line arguments, validate file paths, and run the detailed-data fetcher for the specified anime.
+    
+    Creates an argument parser for data_type ("episodes" or "characters"), anime_id, input_file, and output_file; exits with an error if input_file does not exist; ensures the output directory exists; instantiates JikanDetailedFetcher and invokes its fetch_detailed_data method with the provided files.
+    """
     parser = argparse.ArgumentParser(description="Fetch detailed data from Jikan API")
     parser.add_argument(
         "data_type", choices=["episodes", "characters"], help="Type of data to fetch"

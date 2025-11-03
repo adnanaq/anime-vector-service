@@ -22,7 +22,16 @@ class AniListEnrichmentHelper:
     """Helper for AniList data fetching in AI enrichment pipeline."""
 
     def __init__(self) -> None:
-        """Initialize AniList enrichment helper."""
+        """
+        Create an AniListEnrichmentHelper and initialize internal state.
+        
+        Initializes:
+        - base_url: AniList GraphQL endpoint.
+        - session: HTTP session (created on demand; may become a cached or plain aiohttp session).
+        - rate_limit_remaining: default remaining requests before throttling.
+        - rate_limit_reset: optional timestamp when the rate limit resets.
+        - _session_event_loop: event loop the session is bound to for per-loop session management.
+        """
         self.base_url = "https://graphql.anilist.co"
         self.session: Optional[aiohttp.ClientSession] = None
         self.rate_limit_remaining = 90
@@ -32,9 +41,17 @@ class AniListEnrichmentHelper:
     async def _make_request(
         self, query: str, variables: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
-        """Make GraphQL request to AniList API.
-
-        Returns dict with 'data' key containing response and '_from_cache' metadata.
+        """
+        Send a GraphQL request to AniList and return the parsed response augmented with cache metadata.
+        
+        This method ensures an HTTP session bound to the current event loop (attempting a Redis-backed cached session and falling back to an uncached session), respects AniList rate limits by sleeping when limits are low, and retries after `Retry-After` when receiving HTTP 429. It adds an observable `_from_cache` flag to the returned result indicating whether the response was served from cache.
+        
+        Parameters:
+            query (str): GraphQL query string to execute.
+            variables (Optional[Dict[str, Any]]): GraphQL variables to include with the query.
+        
+        Returns:
+            Dict[str, Any]: The GraphQL `data` object from the response with an additional `_from_cache` boolean. If the request fails or GraphQL `errors` are present, returns a dictionary containing `_from_cache` (typically `False` on failures).
         """
         headers = {
             "Content-Type": "application/json",
@@ -134,6 +151,12 @@ class AniListEnrichmentHelper:
             return {"_from_cache": False}
 
     def _get_media_query_fields(self) -> str:
+        """
+        GraphQL selection set for Media (anime) fields used when querying AniList.
+        
+        Returns:
+            str: A multiline GraphQL field selection string that requests identifiers, titles, descriptions, images, format and airing metadata, scores and popularity, genres and tags, relations, studios, external links, streaming episodes, next airing episode, rankings, statistics, and the last update timestamp.
+        """
         return """
         id
         idMal
@@ -273,6 +296,17 @@ class AniListEnrichmentHelper:
     async def _fetch_paginated_data(
         self, anilist_id: int, query_template: str, data_key: str
     ) -> List[Dict[str, Any]]:
+        """
+        Fetches and accumulates all paginated edge items for a given AniList media ID using the provided GraphQL query.
+        
+        Parameters:
+            anilist_id (int): AniList ID of the media to query.
+            query_template (str): GraphQL query string that accepts `id` and `page` variables and returns a paginated connection under `Media`.
+            data_key (str): Key inside the returned `Media` object that holds the paginated connection (for example, `"characters"`, `"staff"`, or `"airingSchedule"`).
+        
+        Returns:
+            List[Dict[str, Any]]: A list of edge objects collected from every page for the specified `data_key`. Returns an empty list if no data is found.
+        """
         all_items = []
         page = 1
         has_next_page = True
@@ -298,6 +332,12 @@ class AniListEnrichmentHelper:
         return all_items
 
     async def fetch_all_characters(self, anilist_id: int) -> List[Dict[str, Any]]:
+        """
+        Fetches all character edges for the anime with the given AniList ID, aggregating paginated results.
+        
+        Returns:
+            List[Dict[str, Any]]: A list of character edge objects from AniList; each entry typically contains 'node' (character details), 'role', and 'voiceActors'.
+        """
         query = """
         query ($id: Int!, $page: Int!) {
           Media(id: $id, type: ANIME) {

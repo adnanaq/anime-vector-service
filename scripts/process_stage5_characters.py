@@ -35,14 +35,15 @@ logger = logging.getLogger(__name__)
 
 
 def extract_id_from_character_page(url: str, source: str) -> Optional[Union[int, str]]:
-    """Extract character ID from character_pages URL
-
-    Args:
-        url: Character page URL
-        source: Source type (anilist, anidb)
-
+    """
+    Extract an AniList numeric ID or an AniDB string ID from a character page URL.
+    
+    Parameters:
+        url (str): Character page URL to parse.
+        source (str): Source identifier — "anilist" to extract an integer AniList ID, "anidb" to extract an AniDB string ID.
+    
     Returns:
-        Extracted ID (int for anilist, str for anidb) or None if extraction fails
+        int or str or None: The extracted AniList ID as an int when `source` is "anilist", the AniDB ID as a string when `source` is "anidb", or `None` if extraction fails or `url` is falsy.
     """
     if not url:
         return None
@@ -64,7 +65,17 @@ def extract_id_from_character_page(url: str, source: str) -> Optional[Union[int,
 
 
 def load_stage_data(stage_file: Path) -> List[Dict[str, Any]]:
-    """Load data from a stage JSON file"""
+    """
+    Load and normalize character data from a JSON stage file.
+    
+    Handles files that contain either a top-level list of character objects, a dictionary with a "data"
+    key (e.g., Jikan API responses) — in which case the value of "data" is returned — or a single
+    object (wrapped into a one-element list). On any error (file not found, invalid JSON, or unexpected
+    top-level type) an empty list is returned.
+    Returns:
+        List[Dict[str, Any]]: A list of character dictionaries, or an empty list if the file cannot be
+        read or parsed.
+    """
     try:
         with open(stage_file, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -94,7 +105,16 @@ def load_stage_data(stage_file: Path) -> List[Dict[str, Any]]:
 
 
 def get_working_file_paths(anime_id: str, temp_dir: Path) -> Dict[str, Path]:
-    """Get paths for working files"""
+    """
+    Builds paths for per-anime working files under the given temporary directory.
+    
+    Parameters:
+        anime_id (str): Identifier used to name the per-anime subdirectory.
+        temp_dir (Path): Base directory where the per-anime working directory will be created.
+    
+    Returns:
+        Dict[str, Path]: Mapping of source keys ("jikan", "anilist", "anidb", "animeplanet") to their corresponding working file paths.
+    """
     working_dir = temp_dir / anime_id
     return {
         "jikan": working_dir / "working_jikan.json",
@@ -105,7 +125,15 @@ def get_working_file_paths(anime_id: str, temp_dir: Path) -> Dict[str, Path]:
 
 
 def working_files_exist(working_paths: Dict[str, Path]) -> bool:
-    """Check if all working files exist"""
+    """
+    Determine whether all provided working file paths exist.
+    
+    Parameters:
+        working_paths (Dict[str, Path]): Mapping of source names to their corresponding working file Paths.
+    
+    Returns:
+        bool: `True` if every Path in `working_paths` exists, `False` otherwise.
+    """
     return all(path.exists() for path in working_paths.values())
 
 
@@ -118,21 +146,22 @@ def create_working_files(
     anime_planet_chars: List[Dict[str, Any]],
     force_restart: bool = False,
 ) -> Dict[str, Path]:
-    """Create or resume from working copies of character arrays for progressive deletion
-
-    All working files contain ONLY character arrays, no wrapper objects.
-
-    Args:
-        anime_id: The anime ID
-        temp_dir: Temporary directory path
-        jikan_chars: Jikan character array
-        anilist_chars: AniList character array
-        anidb_chars: AniDB character array
-        anime_planet_chars: AnimePlanet character array
-        force_restart: If True, overwrite existing working files. If False (default), resume from existing files.
-
+    """
+    Create or resume per-anime working files that store only character arrays for progressive deletion.
+    
+    Creates a working directory for the given anime and either resumes from existing per-source working files (unless force_restart is True) or writes fresh working files containing the provided character arrays.
+    
+    Parameters:
+        anime_id (str): Identifier for the anime used to name the working directory.
+        temp_dir (Path): Base temporary directory where the per-anime working directory will be created.
+        jikan_chars (List[Dict[str, Any]]): Array of Jikan character objects to write when creating new working files.
+        anilist_chars (List[Dict[str, Any]]): Array of AniList character objects to write when creating new working files.
+        anidb_chars (List[Dict[str, Any]]): Array of AniDB character objects to write when creating new working files.
+        anime_planet_chars (List[Dict[str, Any]]): Array of AnimePlanet character objects to write when creating new working files.
+        force_restart (bool): If True, always overwrite existing working files; if False, resume from existing files when present.
+    
     Returns:
-        Dict with paths to working files
+        Dict[str, Path]: Mapping of source keys ("jikan", "anilist", "anidb", "animeplanet") to the corresponding working file paths.
     """
     working_dir = temp_dir / anime_id
     working_dir.mkdir(parents=True, exist_ok=True)
@@ -178,7 +207,12 @@ def create_working_files(
 
 
 def load_working_file(file_path: Path) -> List[Dict[str, Any]]:
-    """Load a working file and return its contents"""
+    """
+    Load and parse a JSON working file into a list.
+    
+    Returns:
+        A list containing the parsed JSON data from the file, or an empty list if the file could not be read or parsed.
+    """
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -188,7 +222,16 @@ def load_working_file(file_path: Path) -> List[Dict[str, Any]]:
 
 
 def save_working_file(file_path: Path, data: List[Dict[str, Any]]) -> None:
-    """Save data to a working file"""
+    """
+    Write a list of character dictionaries to the given path as pretty-printed UTF-8 JSON.
+    
+    Parameters:
+        file_path (Path): Destination path for the JSON file; existing file will be overwritten.
+        data (List[Dict[str, Any]]): JSON-serializable list of character objects to save.
+    
+    Notes:
+        On failure the error is logged and the function returns without raising.
+    """
     try:
         with open(file_path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
@@ -199,7 +242,21 @@ def save_working_file(file_path: Path, data: List[Dict[str, Any]]) -> None:
 def remove_matched_entry(
     working_data: List[Dict[str, Any]], matched_id: Any, source_type: str
 ) -> List[Dict[str, Any]]:
-    """Remove a matched entry from the working data list"""
+    """
+    Remove the entry matching the given identifier from a source-specific working data list.
+    
+    Parameters:
+        working_data (List[Dict[str, Any]]): List of character records for a single source.
+        matched_id (Any): Identifier to remove; its interpretation depends on `source_type`:
+            - "jikan": compares against the record's `character_id`.
+            - "anilist": compares against the record's `id` (integer).
+            - "anidb": compares against the record's `id` after stringifying both values.
+            - "animeplanet": compares against the record's `name`.
+        source_type (str): Source name indicating which field to compare ("jikan", "anilist", "anidb", "animeplanet").
+    
+    Returns:
+        List[Dict[str, Any]]: A new list with matching records removed; returns the input unchanged if `source_type` is unrecognized.
+    """
     if source_type == "jikan":
         # Jikan uses 'character_id' field
         return [char for char in working_data if char.get("character_id") != matched_id]
@@ -557,7 +614,13 @@ async def process_stage5_ai_characters(
 
 
 def main():
-    """Main entry point for standalone usage"""
+    """
+    Parse command-line arguments and run the Stage 5 AI character processing workflow.
+    
+    Parses arguments for an agent directory name, an optional temporary directory, and a restart flag;
+    resolves the temporary directory relative to the project root when given as a relative path;
+    then invokes the async processing routine for Stage 5 characters with the provided agent and options.
+    """
     import argparse
 
     parser = argparse.ArgumentParser(
@@ -605,4 +668,3 @@ Examples:
 
 if __name__ == "__main__":
     main()
-

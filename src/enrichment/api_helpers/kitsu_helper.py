@@ -26,7 +26,16 @@ class KitsuEnrichmentHelper:
     async def _make_request(
         self, endpoint: str, params: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
-        """Make request to Kitsu API."""
+        """
+        Perform an HTTP GET to the Kitsu API for the given endpoint and optional query parameters.
+        
+        Parameters:
+            endpoint (str): Path appended to the helper's base_url (for example, "/anime/1").
+            params (Optional[Dict[str, Any]]): Query parameters to include in the request, or None.
+        
+        Returns:
+            dict: Parsed JSON response when the request succeeds with HTTP 200, otherwise an empty dict.
+        """
         headers = {
             "Accept": "application/vnd.api+json",
             "Content-Type": "application/vnd.api+json",
