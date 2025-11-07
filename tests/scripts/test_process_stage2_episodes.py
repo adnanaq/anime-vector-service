@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 import pytest
 
-from scripts.process_stage2_episodes import (
+from process_stage2_episodes import (
     auto_detect_temp_dir,
     convert_jst_to_utc,
     load_anisearch_episode_data,

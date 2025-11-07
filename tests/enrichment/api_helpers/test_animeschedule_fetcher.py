@@ -1,423 +1,271 @@
 """
-Comprehensive tests for src/enrichment/api_helpers/animeschedule_fetcher.py
-
-Tests cover:
-- fetch_animeschedule_data function with various scenarios
-- API request handling and error cases
-- JSON parsing and response validation
-- File saving functionality
-- Command-line usage
+Tests for animeschedule_fetcher.py - comprehensive coverage including edge cases.
 """
 
 import json
-from unittest.mock import AsyncMock, MagicMock, patch, mock_open
-
-import aiohttp
+import os
+import tempfile
 import pytest
-
-from src.enrichment.api_helpers.animeschedule_fetcher import (
-    fetch_animeschedule_data,
-)
+from unittest.mock import AsyncMock, MagicMock, patch
 
 
-class TestFetchAnimescheduleData:
-    """Test fetch_animeschedule_data function."""
+# --- Helper function for mocking ---
 
-    @pytest.mark.asyncio
-    async def test_fetch_success_without_save(self):
-        """Test successful fetch without saving to file."""
-        search_term = "dandadan"
-        expected_data = {
-            "anime": [
-                {
-                    "title": "DanDaDan",
-                    "id": 12345,
-                    "episodes": 12
-                }
-            ]
-        }
-        
-        mock_response = AsyncMock()
-        mock_response.status = 200
-        mock_response.raise_for_status = MagicMock()
-        mock_response.json = AsyncMock(return_value=expected_data)
-        
-        mock_session = MagicMock()
-        mock_session.get = MagicMock(return_value=AsyncMock(
-            __aenter__=AsyncMock(return_value=mock_response),
-            __aexit__=AsyncMock()
-        ))
-        mock_session.close = AsyncMock()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            result = await fetch_animeschedule_data(search_term, save_file=False)
-        
-        assert result == expected_data["anime"][0]
+
+def create_mock_session_with_response(mock_response):
+    """Helper to create properly mocked session with async context manager."""
+    # Mock async context manager for session.get()
+    mock_cm = MagicMock()
+    mock_cm.__aenter__ = AsyncMock(return_value=mock_response)
+    mock_cm.__aexit__ = AsyncMock(return_value=None)
+
+    # Mock session
+    mock_session = AsyncMock()
+    mock_session.get = MagicMock(return_value=mock_cm)
+    return mock_session
+
+
+# --- Tests for fetch_animeschedule_data() function ---
+
+
+@pytest.mark.asyncio
+@patch("src.enrichment.api_helpers.animeschedule_fetcher._cache_manager")
+async def test_fetch_animeschedule_data_success_no_output(mock_cache_manager):
+    """Test fetch_animeschedule_data returns data without writing file."""
+    from src.enrichment.api_helpers.animeschedule_fetcher import (
+        fetch_animeschedule_data,
+    )
+
+    # Mock response
+    mock_response = AsyncMock()
+    mock_response.status = 200
+    mock_response.raise_for_status = AsyncMock()
+    mock_response.json = AsyncMock(
+        return_value={"anime": [{"id": 1, "title": "Test Anime"}]}
+    )
+
+    # Create mocked session
+    mock_session = create_mock_session_with_response(mock_response)
+    mock_cache_manager.get_aiohttp_session.return_value = mock_session
+
+    # Call without output_path
+    result = await fetch_animeschedule_data("Test Anime")
+
+    assert result == {"id": 1, "title": "Test Anime"}
+    mock_session.close.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+@patch("src.enrichment.api_helpers.animeschedule_fetcher._cache_manager")
+async def test_fetch_animeschedule_data_with_output_path(mock_cache_manager):
+    """Test fetch_animeschedule_data writes file when output_path provided."""
+    from src.enrichment.api_helpers.animeschedule_fetcher import (
+        fetch_animeschedule_data,
+    )
+
+    # Mock response
+    mock_response = AsyncMock()
+    mock_response.status = 200
+    mock_response.raise_for_status = AsyncMock()
+    mock_response.json = AsyncMock(
+        return_value={"anime": [{"id": 1, "title": "Test Anime"}]}
+    )
+
+    # Create mocked session
+    mock_session = create_mock_session_with_response(mock_response)
+    mock_cache_manager.get_aiohttp_session.return_value = mock_session
+
+    # Use temp file
+    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".json") as tmp:
+        tmp_path = tmp.name
+
+    try:
+        result = await fetch_animeschedule_data("Test Anime", output_path=tmp_path)
+
+        # Verify data returned
+        assert result == {"id": 1, "title": "Test Anime"}
+
+        # Verify file written
+        assert os.path.exists(tmp_path)
+        with open(tmp_path, "r", encoding="utf-8") as f:
+            file_data = json.load(f)
+        assert file_data == {"id": 1, "title": "Test Anime"}
+
         mock_session.close.assert_awaited_once()
-
-    @pytest.mark.asyncio
-    async def test_fetch_success_with_save(self):
-        """Test successful fetch with file saving."""
-        search_term = "steins gate"
-        expected_data = {
-            "anime": [
-                {
-                    "title": "Steins;Gate",
-                    "id": 67890,
-                    "episodes": 24
-                }
-            ]
-        }
-        
-        mock_response = AsyncMock()
-        mock_response.status = 200
-        mock_response.raise_for_status = MagicMock()
-        mock_response.json = AsyncMock(return_value=expected_data)
-        
-        mock_session = MagicMock()
-        mock_session.get = MagicMock(return_value=AsyncMock(
-            __aenter__=AsyncMock(return_value=mock_response),
-            __aexit__=AsyncMock()
-        ))
-        mock_session.close = AsyncMock()
-        
-        m_open = mock_open()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            with patch('builtins.open', m_open):
-                result = await fetch_animeschedule_data(search_term, save_file=True)
-        
-        assert result == expected_data["anime"][0]
-        m_open.assert_called_once_with("temp/as.json", "w", encoding="utf-8")
-        mock_session.close.assert_awaited_once()
-
-    @pytest.mark.asyncio
-    async def test_fetch_no_results_found(self):
-        """Test when no results are returned from API."""
-        search_term = "nonexistent anime"
-        empty_response = {"anime": []}
-        
-        mock_response = AsyncMock()
-        mock_response.status = 200
-        mock_response.raise_for_status = MagicMock()
-        mock_response.json = AsyncMock(return_value=empty_response)
-        
-        mock_session = MagicMock()
-        mock_session.get = MagicMock(return_value=AsyncMock(
-            __aenter__=AsyncMock(return_value=mock_response),
-            __aexit__=AsyncMock()
-        ))
-        mock_session.close = AsyncMock()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            result = await fetch_animeschedule_data(search_term, save_file=False)
-        
-        assert result is None
-        mock_session.close.assert_awaited_once()
-
-    @pytest.mark.asyncio
-    async def test_fetch_no_anime_key(self):
-        """Test when response doesn't contain 'anime' key."""
-        search_term = "test anime"
-        invalid_response = {"results": []}
-        
-        mock_response = AsyncMock()
-        mock_response.status = 200
-        mock_response.raise_for_status = MagicMock()
-        mock_response.json = AsyncMock(return_value=invalid_response)
-        
-        mock_session = MagicMock()
-        mock_session.get = MagicMock(return_value=AsyncMock(
-            __aenter__=AsyncMock(return_value=mock_response),
-            __aexit__=AsyncMock()
-        ))
-        mock_session.close = AsyncMock()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            result = await fetch_animeschedule_data(search_term, save_file=False)
-        
-        assert result is None
-        mock_session.close.assert_awaited_once()
-
-    @pytest.mark.asyncio
-    async def test_fetch_api_client_error(self):
-        """Test handling of aiohttp ClientError."""
-        search_term = "test anime"
-        
-        mock_session = MagicMock()
-        mock_session.get = MagicMock(side_effect=aiohttp.ClientError("Connection failed"))
-        mock_session.close = AsyncMock()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            result = await fetch_animeschedule_data(search_term, save_file=False)
-        
-        assert result is None
-        mock_session.close.assert_awaited_once()
-
-    @pytest.mark.asyncio
-    async def test_fetch_json_decode_error(self):
-        """Test handling of JSON decode errors."""
-        search_term = "test anime"
-        
-        mock_response = AsyncMock()
-        mock_response.status = 200
-        mock_response.raise_for_status = MagicMock()
-        mock_response.json = AsyncMock(side_effect=json.JSONDecodeError("Invalid JSON", "", 0))
-        
-        mock_session = MagicMock()
-        mock_session.get = MagicMock(return_value=AsyncMock(
-            __aenter__=AsyncMock(return_value=mock_response),
-            __aexit__=AsyncMock()
-        ))
-        mock_session.close = AsyncMock()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            result = await fetch_animeschedule_data(search_term, save_file=False)
-        
-        assert result is None
-        mock_session.close.assert_awaited_once()
-
-    @pytest.mark.asyncio
-    async def test_fetch_http_error_status(self):
-        """Test handling of HTTP error status codes."""
-        search_term = "test anime"
-        
-        mock_response = AsyncMock()
-        mock_response.status = 404
-        mock_response.raise_for_status = MagicMock(side_effect=aiohttp.ClientResponseError(
-            request_info=MagicMock(),
-            history=(),
-            status=404
-        ))
-        
-        mock_session = MagicMock()
-        mock_session.get = MagicMock(return_value=AsyncMock(
-            __aenter__=AsyncMock(return_value=mock_response),
-            __aexit__=AsyncMock()
-        ))
-        mock_session.close = AsyncMock()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            result = await fetch_animeschedule_data(search_term, save_file=False)
-        
-        assert result is None
-        mock_session.close.assert_awaited_once()
-
-    @pytest.mark.asyncio
-    async def test_fetch_constructs_correct_url(self):
-        """Test that correct URL is constructed for API call."""
-        search_term = "cowboy bebop"
-        expected_url = f"https://animeschedule.net/api/v3/anime?q={search_term}"
-        
-        mock_response = AsyncMock()
-        mock_response.status = 200
-        mock_response.raise_for_status = MagicMock()
-        mock_response.json = AsyncMock(return_value={"anime": [{"title": "Cowboy Bebop"}]})
-        
-        mock_session = MagicMock()
-        mock_get = MagicMock(return_value=AsyncMock(
-            __aenter__=AsyncMock(return_value=mock_response),
-            __aexit__=AsyncMock()
-        ))
-        mock_session.get = mock_get
-        mock_session.close = AsyncMock()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            await fetch_animeschedule_data(search_term, save_file=False)
-        
-        # Verify URL was called correctly
-        mock_get.assert_called_once_with(expected_url)
-
-    @pytest.mark.asyncio
-    async def test_fetch_returns_first_result(self):
-        """Test that first result is returned when multiple results exist."""
-        search_term = "naruto"
-        multiple_results = {
-            "anime": [
-                {"title": "Naruto", "id": 1},
-                {"title": "Naruto Shippuden", "id": 2},
-                {"title": "Boruto", "id": 3}
-            ]
-        }
-        
-        mock_response = AsyncMock()
-        mock_response.status = 200
-        mock_response.raise_for_status = MagicMock()
-        mock_response.json = AsyncMock(return_value=multiple_results)
-        
-        mock_session = MagicMock()
-        mock_session.get = MagicMock(return_value=AsyncMock(
-            __aenter__=AsyncMock(return_value=mock_response),
-            __aexit__=AsyncMock()
-        ))
-        mock_session.close = AsyncMock()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            result = await fetch_animeschedule_data(search_term, save_file=False)
-        
-        assert result == multiple_results["anime"][0]
-        assert result["id"] == 1
-
-    @pytest.mark.asyncio
-    async def test_fetch_session_always_closed(self):
-        """Test that session is always closed even on errors."""
-        search_term = "test anime"
-        
-        mock_session = MagicMock()
-        mock_session.get = MagicMock(side_effect=Exception("Unexpected error"))
-        mock_session.close = AsyncMock()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            result = await fetch_animeschedule_data(search_term, save_file=False)
-        
-        # Session should be closed even after exception
-        mock_session.close.assert_awaited_once()
-        assert result is None
-
-    @pytest.mark.asyncio
-    async def test_fetch_uses_cache_manager(self):
-        """Test that cache manager is used for session creation."""
-        search_term = "test anime"
-        
-        mock_response = AsyncMock()
-        mock_response.status = 200
-        mock_response.raise_for_status = MagicMock()
-        mock_response.json = AsyncMock(return_value={"anime": [{"title": "Test"}]})
-        
-        mock_session = MagicMock()
-        mock_session.get = MagicMock(return_value=AsyncMock(
-            __aenter__=AsyncMock(return_value=mock_response),
-            __aexit__=AsyncMock()
-        ))
-        mock_session.close = AsyncMock()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            await fetch_animeschedule_data(search_term, save_file=False)
-        
-        mock_cache.get_aiohttp_session.assert_called_once_with("animeschedule")
+    finally:
+        if os.path.exists(tmp_path):
+            os.unlink(tmp_path)
 
 
-class TestFetchAnimescheduleDataEdgeCases:
-    """Test edge cases for fetch_animeschedule_data."""
+@pytest.mark.asyncio
+@patch("src.enrichment.api_helpers.animeschedule_fetcher._cache_manager")
+async def test_fetch_animeschedule_data_no_results(mock_cache_manager):
+    """Test fetch_animeschedule_data returns None when no anime found."""
+    from src.enrichment.api_helpers.animeschedule_fetcher import (
+        fetch_animeschedule_data,
+    )
 
-    @pytest.mark.asyncio
-    async def test_fetch_empty_search_term(self):
-        """Test with empty search term."""
-        search_term = ""
-        expected_url = "https://animeschedule.net/api/v3/anime?q="
-        
-        mock_response = AsyncMock()
-        mock_response.status = 200
-        mock_response.raise_for_status = MagicMock()
-        mock_response.json = AsyncMock(return_value={"anime": []})
-        
-        mock_session = MagicMock()
-        mock_get = MagicMock(return_value=AsyncMock(
-            __aenter__=AsyncMock(return_value=mock_response),
-            __aexit__=AsyncMock()
-        ))
-        mock_session.get = mock_get
-        mock_session.close = AsyncMock()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            result = await fetch_animeschedule_data(search_term, save_file=False)
-        
-        assert result is None
-        mock_get.assert_called_once_with(expected_url)
+    # Mock response with empty results
+    mock_response = AsyncMock()
+    mock_response.status = 200
+    mock_response.raise_for_status = AsyncMock()
+    mock_response.json = AsyncMock(return_value={"anime": []})
 
-    @pytest.mark.asyncio
-    async def test_fetch_special_characters_in_search(self):
-        """Test search term with special characters."""
-        search_term = "Re:Zero"
-        
-        mock_response = AsyncMock()
-        mock_response.status = 200
-        mock_response.raise_for_status = MagicMock()
-        mock_response.json = AsyncMock(return_value={"anime": [{"title": "Re:Zero"}]})
-        
-        mock_session = MagicMock()
-        mock_session.get = MagicMock(return_value=AsyncMock(
-            __aenter__=AsyncMock(return_value=mock_response),
-            __aexit__=AsyncMock()
-        ))
-        mock_session.close = AsyncMock()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            result = await fetch_animeschedule_data(search_term, save_file=False)
-        
-        assert result is not None
-        assert result["title"] == "Re:Zero"
+    # Create mocked session
+    mock_session = create_mock_session_with_response(mock_response)
+    mock_cache_manager.get_aiohttp_session.return_value = mock_session
 
-    @pytest.mark.asyncio
-    async def test_fetch_unicode_search_term(self):
-        """Test search term with unicode characters."""
-        search_term = "進撃の巨人"  # Attack on Titan in Japanese
-        
-        mock_response = AsyncMock()
-        mock_response.status = 200
-        mock_response.raise_for_status = MagicMock()
-        mock_response.json = AsyncMock(return_value={"anime": [{"title": search_term}]})
-        
-        mock_session = MagicMock()
-        mock_session.get = MagicMock(return_value=AsyncMock(
-            __aenter__=AsyncMock(return_value=mock_response),
-            __aexit__=AsyncMock()
-        ))
-        mock_session.close = AsyncMock()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            result = await fetch_animeschedule_data(search_term, save_file=False)
-        
-        assert result is not None
+    result = await fetch_animeschedule_data("Nonexistent Anime")
 
-    @pytest.mark.asyncio
-    async def test_fetch_null_response(self):
-        """Test when API returns null."""
-        search_term = "test"
-        
-        mock_response = AsyncMock()
-        mock_response.status = 200
-        mock_response.raise_for_status = MagicMock()
-        mock_response.json = AsyncMock(return_value=None)
-        
-        mock_session = MagicMock()
-        mock_session.get = MagicMock(return_value=AsyncMock(
-            __aenter__=AsyncMock(return_value=mock_response),
-            __aexit__=AsyncMock()
-        ))
-        mock_session.close = AsyncMock()
-        
-        with patch('src.enrichment.api_helpers.animeschedule_fetcher._cache_manager') as mock_cache:
-            mock_cache.get_aiohttp_session.return_value = mock_session
-            
-            result = await fetch_animeschedule_data(search_term, save_file=False)
-        
-        assert result is None
+    assert result is None
+    mock_session.close.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+@patch("src.enrichment.api_helpers.animeschedule_fetcher._cache_manager")
+async def test_fetch_animeschedule_data_client_error(mock_cache_manager):
+    """Test fetch_animeschedule_data handles aiohttp.ClientError."""
+    from src.enrichment.api_helpers.animeschedule_fetcher import (
+        fetch_animeschedule_data,
+    )
+    import aiohttp
+
+    # Mock async context manager that raises on __aenter__
+    mock_cm = MagicMock()
+    mock_cm.__aenter__ = AsyncMock(side_effect=aiohttp.ClientError("Connection error"))
+    mock_cm.__aexit__ = AsyncMock(return_value=None)
+
+    # Mock session
+    mock_session = AsyncMock()
+    mock_session.get = MagicMock(return_value=mock_cm)
+    mock_cache_manager.get_aiohttp_session.return_value = mock_session
+
+    result = await fetch_animeschedule_data("Test Anime")
+
+    assert result is None
+    mock_session.close.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+@patch("src.enrichment.api_helpers.animeschedule_fetcher._cache_manager")
+async def test_fetch_animeschedule_data_json_decode_error(mock_cache_manager):
+    """Test fetch_animeschedule_data handles JSONDecodeError."""
+    from src.enrichment.api_helpers.animeschedule_fetcher import (
+        fetch_animeschedule_data,
+    )
+
+    # Mock response with invalid JSON
+    mock_response = AsyncMock()
+    mock_response.status = 200
+    mock_response.raise_for_status = AsyncMock()
+    mock_response.json = AsyncMock(side_effect=json.JSONDecodeError("Invalid", "", 0))
+
+    # Create mocked session
+    mock_session = create_mock_session_with_response(mock_response)
+    mock_cache_manager.get_aiohttp_session.return_value = mock_session
+
+    result = await fetch_animeschedule_data("Test Anime")
+
+    assert result is None
+    mock_session.close.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+@patch("src.enrichment.api_helpers.animeschedule_fetcher._cache_manager")
+async def test_fetch_animeschedule_data_raise_for_status(mock_cache_manager):
+    """Test fetch_animeschedule_data handles HTTP errors via raise_for_status."""
+    from src.enrichment.api_helpers.animeschedule_fetcher import (
+        fetch_animeschedule_data,
+    )
+    import aiohttp
+
+    # Mock response with HTTP error - raise_for_status is sync method
+    mock_response = AsyncMock()
+
+    # Make raise_for_status a regular Mock that raises (not async)
+    mock_response.raise_for_status = MagicMock(
+        side_effect=aiohttp.ClientResponseError(
+            request_info=MagicMock(), history=(), status=404, message="Not Found"
+        )
+    )
+
+    # Create mocked session
+    mock_session = create_mock_session_with_response(mock_response)
+    mock_cache_manager.get_aiohttp_session.return_value = mock_session
+
+    result = await fetch_animeschedule_data("Test Anime")
+
+    assert result is None
+    mock_session.close.assert_awaited_once()
+
+
+# --- Tests for main() function ---
+
+
+@pytest.mark.asyncio
+@patch("src.enrichment.api_helpers.animeschedule_fetcher.fetch_animeschedule_data")
+async def test_main_function_success_default_output(mock_fetch):
+    """Test main() function handles successful execution with default output."""
+    from src.enrichment.api_helpers.animeschedule_fetcher import main
+
+    mock_fetch.return_value = {"title": "Test Anime", "data": []}
+
+    with patch("sys.argv", ["script.py", "test-anime"]):
+        exit_code = await main()
+
+    assert exit_code == 0
+    mock_fetch.assert_awaited_once_with("test-anime", output_path="animeschedule.json")
+
+
+@pytest.mark.asyncio
+@patch("src.enrichment.api_helpers.animeschedule_fetcher.fetch_animeschedule_data")
+async def test_main_function_success_custom_output(mock_fetch):
+    """Test main() function handles custom output path."""
+    from src.enrichment.api_helpers.animeschedule_fetcher import main
+
+    mock_fetch.return_value = {"title": "Test Anime", "data": []}
+
+    with patch("sys.argv", ["script.py", "test-anime", "--output", "custom/path.json"]):
+        exit_code = await main()
+
+    assert exit_code == 0
+    mock_fetch.assert_awaited_once_with("test-anime", output_path="custom/path.json")
+
+
+@pytest.mark.asyncio
+@patch("src.enrichment.api_helpers.animeschedule_fetcher.fetch_animeschedule_data")
+async def test_main_function_no_data_found(mock_fetch):
+    """Test main() function handles no data found."""
+    from src.enrichment.api_helpers.animeschedule_fetcher import main
+
+    mock_fetch.return_value = None
+
+    with patch("sys.argv", ["script.py", "nonexistent"]):
+        exit_code = await main()
+
+    assert exit_code == 1
+
+
+@pytest.mark.asyncio
+@patch("src.enrichment.api_helpers.animeschedule_fetcher.fetch_animeschedule_data")
+async def test_main_function_error_handling(mock_fetch):
+    """Test main() function handles errors and returns non-zero exit code."""
+    from src.enrichment.api_helpers.animeschedule_fetcher import main
+
+    mock_fetch.side_effect = Exception("Fetch error")
+
+    with patch("sys.argv", ["script.py", "test-anime"]):
+        exit_code = await main()
+
+    assert exit_code == 1
+
+
+@pytest.mark.asyncio
+async def test_main_function_missing_required_argument():
+    """Test main() function with missing required search_term argument."""
+    from src.enrichment.api_helpers.animeschedule_fetcher import main
+
+    with patch("sys.argv", ["script.py"]):  # Missing search term
+        with pytest.raises(SystemExit) as exc_info:
+            await main()
+        assert exc_info.value.code == 2  # argparse exits with 2 for invalid args

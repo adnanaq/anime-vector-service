@@ -8,6 +8,7 @@ import asyncio
 import json
 import logging
 import os
+import sys
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, cast
@@ -424,7 +425,7 @@ class ProgrammaticEnrichmentPipeline:
         return "\n".join(report)
 
 
-async def main() -> None:
+async def main() -> int:
     """Test the pipeline with a sample anime."""
 
     # Sample offline data
@@ -464,12 +465,15 @@ async def main() -> None:
             json.dump(result, f, ensure_ascii=False, indent=2, default=str)
         print(f"\nResults saved to {output_file}")
 
+        return 0
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
     finally:
         await pipeline.cleanup()
 
 
-if __name__ == "__main__":
-    import logging
+if __name__ == "__main__":  # pragma: no cover
 
     logging.basicConfig(level=logging.INFO)
-    asyncio.run(main())
+    sys.exit(asyncio.run(main()))

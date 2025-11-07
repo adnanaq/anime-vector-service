@@ -9,11 +9,12 @@ import argparse
 import asyncio
 import json
 import logging
+import sys
 from typing import Any, Dict, List, Optional
 
 import aiohttp
 
-from src.cache_manager.instance import http_cache_manager as _cache_manager
+from src.cache_manager.instance import http_cache_manager
 
 logger = logging.getLogger(__name__)
 
@@ -27,14 +28,32 @@ class AniListEnrichmentHelper:
         self.session: Optional[aiohttp.ClientSession] = None
         self.rate_limit_remaining = 90
         self.rate_limit_reset: Optional[int] = None
-        self._session_event_loop: Optional[Any] = None
+        self._session_event_loop: Optional[asyncio.AbstractEventLoop] = None
 
     async def _make_request(
         self, query: str, variables: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
-        """Make GraphQL request to AniList API.
+        """Make GraphQL request to AniList API with HTTP caching.
 
-        Returns dict with 'data' key containing response and '_from_cache' metadata.
+        Uses centralized cache manager which respects REDIS_CACHE_URL environment
+        variable for both local and Docker deployments. The session is created
+        per-event-loop to avoid event loop conflicts in concurrent processing.
+
+        GraphQL caching is enabled via X-Hishel-Body-Key header, ensuring different
+        queries/variables get separate cache entries despite same URL.
+
+        Args:
+            query: GraphQL query string
+            variables: Optional variables for GraphQL query
+
+        Returns:
+            Dict containing response data and '_from_cache' metadata indicating
+            whether the response was served from cache.
+
+        Note:
+            - Automatically handles rate limiting (90 requests per minute)
+            - Retries on 429 responses with exponential backoff
+            - Creates new session for each event loop to maintain isolation
         """
         headers = {
             "Content-Type": "application/json",
@@ -43,7 +62,7 @@ class AniListEnrichmentHelper:
         payload = {"query": query, "variables": variables or {}}
 
         # Check if we need to create/recreate session for current event loop
-        current_loop = asyncio.get_running_loop()
+        current_loop: asyncio.AbstractEventLoop = asyncio.get_running_loop()
         if self.session is None or self._session_event_loop != current_loop:
             # Close old session if it exists
             if self.session is not None:
@@ -52,51 +71,27 @@ class AniListEnrichmentHelper:
                 except Exception:
                     pass  # Ignore errors closing old session
 
-            # Create cached session for THIS event loop
-            # Each event loop gets its own Redis client to avoid "different event loop" errors
+            # Get cached session from centralized cache manager
+            # Each event loop gets its own session via the cache manager
             # This enables GraphQL caching while preventing event loop conflicts
-            try:
-                from redis.asyncio import Redis
-
-                from src.cache_manager.aiohttp_adapter import CachedAiohttpSession
-                from src.cache_manager.async_redis_storage import AsyncRedisStorage
-
-                # Create NEW Redis client bound to current event loop
-                redis_client = Redis.from_url(
-                    "redis://localhost:6379/0",
-                    decode_responses=False,
-                    socket_connect_timeout=5.0,
-                )
-
-                # Create storage with event-loop-specific Redis client
-                storage = AsyncRedisStorage(
-                    client=redis_client,
-                    default_ttl=86400.0,  # 24 hours
-                    refresh_ttl_on_access=True,
-                    key_prefix="hishel_cache",
-                )
-
-                # Create cached session with body-based caching for GraphQL
-                # X-Hishel-Body-Key ensures different queries/variables get different cache entries
-                headers = {"X-Hishel-Body-Key": "true"}
-                self.session = CachedAiohttpSession(
-                    storage=storage,
-                    timeout=aiohttp.ClientTimeout(total=None),
-                    headers=headers,
-                )
-                logger.debug("AniList cached session created for current event loop")
-            except Exception as e:
-                logger.warning(f"Failed to create cached session: {e}, using uncached")
-                # Fallback to uncached session
-                self.session = aiohttp.ClientSession(
-                    timeout=aiohttp.ClientTimeout(total=None)
-                )
-
+            self.session = http_cache_manager.get_aiohttp_session(
+                "anilist",
+                timeout=aiohttp.ClientTimeout(total=None),
+                headers={
+                    "X-Hishel-Body-Key": "true"
+                },  # Enable body-based caching for GraphQL
+            )
+            logger.debug(
+                "AniList cached session created via cache manager for current event loop"
+            )
             self._session_event_loop = current_loop
+
+        # Ensure mypy knows session is initialized before use
+        assert self.session is not None
 
         try:
             if self.rate_limit_remaining < 5:
-                logging.info(
+                logger.info(
                     f"Rate limit low ({self.rate_limit_remaining}), waiting 60 seconds..."
                 )
                 await asyncio.sleep(60)
@@ -130,8 +125,8 @@ class AniListEnrichmentHelper:
                 # Add cache metadata to result
                 result["_from_cache"] = from_cache
                 return result
-        except Exception as e:
-            logger.error(f"AniList API request failed: {e}")
+        except Exception:
+            logger.exception("AniList API request failed")
             return {"_from_cache": False}
 
     def _get_media_query_fields(self) -> str:
@@ -396,7 +391,8 @@ class AniListEnrichmentHelper:
             await self.session.close()
 
 
-async def main() -> None:
+async def main() -> int:
+    """CLI entry point for AniList helper."""
     parser = argparse.ArgumentParser(description="Test AniList data fetching")
     group = parser.add_mutually_exclusive_group(required=True)
     # group.add_argument("--mal-id", type=int, help="MyAnimeList ID to fetch")
@@ -416,8 +412,10 @@ async def main() -> None:
         if args.anilist_id:
             try:
                 anime_data = await helper.fetch_all_data_by_anilist_id(args.anilist_id)
-            except Exception as e:
-                logger.error(f"Error fetching AniList data for ID {args.anilist_id}: {e}")
+            except Exception:
+                logger.exception(
+                    f"Error fetching AniList data for ID {args.anilist_id}"
+                )
                 anime_data = None
         # elif args.mal_id:
         #     anime_data = await helper.fetch_all_data_by_mal_id(args.mal_id)
@@ -426,11 +424,16 @@ async def main() -> None:
             with open(args.output, "w", encoding="utf-8") as f:
                 json.dump(anime_data, f, indent=2, ensure_ascii=False)
             logger.info(f"Data saved to {args.output}")
+            return 0
         else:
             logger.error("No data found for the given ID.")
+            return 1
+    except Exception:
+        logger.exception("Error")
+        return 1
     finally:
         await helper.close()
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+if __name__ == "__main__":  # pragma: no cover
+    sys.exit(asyncio.run(main()))

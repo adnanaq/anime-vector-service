@@ -334,7 +334,7 @@ class TestAniListEnrichmentHelperMakeRequest:
         helper.session = mock_session
         helper._session_event_loop = asyncio.get_running_loop()
 
-        with patch("asyncio.sleep") as mock_sleep:
+        with patch("asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
             await helper._make_request("query { test }")
 
             # Should wait 60 seconds
@@ -374,7 +374,7 @@ class TestAniListEnrichmentHelperMakeRequest:
         helper.session = mock_session
         helper._session_event_loop = asyncio.get_running_loop()
 
-        with patch("asyncio.sleep") as mock_sleep:
+        with patch("asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
             result = await helper._make_request("query { test }")
 
             # Should wait for Retry-After value
@@ -413,7 +413,7 @@ class TestAniListEnrichmentHelperMakeRequest:
         helper.session = mock_session
         helper._session_event_loop = asyncio.get_running_loop()
 
-        with patch("asyncio.sleep") as mock_sleep:
+        with patch("asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
             await helper._make_request("query { test }")
 
             # Should use default 60 seconds
@@ -654,7 +654,7 @@ class TestAniListEnrichmentHelperPagination:
 
         helper._make_request = AsyncMock(side_effect=[response_page1, response_page2])
 
-        with patch("asyncio.sleep") as mock_sleep:
+        with patch("asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
             result = await helper._fetch_paginated_data(21, "query", "characters")
 
             assert len(result) == 2
@@ -951,7 +951,7 @@ class TestAniListEnrichmentHelperEdgeCases:
         helper.session = mock_session
         helper._session_event_loop = asyncio.get_running_loop()
 
-        with patch("asyncio.sleep") as mock_sleep:
+        with patch("asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
             await helper._make_request("query { test }")
 
             # Should NOT wait at exactly 5 (threshold is < 5)
@@ -978,7 +978,7 @@ class TestAniListEnrichmentHelperEdgeCases:
         helper.session = mock_session
         helper._session_event_loop = asyncio.get_running_loop()
 
-        with patch("asyncio.sleep") as mock_sleep:
+        with patch("asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
             await helper._make_request("query { test }")
 
             # Should wait at 4
@@ -1209,11 +1209,97 @@ class TestAniListEnrichmentHelperEdgeCases:
         helper.session = mock_session
         helper._session_event_loop = asyncio.get_running_loop()
 
-        with patch("asyncio.sleep") as mock_sleep:
+        with patch("asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
             await helper._make_request("query { test }")
 
             # Should wait exactly the Retry-After value
             mock_sleep.assert_awaited_once_with(3600)
+
+
+class TestAniListEnrichmentHelperCacheIntegration:
+    """Test cache manager integration."""
+
+    @pytest.mark.asyncio
+    async def test_anilist_helper_uses_cache_manager(self, mocker):
+        """Test that AniListEnrichmentHelper uses centralized cache manager."""
+        from src.enrichment.api_helpers.anilist_helper import AniListEnrichmentHelper
+        from src.cache_manager.instance import http_cache_manager
+
+        # Create proper mock response
+        mock_response = AsyncMock()
+        mock_response.status = 200
+        mock_response.json = AsyncMock(
+            return_value={"data": {"Media": {"id": 1, "title": {"romaji": "Test"}}}}
+        )
+        mock_response.from_cache = False
+        mock_response.headers = {}
+
+        # Create mock session with proper context manager for post
+        mock_session = MagicMock()
+        mock_session.post = MagicMock(return_value=AsyncMock(
+            __aenter__=AsyncMock(return_value=mock_response),
+            __aexit__=AsyncMock()
+        ))
+        mock_session.close = AsyncMock()
+
+        # Mock the cache manager's get_aiohttp_session method
+        mock_get_session = mocker.patch.object(
+            http_cache_manager,
+            'get_aiohttp_session',
+            return_value=mock_session
+        )
+
+        helper = AniListEnrichmentHelper()
+
+        # Trigger session creation by making a request
+        result = await helper.fetch_anime_by_anilist_id(1)
+
+        # Verify cache manager was called with correct parameters
+        mock_get_session.assert_called_once()
+        call_args = mock_get_session.call_args
+        assert call_args[0][0] == "anilist"  # service name
+        assert "timeout" in call_args[1]
+        assert "headers" in call_args[1]
+        assert call_args[1]["headers"]["X-Hishel-Body-Key"] == "true"
+
+        # Verify the session was used for the request
+        assert result is not None
+
+        await helper.close()
+
+
+    @pytest.mark.asyncio
+    async def test_anilist_helper_does_not_create_manual_redis_client(self, mocker):
+        """Test that AniListEnrichmentHelper does NOT manually create Redis clients."""
+        from src.enrichment.api_helpers.anilist_helper import AniListEnrichmentHelper
+
+        # Mock Redis.from_url to detect if it's called
+        mock_redis_from_url = mocker.patch('redis.asyncio.Redis.from_url')
+
+        # Mock cache manager to provide a working session
+        mock_session = mocker.AsyncMock()
+        mock_session.post = mocker.AsyncMock()
+        mock_session.post.return_value.__aenter__.return_value.status = 200
+        mock_session.post.return_value.__aenter__.return_value.json = mocker.AsyncMock(
+            return_value={"data": {"Media": {"id": 1, "title": {"romaji": "Test"}}}}
+        )
+        mock_session.post.return_value.__aenter__.return_value.from_cache = False
+        mock_session.post.return_value.__aenter__.return_value.headers = {}
+
+        mocker.patch(
+            'src.cache_manager.instance.http_cache_manager.get_aiohttp_session',
+            return_value=mock_session
+        )
+
+        helper = AniListEnrichmentHelper()
+
+        # Make a request to trigger session creation
+        await helper.fetch_anime_by_anilist_id(1)
+
+        # Verify Redis.from_url was NOT called (no manual Redis client creation)
+        mock_redis_from_url.assert_not_called()
+
+        await helper.close()
 
 
 class TestAniListEnrichmentHelperCLI:
@@ -1329,3 +1415,65 @@ class TestAniListEnrichmentHelperCLI:
                     mock_open.assert_called()
                     call_args = mock_open.call_args[0]
                     assert "test_anilist_output.json" in call_args[0]
+
+
+# --- Tests for main() function following jikan_helper pattern ---
+
+
+@pytest.mark.asyncio
+@patch("src.enrichment.api_helpers.anilist_helper.AniListEnrichmentHelper")
+async def test_main_function_success(mock_helper_class, tmp_path):
+    """Test main() function handles successful execution."""
+    from src.enrichment.api_helpers.anilist_helper import main
+
+    mock_helper = AsyncMock()
+    mock_helper.fetch_all_data_by_anilist_id = AsyncMock(return_value={"id": 21, "title": "Test"})
+    mock_helper.close = AsyncMock()
+    mock_helper_class.return_value = mock_helper
+
+    # Use pytest's tmp_path for portability
+    output_file = str(tmp_path / "output.json")
+    with patch("sys.argv", ["script.py", "--anilist-id", "21", "--output", output_file]):
+        with patch("builtins.open", MagicMock()):
+            exit_code = await main()
+
+    assert exit_code == 0
+    mock_helper_class.assert_called_once()
+    mock_helper.fetch_all_data_by_anilist_id.assert_awaited_once_with(21)
+    mock_helper.close.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+@patch("src.enrichment.api_helpers.anilist_helper.AniListEnrichmentHelper")
+async def test_main_function_no_data_found(mock_helper_class):
+    """Test main() function handles no data found."""
+    from src.enrichment.api_helpers.anilist_helper import main
+
+    mock_helper = AsyncMock()
+    mock_helper.fetch_all_data_by_anilist_id = AsyncMock(return_value=None)
+    mock_helper.close = AsyncMock()
+    mock_helper_class.return_value = mock_helper
+
+    with patch("sys.argv", ["script.py", "--anilist-id", "99999"]):
+        exit_code = await main()
+
+    assert exit_code == 1
+    mock_helper.close.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+@patch("src.enrichment.api_helpers.anilist_helper.AniListEnrichmentHelper")
+async def test_main_function_error_handling(mock_helper_class):
+    """Test main() function handles errors and returns non-zero exit code."""
+    from src.enrichment.api_helpers.anilist_helper import main
+
+    mock_helper = AsyncMock()
+    mock_helper.fetch_all_data_by_anilist_id = AsyncMock(side_effect=Exception("API error"))
+    mock_helper.close = AsyncMock()
+    mock_helper_class.return_value = mock_helper
+
+    with patch("sys.argv", ["script.py", "--anilist-id", "21"]):
+        exit_code = await main()
+
+    assert exit_code == 1
+    mock_helper.close.assert_awaited_once()

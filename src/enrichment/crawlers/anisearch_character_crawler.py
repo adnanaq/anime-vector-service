@@ -83,8 +83,6 @@ async def fetch_anisearch_characters(
         ],
     }
 
-    print(f"Using Schema: {json.dumps(css_schema, indent=2)}")
-
     extraction_strategy = JsonCssExtractionStrategy(css_schema)
     config = CrawlerRunConfig(
         extraction_strategy=extraction_strategy,
@@ -164,7 +162,8 @@ async def fetch_anisearch_characters(
         return None
 
 
-if __name__ == "__main__":
+async def main() -> int:
+    """CLI entry point for anisearch.com character crawler."""
     parser = argparse.ArgumentParser(
         description="Crawl character data from an anisearch.com URL."
     )
@@ -179,10 +178,21 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    asyncio.run(
-        fetch_anisearch_characters(
+    try:
+        await fetch_anisearch_characters(
             args.url,
             return_data=False,  # CLI doesn't need return value
             output_path=args.output,
         )
-    )
+        return 0
+    except Exception as e:
+        import sys
+
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":  # pragma: no cover
+    import sys
+
+    sys.exit(asyncio.run(main()))

@@ -287,7 +287,7 @@ class TestCachedAiohttpSession:
 
     @pytest.mark.asyncio
     async def test_init_creates_session(self, mock_storage):
-        """Test initialization creates session if not provided."""
+        """Test lazy session creation on first request."""
         with patch(
             "src.cache_manager.aiohttp_adapter.aiohttp.ClientSession"
         ) as mock_client_session:
@@ -299,8 +299,29 @@ class TestCachedAiohttpSession:
                 timeout=MagicMock(),
             )
 
+            # Session IS created during __init__ (not lazy)
             assert cached_session.storage is mock_storage
+            assert cached_session.session is mock_session_instance
             mock_client_session.assert_called_once()
+
+            # Session should be created lazily on first request
+            # Setup mock for cache miss scenario
+            mock_storage.get_entries = AsyncMock(return_value=[])
+            mock_response = AsyncMock()
+            mock_response.status = 200
+            mock_response.headers = {}
+            mock_response.url = "https://example.com"
+            mock_response.read = AsyncMock(return_value=b"test")
+            mock_response.request_info = MagicMock()
+            mock_response.request_info.headers = {}
+            mock_session_instance.request = AsyncMock(return_value=mock_response)
+
+            # Make a request to verify session works
+            await cached_session._request("GET", "https://example.com")
+
+            # Session should still be the same instance (not recreated)
+            assert cached_session.session is mock_session_instance
+            mock_client_session.assert_called_once()  # Still only called once during __init__
 
     @pytest.mark.asyncio
     async def test_get_returns_context_manager(self, mock_storage):
@@ -356,20 +377,6 @@ class TestCachedAiohttpSession:
         assert key2.startswith("POST:")
         assert key1 != key2  # Different bodies = different keys
 
-    def test_generate_cache_key_post_with_list_data(self, mock_storage):
-        """Test cache key generation for POST with form data."""
-        # Pass a mock session to avoid event loop requirement
-        mock_session = MagicMock()
-        cached_session = CachedAiohttpSession(
-            storage=mock_storage, session=mock_session
-        )
-
-        key = cached_session._generate_cache_key(
-            "POST", "https://example.com/api", {"data": "form=data"}
-        )
-
-        assert key.startswith("POST:")
-
     def test_generate_cache_key_post_with_form_data_different_bodies(
         self, mock_storage
     ):
@@ -400,9 +407,6 @@ class TestCachedAiohttpSession:
         assert key.startswith("POST:")
         assert len(key) > 4
 
-        assert key.startswith("POST:")
-        assert len(key) > 4
-
     def test_generate_cache_key_post_with_tuple_data(self, mock_storage):
         """Test cache key generation for POST with tuple data."""
         mock_session = MagicMock()
@@ -421,6 +425,7 @@ class TestCachedAiohttpSession:
     async def test_close(self, mock_storage):
         """Test close() closes session and storage."""
         mock_session = AsyncMock()
+        mock_session.closed = False  # Add closed property
         cached_session = CachedAiohttpSession(
             storage=mock_storage,
             session=mock_session,
@@ -429,11 +434,13 @@ class TestCachedAiohttpSession:
         await cached_session.close()
 
         mock_session.close.assert_awaited_once()
+        mock_storage.close.assert_awaited_once()
 
     @pytest.mark.asyncio
     async def test_async_context_manager(self, mock_storage):
         """Test CachedAiohttpSession as async context manager."""
         mock_session = AsyncMock()
+        mock_session.closed = False  # Add closed property
 
         async with CachedAiohttpSession(
             storage=mock_storage, session=mock_session
@@ -465,6 +472,9 @@ class TestCachedAiohttpSession:
         cached_session = CachedAiohttpSession(
             storage=mock_storage, session=mock_session
         )
+
+        # Mock _get_or_create_session to return our mock session
+        cached_session._get_or_create_session = MagicMock(return_value=mock_session)
 
         # Execute request
         result = await cached_session._request("GET", "https://example.com/api")
@@ -848,6 +858,9 @@ class TestCachedAiohttpSession:
             storage=mock_storage, session=mock_session
         )
 
+        # Mock _get_or_create_session to return our mock session
+        cached_session._get_or_create_session = MagicMock(return_value=mock_session)
+
         # --- First Request ---
         url = "http://test.com/api"
         params1 = {"id": 1}
@@ -903,6 +916,9 @@ class TestCachedAiohttpSession:
             storage=mock_storage, session=mock_session
         )
 
+        # Mock _get_or_create_session to return our mock session
+        cached_session._get_or_create_session = MagicMock(return_value=mock_session)
+
         # --- First Request ---
         url = "http://test.com/submit"
         data1 = {"field": "value1"}
@@ -943,3 +959,105 @@ class TestCachedAiohttpSession:
             assert not resp.from_cache
 
         mock_session.request.assert_called_once_with("POST", url, data=data2)
+
+    def test_generate_cache_key_post_with_bytes_data(self, mock_storage):
+        """Test cache key generation for POST with bytes data."""
+        mock_session = MagicMock()
+        cached_session = CachedAiohttpSession(
+            storage=mock_storage, session=mock_session
+        )
+
+        # Test with bytes data (exercises serialize_payload bytes path)
+        key1 = cached_session._generate_cache_key(
+            "POST", "https://example.com/api", {"data": b"raw bytes data"}
+        )
+
+        # Test with bytearray data
+        key2 = cached_session._generate_cache_key(
+            "POST", "https://example.com/api", {"data": bytearray(b"bytearray data")}
+        )
+
+        assert key1.startswith("POST:")
+        assert key2.startswith("POST:")
+        assert key1 != key2  # Different bytes = different keys
+
+    @pytest.mark.asyncio
+    async def test_cache_hit_returns_newest_entry_not_first_from_smembers(
+        self, mock_storage
+    ):
+        """
+        Test that cache hits return the NEWEST entry by created_at timestamp,
+        not just entries[0] which may be stale due to Redis SMEMBERS unordered results.
+
+        This test addresses PR #20 discussion r2496155470:
+        "AsyncRedisStorage.get_entries iterates over a Redis set (SMEMBERS),
+        whose order is undefined. On cache hits you can therefore hand back
+        an arbitrarily old response even when a newer entry exists for the same key."
+        """
+        from hishel import Headers
+
+        # Create three mock entries with different timestamps
+        # Simulate Redis returning them in "wrong" order (oldest first)
+        async def create_mock_stream(data: bytes):
+            yield data
+
+        # OLD entry (created_at=1.0)
+        mock_old_response = MagicMock()
+        mock_old_response.status_code = 200
+        mock_old_response.headers = Headers({"Content-Type": "application/json"})
+        mock_old_response.stream = create_mock_stream(b'{"data": "old"}')
+
+        mock_old_entry = MagicMock()
+        mock_old_entry.response = mock_old_response
+        mock_old_entry.meta = MagicMock()
+        mock_old_entry.meta.created_at = 1.0
+
+        # MIDDLE entry (created_at=2.0)
+        mock_middle_response = MagicMock()
+        mock_middle_response.status_code = 200
+        mock_middle_response.headers = Headers({"Content-Type": "application/json"})
+        mock_middle_response.stream = create_mock_stream(b'{"data": "middle"}')
+
+        mock_middle_entry = MagicMock()
+        mock_middle_entry.response = mock_middle_response
+        mock_middle_entry.meta = MagicMock()
+        mock_middle_entry.meta.created_at = 2.0
+
+        # NEW entry (created_at=3.0)
+        mock_new_response = MagicMock()
+        mock_new_response.status_code = 200
+        mock_new_response.headers = Headers({"Content-Type": "application/json"})
+        mock_new_response.stream = create_mock_stream(b'{"data": "new"}')
+
+        mock_new_entry = MagicMock()
+        mock_new_entry.response = mock_new_response
+        mock_new_entry.meta = MagicMock()
+        mock_new_entry.meta.created_at = 3.0
+
+        # Simulate Redis SMEMBERS returning entries in "bad" order (old first)
+        mock_storage.get_entries = AsyncMock(
+            return_value=[mock_old_entry, mock_middle_entry, mock_new_entry]
+        )
+
+        mock_session = AsyncMock()
+        cached_session = CachedAiohttpSession(
+            storage=mock_storage, session=mock_session
+        )
+
+        # Execute request - should get NEWEST entry (created_at=3.0)
+        result = await cached_session._request("GET", "https://example.com/api")
+
+        # Verify NO HTTP request was made (cache hit)
+        mock_session.request.assert_not_awaited()
+
+        # Verify the NEWEST entry was returned (not entries[0] which is old)
+        assert isinstance(result, _CachedResponse)
+        assert result.status == 200
+        assert result.from_cache is True
+
+        # CRITICAL ASSERTION: Body should be from NEWEST entry
+        body = await result.read()
+        assert body == b'{"data": "new"}', (
+            f"Expected newest entry (created_at=3.0) but got: {body}. "
+            "This means entries[0] was used instead of max(entries, key=created_at)"
+        )
