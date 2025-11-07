@@ -23,8 +23,8 @@ services:
   redis:
     image: redis:7-alpine
     container_name: anime-vector-redis
-    ports:
-      - "6379:6379"
+    # Redis is only accessible within the vector-network (no host port exposure)
+    # The vector-service accesses it via internal DNS: redis://redis:6379/0
     volumes:
       - redis-data:/data
     command: redis-server --appendonly yes
