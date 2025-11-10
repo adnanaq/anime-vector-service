@@ -10,14 +10,16 @@ RUN apt-get update && apt-get install -y \
   curl \
   && rm -rf /var/lib/apt/lists/*
 
-# Install uv package manager
+# Install uv (modern fast package manager)
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Add uv to PATH (it's installed under /root/.local/bin)
 ENV PATH="/root/.local/bin:$PATH"
 
-# Copy dependency files for caching
+# Copy pyproject.toml and uv.lock
 COPY pyproject.toml uv.lock ./
 
-# Install only production dependencies
+# Install dependencies using uv
 RUN uv sync --no-dev --frozen
 
 # Copy source code

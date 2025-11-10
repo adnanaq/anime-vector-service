@@ -34,7 +34,7 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 8002
 
 # Optional: mount local source code for live reload in docker run
-# docker run -v $(pwd)/src:/app/src ...
+# docker run -v $(pwd)/src:/app/src -p 8002:8002 anime-vector-service
 
 # Health check (optional for dev)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
@@ -42,4 +42,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 
 # Run application
 CMD ["python", "-m", "src.main"]
-
