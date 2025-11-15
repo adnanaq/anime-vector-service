@@ -1,22 +1,22 @@
 """
-This script crawls character information from a given anisearch.com anime URL.
+Crawls character information from anisearch.com anime URLs with Redis caching.
 
-It accepts a URL as a command-line argument. It then uses the crawl4ai
-library to extract character data based on a predefined CSS schema.
-The extracted data is processed to clean up fields like 'favorites' and 'image',
-and the character's role is added.
-
-The final processed data, a list of characters with their details, is saved
-to 'anisearch_characters.json' in the project root.
+Extracts character data using crawl4ai with CSS selectors, processes fields
+like 'favorites' and 'image', and adds character roles. Results are cached
+in Redis for 24 hours to avoid repeated crawling.
 
 Usage:
-    python character_crawler.py <anisearch_url>
+    python -m src.enrichment.crawlers.anisearch_character_crawler <url> [--output PATH]
+
+    <url>           anisearch.com anime character page URL
+    --output PATH   optional output file path (default: anisearch_characters.json)
 """
 
 import argparse
 import asyncio
 import json
 import re
+import sys
 from typing import Any, Dict, Optional
 
 from crawl4ai import (
@@ -27,28 +27,28 @@ from crawl4ai import (
 )
 from crawl4ai.types import RunManyReturn
 
-from .utils import sanitize_output_path
+from src.cache_manager.config import get_cache_config
+from src.cache_manager.result_cache import cached_result
+from src.enrichment.crawlers.utils import sanitize_output_path
+
+# Get TTL from config to keep cache control centralized
+_CACHE_CONFIG = get_cache_config()
+TTL_ANISEARCH = _CACHE_CONFIG.ttl_anisearch
 
 
-async def fetch_anisearch_characters(
-    url: str, return_data: bool = True, output_path: Optional[str] = None
-) -> Optional[Dict[str, Any]]:
+@cached_result(ttl=TTL_ANISEARCH, key_prefix="anisearch_characters")
+async def _fetch_anisearch_characters_data(url: str) -> Optional[Dict[str, Any]]:
     """
-    Crawls, processes, and saves character data from a given anisearch.com URL.
+    Pure cached function that crawls and processes character data from anisearch.com.
 
-    This function defines a schema for extracting character information,
-    including their name, role, URL, favorites count, and image. It then
-    initializes a crawler, runs it on the provided anime character page URL,
-    processes the returned data to clean and structure it, and optionally
-    writes the output to a JSON file.
+    Results are cached in Redis for 24 hours based ONLY on URL.
+    This function has no side effects - it only fetches and returns data.
 
     Args:
-        url (str): The URL of the anisearch.com character page to crawl.
-        return_data: Whether to return the data dict (default: True)
-        output_path: Optional file path to save JSON (default: None)
+        url: The URL of the anisearch.com character page to crawl
 
     Returns:
-        Character data dictionary (if return_data=True), otherwise None
+        Complete character data dictionary with enriched details, or None if fetch fails
     """
     # Define a correct schema for character extraction
     css_schema = {
@@ -79,16 +79,15 @@ async def fetch_anisearch_characters(
         ],
     }
 
-    print(f"Using Schema: {json.dumps(css_schema, indent=2)}")
-
     extraction_strategy = JsonCssExtractionStrategy(css_schema)
     config = CrawlerRunConfig(
         extraction_strategy=extraction_strategy,
+        page_timeout=60000,  # 60 seconds for image loading
         wait_until="networkidle",
         wait_for_images=True,
         scan_full_page=True,
         adjust_viewport_to_content=True,
-        delay_before_return_html=0.5,
+        delay_before_return_html=2.0,  # 2 second delay for reliable image loading
     )
 
     async with AsyncWebCrawler() as crawler:
@@ -142,25 +141,53 @@ async def fetch_anisearch_characters(
 
                 output_data = {"characters": flattened_characters}
 
-                # Conditionally write to file
-                if output_path:
-                    safe_path = sanitize_output_path(output_path)
-                    with open(safe_path, "w", encoding="utf-8") as f:
-                        json.dump(output_data, f, ensure_ascii=False, indent=2)
-                    print(f"Data written to {safe_path}")
-
-                # Return data for programmatic usage
-                if return_data:
-                    return output_data
-
-                return None
+                # Always return data (no conditional return or file writing)
+                return output_data
             else:
                 print(f"Extraction failed: {result.error_message}")
                 return None
         return None
 
 
-if __name__ == "__main__":
+async def fetch_anisearch_characters(
+    url: str, return_data: bool = True, output_path: Optional[str] = None
+) -> Optional[Dict[str, Any]]:
+    """
+    Wrapper function that handles side effects (file writing, return_data logic).
+
+    This function calls the cached _fetch_anisearch_characters_data() to get the data,
+    then performs side effects that should execute regardless of cache status.
+
+    Args:
+        url: The URL of the anisearch.com character page to crawl
+        return_data: Whether to return the data dict (default: True)
+        output_path: Optional file path to save JSON (default: None)
+
+    Returns:
+        Complete character data dictionary (if return_data=True), otherwise None
+    """
+    # Fetch data from cache or crawl (pure function)
+    data = await _fetch_anisearch_characters_data(url)
+
+    if data is None:
+        return None
+
+    # Side effect: Write to file (always executes, even on cache hit)
+    if output_path:
+        safe_path = sanitize_output_path(output_path)
+        with open(safe_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        print(f"Data written to {safe_path}")
+
+    # Return data based on return_data parameter
+    if return_data:
+        return data
+
+    return None
+
+
+async def main() -> int:
+    """CLI entry point for anisearch.com character crawler."""
     parser = argparse.ArgumentParser(
         description="Crawl character data from an anisearch.com URL."
     )
@@ -175,10 +202,16 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    asyncio.run(
-        fetch_anisearch_characters(
+    try:
+        await fetch_anisearch_characters(
             args.url,
-            return_data=False,  # CLI doesn't need return value
             output_path=args.output,
         )
-    )
+    except (ValueError, RuntimeError) as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":  # pragma: no cover
+    sys.exit(asyncio.run(main()))

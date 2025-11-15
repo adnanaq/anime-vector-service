@@ -12,22 +12,25 @@ Examples:
 """
 
 import argparse
+import asyncio
 import json
 import os
 import sys
 import time
-from typing import Any, Dict, List, Optional
+from types import TracebackType
+from typing import Any, Dict, List, Optional, Type
 
-import requests
+from src.cache_manager.instance import http_cache_manager as _cache_manager
 
 
 class JikanDetailedFetcher:
     """
     Fetches detailed data from Jikan API with proper rate limiting.
     Supports episodes and characters endpoints.
+    Uses async/await with aiohttp for improved performance.
     """
 
-    def __init__(self, anime_id: str, data_type: str):
+    def __init__(self, anime_id: str, data_type: str, session: Optional[Any] = None):
         self.anime_id = anime_id
         self.data_type = data_type  # 'episodes' or 'characters'
         self.request_count = 0
@@ -38,10 +41,24 @@ class JikanDetailedFetcher:
         self.max_requests_per_second = 3
         self.max_requests_per_minute = 60
 
-    def respect_rate_limits(self) -> None:
-        """Ensure we don't exceed Jikan API rate limits."""
+        # Reuse provided session or create new one
+        self._owns_session = session is None
+        self.session = session or _cache_manager.get_aiohttp_session("jikan")
+
+    async def respect_rate_limits(self) -> None:
+        """Ensure we don't exceed Jikan API rate limits (async version).
+
+        Jikan limits: 3 requests/second, 60 requests/minute
+        Strategy: Wait 0.5s between each request (ensures 2 req/sec << 3/sec limit)
+        """
         current_time = time.time()
         elapsed = current_time - self.start_time
+
+        # Handle time going backwards (clock adjustments, NTP sync, etc.)
+        if elapsed < 0:
+            self.request_count = 0
+            self.start_time = current_time
+            elapsed = 0
 
         # Reset counter every minute
         if elapsed >= 60:
@@ -49,107 +66,161 @@ class JikanDetailedFetcher:
             self.start_time = current_time
             elapsed = 0
 
-        # If we've made 60 requests in current minute, wait
+        # If we've made 60 requests in current minute, wait until minute resets
         if self.request_count >= self.max_requests_per_minute:
             wait_time = 60 - elapsed
             if wait_time > 0:
-                print(f"Rate limit reached. Waiting {wait_time:.1f} seconds...")
-                time.sleep(wait_time)
+                await asyncio.sleep(wait_time)
                 self.request_count = 0
                 self.start_time = time.time()
 
-        # Ensure we don't exceed 3 requests per second
-        if (
-            self.request_count % self.max_requests_per_second == 0
-            and self.request_count > 0
-        ):
-            time.sleep(1)
+        # Always wait 0.5s between requests (ensures 2 requests/second << 3/sec limit)
+        # Being more conservative to avoid 429 errors
+        if self.request_count > 0:  # Don't wait before first request
+            await asyncio.sleep(0.5)
 
-    def fetch_episode_detail(self, episode_id: int) -> Optional[Dict[str, Any]]:
-        """Fetch detailed episode data from Jikan API."""
-        self.respect_rate_limits()
+    async def _record_network_request(self, from_cache: bool) -> None:
+        """Increment counters for real network hits and apply pacing."""
+        if not from_cache:
+            self.request_count += 1
+            await self.respect_rate_limits()
 
+    async def fetch_episode_detail(
+        self, episode_id: int, retry_count: int = 0
+    ) -> Optional[Dict[str, Any]]:
+        """Fetch detailed episode data from Jikan API (async).
+
+        Args:
+            episode_id: Episode number to fetch
+            retry_count: Internal retry counter (max 3 retries)
+
+        Returns:
+            Episode detail dict or None if failed
+        """
         try:
             url = (
                 f"https://api.jikan.moe/v4/anime/{self.anime_id}/episodes/{episode_id}"
             )
-            response = requests.get(url, timeout=10)
-            self.request_count += 1
-
-            if response.status_code == 200:
-                episode_detail = response.json()["data"]
-
-                return {
-                    "episode_number": episode_id,
-                    "url": episode_detail.get("url"),
-                    "title": episode_detail.get("title"),
-                    "title_japanese": episode_detail.get("title_japanese"),
-                    "title_romaji": episode_detail.get("title_romaji"),
-                    "aired": episode_detail.get("aired"),
-                    "score": episode_detail.get("score"),
-                    "filler": episode_detail.get("filler", False),
-                    "recap": episode_detail.get("recap", False),
-                    "duration": episode_detail.get("duration"),
-                    "synopsis": episode_detail.get("synopsis"),
-                }
-
-            elif response.status_code == 429:
-                print(
-                    f"Rate limit hit for episode {episode_id}. Waiting and retrying..."
+            async with self.session.get(url) as response:
+                # Check if response was served from cache
+                # Explicitly check for boolean type to handle mocks properly
+                from_cache = (
+                    isinstance(getattr(response, "from_cache", None), bool)
+                    and response.from_cache
                 )
-                time.sleep(5)
-                return self.fetch_episode_detail(episode_id)  # Retry once
 
-            else:
-                print(
-                    f"Error fetching episode {episode_id}: HTTP {response.status_code}"
-                )
-                return None
+                if response.status == 200:
+                    data = await response.json()
+                    episode_detail = data["data"]
+
+                    # Only rate limit for network requests, not cache hits
+                    await self._record_network_request(from_cache)
+
+                    return {
+                        "episode_number": episode_id,
+                        "url": episode_detail.get("url"),
+                        "title": episode_detail.get("title"),
+                        "title_japanese": episode_detail.get("title_japanese"),
+                        "title_romaji": episode_detail.get("title_romaji"),
+                        "aired": episode_detail.get("aired"),
+                        "score": episode_detail.get("score"),
+                        "filler": episode_detail.get("filler", False),
+                        "recap": episode_detail.get("recap", False),
+                        "duration": episode_detail.get("duration"),
+                        "synopsis": episode_detail.get("synopsis"),
+                    }
+
+                elif response.status == 429:
+                    if retry_count >= 3:
+                        print(
+                            f"Max retries reached for episode {episode_id}, giving up"
+                        )
+                        return None
+
+                    print(
+                        f"Rate limit hit for episode {episode_id}. Waiting and retrying (attempt {retry_count + 1}/3)..."
+                    )
+                    await asyncio.sleep(5)
+                    await self._record_network_request(from_cache)
+                    return await self.fetch_episode_detail(episode_id, retry_count + 1)
+
+                else:
+                    print(
+                        f"Error fetching episode {episode_id}: HTTP {response.status}"
+                    )
+                    await self._record_network_request(from_cache)
+                    return None
 
         except Exception as e:
             print(f"Error fetching episode {episode_id}: {e}")
             return None
 
-    def fetch_character_detail(
-        self, character_data: Dict[str, Any]
+    async def fetch_character_detail(
+        self, character_data: Dict[str, Any], retry_count: int = 0
     ) -> Optional[Dict[str, Any]]:
-        """Fetch detailed character data from Jikan API."""
+        """Fetch detailed character data from Jikan API (async).
+
+        Args:
+            character_data: Character data containing MAL ID
+            retry_count: Internal retry counter (max 3 retries)
+
+        Returns:
+            Character detail dict or None if failed
+        """
         character_id = character_data["character"]["mal_id"]
-        self.respect_rate_limits()
 
         try:
             url = f"https://api.jikan.moe/v4/characters/{character_id}"
-            response = requests.get(url, timeout=10)
-            self.request_count += 1
-
-            if response.status_code == 200:
-                character_detail = response.json()["data"]
-
-                return {
-                    "character_id": character_id,
-                    "url": character_detail.get("url"),
-                    "name": character_detail.get("name"),
-                    "name_kanji": character_detail.get("name_kanji"),
-                    "nicknames": character_detail.get("nicknames", []),
-                    "about": character_detail.get("about"),
-                    "images": character_detail.get("images", {}),
-                    "favorites": character_detail.get("favorites"),
-                    "role": character_data.get("role"),
-                    "voice_actors": character_data.get("voice_actors", []),
-                }
-
-            elif response.status_code == 429:
-                print(
-                    f"Rate limit hit for character {character_id}. Waiting and retrying..."
+            async with self.session.get(url) as response:
+                # Check if response was served from cache
+                # Explicitly check for boolean type to handle mocks properly
+                from_cache = (
+                    isinstance(getattr(response, "from_cache", None), bool)
+                    and response.from_cache
                 )
-                time.sleep(5)
-                return self.fetch_character_detail(character_data)  # Retry once
 
-            else:
-                print(
-                    f"Error fetching character {character_id}: HTTP {response.status_code}"
-                )
-                return None
+                if response.status == 200:
+                    data = await response.json()
+                    character_detail = data["data"]
+
+                    # Only rate limit for network requests, not cache hits
+                    await self._record_network_request(from_cache)
+
+                    return {
+                        "character_id": character_id,
+                        "url": character_detail.get("url"),
+                        "name": character_detail.get("name"),
+                        "name_kanji": character_detail.get("name_kanji"),
+                        "nicknames": character_detail.get("nicknames", []),
+                        "about": character_detail.get("about"),
+                        "images": character_detail.get("images", {}),
+                        "favorites": character_detail.get("favorites"),
+                        "role": character_data.get("role"),
+                        "voice_actors": character_data.get("voice_actors", []),
+                    }
+
+                elif response.status == 429:
+                    if retry_count >= 3:
+                        print(
+                            f"Max retries reached for character {character_id}, giving up"
+                        )
+                        return None
+
+                    print(
+                        f"Rate limit hit for character {character_id}. Waiting and retrying (attempt {retry_count + 1}/3)..."
+                    )
+                    await asyncio.sleep(5)
+                    await self._record_network_request(from_cache)
+                    return await self.fetch_character_detail(
+                        character_data, retry_count + 1
+                    )
+
+                else:
+                    print(
+                        f"Error fetching character {character_id}: HTTP {response.status}"
+                    )
+                    await self._record_network_request(from_cache)
+                    return None
 
         except Exception as e:
             print(f"Error fetching character {character_id}: {e}")
@@ -175,8 +246,27 @@ class JikanDetailedFetcher:
 
         return len(all_data)
 
-    def fetch_detailed_data(self, input_file: str, output_file: str) -> None:
-        """Main method to fetch detailed data with batch processing. When processing each object should
+    async def close(self) -> None:
+        """Close the underlying HTTP session if we created it."""
+        if self._owns_session and self.session:
+            await self.session.close()
+
+    async def __aenter__(self) -> "JikanDetailedFetcher":
+        """Enter async context - session may be provided or created lazily."""
+        return self
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> bool:
+        """Exit async context - cleanup if we own the session."""
+        await self.close()
+        return False
+
+    async def fetch_detailed_data(self, input_file: str, output_file: str) -> None:
+        """Main async method to fetch detailed data with batch processing. When processing each object should
         have these properties, example for characters:
         {
             "name": "Character Full Name",
@@ -220,6 +310,13 @@ class JikanDetailedFetcher:
             total_items = len(input_data)
             print(f"Fetching detailed data for {total_items} characters...")
 
+        # Handle empty input
+        if total_items == 0:
+            print("No items to process, creating empty output file")
+            with open(output_file, "w", encoding="utf-8") as f:
+                json.dump([], f, ensure_ascii=False, indent=2)
+            return
+
         # Progress tracking
         progress_file = f"{output_file}.progress"
         if os.path.exists(progress_file):
@@ -234,16 +331,17 @@ class JikanDetailedFetcher:
 
         batch_data = []
 
+        # Determine item type for logging
+        item_type = "episode" if self.data_type == "episodes" else "character"
+
         # Process items starting from where we left off
         for i in range(start_index, total_items):
             if self.data_type == "episodes":
                 item_id = episode_ids[i]
-                detailed_item = self.fetch_episode_detail(item_id)
-                item_type = "episode"
+                detailed_item = await self.fetch_episode_detail(item_id)
             else:  # characters
                 item = input_data[i]
-                detailed_item = self.fetch_character_detail(item)
-                item_type = "character"
+                detailed_item = await self.fetch_character_detail(item)
                 item_id = item["character"]["mal_id"]
 
             if detailed_item:
@@ -269,8 +367,12 @@ class JikanDetailedFetcher:
             )
 
         # Load final data and create final file
-        with open(progress_file, "r", encoding="utf-8") as f:
-            all_detailed_data = json.load(f)
+        if os.path.exists(progress_file):
+            with open(progress_file, "r", encoding="utf-8") as f:
+                all_detailed_data = json.load(f)
+        else:
+            # No items were successfully fetched
+            all_detailed_data = []
 
         print(f"\\nCompleted fetching {len(all_detailed_data)} detailed {item_type}s")
 
@@ -296,7 +398,8 @@ class JikanDetailedFetcher:
             print(f"Cleaned up progress file: {progress_file}")
 
 
-def main() -> None:
+async def main() -> int:
+    """CLI entry point for Jikan helper."""
     parser = argparse.ArgumentParser(description="Fetch detailed data from Jikan API")
     parser.add_argument(
         "data_type", choices=["episodes", "characters"], help="Type of data to fetch"
@@ -307,18 +410,33 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    # Validate input file exists
-    if not os.path.exists(args.input_file):
-        print(f"Error: Input file {args.input_file} does not exist")
-        sys.exit(1)
+    # Extract output directory to guard against empty dirname edge case
+    output_dir = os.path.dirname(args.output_file)
 
-    # Create output directory if it doesn't exist
-    os.makedirs(os.path.dirname(args.output_file), exist_ok=True)
-
-    # Create fetcher and run
     fetcher = JikanDetailedFetcher(args.anime_id, args.data_type)
-    fetcher.fetch_detailed_data(args.input_file, args.output_file)
+
+    try:
+        # Validate input file exists
+        if not os.path.exists(args.input_file):
+            print(
+                f"Error: Input file {args.input_file} does not exist", file=sys.stderr
+            )
+            return 1
+
+        # Create output directory if it doesn't exist
+        # Guard: only call makedirs if output_dir is non-empty
+        # (dirname('episodes.json') returns '', makedirs('') raises FileNotFoundError)
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
+
+        await fetcher.fetch_detailed_data(args.input_file, args.output_file)
+        return 0
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
+    finally:
+        await fetcher.close()
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__main__":  # pragma: no cover
+    sys.exit(asyncio.run(main()))

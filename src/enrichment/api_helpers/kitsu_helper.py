@@ -9,9 +9,12 @@ import asyncio
 import json
 import logging
 import sys
-from typing import Any, Dict, List, Optional
+from types import TracebackType
+from typing import Any, Dict, List, Optional, Type, cast
 
 import aiohttp
+
+from src.cache_manager.instance import http_cache_manager as _cache_manager
 
 logger = logging.getLogger(__name__)
 
@@ -35,12 +38,12 @@ class KitsuEnrichmentHelper:
         url = f"{self.base_url}{endpoint}"
 
         try:
-            async with aiohttp.ClientSession(
-                timeout=aiohttp.ClientTimeout(total=30)
+            async with _cache_manager.get_aiohttp_session(
+                "kitsu", timeout=aiohttp.ClientTimeout(total=30)
             ) as session:
                 async with session.get(url, headers=headers, params=params) as response:
                     if response.status == 200:
-                        return await response.json()
+                        return cast(Dict[str, Any], await response.json())
                     else:
                         logger.warning(f"Kitsu API error: HTTP {response.status}")
                         return {}
@@ -143,26 +146,51 @@ class KitsuEnrichmentHelper:
             logger.error(f"Kitsu fetch_all_data failed for ID {anime_id}: {e}")
             return {"anime": None, "episodes": [], "categories": []}
 
+    async def close(self) -> None:
+        """No persistent session to close (creates per-request sessions)."""
+        pass
 
-async def main() -> None:
+    async def __aenter__(self) -> "KitsuEnrichmentHelper":
+        """Enter async context."""
+        return self
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> bool:
+        """Exit async context."""
+        await self.close()
+        return False
+
+
+async def main() -> int:
+    """CLI entry point for Kitsu helper."""
     if len(sys.argv) != 3:
-        print("Usage: python kitsu_helper.py <anime_id> <output_file>")
-        sys.exit(1)
+        print("Usage: python kitsu_helper.py <anime_id> <output_file>", file=sys.stderr)
+        return 1
 
-    anime_id = int(sys.argv[1])
-    output_file = sys.argv[2]
+    try:
+        anime_id = int(sys.argv[1])
+        output_file = sys.argv[2]
 
-    helper = KitsuEnrichmentHelper()
-    data = await helper.fetch_all_data(anime_id)
+        helper = KitsuEnrichmentHelper()
+        data = await helper.fetch_all_data(anime_id)
 
-    if data:
-        with open(output_file, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=4)
-        print(f"Data for {anime_id} saved to {output_file}")
-    else:
-        print(f"Could not fetch data for {anime_id}")
+        if data:
+            with open(output_file, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+            print(f"Data for {anime_id} saved to {output_file}")
+            return 0
+        else:
+            print(f"Could not fetch data for {anime_id}", file=sys.stderr)
+            return 1
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        return 1
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     logging.basicConfig(level=logging.INFO)
-    asyncio.run(main())
+    sys.exit(asyncio.run(main()))

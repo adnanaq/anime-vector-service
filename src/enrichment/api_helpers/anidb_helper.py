@@ -12,17 +12,17 @@ import hashlib
 import json
 import logging
 import os
+import sys
 import time
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Union, cast
+from types import TracebackType
+from typing import Any, Dict, List, Optional, Set, Type, Union, cast
 
 import aiohttp
-from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+from src.cache_manager.instance import http_cache_manager as _cache_manager
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +75,7 @@ class AniDBEnrichmentHelper:
 
         # Session management
         self.session = None
-        self._session_created_at = 0
+        self._session_created_at: float = 0.0
         self._session_max_age = 300  # Recreate session every 5 minutes
 
         # Enhanced rate limiting configuration
@@ -221,7 +221,8 @@ class AniDBEnrichmentHelper:
                 enable_cleanup_closed=True,
             )
 
-            self.session = aiohttp.ClientSession(
+            self.session = _cache_manager.get_aiohttp_session(
+                "anidb",
                 timeout=aiohttp.ClientTimeout(total=60, connect=30),
                 headers=headers,
                 connector=connector,
@@ -827,8 +828,22 @@ class AniDBEnrichmentHelper:
                 self.session = None
                 self._session_created_at = 0
 
+    async def __aenter__(self) -> "AniDBEnrichmentHelper":
+        """Enter async context - session created lazily on first request."""
+        return self
 
-async def main() -> None:
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> bool:
+        """Exit async context - ensure session cleanup."""
+        await self.close()
+        return False
+
+
+async def main() -> int:
     """Main function for testing AniDB data fetching."""
     parser = argparse.ArgumentParser(description="Test AniDB data fetching")
     parser.add_argument("--anidb-id", type=int, help="AniDB ID to fetch")
@@ -854,22 +869,26 @@ async def main() -> None:
             anime_data = search_results[0] if search_results else None
         else:
             logger.error("Must provide either --anidb-id or --search-name")
-            return
+            return 1
 
         if anime_data:
             # Save to file
             with open(args.output, "w", encoding="utf-8") as f:
                 json.dump(anime_data, f, indent=2, ensure_ascii=False)
+            return 0
         else:
-            logger.error(f"No data found")
+            logger.error("No data found")
+            return 1
 
     except KeyboardInterrupt:
         logger.info("Operation cancelled by user")
-    except Exception as e:
-        logger.error(f"Main execution failed: {e}")
+        return 1
+    except Exception:
+        logger.exception("Main execution failed")
+        return 1
     finally:
         await helper.close()
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+if __name__ == "__main__":  # pragma: no cover
+    sys.exit(asyncio.run(main()))

@@ -14,6 +14,7 @@ Usage:
 import argparse
 import asyncio
 import json
+import logging
 from typing import Any, Dict, List, Optional
 
 from crawl4ai import (
@@ -24,7 +25,14 @@ from crawl4ai import (
 )
 from crawl4ai.types import RunManyReturn
 
+from src.cache_manager.config import get_cache_config
+from src.cache_manager.result_cache import cached_result
+
 from .utils import sanitize_output_path
+
+# Get TTL from config to keep cache control centralized
+_CACHE_CONFIG = get_cache_config()
+TTL_ANIME_PLANET = _CACHE_CONFIG.ttl_anime_planet
 
 BASE_URL = "https://www.anime-planet.com"
 
@@ -75,21 +83,21 @@ def _extract_slug_from_characters_url(url: str) -> str:
     return match.group(1)
 
 
-async def fetch_animeplanet_characters(
-    slug: str, return_data: bool = True, output_path: Optional[str] = None
-) -> Optional[Dict[str, Any]]:
+@cached_result(ttl=TTL_ANIME_PLANET, key_prefix="animeplanet_characters")
+async def _fetch_animeplanet_characters_data(slug: str) -> Optional[Dict[str, Any]]:
     """
-    Crawls and processes character data from anime-planet.com.
+    Pure cached function that crawls and processes character data from anime-planet.com.
     Uses concurrent batch processing for character detail enrichment.
+
+    Results are cached in Redis for 24 hours based ONLY on slug.
+    This function has no side effects - it only fetches and returns data.
 
     Args:
         slug: Anime slug (e.g., "dandadan"), path (e.g., "/anime/dandadan/characters"),
               or full URL (e.g., "https://www.anime-planet.com/anime/dandadan/characters")
-        return_data: Whether to return the data dict (default: True)
-        output_path: Optional file path to save JSON (default: None)
 
     Returns:
-        Complete character data dictionary with enriched details (if return_data=True), otherwise None
+        Complete character data dictionary with enriched details, or None if fetch fails
     """
     # Normalize URL and extract slug using helper functions
     characters_url = _normalize_characters_url(slug)
@@ -191,7 +199,7 @@ async def fetch_animeplanet_characters(
     }
 
     async with AsyncWebCrawler() as crawler:
-        print(f"Fetching character list: {characters_url}")
+        logging.info(f"Fetching character list: {characters_url}")
 
         # Phase 1: Fetch character list page
         list_config = CrawlerRunConfig(
@@ -202,7 +210,7 @@ async def fetch_animeplanet_characters(
         )
 
         if not results:
-            print(f"Failed to fetch character list: {characters_url}")
+            logging.warning(f"Failed to fetch character list: {characters_url}")
             return None
 
         for result in results:
@@ -215,7 +223,7 @@ async def fetch_animeplanet_characters(
                 data = json.loads(result.extracted_content)
 
                 if not data:
-                    print("Extraction returned empty data.")
+                    logging.warning("Extraction returned empty data.")
                     continue
 
                 # Phase 2: Process character list and assign roles
@@ -224,10 +232,10 @@ async def fetch_animeplanet_characters(
                 )
 
                 if not characters_basic:
-                    print("No characters found.")
+                    logging.warning("No characters found.")
                     return None
 
-                print(f"Found {len(characters_basic)} characters")
+                logging.info(f"Found {len(characters_basic)} characters")
 
                 # Phase 3: Prepare character detail URLs for concurrent enrichment
                 character_detail_urls = []
@@ -243,11 +251,11 @@ async def fetch_animeplanet_characters(
                         )
 
                 if not character_detail_urls:
-                    print("No valid character URLs found.")
+                    logging.warning("No valid character URLs found.")
                     return None
 
                 # Phase 4: CONCURRENT BATCH ENRICHMENT using arun_many()
-                print(
+                logging.info(
                     f"Enriching {len(character_detail_urls)} characters concurrently..."
                 )
 
@@ -264,11 +272,13 @@ async def fetch_animeplanet_characters(
 
                 # Validate the results - arun_many returns List[CrawlResultContainer]
                 if not list_results:
-                    print("No results returned from batch character fetch")
+                    logging.warning("No results returned from batch character fetch")
                     return None
 
                 if not isinstance(list_results, list):
-                    print(f"Unexpected return type from arun_many: {type(list_results)}")
+                    logging.warning(
+                        f"Unexpected return type from arun_many: {type(list_results)}"
+                    )
                     return None
 
                 # Unwrap CrawlResultContainer objects to get CrawlResult objects
@@ -287,7 +297,7 @@ async def fetch_animeplanet_characters(
                         unwrapped_results.append(container)
 
                 if not unwrapped_results:
-                    print("No valid CrawlResult objects found after unwrapping")
+                    logging.warning("No valid CrawlResult objects found after unwrapping")
                     return None
 
                 # Replace list_results with unwrapped results
@@ -317,17 +327,22 @@ async def fetch_animeplanet_characters(
                                     characters_basic[idx].update(enriched_data)
                                     enriched_count += 1
                                 else:
-                                    print(
-                                        f"Warning: Could not match character: {detail_name}"
+                                    logging.warning(
+                                        f"Could not match character: {detail_name}"
                                     )
-                        except (json.JSONDecodeError, KeyError, IndexError, TypeError) as e:
-                            print(f"Failed to process enrichment: {e}")
+                        except (
+                            json.JSONDecodeError,
+                            KeyError,
+                            IndexError,
+                            TypeError,
+                        ) as e:
+                            logging.warning(f"Failed to process enrichment: {e}")
                     else:
-                        print(
+                        logging.warning(
                             f"Failed to enrich detail page - {detail_result.error_message}"
                         )
 
-                print(
+                logging.info(
                     f"Successfully enriched {enriched_count}/{len(characters_basic)} characters"
                 )
 
@@ -337,22 +352,50 @@ async def fetch_animeplanet_characters(
                     "total_count": len(characters_basic),
                 }
 
-                # Conditionally write to file
-                if output_path:
-                    safe_path = sanitize_output_path(output_path)
-                    with open(safe_path, "w", encoding="utf-8") as f:
-                        json.dump(output_data, f, ensure_ascii=False, indent=2)
-                    print(f"Data written to {safe_path}")
-
-                # Return data for programmatic usage
-                if return_data:
-                    return output_data
-
-                return None
+                # Always return data (no conditional return or file writing)
+                return output_data
             else:
-                print(f"Extraction failed: {result.error_message}")
+                logging.warning(f"Extraction failed: {result.error_message}")
                 return None
         return None
+
+
+async def fetch_animeplanet_characters(
+    slug: str, return_data: bool = True, output_path: Optional[str] = None
+) -> Optional[Dict[str, Any]]:
+    """
+    Wrapper function that handles side effects (file writing, return_data logic).
+
+    This function calls the cached _fetch_animeplanet_characters_data() to get the data,
+    then performs side effects that should execute regardless of cache status.
+
+    Args:
+        slug: Anime slug (e.g., "dandadan"), path (e.g., "/anime/dandadan/characters"),
+              or full URL (e.g., "https://www.anime-planet.com/anime/dandadan/characters")
+        return_data: Whether to return the data dict (default: True)
+        output_path: Optional file path to save JSON (default: None)
+
+    Returns:
+        Complete character data dictionary (if return_data=True), otherwise None
+    """
+    # Fetch data from cache or crawl (pure function)
+    data = await _fetch_animeplanet_characters_data(slug)
+
+    if data is None:
+        return None
+
+    # Side effect: Write to file (always executes, even on cache hit)
+    if output_path:
+        safe_path = sanitize_output_path(output_path)
+        with open(safe_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        logging.info(f"Data written to {safe_path}")
+
+    # Return data based on return_data parameter
+    if return_data:
+        return data
+
+    return None
 
 
 def _get_character_detail_schema() -> Dict[str, Any]:
@@ -680,7 +723,8 @@ def _process_character_details(detail_data: Dict[str, Any]) -> Dict[str, Any]:
     return enriched
 
 
-if __name__ == "__main__":
+async def main() -> int:
+    """CLI entry point for anime-planet.com character crawler."""
     parser = argparse.ArgumentParser(
         description="Crawl character data from an anime-planet.com anime characters page."
     )
@@ -697,10 +741,21 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    asyncio.run(
-        fetch_animeplanet_characters(
+    try:
+        await fetch_animeplanet_characters(
             args.identifier,
             return_data=False,  # CLI doesn't need return value
             output_path=args.output,
         )
-    )
+        return 0
+    except Exception as e:
+        import sys
+
+        logging.exception("Failed to fetch anime-planet character data")
+        return 1
+
+
+if __name__ == "__main__":  # pragma: no cover
+    import sys
+
+    sys.exit(asyncio.run(main()))

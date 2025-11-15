@@ -14,7 +14,9 @@ Usage:
 import argparse
 import asyncio
 import json
+import logging
 import re
+import sys
 from typing import Any, Dict, List, Optional, cast
 
 from crawl4ai import (
@@ -25,7 +27,13 @@ from crawl4ai import (
 )
 from crawl4ai.types import RunManyReturn
 
-from .utils import sanitize_output_path
+from src.cache_manager.config import get_cache_config
+from src.cache_manager.result_cache import cached_result
+from src.enrichment.crawlers.utils import sanitize_output_path
+
+# Get TTL from config to keep cache control centralized
+_CACHE_CONFIG = get_cache_config()
+TTL_ANIME_PLANET = _CACHE_CONFIG.ttl_anime_planet
 
 BASE_ANIME_URL = "https://www.anime-planet.com/anime/"
 
@@ -69,21 +77,21 @@ def _extract_slug_from_url(url: str) -> str:
     return match.group(1)
 
 
-async def fetch_animeplanet_anime(
-    slug: str, return_data: bool = True, output_path: Optional[str] = None
-) -> Optional[Dict[str, Any]]:
+@cached_result(ttl=TTL_ANIME_PLANET, key_prefix="animeplanet_anime")
+async def _fetch_animeplanet_anime_data(slug: str) -> Optional[Dict[str, Any]]:
     """
-    Crawls and processes anime data from anime-planet.com.
+    Pure cached function that crawls and processes anime data from anime-planet.com.
     All data is available on the main anime page - no navigation needed.
+
+    Results are cached in Redis for 24 hours based ONLY on slug.
+    This function has no side effects - it only fetches and returns data.
 
     Args:
         slug: Anime slug (e.g., "dandadan"), path (e.g., "/anime/dandadan"),
               or full URL (e.g., "https://www.anime-planet.com/anime/dandadan")
-        return_data: Whether to return the data dict (default: True)
-        output_path: Optional file path to save JSON (default: None)
 
     Returns:
-        Complete anime data dictionary (if return_data=True), otherwise None
+        Complete anime data dictionary, or None on failure
     """
     # Normalize URL and extract slug using helper functions
     url = _normalize_anime_url(slug)
@@ -96,6 +104,53 @@ async def fetch_animeplanet_anime(
             {
                 "name": "related_anime_raw",
                 "selector": "#tabs--relations--anime--same_franchise .pure-u-1",
+                "type": "nested_list",
+                "fields": [
+                    {
+                        "name": "title",
+                        "selector": ".RelatedEntry__name",
+                        "type": "text",
+                    },
+                    {
+                        "name": "url",
+                        "selector": "a.RelatedEntry",
+                        "type": "attribute",
+                        "attribute": "href",
+                    },
+                    {
+                        "name": "relation_subtype",
+                        "selector": ".RelatedEntry__subtitle",
+                        "type": "text",
+                    },
+                    {
+                        "name": "image",
+                        "selector": ".RelatedEntry__image",
+                        "type": "attribute",
+                        "attribute": "src",
+                    },
+                    {
+                        "name": "start_date_attr",
+                        "selector": "time span[data-start-date]",
+                        "type": "attribute",
+                        "attribute": "data-start-date",
+                    },
+                    {
+                        "name": "end_date_attr",
+                        "selector": "time span[data-end-date]",
+                        "type": "attribute",
+                        "attribute": "data-end-date",
+                    },
+                    {
+                        "name": "metadata_text",
+                        "selector": ".RelatedEntry__metadata",
+                        "type": "text",
+                    },
+                ],
+            },
+            # Related manga from same franchise section
+            {
+                "name": "related_manga_raw",
+                "selector": "#tabs--relations--manga .pure-u-1",
                 "type": "nested_list",
                 "fields": [
                     {
@@ -173,11 +228,11 @@ async def fetch_animeplanet_anime(
         extraction_strategy = JsonCssExtractionStrategy(css_schema)
         config = CrawlerRunConfig(extraction_strategy=extraction_strategy)
 
-        print(f"Fetching anime data: {url}")
+        logging.info(f"Fetching anime data: {url}")
         results: RunManyReturn = await crawler.arun(url=url, config=config)
 
         if not results:
-            print("No results found.")
+            logging.warning("No results found.")
             return None
 
         for result in results:
@@ -190,7 +245,7 @@ async def fetch_animeplanet_anime(
                 data = json.loads(result.extracted_content)
 
                 if not data:
-                    print("Extraction returned empty data.")
+                    logging.warning("Extraction returned empty data.")
                     return None
 
                 anime_data = cast(Dict[str, Any], data[0])
@@ -270,6 +325,15 @@ async def fetch_animeplanet_anime(
                 if "related_anime_raw" in anime_data:
                     del anime_data["related_anime_raw"]
 
+                # Process related manga
+                related_manga = _process_related_manga(
+                    anime_data.get("related_manga_raw", [])
+                )
+                if related_manga:
+                    anime_data["related_manga"] = related_manga
+                if "related_manga_raw" in anime_data:
+                    del anime_data["related_manga_raw"]
+
                 # Derive year, season, status from dates
                 if json_ld and json_ld.get("startDate"):
                     start_date = json_ld["startDate"]
@@ -295,32 +359,64 @@ async def fetch_animeplanet_anime(
                             start_dt = datetime.fromisoformat(
                                 start_date.replace("Z", "+00:00")
                             )
+                            # If the parsed date is naive, make it aware (assume UTC)
+                            if start_dt.tzinfo is None:
+                                start_dt = start_dt.replace(tzinfo=timezone.utc)
+
                             now = datetime.now(timezone.utc)
+
                             if start_dt > now:
                                 anime_data["status"] = "UPCOMING"
                             else:
                                 anime_data["status"] = "AIRING"
                         except (ValueError, TypeError):
                             anime_data["status"] = "AIRING"
-                    else:
-                        anime_data["status"] = "UNKNOWN"
+                else:
+                    anime_data["status"] = "UNKNOWN"
 
-                # Conditionally write to file
-                if output_path:
-                    safe_path = sanitize_output_path(output_path)
-                    with open(safe_path, "w", encoding="utf-8") as f:
-                        json.dump(anime_data, f, ensure_ascii=False, indent=2)
-                    print(f"Data written to {safe_path}")
-
-                # Return data for programmatic usage
-                if return_data:
-                    return anime_data
-
-                return None
+                # Return pure data (no side effects)
+                return anime_data
             else:
-                print(f"Extraction failed: {result.error_message}")
+                logging.warning(f"Extraction failed: {result.error_message}")
                 return None
         return None
+
+
+async def fetch_animeplanet_anime(
+    slug: str, return_data: bool = True, output_path: Optional[str] = None
+) -> Optional[Dict[str, Any]]:
+    """
+    Wrapper function that handles side effects (file writing, return_data logic).
+
+    This function calls the cached _fetch_animeplanet_anime_data() to get the data,
+    then performs side effects that should execute regardless of cache status.
+
+    Args:
+        slug: Anime slug (e.g., "dandadan"), path (e.g., "/anime/dandadan"),
+              or full URL (e.g., "https://www.anime-planet.com/anime/dandadan")
+        return_data: Whether to return the data dict (default: True)
+        output_path: Optional file path to save JSON (default: None)
+
+    Returns:
+        Complete anime data dictionary (if return_data=True), otherwise None
+    """
+    # Fetch data from cache or crawl (pure function)
+    data = await _fetch_animeplanet_anime_data(slug)
+
+    if data is None:
+        return None
+
+    # Side effect: Write to file (always executes, even on cache hit)
+    if output_path:
+        safe_path = sanitize_output_path(output_path)
+        with open(safe_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        logging.info(f"Data written to {safe_path}")
+
+    # Return data based on return_data parameter
+    if return_data:
+        return data
+    return None
 
 
 def _extract_json_ld(html: str) -> Optional[Dict[str, Any]]:
@@ -357,7 +453,7 @@ def _extract_json_ld(html: str) -> Optional[Dict[str, Any]]:
 
             return json_ld
     except (json.JSONDecodeError, AttributeError) as e:
-        print(f"Failed to extract JSON-LD: {e}")
+        logging.warning(f"Failed to extract JSON-LD: {e}")
     return None
 
 
@@ -441,7 +537,7 @@ def _process_related_anime(
         # Add relation subtype if present (Sequel, Prequel, etc.)
         relation_subtype = item.get("relation_subtype", "").strip()
         if relation_subtype:
-            related_item["relation_subtype"] = relation_subtype
+            related_item["relation_subtype"] = relation_subtype.upper()
 
         # Extract dates from data attributes (preferred method)
         start_date = item.get("start_date_attr", "").strip()
@@ -467,12 +563,12 @@ def _process_related_anime(
         if metadata_text:
             # Extract type and episodes (e.g., "TV: 12 ep")
             type_ep_match = re.search(
-                r"(TV|OVA|Movie|Special|ONA|Music\s*Video)(?:\s*:\s*(\d+)\s*ep)?",
+                r"(Web|TV Special|TV|OVA|Movie|Special|ONA|Music\s*Video)(?:\s*:\s*(\d+)\s*ep)?",
                 metadata_text,
                 re.IGNORECASE,
             )
             if type_ep_match:
-                related_item["type"] = type_ep_match.group(1).strip()
+                related_item["type"] = type_ep_match.group(1).strip().upper()
                 if type_ep_match.group(2):
                     related_item["episodes"] = int(type_ep_match.group(2))
 
@@ -481,7 +577,79 @@ def _process_related_anime(
     return related_anime
 
 
-if __name__ == "__main__":
+def _process_related_manga(
+    related_manga_raw: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """Process related manga data from raw extracted list."""
+    related_manga = []
+
+    for item in related_manga_raw:
+        title = item.get("title", "").strip()
+        url = item.get("url", "").strip()
+
+        if not title or not url:
+            continue
+
+        # Extract slug from URL
+        slug_match = re.search(r"/manga/([^/?]+)", url)
+        slug = slug_match.group(1) if slug_match else None
+
+        if not slug:
+            continue
+
+        related_item = {
+            "title": title,
+            "slug": slug,
+            "url": f"https://www.anime-planet.com{url}",
+            "relation_type": "same_franchise",
+        }
+
+        # Add relation subtype if present (Sequel, Prequel, etc.)
+        relation_subtype = item.get("relation_subtype", "").strip()
+        if relation_subtype:
+            related_item["relation_subtype"] = relation_subtype.upper()
+
+        # Extract dates from data attributes (preferred method)
+        start_date = item.get("start_date_attr", "").strip()
+        end_date = item.get("end_date_attr", "").strip()
+
+        if start_date:
+            related_item["start_date"] = start_date
+            # Extract year from start date
+            year_match = re.search(r"(\d{4})", start_date)
+            if year_match:
+                related_item["year"] = int(year_match.group(1))
+
+        if end_date:
+            related_item["end_date"] = end_date
+            # Extract year from end date if no start date
+            if not start_date:
+                year_match = re.search(r"(\d{4})", end_date)
+                if year_match:
+                    related_item["year"] = int(year_match.group(1))
+
+        # Parse metadata text (contains: type, volumes, chapters)
+        metadata_text = item.get("metadata_text", "")
+        if metadata_text:
+            # Example: "Vol: 1, Ch: 5"
+            vol_match = re.search(r"Vol:\s*([\d?]+)", metadata_text, re.IGNORECASE)
+            if vol_match:
+                vol_raw = vol_match.group(1)
+                if vol_raw.isdigit():
+                    related_item["volumes"] = int(vol_raw)
+
+            ch_match = re.search(r"Ch:\s*([\d?]+)", metadata_text, re.IGNORECASE)
+            if ch_match:
+                ch_raw = ch_match.group(1)
+                if ch_raw.isdigit():
+                    related_item["chapters"] = int(ch_raw)
+        related_manga.append(related_item)
+
+    return related_manga
+
+
+async def main() -> int:
+    """CLI entry point for anime-planet.com crawler."""
     parser = argparse.ArgumentParser(
         description="Crawl anime data from anime-planet.com"
     )
@@ -498,10 +666,17 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    asyncio.run(
-        fetch_animeplanet_anime(
+    try:
+        await fetch_animeplanet_anime(
             args.identifier,
             return_data=False,  # CLI doesn't need return value
             output_path=args.output,
         )
-    )
+        return 0
+    except Exception as e:
+        logging.exception(f"Failed to fetch anime-planet anime data")
+        return 1
+
+
+if __name__ == "__main__":  # pragma: no cover
+    sys.exit(asyncio.run(main()))

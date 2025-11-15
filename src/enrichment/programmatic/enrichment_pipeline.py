@@ -8,14 +8,13 @@ import asyncio
 import json
 import logging
 import os
+import sys
 import time
-from pathlib import Path
-from typing import Any, Dict, List, Optional, cast
+from types import TracebackType
+from typing import Any, Dict, List, Optional, Type, cast
 
 from .api_fetcher import ParallelAPIFetcher
-from .assembly import assemble_anime_entry, validate_and_fix_entry
 from .config import EnrichmentConfig
-from .episode_processor import EpisodeProcessor
 from .id_extractor import PlatformIDExtractor
 
 logger = logging.getLogger(__name__)
@@ -39,7 +38,6 @@ class ProgrammaticEnrichmentPipeline:
         # Initialize components
         self.id_extractor = PlatformIDExtractor()
         self.api_fetcher = ParallelAPIFetcher(config)
-        self.episode_processor = EpisodeProcessor()
 
         # Performance tracking
         self.timing_breakdown: Dict[str, float] = {}
@@ -130,9 +128,6 @@ class ProgrammaticEnrichmentPipeline:
                 "extracted_ids": valid_ids,
                 "api_data": api_data,
                 "processed_episodes": processed_episodes,
-                "episode_statistics": self.episode_processor.extract_episode_statistics(
-                    processed_episodes
-                ),
                 "enrichment_metadata": {
                     "method": "programmatic",
                     "total_time": time.time() - start_time,
@@ -229,7 +224,11 @@ class ProgrammaticEnrichmentPipeline:
                         # Split on "_agent" and get the part after it
                         after_agent = item.split("_agent")[1]
                         # Get first segment (number part before any additional "_")
-                        num_str = after_agent.split("_")[0] if "_" in after_agent else after_agent
+                        num_str = (
+                            after_agent.split("_")[0]
+                            if "_" in after_agent
+                            else after_agent
+                        )
                         if num_str.isdigit():
                             existing_ids.append(int(num_str))
                     except (IndexError, ValueError):
@@ -248,12 +247,16 @@ class ProgrammaticEnrichmentPipeline:
         # Find first missing ID (gap filling)
         for i in range(1, existing_ids[-1] + 1):
             if i not in existing_ids:
-                logger.info(f"Gap-filling agent ID: Using {i} (existing: {existing_ids})")
+                logger.info(
+                    f"Gap-filling agent ID: Using {i} (existing: {existing_ids})"
+                )
                 return i
 
         # No gaps found, return next sequential
         next_id = existing_ids[-1] + 1
-        logger.info(f"No gaps: Using next agent ID {next_id} (existing: {existing_ids})")
+        logger.info(
+            f"No gaps: Using next agent ID {next_id} (existing: {existing_ids})"
+        )
         return next_id
 
     def _create_temp_dir(self, anime_title: str) -> str:
@@ -283,119 +286,30 @@ class ProgrammaticEnrichmentPipeline:
 
         return temp_dir
 
-    def _process_episodes(self, api_data: Dict) -> List[Dict]:
-        """Process and merge episode data from all APIs."""
-        episode_sources = []
-
-        # Extract episodes from each API response
+    def _process_episodes(self, api_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Extract episode data from Jikan API."""
+        # Only use Jikan episodes - they have full details (title, synopsis, aired, etc.)
+        # AniList episodes only have episode number and air time, not useful
         if jikan_data := api_data.get("jikan"):
-            if episodes := jikan_data.get("episodes"):
-                episode_sources.append(episodes)
-
-        if anilist_data := api_data.get("anilist"):
-            if episodes := anilist_data.get("airingSchedule", {}).get("edges"):
-                episode_sources.append(episodes)
-
-        # Process and merge all episode sources
-        if episode_sources:
-            merged = self.episode_processor.merge_episode_sources(*episode_sources)
-            return self.episode_processor.validate_episode_data(merged)
+            episodes = jikan_data.get("episodes", [])
+            logger.debug(f"Extracted {len(episodes)} episodes from Jikan")
+            return episodes
 
         return []
 
-    async def load_and_enrich_from_file(self, file_path: str) -> Dict:
-        """
-        Load anime from file and enrich it.
+    async def __aenter__(self) -> "ProgrammaticEnrichmentPipeline":
+        """Enter async context - pipeline ready."""
+        return self
 
-        Args:
-            file_path: Path to JSON file with offline anime data
-
-        Returns:
-            Enriched anime data
-        """
-        with open(file_path, "r", encoding="utf-8") as f:
-            offline_data = json.load(f)
-
-        return await self.enrich_anime(offline_data)
-
-    async def enrich_anime_with_assembly(
-        self, offline_data: Dict, stage_outputs_dir: Optional[Path] = None
-    ) -> Dict[str, Any]:
-        """
-        Complete enrichment pipeline including Step 5 assembly.
-
-        Args:
-            offline_data: Raw anime data from offline database
-            stage_outputs_dir: Directory containing AI stage outputs (stage1-6 JSON files)
-
-        Returns:
-            Complete assembled and validated AnimeEntry
-        """
-        anime_title = offline_data.get("title", "Unknown")
-        logger.info(f"Starting complete enrichment pipeline for {anime_title}")
-
-        # Step 1-3: Programmatic enrichment
-        programmatic_result = await self.enrich_anime(offline_data)
-
-        if "error" in programmatic_result:
-            logger.error(
-                f"Programmatic enrichment failed: {programmatic_result['error']}"
-            )
-            return programmatic_result
-
-        # Step 5: Assembly (if stage outputs available)
-        if stage_outputs_dir and stage_outputs_dir.exists():
-            logger.info(f"Running Step 5 assembly...")
-
-            try:
-                # Extract anime sources
-                anime_sources = offline_data.get("sources", [])
-
-                # Run assembly
-                assembly_result = assemble_anime_entry(
-                    stage_dir=stage_outputs_dir,
-                    programmatic_data=programmatic_result,
-                    anime_sources=anime_sources,
-                )
-
-                if assembly_result.success and assembly_result.anime_entry:
-                    logger.info(
-                        f"Assembly successful with {len(assembly_result.warnings)} warnings"
-                    )
-
-                    # Apply final validation and auto-fix
-                    final_entry, is_valid, validation_messages = validate_and_fix_entry(
-                        assembly_result.anime_entry
-                    )
-
-                    # Add assembly metadata to result
-                    programmatic_result["assembled_entry"] = final_entry
-                    programmatic_result["assembly_success"] = assembly_result.success
-                    programmatic_result["validation_passed"] = is_valid
-                    programmatic_result["assembly_errors"] = assembly_result.errors
-                    programmatic_result["assembly_warnings"] = assembly_result.warnings
-                    programmatic_result["validation_messages"] = validation_messages
-
-                    logger.info(f"Complete pipeline finished - Validation: {is_valid}")
-
-                else:
-                    logger.error(f"Assembly failed: {assembly_result.errors}")
-                    programmatic_result["assembly_errors"] = assembly_result.errors
-                    programmatic_result["assembly_success"] = False
-
-            except Exception as e:
-                logger.error(f"Step 5 assembly failed: {e}")
-                programmatic_result["assembly_error"] = str(e)
-                programmatic_result["assembly_success"] = False
-        else:
-            logger.info(f"No stage outputs found, skipping Step 5 assembly")
-            programmatic_result["assembly_skipped"] = True
-
-        return programmatic_result
-
-    async def cleanup(self) -> None:
-        """Clean up resources."""
-        await self.api_fetcher.cleanup()
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> bool:
+        """Exit async context - cleanup API fetcher resources."""
+        await self.api_fetcher.__aexit__(exc_type, exc_val, exc_tb)
+        return False
 
     def get_performance_report(self) -> str:
         """Generate performance report."""
@@ -416,7 +330,7 @@ class ProgrammaticEnrichmentPipeline:
         return "\n".join(report)
 
 
-async def main() -> None:
+async def main() -> int:
     """Test the pipeline with a sample anime."""
 
     # Sample offline data
@@ -432,10 +346,7 @@ async def main() -> None:
         "status": "Currently Airing",
     }
 
-    # Initialize pipeline
-    pipeline = ProgrammaticEnrichmentPipeline()
-
-    try:
+    async with ProgrammaticEnrichmentPipeline() as pipeline:
         # Run enrichment
         result = await pipeline.enrich_anime(sample_anime)
 
@@ -456,12 +367,10 @@ async def main() -> None:
             json.dump(result, f, ensure_ascii=False, indent=2, default=str)
         print(f"\nResults saved to {output_file}")
 
-    finally:
-        await pipeline.cleanup()
+    return 0
 
 
-if __name__ == "__main__":
-    import logging
+if __name__ == "__main__":  # pragma: no cover
 
     logging.basicConfig(level=logging.INFO)
-    asyncio.run(main())
+    sys.exit(asyncio.run(main()))
